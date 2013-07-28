@@ -1,2 +1,8 @@
 # -*- coding: utf-8 -*-
-"""Controllers for the Intranet-1.0 application."""
+"""
+:package: intranet.controllers
+:date: 2013-07-28
+:author: Laurent LAPORTE <sandlol2009@gmail.com>
+
+Controllers for the Intranet-1.0 application.
+"""

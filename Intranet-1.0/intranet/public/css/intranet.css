@@ -1,0 +1,64 @@
+@CHARSET "UTF-8";
+
+/**
+ * Global layout
+ */
+html,body {
+	font-family: arial;
+	font-size: 10pt;
+	margin: 0;
+	padding: 0;
+	width: 100%;
+}
+
+/**
+ * Layout panes
+ */
+#topFrame {
+	padding: 0;
+}
+
+#leftFrame {
+	padding: .5em;
+}
+
+#rightFrame {
+	padding: .5em;
+}
+
+/* Override jquery.layout plug-in's CSS */
+.ui-layout-pane {
+	background: inherit;
+	border: none;
+	padding: 0;
+	overflow: none;
+}
+
+/**
+ * Document's title and toolbar
+ */
+h1 {
+	display: inline;
+	margin: .5em;
+	font-size: 1.4em;
+}
+
+#toolbar {
+	padding: 4px;
+	display: block;
+}
+
+/**
+ * inline styles
+ */
+.alignLeft {
+	text-align: left;
+}
+
+.alignRight {
+	text-align: right;
+}
+
+.alignCenter {
+	text-align: center;
+}

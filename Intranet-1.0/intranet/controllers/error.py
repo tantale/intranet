@@ -15,7 +15,6 @@ class ErrorController(object):
 
     This behaviour can be altered by changing the parameters to the
     ErrorDocuments middleware in your config/middleware.py file.
-    
     """
 
     @expose('intranet.templates.error')

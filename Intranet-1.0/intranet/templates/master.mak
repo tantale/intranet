@@ -28,6 +28,7 @@
 </%def>
 
 <%def name="body_class()"></%def>
+
 <%def name="meta()">
   <meta charset="${response.charset}" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
