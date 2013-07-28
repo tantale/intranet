@@ -1,0 +1,4 @@
+recursive-include intranet/public *
+include intranet/public/favicon.ico
+recursive-include intranet/i18n *
+recursive-include intranet/templates *
