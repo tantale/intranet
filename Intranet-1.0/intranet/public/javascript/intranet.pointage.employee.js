@@ -1,3 +1,21 @@
+function display_employee_create_form(event) {
+	if (event) {
+		event.preventDefault();
+	}
+	$("#employee_update").hide();
+	$(".addButton").button("disable");
+	$("#employee_create").show().focus();
+}
+
+function display_employee_update_form(event) {
+	if (event) {
+		event.preventDefault();
+	}
+	$("#employee_create").hide();
+	$(".addButton").button("enable");
+	$("#employee_update").show().focus();
+}
+
 $(function() {
 	$(".picture_placeholder").imgLiquid({
 		fill : true,
@@ -5,9 +23,12 @@ $(function() {
 		verticalAlign : "center"
 	});
 
-	$(".selectEmpButton").button({
+	$(".selectButton").button({
 		text : true
 	});
+	
+	$(".addButton").click(display_employee_create_form);
+	$("#employee_create__cancel").click(display_employee_update_form);
 
 	$('body').layout({
 		north__size : "auto",

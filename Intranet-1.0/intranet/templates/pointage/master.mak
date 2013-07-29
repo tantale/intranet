@@ -53,9 +53,9 @@ ${self.extra_script()}\
 <%def name="toolbar()">\
 <div id="toolbar" class="ui-widget-header">
 	<h1>Gestion des pointages</h1>
-	<a id="toolbar_employee" href="employee">Employés</a>
-	<a id="toolbar_command"  href="command">Commandes</a>
-	<a id="toolbar_calendar" href="calendar">Calendrier</a>
+	<a id="toolbar_employee" href="../employee">Employés</a>
+	<a id="toolbar_command"  href="../command">Commandes</a>
+	<a id="toolbar_calendar" href="../calendar">Calendrier</a>
 </div>\
 </%def>
 

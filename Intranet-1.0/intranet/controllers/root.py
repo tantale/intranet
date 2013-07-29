@@ -8,6 +8,7 @@ from intranet.model import DBSession, metadata
 from tg import expose, flash, require, url, lurl, request, redirect, \
     tmpl_context
 from tg.i18n import ugettext as _, lazy_ugettext as l_
+from intranet.controllers.file_storage import FileStorageController
 
 
 __all__ = ['RootController']
@@ -30,6 +31,7 @@ class RootController(BaseController):
 
     error = ErrorController()
     pointage = PointageControoler()
+    file_storage = FileStorageController()
 
     def _before(self, *args, **kw):
         tmpl_context.project_name = "intranet"

@@ -38,6 +38,7 @@ metadata = DeclarativeBase.metadata
 #
 ######
 
+
 def init_model(engine):
     """Call me before using any of the tables or classes in the model."""
     DBSession.configure(bind=engine)
@@ -59,3 +60,4 @@ def init_model(engine):
     #mapper(Reflected, t_reflected)
 
 # Import your model modules here.
+from intranet.model.pointage.employee import Employee

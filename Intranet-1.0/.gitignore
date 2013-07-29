@@ -17,6 +17,8 @@ __MACOSX__
 
 # Ignore generated files and directories.
 /data
+/upload
+/devdata.db
 *.egg-info/
 .installed.cfg
 dist/

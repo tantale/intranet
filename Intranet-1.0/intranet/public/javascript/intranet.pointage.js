@@ -28,6 +28,13 @@ $(function() {
 		}
 	});
 
+	$(".delButton").button({
+		text : true,
+		icons : {
+			primary : "ui-icon-minus"
+		}
+	});
+
 	$("#search_form__search").button({
 		text : false,
 		icons : {

@@ -1,7 +1,15 @@
 @CHARSET "UTF-8";
 
 #employee_update label {
-	width: 8em;
+	width: 10em;
+	display: inline-block;
+	text-align: left;
+	font-size: .9em;
+	font-weight: bold;
+}
+
+#employee_create label {
+	width: 10em;
 	display: inline-block;
 	text-align: left;
 	font-size: .9em;
@@ -9,20 +17,20 @@
 }
 
 #command_update label {
-	width: 9em;
+	width: 10em;
 	display: inline-block;
 	text-align: left;
 	font-size: .9em;
 	font-weight: bold;
 }
 
-.selectEmpButton {
+.selectButton {
 	width: 12em;
 	text-align: left;
 	font-size: .9em;
 }
 
-.selectEmpButton img {
+.selectButton img {
 	vertical-align: middle;
 	border: none;
 }
