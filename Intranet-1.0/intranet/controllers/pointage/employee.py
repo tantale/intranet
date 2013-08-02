@@ -116,7 +116,7 @@ class EmployeeController(BaseController):
         return dict(new_employee=new_employee)
 
     @expose('intranet.templates.pointage.employee_edit')
-    def select(self, uid):
+    def edit(self, uid):
         curr_employee = DBSession.query(Employee).get(int(uid))
         if curr_employee is None:
                 msg_fmt = (u"La sélection n’a donnée aucun résultat : "

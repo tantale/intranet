@@ -19,7 +19,7 @@ function on_event_render(event, element, view) {
 
 $(function() {
 
-	$(".selectButton").button({
+	$(".editButton").button({
 		text : true
 	});
 

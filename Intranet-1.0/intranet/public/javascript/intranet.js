@@ -1,6 +1,6 @@
 $(function() {
 
-	$(".select_button").button({
+	$(".edit_button").button({
 		text : true
 	});
 	

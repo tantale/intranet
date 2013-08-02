@@ -31,13 +31,13 @@
 %if employee_list:
 	%for employee in employee_list:
 		<%img_src = employee.photo_path if employee.photo_path else tg.url('/images/silhouette.min.png')%>\
-		<form id="employee_select_${employee.uid}" class="minimal_form" action="select" method="get">
+		<form id="employee_edit_${employee.uid}" class="minimal_form" action="edit" method="get">
 			<p>
 				<input type="hidden" name="uid" value="${employee.uid}" />
-				<button id="employee_select_${employee.uid}__select" type="submit" class="select_button searchable"
+				<button id="employee_edit_${employee.uid}__edit" type="submit" class="edit_button searchable"
 					title="Sélectionner ${employee.employee_name}">
 					<img class="imgLiquid picture_box_inner_min valignMiddle"
-						id="employee_select_${employee.uid}__picture"
+						id="employee_edit_${employee.uid}__picture"
 						alt="${employee.employee_name} - Photo" src="${img_src}" />
 					${employee.employee_name}</button>
 			</p>
