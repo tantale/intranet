@@ -7,6 +7,7 @@ from intranet.lib.base import BaseController
 from intranet.model.file_storage import FileStorage
 from tg.decorators import expose
 import logging
+import os
 import tg
 
 
@@ -17,9 +18,15 @@ class FileStorageController(BaseController):
     """
     file storage controller used to extract stored files (like photos).
     """
+
+    def __init__(self, url_prefix):
+        super(FileStorageController, self).__init__()
+        self.url_prefix = url_prefix
+
     @expose(content_type='image/jpg')
     def _default(self, *relpath_list, **kwargs):
-        relpath = "/".join(relpath_list) + '.jpg'
+        relpath = os.path.join(self.url_prefix, *relpath_list)
+        relpath += ".jpg"
 
         if LOG.isEnabledFor(logging.DEBUG):
             msg_fmt = "Try to extract the data stored in: '{relpath}'"

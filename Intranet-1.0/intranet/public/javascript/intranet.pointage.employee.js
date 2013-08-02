@@ -3,7 +3,7 @@ function display_employee_create_form(event) {
 		event.preventDefault();
 	}
 	$("#employee_update").hide();
-	$(".addButton").button("disable");
+	$(".create_button").button("disable");
 	$("#employee_create").show().focus();
 }
 
@@ -12,7 +12,7 @@ function display_employee_update_form(event) {
 		event.preventDefault();
 	}
 	$("#employee_create").hide();
-	$(".addButton").button("enable");
+	$(".create_button").button("enable");
 	$("#employee_update").show().focus();
 }
 
@@ -23,11 +23,7 @@ $(function() {
 		verticalAlign : "center"
 	});
 
-	$(".selectButton").button({
-		text : true
-	});
-	
-	$(".addButton").click(display_employee_create_form);
+	$(".create_button").click(display_employee_create_form);
 	$("#employee_create__cancel").click(display_employee_update_form);
 
 	$('body').layout({

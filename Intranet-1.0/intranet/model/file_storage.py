@@ -5,7 +5,11 @@
 """
 import collections
 import errno
+import logging
 import os
+
+
+LOG = logging.getLogger(__name__)
 
 
 def safe_makedirs(path):
@@ -50,8 +54,14 @@ class FileStorage(collections.Mapping):
                 self[key] = value
 
     def _get_fullpath(self, relpath):
-        # TODO: check that subdirs not in IGNORE_LIST
-        return os.path.normpath(os.path.join(self.file_storage_dir, relpath))
+        relpath = os.path.normpath(relpath)
+        relpath_list = filter(None, relpath.split(os.path.sep))
+        for forbiden in self.IGNORE_LIST:
+            if forbiden in relpath_list:
+                msg_fmt = ('Forbiden directory "{forbiden}" '
+                           'found in relative path: "{relpath}"')
+                raise msg_fmt.format(forbiden=forbiden, path=relpath)
+        return os.path.join(self.file_storage_dir, *relpath_list)
 
     def __contains__(self, relpath):
         """
@@ -70,6 +80,9 @@ class FileStorage(collections.Mapping):
         """
         try:
             fullpath = self._get_fullpath(relpath)
+            if LOG.isEnabledFor(logging.DEBUG):
+                msg_fmt = 'get data from "{path}"...'
+                LOG.debug(msg_fmt.format(path=fullpath))
             with file(fullpath, 'rb') as data_file:
                 return data_file.read()
         except IOError as cause:
@@ -88,6 +101,9 @@ class FileStorage(collections.Mapping):
         fullpath = self._get_fullpath(relpath)
         safe_makedirs(os.path.dirname(fullpath))
         safe_remove(fullpath)
+        if LOG.isEnabledFor(logging.DEBUG):
+            msg_fmt = 'set data to "{path}"...'
+            LOG.debug(msg_fmt.format(path=fullpath))
         with file(fullpath, 'wb') as data_file:
             data_file.write(data)
 
@@ -99,6 +115,9 @@ class FileStorage(collections.Mapping):
         """
         fullpath = self._get_fullpath(relpath)
         try:
+            if LOG.isEnabledFor(logging.DEBUG):
+                msg_fmt = 'delete data from "{path}"...'
+                LOG.debug(msg_fmt.format(path=fullpath))
             os.remove(fullpath)
         except OSError as cause:
             if cause.errno == errno.ENOENT:

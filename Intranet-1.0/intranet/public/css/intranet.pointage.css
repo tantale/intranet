@@ -24,13 +24,13 @@
 	font-weight: bold;
 }
 
-.selectButton {
-	width: 12em;
+.select_button {
+	width: 13em;
 	text-align: left;
 	font-size: .9em;
 }
 
-.selectButton img {
+.select_button img {
 	vertical-align: middle;
 	border: none;
 }
@@ -107,6 +107,16 @@
 	border: 3px solid #ccc;
 	margin: 10px;
 	display: inline-block;
+}
+
+.picture_box_inner {
+	width: 3.5cm;
+	height: 4.5cm;
+}
+
+.picture_box_inner_min {
+	width: 38px;
+	height: 42px;
 }
 
 /* rs carousel */

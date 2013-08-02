@@ -63,6 +63,17 @@ h1 {
 	text-align: center;
 }
 
+.valignTop {
+	vertical-align: top;
+}
+
+.minimal_form {
+	border:0; margin:0; padding:0;
+}
+.minimal_form p {
+	margin:0;
+}
+
 /**
  * flash
  */

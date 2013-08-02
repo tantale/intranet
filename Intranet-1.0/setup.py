@@ -56,7 +56,7 @@ setup(
                                'templates/*/*',
                                'public/*/*']},
     message_extractors={'intranet': [('**.py', 'python', None),
-                                     ('templates/**.mako', 'mako', None),
+                                     ('templates/**.mak', 'mako', None),
                                      ('public/**', 'ignore', None)]},
 
     entry_points="""

@@ -12,11 +12,11 @@ convert them into boolean, for example, you should use the
     setting = asbool(global_conf.get('the_setting'))
 """
 
-from tg.configuration import AppConfig
-
-import intranet
 from intranet import model
 from intranet.lib import app_globals, helpers
+from tg.configuration import AppConfig
+import intranet
+
 
 base_config = AppConfig()
 base_config.renderers = []

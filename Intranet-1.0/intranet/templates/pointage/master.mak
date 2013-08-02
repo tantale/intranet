@@ -12,9 +12,11 @@ ${self.meta()}\
 ${self.extra_css()}\
 <script type='text/javascript' src="${tg.url('/javascript/jquery-1.9.1.js')}"></script>
 <script type='text/javascript' src="${tg.url('/javascript/jquery-ui-1.10.3.custom.min.js')}"></script>
+<script type='text/javascript' src="${tg.url('/javascript/jquery.ui.datepicker-fr.js')}"></script>
 <script type='text/javascript' src="${tg.url('/javascript/modernizr.custom.32767.js')}"></script>
 <script type='text/javascript' src="${tg.url('/javascript/imgLiquid-min.js')}"></script>
 <script type='text/javascript' src="${tg.url('/javascript/jquery.layout-latest.min.js')}"></script>
+<script type='text/javascript' src="${tg.url('/javascript/jquery.form.js')}"></script>
 <script type='text/javascript' src="${tg.url('/javascript/intranet.js')}"></script>
 <script type='text/javascript' src="${tg.url('/javascript/intranet.pointage.js')}"></script>
 ${self.extra_script()}\
@@ -31,13 +33,8 @@ ${self.extra_script()}\
 		</div>
 	</div>
 	<div id="rightFrame" class="ui-layout-center">
-	<%flash = tg.flash_obj.render('flash', use_js=False)%>
-	%if flash:
-		<div class="row"><div class="span8 offset2">
-		${flash | n}
-		</div></div>
-	%endif
-	${self.body()}
+		${self.body()}
+		<div id="employee_content"/>
 	</div>
 </body>
 </html>
@@ -61,10 +58,13 @@ ${self.extra_script()}\
 
 <%def name="search_frame()">\
 <div id="searchFrame">
-	<form id="search_form" action="#">
+	<form id="search_form" class="minimal_form" action="search" method="get">
 		<p>
-			<input id="search_form__name" type="search" name="name" />
-			<button id="search_form__search" type="submit">Rechercher</button>
+			<input id="search_form__keyword" type="search" name="keyword"
+				placeholder="Mot-clef"
+				title="Saisir un mot-clef" />
+			<button id="search_form__search" type="submit" class="search_button"
+				title="Rechercher selon le mot-clef">Rechercher</button>
 		</p>
 	</form>
 </div>\

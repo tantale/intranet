@@ -1,20 +1,60 @@
 $(function() {
 
-	$("button[type='submit']").button({
+	$(".select_button").button({
+		text : true
+	});
+	
+	$(".create_button").button({
 		text : true,
 		icons : {
 			primary : "ui-icon-check"
 		}
 	});
 
-	$("button[type='reset']").button({
+	$(".update_button").button({
+		text : true,
+		icons : {
+			primary : "ui-icon-pencil"
+		}
+	});
+
+	$(".return_button").button({
+		text : true,
+		icons : {
+			primary : "ui-icon-arrowreturnthick-1-w"
+		}
+	});
+
+	$(".add_button").button({
+		text : true,
+		icons : {
+			primary : "ui-icon-plus"
+		}
+	});
+
+	$(".delete_button").button({
+		text : true,
+		icons : {
+			primary : "ui-icon-trash"
+		}
+	});
+
+	$(".cancel_button").button({
 		text : true,
 		icons : {
 			primary : "ui-icon-cancel"
 		}
 	});
 
+	$(".search_button").button({
+		text : false,
+		icons : {
+			primary : "ui-icon-search"
+		}
+	});
+
 	if (!Modernizr.inputtypes.date) {
+		$.datepicker.setDefaults($.datepicker.regional["fr"]);
 		$('input[type=date]').datepicker();
 	}
 

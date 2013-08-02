@@ -21,34 +21,14 @@ $(function() {
 		}
 	});
 
-	$(".addButton").button({
-		text : true,
-		icons : {
-			primary : "ui-icon-plus"
-		}
-	});
+	var index, search_list = [], searchable_node_list = $("#accordion .searchable");
 
-	$(".delButton").button({
-		text : true,
-		icons : {
-			primary : "ui-icon-minus"
-		}
-	});
-
-	$("#search_form__search").button({
-		text : false,
-		icons : {
-			primary : "ui-icon-search"
-		}
-	});
-
-	var index, search_list = [], h2_node_list = $("#accordion .searchable");
-
-	for (index = 0; index < h2_node_list.length; ++index) {
-		search_list.push($(h2_node_list[index]).text());
+	for (index = 0; index < searchable_node_list.length; ++index) {
+		var keyword = $.trim($(searchable_node_list[index]).text());
+		search_list.push(keyword);
 	}
 
-	$("#search_form__name").autocomplete({
+	$("#search_form__keyword").autocomplete({
 		source : search_list
 	});
 

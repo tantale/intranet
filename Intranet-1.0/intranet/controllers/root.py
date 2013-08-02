@@ -31,7 +31,7 @@ class RootController(BaseController):
 
     error = ErrorController()
     pointage = PointageControoler()
-    file_storage = FileStorageController()
+    photo = FileStorageController("photo")
 
     def _before(self, *args, **kw):
         tmpl_context.project_name = "intranet"
