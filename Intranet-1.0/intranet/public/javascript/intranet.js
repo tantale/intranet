@@ -25,7 +25,7 @@ $(function() {
 		}
 	});
 
-	$(".add_button").button({
+	$(".new_button").button({
 		text : true,
 		icons : {
 			primary : "ui-icon-plus"

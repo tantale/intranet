@@ -17,10 +17,10 @@
 	});
 </script>
 </%def>\
-<%def name="add_button()">\
-<form id="employee_add" class="minimal_form alignCenter" action="add" method="get">
+<%def name="new_button()">\
+<form id="employee_new" class="minimal_form alignCenter" action="new" method="get">
 	<p>
-		<button id="employee_add__add" type="submit" class="add_button"
+		<button id="employee_new__new" type="submit" class="new_button"
 			title="Ajouter un employé">Nouvel employé</button>
 	</p>
 </form>

@@ -104,8 +104,8 @@ class EmployeeController(BaseController):
                 flash(msg, status="warning")
         return dict(curr_employee=curr_employee)
 
-    @expose('intranet.templates.pointage.employee_add')
-    def add(self):
+    @expose('intranet.templates.pointage.employee_new')
+    def new(self):
         new_employee = Employee(employee_name=None,
                                 worked_hours=None,
                                 entry_date=None,
@@ -212,7 +212,7 @@ class EmployeeController(BaseController):
               status="ok")
         return dict(curr_employee=None)
 
-    @expose('intranet.templates.pointage.employee_add')
+    @expose('intranet.templates.pointage.employee_new')
     def create(self, employee_name, worked_hours, entry_date,
                  exit_date=None, photo_path=None):
 

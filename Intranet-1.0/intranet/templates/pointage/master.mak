@@ -27,7 +27,7 @@ ${self.extra_script()}\
 	</div>
 	<div id="leftFrame" class="ui-layout-west">
 		${self.search_frame()}
-		${self.add_button()}
+		${self.new_button()}
 		<div id="accordion">
 			${self.accordion()}
 		</div>
@@ -70,6 +70,6 @@ ${self.extra_script()}\
 </div>\
 </%def>
 
-<%def name="add_button()"></%def>
+<%def name="new_button()"></%def>
 
 <%def name="accordion()"></%def>
