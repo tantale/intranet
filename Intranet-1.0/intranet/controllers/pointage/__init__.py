@@ -4,6 +4,7 @@
 :author: Laurent LAPORTE <sandlol2009@gmail.com>
 """
 from intranet.controllers.pointage.employee import EmployeeController
+from intranet.controllers.pointage.order import OrderController
 from intranet.lib.base import BaseController
 
 
@@ -13,3 +14,4 @@ class PointageControoler(BaseController):
     """
 
     employee = EmployeeController()
+    order = OrderController()

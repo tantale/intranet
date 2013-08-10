@@ -41,7 +41,7 @@
 		<div id="toolbar" class="ui-widget-header">
 			<h1>Gestion des pointages</h1>
 			<a id="toolbar_employee" href="${tg.url('/pointage/employee/index')}">Employés</a>
-			<a id="toolbar_command"  href="${tg.url('/pointage/command/index')}">Commandes</a>
+			<a id="toolbar_order" href="${tg.url('/pointage/order/index')}">Commandes</a>
 			<a id="toolbar_calendar" href="${tg.url('/pointage/calendar/index')}">Calendrier</a>
 		</div>\
 	</div>

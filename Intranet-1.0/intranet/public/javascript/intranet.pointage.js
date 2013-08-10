@@ -6,7 +6,7 @@ $(function() {
 		}
 	});
 
-	$("#toolbar_command").button({
+	$("#toolbar_order").button({
 		text : true,
 		icons : {
 			primary : "ui-icon-document"

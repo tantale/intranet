@@ -63,3 +63,4 @@ def init_model(engine):
 from intranet.model.pointage.employee import Employee
 from intranet.model.pointage.order import Order
 from intranet.model.pointage.order_phase import OrderPhase
+from intranet.model.pointage.order_cat import OrderCat
