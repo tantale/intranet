@@ -15,6 +15,7 @@ encoding//intranet/model/__init__.py=utf-8
 encoding//intranet/model/auth.py=utf-8
 encoding//intranet/templates/pointage/employee/get_all.mak=utf-8
 encoding//intranet/tests/__init__.py=utf-8
+encoding//intranet/tests/model/__init__.py=utf-8
 encoding//intranet/websetup/__init__.py=utf-8
 encoding//intranet/websetup/bootstrap.py=utf-8
 encoding//intranet/websetup/schema.py=utf-8

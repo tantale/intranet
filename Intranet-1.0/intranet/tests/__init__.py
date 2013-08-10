@@ -1,17 +1,16 @@
 # -*- coding: utf-8 -*-
 """Unit and functional test suite for Intranet-1.0."""
 
+from intranet.model import *
+from nose.tools import eq_
 from os import path
-import sys
-
-from tg import config
 from paste.deploy import loadapp  # @UnresolvedImport
 from paste.script.appinstall import SetupCommand  # @UnresolvedImport
 from routes import url_for
+from tg import config
 from webtest import TestApp
-from nose.tools import eq_
+import sys
 
-from intranet import model
 
 __all__ = ['setup_db', 'teardown_db', 'TestController', 'url_for']
 
@@ -19,14 +18,14 @@ __all__ = ['setup_db', 'teardown_db', 'TestController', 'url_for']
 def setup_db():
     """Method used to build a database"""
     engine = config['pylons.app_globals'].sa_engine
-    model.init_model(engine)
-    model.metadata.create_all(engine)  # @UndefinedVariable 'create_all'
+    init_model(engine)
+    metadata.create_all(engine)  # @UndefinedVariable 'create_all'
 
 
 def teardown_db():
     """Method used to destroy a database"""
     engine = config['pylons.app_globals'].sa_engine
-    model.metadata.drop_all(engine)  # @UndefinedVariable 'drop_all'
+    metadata.drop_all(engine)  # @UndefinedVariable 'drop_all'
 
 
 class TestController(object):
@@ -63,5 +62,5 @@ class TestController(object):
     def tearDown(self):
         """Method called by nose after running each test"""
         # Cleaning up the database:
-        model.DBSession.remove()
+        DBSession.remove()
         teardown_db()

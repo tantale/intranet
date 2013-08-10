@@ -10,7 +10,6 @@ from sqlalchemy.types import Integer, Text, Date
 
 class Employee(DeclarativeBase):
     """Employee management."""
-    
     __tablename__ = 'Employee'
 
     uid = Column(Integer, primary_key=True, nullable=False, autoincrement=True)

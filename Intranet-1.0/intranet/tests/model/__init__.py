@@ -1,15 +1,17 @@
 # -*- coding: utf-8 -*-
 """Unit test suite for the models of the application."""
-from nose.tools import assert_equals
 from intranet.model import DBSession
 from intranet.tests import setup_db, teardown_db
+from nose.tools import eq_
 
 __all__ = ['ModelTest']
+
 
 # Create an empty database before we start our tests for this module
 def setup():
     """Function called by nose on module load"""
     setup_db()
+
 
 # Tear down that database
 def teardown():
@@ -23,6 +25,9 @@ class ModelTest(object):
     klass = None
     attrs = {}
 
+    def __init__(self):
+        self.obj = None  # created during setUp
+
     def setUp(self):
         """Prepare model test fixture."""
         try:
@@ -32,7 +37,6 @@ class ModelTest(object):
             self.obj = self.klass(**new_attrs)
             DBSession.add(self.obj)
             DBSession.flush()
-            return self.obj
         except:
             DBSession.rollback()
             raise
@@ -50,12 +54,8 @@ class ModelTest(object):
         """
         return {}
 
-    def test_create_obj(self):
-        """Model objects can be created"""
-        pass
-
     def test_query_obj(self):
         """Model objects can be queried"""
         obj = DBSession.query(self.klass).one()
         for key, value in self.attrs.iteritems():
-            assert_equals(getattr(obj, key), value)
+            eq_(getattr(obj, key), value)
