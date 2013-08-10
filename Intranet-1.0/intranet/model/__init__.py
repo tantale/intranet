@@ -61,3 +61,5 @@ def init_model(engine):
 
 # Import your model modules here.
 from intranet.model.pointage.employee import Employee
+from intranet.model.pointage.order import Order
+from intranet.model.pointage.order_phase import OrderPhase

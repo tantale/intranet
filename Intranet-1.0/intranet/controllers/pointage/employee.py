@@ -4,11 +4,11 @@
 :date: 2013-07-28
 :author: Laurent LAPORTE <sandlol2009@gmail.com>
 """
-from intranet.lib.base import BaseController
 from intranet.model import DBSession
 from intranet.model.file_storage import FileStorage
 from intranet.model.pointage.employee import Employee
 from sqlalchemy.exc import IntegrityError
+from tg.controllers.restcontroller import RestController
 from tg.decorators import with_trailing_slash, expose
 from tg.flash import flash
 import datetime
@@ -16,6 +16,7 @@ import logging
 import os
 import tg
 import transaction
+import time
 
 
 LOG = logging.getLogger(__name__)
@@ -74,13 +75,13 @@ def parse_date_interval(field_name1, field_value1, field_name2, field_value2):
     return (date1, date2)
 
 
-class EmployeeController(BaseController):
+class EmployeeController(RestController):
     """
     Create / Modify / Remove Employees
     """
 
     @with_trailing_slash
-    @expose('intranet.templates.pointage.employee')
+    @expose('intranet.templates.pointage.employee.index')
     @expose('json')
     def index(self):
         employee_list = (DBSession.query(Employee)
@@ -88,44 +89,46 @@ class EmployeeController(BaseController):
                          .all())
         return dict(employee_list=employee_list)
 
-    @expose('intranet.templates.pointage.employee_edit')
-    def search(self, keyword):
-        curr_employee = (DBSession.query(Employee)
-                         .filter(Employee.employee_name == keyword)
-                         .first())
-        if curr_employee is None:
-            if keyword:
-                msg_fmt = (u"La recherche n’a donnée aucun résultat : "
-                           u"aucun employé ne porte le nom « {keyword} ».")
-                flash(msg_fmt.format(keyword=keyword), status="warning")
-            else:
-                msg = (u"La recherche n’a donnée aucun résultat : "
-                       u"le mot-clef est vide (non renseigné).")
-                flash(msg, status="warning")
-        return dict(curr_employee=curr_employee)
+    @with_trailing_slash
+    @expose('intranet.templates.pointage.employee.get_all')
+    @expose('json')
+    def get_all(self):
+        employee_list = (DBSession.query(Employee)
+                         .order_by(Employee.employee_name)
+                         .all())
+        return dict(employee_list=employee_list)
 
-    @expose('intranet.templates.pointage.employee_new')
+    @with_trailing_slash
+    @expose('intranet.templates.pointage.employee.get_all')
+    @expose('json')
+    def search(self, keyword):
+        predicat = Employee.employee_name.like('%' + keyword + '%')
+        employee_list = (DBSession.query(Employee)
+                         .filter(predicat)
+                         .order_by(Employee.employee_name)
+                         .all())
+        return dict(employee_list=employee_list)
+
+    @expose('intranet.templates.pointage.employee.new')
     def new(self):
         new_employee = Employee(employee_name=None,
                                 worked_hours=None,
                                 entry_date=None,
                                 exit_date=None,
                                 photo_path=None)
-        msg = u"Veuillez saisir les informations pour créer un nouvel employé."
-        flash(msg, status="info")
         return dict(new_employee=new_employee)
 
-    @expose('intranet.templates.pointage.employee_edit')
+    @expose('intranet.templates.pointage.employee.edit')
     def edit(self, uid):
         curr_employee = DBSession.query(Employee).get(int(uid))
         if curr_employee is None:
-                msg_fmt = (u"La sélection n’a donnée aucun résultat : "
-                           u"L’identifiant {uid} n’existe pas.")
-                flash(msg_fmt.format(uid=uid), status="error")
+            msg_fmt = (u"La sélection n’a donnée aucun résultat : "
+                       u"L’identifiant {uid} n’existe pas.")
+            flash(msg_fmt.format(uid=uid), status="error")
         return dict(curr_employee=curr_employee)
 
-    @expose('intranet.templates.pointage.employee_edit')
-    def update(self, uid, employee_name, worked_hours, entry_date,
+    @expose('intranet.templates.pointage.employee.edit')
+    def put(self, uid, employee_name, worked_hours, entry_date,
                  exit_date=None, photo_path=None):
 
         if LOG.isEnabledFor(logging.DEBUG):
@@ -161,20 +164,19 @@ class EmployeeController(BaseController):
                 exit_date = None
 
             try:
-                if isinstance(photo_path, (str, unicode)):
-                    photo_storage = None
-                else:
-                    photo_storage = photo_path  # FieldStorage
-
                 # -- update
                 employee = DBSession.query(Employee).get(uid)
-                self.delete_photo(employee.photo_path)
-                new_photo_path = self.store_photo(employee.uid, photo_storage)
                 employee.employee_name = employee_name
                 employee.worked_hours = worked_hours
                 employee.entry_date = entry_date
                 employee.exit_date = exit_date
-                employee.photo_path = new_photo_path
+                if not isinstance(photo_path, (str, unicode)):
+                    LOG.debug("Replace the photo...")
+                    self.delete_photo(employee.photo_path)
+                    new_photo_path = self.store_photo(employee.uid, photo_path)
+                    employee.photo_path = new_photo_path
+                else:
+                    LOG.debug("Do not replace the photo!")
                 transaction.commit()
             except IntegrityError as cause:
                 LOG.error(cause)
@@ -194,8 +196,8 @@ class EmployeeController(BaseController):
         curr_employee = DBSession.query(Employee).get(int(uid))
         return dict(curr_employee=curr_employee)
 
-    @expose('intranet.templates.pointage.employee_edit')
-    def delete(self, uid):
+    @expose('intranet.templates.pointage.employee.edit')
+    def post_delete(self, uid):
         curr_employee = DBSession.query(Employee).get(int(uid))
 
         if LOG.isEnabledFor(logging.DEBUG):
@@ -212,8 +214,8 @@ class EmployeeController(BaseController):
               status="ok")
         return dict(curr_employee=None)
 
-    @expose('intranet.templates.pointage.employee_new')
-    def create(self, employee_name, worked_hours, entry_date,
+    @expose('intranet.templates.pointage.employee.new')
+    def post(self, employee_name, worked_hours, entry_date,
                  exit_date=None, photo_path=None):
 
         if LOG.isEnabledFor(logging.DEBUG):
@@ -286,9 +288,9 @@ class EmployeeController(BaseController):
         if photo_storage is None:
             return None
         # -- upload photo file (@see: FieldStorage)
-        relpath_fmt = "/photo/pointage/employee/employee_{uid}{ext}"
+        relpath_fmt = "/photo/pointage/employee/employee_{uid}_{time}{ext}"
         ext = os.path.splitext(photo_storage.filename)[1]
-        relpath = relpath_fmt.format(uid=uid, ext=ext)
+        relpath = relpath_fmt.format(uid=uid, ext=ext, time=time.time())
         file_storage = FileStorage(tg.config.file_storage_dir)
         if relpath in file_storage:
             del file_storage[relpath]

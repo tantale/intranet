@@ -18,10 +18,10 @@ $(function() {
 		}
 	});
 
-	$(".return_button").button({
-		text : true,
+	$(".refresh_button").button({
+		text : false,
 		icons : {
-			primary : "ui-icon-arrowreturnthick-1-w"
+			primary : "ui-icon-refresh"
 		}
 	});
 

@@ -6,7 +6,9 @@
 	</div></div>
 %endif
 %if new_employee:
-<form id="employee_create" class="ui-widget" action="create" method="post" enctype="multipart/form-data">
+<form id="employee_create" class="ui-widget"
+	action="${tg.url('/pointage/employee/')}"
+	method="post" enctype="multipart/form-data">
 	<fieldset>
 		<legend class="ui-widget-header">Saisir les informations concernant un nouvel employé</legend>
 		<table>
@@ -53,13 +55,6 @@
 
 %endif
 
-<form id="employee_return" class="minimal_form" action="/pointage/employee/" method="get">
-	<p>
-		<button id="employee_return__return" type="submit" class="return_button"
-			title="Retoune et met à jour la liste des employés">Retour</button>
-	</p>
-</form>
-
 <script>
 	if (!Modernizr.inputtypes.date) {
 		$('#employee_content input[type=date]').datepicker();
@@ -75,13 +70,8 @@
 			primary : "ui-icon-check"
 		}
 	});
-	$("#employee_content .return_button").button({
-		text : true,
-		icons : {
-			primary : "ui-icon-arrowreturnthick-1-w"
-		}
-	});
 	$('#employee_create').ajaxForm({
-		target : '#employee_content'
+		target : '#employee_content',
+		success: refresh_accordion
 	});
 </script>

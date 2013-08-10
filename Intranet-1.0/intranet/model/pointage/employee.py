@@ -9,10 +9,12 @@ from sqlalchemy.types import Integer, Text, Date
 
 
 class Employee(DeclarativeBase):
+    """Employee management."""
+    
     __tablename__ = 'Employee'
 
     uid = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
-    employee_name = Column(Text, unique=True, nullable=False)
+    employee_name = Column(Text, unique=True, nullable=False, index=True)
     worked_hours = Column(Integer, nullable=False)
     entry_date = Column(Date, nullable=False)
     exit_date = Column(Date, nullable=True)

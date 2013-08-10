@@ -6,7 +6,10 @@
 	</div></div>
 %endif
 %if curr_employee:
-<form id="employee_update" class="ui-widget" action="update" method="post" enctype="multipart/form-data">
+<%img_src = curr_employee.photo_path if curr_employee.photo_path else tg.url('/images/silhouette.png')%>\
+<form id="employee_update" class="ui-widget"
+	action="${tg.url('/pointage/employee/{employee.uid}'.format(employee=curr_employee))}"
+	method="post" enctype="multipart/form-data">
 	<fieldset>
 		<legend class="ui-widget-header">Modifier les informations concernant ${curr_employee.employee_name}</legend>
 		<table>
@@ -14,7 +17,7 @@
 				<td style="vertical-align: top;">
 					<div class="picture_box">
 						<div class="picture_box_inner imgLiquid">
-							<img id="employee_update__picture" alt="Photo" src="${curr_employee.photo_path}"/>
+							<img id="employee_update__picture" alt="Photo" src="${img_src}"/>
 						</div>
 					</div>
 				</td>
@@ -44,7 +47,7 @@
 			</tr>
 			<tr>
 				<td class="alignRight" colspan="2">
-				<input type="hidden" name="uid" value="${curr_employee.uid}" />
+				<input type="hidden" name="_method" value="PUT" />
 				<button id="employee_update__update" type="submit" class="update_button"
 					title="Modifier les informations concernant cet employé">Modifier</button></td>
 			</tr>
@@ -52,21 +55,16 @@
 	</fieldset>
 </form>
 
-<form id="employee_delete" class="minimal_form" action="delete" method="post">
+<form id="employee_delete" class="minimal_form"
+	action="${tg.url('/pointage/employee/{employee.uid}'.format(employee=curr_employee))}"
+	method="post">
 	<p>
-		<input type="hidden" name="uid" value="${curr_employee.uid}" />
+		<input type="hidden" name="_method" value="DELETE" />
 		<button id="employee_delete__delete" type="submit" class="delete_button"
 			title="Supprimer les informations concernant ${curr_employee.employee_name}">Supprimer</button>
 	</p>
 </form>
 %endif
-
-<form id="employee_return" class="minimal_form" action="/pointage/employee/" method="post">
-	<p>
-		<button id="employee_return__return" type="submit" class="return_button"
-			title="Retoune et met à jour la liste des employés">Retour</button>
-	</p>
-</form>
 
 <script>
 	if (!Modernizr.inputtypes.date) {
@@ -83,12 +81,6 @@
 			primary : "ui-icon-pencil"
 		}
 	});
-	$("#employee_content .return_button").button({
-		text : true,
-		icons : {
-			primary : "ui-icon-arrowreturnthick-1-w"
-		}
-	});
 	$("#employee_content .delete_button").button({
 		text : true,
 		icons : {
@@ -96,9 +88,11 @@
 		}
 	});
 	$('#employee_update').ajaxForm({
-		target : '#employee_content'
+		target : '#employee_content',
+		success: refresh_accordion
 	});
 	$('#employee_delete').ajaxForm({
-		target : '#employee_content'
+		target : '#employee_content',
+		success: refresh_accordion
 	});
 </script>
