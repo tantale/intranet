@@ -5,6 +5,7 @@
 """
 from intranet.controllers.pointage.employee import EmployeeController
 from intranet.controllers.pointage.order import OrderController
+from intranet.controllers.pointage.order_cat import OrderCatController
 from intranet.lib.base import BaseController
 
 
@@ -15,3 +16,4 @@ class PointageControoler(BaseController):
 
     employee = EmployeeController()
     order = OrderController()
+    order_cat = OrderCatController()

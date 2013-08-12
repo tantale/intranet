@@ -1,4 +1,9 @@
 # -*- coding: utf-8 -*-
+<%doc>
+:template: intranet.templates.pointage.employee.index
+:date: 2013-08-11
+:author: Laurent LAPORTE <sandlol2009@gmail.com>
+</%doc>
 <!DOCTYPE html>
 <html>
 <head profile="http://www.w3.org/2005/10/profile">
@@ -59,7 +64,7 @@
 			</form>
 		</div>\
 		<form id="employee_get_all" class="inline_form alignCenter"
-			action="${tg.url('/pointage/employee/get_all')}" method="get">
+			action="${tg.url('/pointage/employee/get_all/')}" method="get">
 			<p>
 				<button id="employee_get_all__refresh" type="submit" class="refresh_button"
 					title="Mettre à jour la liste des employés">Mettre à jour</button>

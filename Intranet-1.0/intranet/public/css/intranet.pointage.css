@@ -24,6 +24,19 @@
 	font-weight: bold;
 }
 
+#order_create label {
+	width: 10em;
+	display: inline-block;
+	text-align: left;
+	font-size: .9em;
+	font-weight: bold;
+}
+
+.noColor {
+	color: black;
+	background-color: white;
+}
+
 .edit_button {
 	width: 13em;
 	text-align: left;
@@ -33,56 +46,6 @@
 .edit_button img {
 	vertical-align: middle;
 	border: none;
-}
-
-.colorCuisines {
-	background-color: yellow;
-	color: black;
-}
-
-.colorBains {
-	background-color: #64FE2E;
-	color: black;
-}
-
-.colorBureaux {
-	background-color: orange;
-	color: black;
-}
-
-.colorDressings {
-	background-color: aqua;
-	color: black;
-}
-
-.colorMagasins {
-	background-color: pink;
-	color: black;
-}
-
-.colorMeubles {
-	background-color: red;
-	color: black;
-}
-
-.colorRenovation {
-	background-color: #0B610B;
-	color: white;
-}
-
-.colorConges {
-	background-color: #6A0888;
-	color: white;
-}
-
-.colorNettoyage {
-	background-color: #61380B;
-	color: white;
-}
-
-.colorDechargement {
-	background-color: #8A2908;
-	color: white;
 }
 
 .sortable {

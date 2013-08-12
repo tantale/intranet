@@ -67,6 +67,27 @@ h1 {
 	vertical-align: top;
 }
 
+form {
+	border: 0;
+	margin: 0;
+	padding: 5px;
+}
+
+form p {
+	margin: 0;
+}
+
+form span.error {
+	background-color: #f2dede;
+	border-color: #eed3d7;
+	-webkit-border-radius: 4px;
+	-moz-border-radius: 4px;
+	border-radius: 4px;
+	color: #b94a48;
+	padding: 4px 8px 4px 8px;
+	font-size: .8em;
+}
+
 .minimal_form {
 	border: 0;
 	margin: 0;
