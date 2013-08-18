@@ -201,7 +201,8 @@ class OrderController(RestController):
         order.creation_date = creation_date
         order.close_date = close_date
         DBSession.flush()
-        redirect('../')
+        msg_fmt = (u"La commande « {order_ref} » est modifiée.")
+        flash(msg_fmt.format(order_ref=order_ref), status="ok")
 
     @expose()
     def post_delete(self, uid, **kw):
