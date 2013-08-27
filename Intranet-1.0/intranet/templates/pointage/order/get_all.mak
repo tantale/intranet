@@ -27,8 +27,8 @@
 %endfor
 </div>
 <script type='text/javascript'>
-	"use strict";
-	/*global $*/
+    "use strict";
+    /*global $*/
     $('#accordion .minimal_form').ajaxForm({
         target : '#order_content'
     });
@@ -38,11 +38,11 @@
         collapsible: true,
         heightStyle: "auto",
         activate: function(event, ui) {
-        	var uid = ui.newHeader.attr('id').split('_')[1],
-        		url = '/pointage/order/' + uid + '/edit';
-        	$('#order_content').load(url);
-			$("#order_get_all input[name=uid]").val(uid);
-			$("#search_form input[name=uid]").val(uid);
+            var uid = ui.newHeader.attr('id').split('_')[1],
+                url = '/pointage/order/' + uid + '/edit';
+            $('#order_content').load(url);
+            $("#order_get_all input[name=uid]").val(uid);
+            $("#search_form input[name=uid]").val(uid);
         }
     });
 </script>
