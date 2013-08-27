@@ -5,10 +5,11 @@
 :author: Laurent LAPORTE <sandlol2009@gmail.com>
 </%doc>
 <!DOCTYPE html>
-<html>
-<head profile="http://www.w3.org/2005/10/profile">
-<meta charset="${response.charset}" />\
+<html lang="fr">
+<head>
+<meta charset="${response.charset}" />
 <title>Gestion des employés</title>
+<meta name="description" content="Gestion des employés pour l'intranet de pointage" />
 <link rel="icon" type="image/ico" href="${tg.url('/favicon.ico')}" />
 <link rel="stylesheet" type="text/css" href="${tg.url('/css/blitzer/jquery-ui-1.10.3.custom.min.css')}" />
 <link rel="stylesheet" type="text/css" href="${tg.url('/css/layout-default-latest.css')}" />

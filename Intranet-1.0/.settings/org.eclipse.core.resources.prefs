@@ -1,7 +1,4 @@
 eclipse.preferences.version=1
-encoding//data/templates/git/repo/intranet/Intranet-1.0/intranet/templates/pointage/order/edit.mak.py=utf-8
-encoding//data/templates/git/repo/intranet/Intranet-1.0/intranet/templates/pointage/order/get_all.mak.py=utf-8
-encoding//data/templates/git/repo/intranet/Intranet-1.0/intranet/templates/pointage/order/new.mak.py=utf-8
 encoding//intranet/__init__.py=utf-8
 encoding//intranet/config/__init__.py=utf-8
 encoding//intranet/config/app_cfg.py=utf-8

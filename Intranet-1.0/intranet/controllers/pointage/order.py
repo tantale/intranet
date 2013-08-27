@@ -72,34 +72,43 @@ class OrderController(RestController):
     @with_trailing_slash
     @expose('json')
     @expose('intranet.templates.pointage.order.get_all')
-    def get_all(self):
+    def get_all(self, keyword=None, uid=None, order_ref=None):
         """
         Display all records in a resource.
 
         GET /pointage/order/
-        """
-        order_list = (DBSession.query(Order)
-                      .order_by(Order.order_ref)
-                      .all())
-        return dict(order_list=order_list)
 
-    @with_trailing_slash
-    @expose('json')
-    @expose('intranet.templates.pointage.order.get_all')
-    def search(self, keyword):
+        :param uid: Active order's UID if any
         """
-        Search a list of orders.
-
-        GET /pointage/order/?keyword=<keyword>
-
-        :param keyword: order reference's keyword
-        """
-        predicat = Order.order_ref.like('%' + keyword + '%')
-        order_list = (DBSession.query(Order)
-                      .filter(predicat)
-                      .order_by(Order.order_ref)
-                      .all())
-        return dict(order_list=order_list)
+        # -- filter the order list/keyword
+        if keyword:
+            predicat = Order.order_ref.like('%' + keyword + '%')
+            order_list = (DBSession.query(Order)
+                          .filter(predicat)
+                          .order_by(Order.order_ref)
+                          .all())
+        else:
+            order_list = (DBSession.query(Order)
+                          .order_by(Order.order_ref)
+                          .all())
+        # -- active_index of the order by uid or order_ref
+        active_index = False
+        if uid:
+            uid = int(uid)
+            for index, order in enumerate(order_list):
+                if order.uid == uid:
+                    active_index = index
+                    break
+        elif order_ref:
+            for index, order in enumerate(order_list):
+                if order.order_ref == order_ref:
+                    active_index = index
+                    break
+        else:
+            if order_list:
+                active_index = 0
+        return dict(order_list=order_list, keyword=keyword,
+                    active_index=active_index)
 
     @expose('intranet.templates.pointage.order.new')
     def new(self, **kw):
@@ -143,6 +152,7 @@ class OrderController(RestController):
         DBSession.add(order)
         msg_fmt = (u"La commande « {order_ref} » est créée.")
         flash(msg_fmt.format(order_ref=order_ref), status="ok")
+        redirect('./new')
 
     @expose('intranet.templates.pointage.order.edit')
     def edit(self, uid, **kw):
@@ -203,19 +213,7 @@ class OrderController(RestController):
         DBSession.flush()
         msg_fmt = (u"La commande « {order_ref} » est modifiée.")
         flash(msg_fmt.format(order_ref=order_ref), status="ok")
-
-    @expose()
-    def post_delete(self, uid, **kw):
-        """
-        Delete an existing record.
-
-        POST /pointage/order/1?_method=DELETE
-        DELETE /pointage/order/1
-
-        :param uid: UID of the Order to delete.
-        """
-        DBSession.delete(DBSession.query(Order).get(uid))
-        redirect('../')
+        redirect('./{uid}/edit'.format(uid=uid))
 
     @expose('intranet.templates.pointage.order.get_delete')
     def get_delete(self, uid):
@@ -227,4 +225,20 @@ class OrderController(RestController):
         :param uid: UID of the Order to delete.
         """
         order = DBSession.query(Order).get(uid)
+        return dict(order=order)
+
+    @expose('intranet.templates.pointage.order.deleted')
+    def post_delete(self, uid, **kw):
+        """
+        Delete an existing record.
+
+        POST /pointage/order/1?_method=DELETE
+        DELETE /pointage/order/1
+
+        :param uid: UID of the Order to delete.
+        """
+        order = DBSession.query(Order).get(uid)
+        DBSession.delete(order)
+        msg_fmt = (u"La commande « {order_ref} » est suppriméeée.")
+        flash(msg_fmt.format(order_ref=order.order_ref), status="ok")
         return dict(order=order)

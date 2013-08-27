@@ -15,7 +15,7 @@
 		<legend class="ui-widget-header">Modifier les informations concernant la commande ${values.get('order_ref')}</legend>
 		<table>
 			<tr>
-				<td><p><label for="order_update__order_ref">Nom :</label>
+				<td><p><label for="order_update__order_ref">Ref. commande :</label>
 						<input id="order_update__order_ref" type="text" name="order_ref"
 							value="${values.get('order_ref')}"
 							placeholder="Référence"
@@ -90,7 +90,20 @@
 		</table>
 	</fieldset>
 </form>
-<script>
+
+<form id="order_delete" class="minimal_form"
+	action="${tg.url('/pointage/order/{uid}'.format(uid=values['uid']))}"
+	method="post">
+	<p>
+		<input type="hidden" name="_method" value="DELETE" />
+		<button id="order_delete__delete" type="submit" class="delete_button"
+			title="Supprimer les informations concernant la commande ${values.get('order_ref')}">Supprimer</button>
+	</p>
+</form>
+
+<script type='text/javascript'>
+	"use strict";
+	/*global $, Modernizr*/
 	var project_cat_css = $('#order_update__project_cat').val();
 	$('#order_update__project_cat').change(function(){
 		var new_css = $(this).find('option:selected').attr('class');
@@ -108,6 +121,20 @@
 	});
 	$('#order_update').ajaxForm({
 		target : '#order_content',
-		success: refresh_accordion
+		success: function(responseText, statusText, xhr) {
+			refresh_accordion(${values['uid']});
+		}
+	});
+	$("#order_delete .delete_button").button({
+		text : true,
+		icons : {
+			primary : "ui-icon-trash"
+		}
+	});
+	$('#order_delete').ajaxForm({
+		target : '#order_content',
+		success: function(responseText, statusText, xhr) {
+			refresh_accordion();
+		}
 	});
 </script>

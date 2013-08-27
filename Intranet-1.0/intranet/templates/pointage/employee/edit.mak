@@ -66,7 +66,7 @@
 </form>
 %endif
 
-<script>
+<script type='text/javascript'>
 	if (!Modernizr.inputtypes.date) {
 		$('#employee_content input[type=date]').datepicker();
 	}

@@ -27,8 +27,6 @@
 	});
 	$('#accordion form button').button();
 	$("#accordion").accordion({
-		autoHeight : false,
-		heightStyle : "fill",
-		clearStyle: true
+		heightStyle : "auto"
 	});
 </script>

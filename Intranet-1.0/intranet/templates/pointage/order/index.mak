@@ -5,10 +5,11 @@
 :author: Laurent LAPORTE <sandlol2009@gmail.com>
 </%doc>
 <!DOCTYPE html>
-<html>
-<head profile="http://www.w3.org/2005/10/profile">
-<meta charset="${response.charset}" />\
+<html lang="fr">
+<head>
+<meta charset="${response.charset}" />
 <title>Gestion des commandes</title>
+<meta name="description" content="Gestion des commandes pour l'intranet de pointage" />
 <link rel="icon" type="image/ico" href="${tg.url('/favicon.ico')}" />
 <link rel="stylesheet" type="text/css" href="${tg.url('/css/blitzer/jquery-ui-1.10.3.custom.min.css')}" />
 <link rel="stylesheet" type="text/css" href="${tg.url('/css/layout-default-latest.css')}" />
@@ -26,13 +27,18 @@
 <script type='text/javascript' src="${tg.url('/javascript/intranet.pointage.js')}"></script>
 <script type='text/javascript' src="${tg.url('/javascript/intranet.pointage.order.js')}"></script>
 <script type='text/javascript'>
+	"use strict";
+	/*global $*/
     $(function() {
         $('#search_form').ajaxForm({
             target: '#accordion_content',
             success: on_accordion_refresh
         });
         $('#order_new').ajaxForm({
-            target: '#order_content'
+            target: '#order_content',
+            success: function(responseText, statusText, xhr) {
+            	$("#accordion").accordion("option", "active", false);
+            }
         });
         $('#order_get_all').ajaxForm({
             target: '#accordion_content',
@@ -54,11 +60,13 @@
     <div id="leftFrame" class="ui-layout-west">
         <div id="searchFrame">
             <form id="search_form" class="minimal_form"
-                action="${tg.url('/pointage/order/search')}" method="get">
+                action="${tg.url('/pointage/order/get_all/')}" method="get">
                 <p>
                     <input id="search_form__keyword" type="search" name="keyword"
                         placeholder="Mot-clef"
                         title="Saisir un mot-clef" />
+	        		<input type="hidden" name="uid" value="" />
+	        		<input type="hidden" name="order_ref" value="" />
                     <button id="search_form__search" type="submit" class="search_button"
                         title="Rechercher selon le mot-clef">Rechercher</button>
                 </p>
@@ -67,6 +75,9 @@
         <form id="order_get_all" class="inline_form alignCenter"
             action="${tg.url('/pointage/order/get_all/')}" method="get">
             <p>
+        		<input type="hidden" name="keyword" value="" />
+        		<input type="hidden" name="uid" value="" />
+        		<input type="hidden" name="order_ref" value="" />
                 <button id="order_get_all__refresh" type="submit" class="refresh_button"
                     title="Mettre à jour la liste des commandes">Mettre à jour</button>
             </p>

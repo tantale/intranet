@@ -15,7 +15,7 @@
 		<legend class="ui-widget-header">Saisir les informations concernant une nouvelle commande</legend>
 		<table>
 			<tr>
-				<td><p><label for="order_create__order_ref">Nom :</label>
+				<td><p><label for="order_create__order_ref">Ref. commande :</label>
 						<input id="order_create__order_ref" type="text" name="order_ref"
 							value="${values.get('order_ref')}"
 							placeholder="Référence"
@@ -89,7 +89,9 @@
 		</table>
 	</fieldset>
 </form>
-<script>
+<script type='text/javascript'>
+	"use strict";
+	/*global $, Modernizr*/
 	var project_cat_css = $('#order_create__project_cat').val();
 	$('#order_create__project_cat').change(function(){
 		var new_css = $(this).find('option:selected').attr('class');
@@ -107,6 +109,8 @@
 	});
 	$('#order_create').ajaxForm({
 		target : '#order_content',
-		success: refresh_accordion
+		success: function(responseText, statusText, xhr) {
+			refresh_accordion(null, '${values.get('order_ref')}');
+		}
 	});
 </script>

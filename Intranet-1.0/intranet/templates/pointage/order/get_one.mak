@@ -4,6 +4,10 @@
 :date: 2013-08-11
 :author: Laurent LAPORTE <sandlol2009@gmail.com>
 </%doc>
+<%flash = tg.flash_obj.render('flash', use_js=False)%>
+%if flash:
+	${flash | n}
+%endif
 <h3>Détail de la commande</h3>
 <table>
 <tbody>

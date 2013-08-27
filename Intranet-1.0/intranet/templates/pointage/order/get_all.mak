@@ -7,9 +7,7 @@
 %if order_list:
 <div id="accordion">
 %for order in order_list:
-<h2 id="order_${order.uid}" class="searchable"
-	onclick="$('#order_content').load('${tg.url('/pointage/order/{uid}/edit'.format(uid=order.uid))}');">${order.order_ref}</h2>
-</script>
+<h2 id="order_${order.uid}" class="searchable">${order.order_ref}</h2>
 <div>
 %if order.order_phase_list:
 <ul class="sortable ${order.project_cat}">
@@ -29,14 +27,23 @@
 %endfor
 </div>
 <script type='text/javascript'>
+	"use strict";
+	/*global $*/
     $('#accordion .minimal_form').ajaxForm({
         target : '#order_content'
     });
     $('#accordion form button').button();
     $("#accordion").accordion({
-        autoHeight : 'content',
-        heightStyle : "fill",
-        clearStyle: true
+        active: ${active_index},
+        collapsible: true,
+        heightStyle: "auto",
+        activate: function(event, ui) {
+        	var uid = ui.newHeader.attr('id').split('_')[1],
+        		url = '/pointage/order/' + uid + '/edit';
+        	$('#order_content').load(url);
+			$("#order_get_all input[name=uid]").val(uid);
+			$("#search_form input[name=uid]").val(uid);
+        }
     });
 </script>
 %else:
