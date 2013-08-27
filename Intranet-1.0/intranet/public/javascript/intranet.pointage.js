@@ -1,3 +1,8 @@
+"use strict";
+/*jslint browser: true, devel: true, es5: false, plusplus: true, unparam: true, white: true */
+/*global $*/
+
+
 $(function() {
 	$("#toolbar_employee").button({
 		text : true,

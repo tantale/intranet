@@ -1,3 +1,8 @@
+"use strict";
+/*jslint browser: true, devel: true, es5: false, plusplus: true, unparam: true, white: true */
+/*global $*/
+
+
 /**
  * Change the rendering of an event in the calendar.
  * 

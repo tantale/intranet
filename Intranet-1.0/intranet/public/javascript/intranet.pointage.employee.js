@@ -1,3 +1,8 @@
+"use strict";
+/*jslint browser: true, devel: true, es5: false, plusplus: true, unparam: true, white: true */
+/*global $*/
+
+
 function on_accordion_refresh() {
 	var index, search_list = [], searchable_node_list = $("#accordion .searchable");
 	for (index = 0; index < searchable_node_list.length; ++index) {

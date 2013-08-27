@@ -1,3 +1,7 @@
+"use strict";
+/*jslint browser: true, devel: true, es5: false, plusplus: true, unparam: true, white: true */
+/*global $, Modernizr*/
+
 $(function() {
 
 	$(".edit_button").button({
