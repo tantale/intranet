@@ -19,28 +19,24 @@ function on_accordion_refresh(responseText, statusText, xhr) {
 		keyword = $.trim($(searchable_node_list[index]).text());
 		search_list.push(keyword);
 	}
-	$('#search_form__keyword').autocomplete({
+	$('#order_get_all__keyword').autocomplete({
 		source : search_list
 	});
-	$('#search_form__keyword').autocomplete('close');
+	$('#order_get_all__keyword').autocomplete('close');
 }
 
 function refresh_accordion(uid, order_ref) {
-	var keyword = $('#search_form__keyword').val();
+	var keyword = $('#order_get_all__keyword').val();
 	$("#order_get_all input[name=keyword]").val(keyword);
 	if (uid) {
 		$("#order_get_all input[name=uid]").val(uid);
-		$("#search_form input[name=uid]").val(uid);
 	} else {
 		$("#order_get_all input[name=uid]").val("");
-		$("#search_form input[name=uid]").val("");
 	}
 	if (order_ref) {
 		$("#order_get_all input[name=order_ref]").val(order_ref);
-		$("#search_form input[name=order_ref]").val(order_ref);
 	} else {
 		$("#order_get_all input[name=order_ref]").val("");
-		$("#search_form input[name=order_ref]").val("");
 	}
 	$("#order_get_all").submit();
 }

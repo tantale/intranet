@@ -38,11 +38,12 @@
         collapsible: true,
         heightStyle: "auto",
         activate: function(event, ui) {
-            var uid = ui.newHeader.attr('id').split('_')[1],
-                url = '/pointage/order/' + uid + '/edit';
-            $('#order_content').load(url);
-            $("#order_get_all input[name=uid]").val(uid);
-            $("#search_form input[name=uid]").val(uid);
+            if (ui.newHeader.attr('id')) {
+                var uid = ui.newHeader.attr('id').split('_')[1],
+                    url = '/pointage/order/' + uid + '/edit';
+                $('#order_content').load(url);
+                $("#order_get_all input[name=uid]").val(uid);
+            }
         }
     });
 </script>

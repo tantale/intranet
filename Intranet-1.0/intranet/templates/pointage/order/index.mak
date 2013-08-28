@@ -30,7 +30,7 @@
     "use strict";
     /*global $*/
     $(function() {
-        $('#search_form').ajaxForm({
+        $('#order_get_all').ajaxForm({
             target: '#accordion_content',
             success: on_accordion_refresh
         });
@@ -39,10 +39,6 @@
             success: function(responseText, statusText, xhr) {
                 $("#accordion").accordion("option", "active", false);
             }
-        });
-        $('#order_get_all').ajaxForm({
-            target: '#accordion_content',
-            success: on_accordion_refresh
         });
         refresh_accordion();
     });
@@ -59,29 +55,19 @@
     </div>
     <div id="leftFrame" class="ui-layout-west">
         <div id="searchFrame">
-            <form id="search_form" class="minimal_form"
+            <form id="order_get_all" class="minimal_form"
                 action="${tg.url('/pointage/order/get_all/')}" method="get">
                 <p>
-                    <input id="search_form__keyword" type="search" name="keyword"
+                    <input id="order_get_all__keyword" type="search" name="keyword"
                         placeholder="Mot-clef"
                         title="Saisir un mot-clef" />
                     <input type="hidden" name="uid" value="" />
                     <input type="hidden" name="order_ref" value="" />
-                    <button id="search_form__search" type="submit" class="search_button"
+                    <button id="order_get_all__search" type="submit" class="search_button"
                         title="Rechercher selon le mot-clef">Rechercher</button>
                 </p>
             </form>
         </div>\
-        <form id="order_get_all" class="inline_form alignCenter"
-            action="${tg.url('/pointage/order/get_all/')}" method="get">
-            <p>
-                <input type="hidden" name="keyword" value="" />
-                <input type="hidden" name="uid" value="" />
-                <input type="hidden" name="order_ref" value="" />
-                <button id="order_get_all__refresh" type="submit" class="refresh_button"
-                    title="Mettre à jour la liste des commandes">Mettre à jour</button>
-            </p>
-        </form>
         <form id="order_new" class="inline_form alignCenter"
             action="${tg.url('/pointage/order/new')}" method="get">
             <p>
