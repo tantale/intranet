@@ -17,7 +17,6 @@ encoding//intranet/model/__init__.py=utf-8
 encoding//intranet/model/auth.py=utf-8
 encoding//intranet/templates/pointage/employee/get_all.mak=utf-8
 encoding//intranet/templates/pointage/order/get_all.mak=utf-8
-encoding//intranet/templates/pointage/order/get_one.mak=utf-8
 encoding//intranet/templates/pointage/order/index.mak=utf-8
 encoding//intranet/tests/__init__.py=utf-8
 encoding//intranet/tests/model/__init__.py=utf-8

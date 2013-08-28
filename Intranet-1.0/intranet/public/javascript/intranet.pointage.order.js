@@ -25,21 +25,6 @@ function on_accordion_refresh(responseText, statusText, xhr) {
 	$('#order_get_all__keyword').autocomplete('close');
 }
 
-function refresh_accordion(uid, order_ref) {
-	var keyword = $('#order_get_all__keyword').val();
-	if (uid) {
-		$("#order_get_all input[name=uid]").val(uid);
-	} else {
-		$("#order_get_all input[name=uid]").val("");
-	}
-	if (order_ref) {
-		$("#order_get_all input[name=order_ref]").val(order_ref);
-	} else {
-		$("#order_get_all input[name=order_ref]").val("");
-	}
-	$("#order_get_all").submit();
-}
-
 $(function() {
 	$(".editInPlace").editInPlace({
 		url : "http://edit"

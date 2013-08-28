@@ -45,14 +45,14 @@ class OrderController(RestController):
 
         use '/pointage/order_cat.css' to get the order category's styles heet.
         """
-        order_list = (DBSession.query(Order)
-                      .order_by(Order.order_ref)
-                      .all())
-        return dict(order_list=order_list)
+        #order_list = (DBSession.query(Order)
+        #              .order_by(Order.order_ref)
+        #              .all())
+        #return dict(order_list=order_list)
+        return dict()
 
     @with_trailing_slash
     @expose('json')
-    @expose('intranet.templates.pointage.order.get_one')
     def get_one(self, uid):
         """
         Display one record.
@@ -72,7 +72,7 @@ class OrderController(RestController):
     @with_trailing_slash
     @expose('json')
     @expose('intranet.templates.pointage.order.get_all')
-    def get_all(self, keyword=None, uid=None, order_ref=None):
+    def get_all(self, keyword=None, uid=None):
         """
         Display all records in a resource.
 
@@ -91,7 +91,7 @@ class OrderController(RestController):
             order_list = (DBSession.query(Order)
                           .order_by(Order.order_ref)
                           .all())
-        # -- active_index of the order by uid or order_ref
+        # -- active_index of the order by uid
         active_index = False
         if uid:
             uid = int(uid)
@@ -99,14 +99,6 @@ class OrderController(RestController):
                 if order.uid == uid:
                     active_index = index
                     break
-        elif order_ref:
-            for index, order in enumerate(order_list):
-                if order.order_ref == order_ref:
-                    active_index = index
-                    break
-        else:
-            if order_list:
-                active_index = 0
         return dict(order_list=order_list, keyword=keyword,
                     active_index=active_index)
 

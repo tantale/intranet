@@ -27,59 +27,58 @@
 <script type='text/javascript' src="${tg.url('/javascript/intranet.pointage.js')}"></script>
 <script type='text/javascript' src="${tg.url('/javascript/intranet.pointage.order.js')}"></script>
 <script type='text/javascript'>
-    "use strict";
-    /*global $*/
-    $(function() {
-        $('#order_get_all').ajaxForm({
-            target: '#accordion_content',
-            success: on_accordion_refresh
-        });
-        $('#order_new').ajaxForm({
-            target: '#order_content',
-            success: function(responseText, statusText, xhr) {
-                $("#accordion").accordion("option", "active", false);
-            }
-        });
-        refresh_accordion();
-    });
+	"use strict";
+	/*global $*/
+	$(function() {
+		$('#order_get_all').ajaxForm({
+			target: '#accordion_content',
+			success: on_accordion_refresh
+		});
+		$('#order_new').ajaxForm({
+			target: '#order_content',
+			success: function(responseText, statusText, xhr) {
+				$("#accordion").accordion("option", "active", false);
+			}
+		});
+		$("#order_get_all").submit();
+	});
 </script>
 </head>
 <body>
-    <div id="topFrame" class="ui-layout-north">
-        <div id="toolbar" class="ui-widget-header">
-            <h1>Gestion des pointages</h1>
-            <a id="toolbar_employee" href="${tg.url('/pointage/employee/index')}">Employés</a>
-            <a id="toolbar_order" href="${tg.url('/pointage/order/index')}">Commandes</a>
-            <a id="toolbar_calendar" href="${tg.url('/pointage/calendar/index')}">Calendrier</a>
-        </div>\
-    </div>
-    <div id="leftFrame" class="ui-layout-west">
-        <div id="searchFrame">
-            <form id="order_get_all" class="minimal_form"
-                action="${tg.url('/pointage/order/get_all/')}" method="get">
-                <p>
-                    <input id="order_get_all__keyword" type="search" name="keyword"
-                        placeholder="Mot-clef"
-                        title="Saisir un mot-clef" />
-                    <input type="hidden" name="uid" value="" />
-                    <input type="hidden" name="order_ref" value="" />
-                    <button id="order_get_all__search" type="submit" class="search_button"
-                        title="Rechercher selon le mot-clef">Rechercher</button>
-                </p>
-            </form>
-        </div>\
-        <form id="order_new" class="inline_form alignCenter"
-            action="${tg.url('/pointage/order/new')}" method="get">
-            <p>
-                <button id="order_new__new" type="submit" class="new_button"
-                    title="Ajouter une commande">Nouvelle commande</button>
-            </p>
-        </form>
-        <div id="accordion_content">
-        </div>
-    </div>
-    <div id="rightFrame" class="ui-layout-center">
-        <div id="order_content"/>
-    </div>
+	<div id="topFrame" class="ui-layout-north">
+		<div id="toolbar" class="ui-widget-header">
+			<h1>Gestion des pointages</h1>
+			<a id="toolbar_employee" href="${tg.url('/pointage/employee/index')}">Employés</a>
+			<a id="toolbar_order" href="${tg.url('/pointage/order/index')}">Commandes</a>
+			<a id="toolbar_calendar" href="${tg.url('/pointage/calendar/index')}">Calendrier</a>
+		</div>\
+	</div>
+	<div id="leftFrame" class="ui-layout-west">
+		<div id="searchFrame">
+			<form id="order_get_all" class="minimal_form"
+				action="${tg.url('/pointage/order/get_all/')}" method="get">
+				<p>
+					<input id="order_get_all__keyword" type="search" name="keyword"
+						placeholder="Mot-clef"
+						title="Saisir un mot-clef" />
+					<input type="hidden" name="uid" value="" />
+					<button id="order_get_all__search" type="submit" class="search_button"
+						title="Rechercher selon le mot-clef">Rechercher</button>
+				</p>
+			</form>
+		</div>\
+		<form id="order_new" class="minimal_form alignCenter"
+			action="${tg.url('/pointage/order/new')}" method="get">
+			<p>
+				<button id="order_new__new" type="submit" class="new_button"
+					title="Ajouter une commande">Nouvelle commande</button>
+			</p>
+		</form>
+		<div id="accordion_content">
+		</div>
+	</div>
+	<div id="rightFrame" class="ui-layout-center">
+		<div id="order_content"/>
+	</div>
 </body>
 </html>
