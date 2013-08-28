@@ -4,6 +4,7 @@
 :date: 2013-08-11
 :author: Laurent LAPORTE <sandlol2009@gmail.com>
 </%doc>
+<%! import json %>
 <%flash = tg.flash_obj.render('flash', use_js=False)%>
 %if flash:
     ${flash | n}
@@ -100,7 +101,7 @@
             title="Supprimer les informations concernant la commande ${values.get('order_ref')}">Supprimer</button>
     </p>
 </form>
-
+<% uid_json = json.dumps(values['uid']) %>
 <script type='text/javascript'>
     "use strict";
     /*global $, Modernizr*/
@@ -122,7 +123,7 @@
     $('#order_update').ajaxForm({
         target : '#order_content',
         success: function(responseText, statusText, xhr) {
-            refresh_accordion(${values['uid']});
+            refresh_accordion(${uid_json|n});
         }
     });
     $("#order_delete .delete_button").button({

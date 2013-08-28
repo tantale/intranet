@@ -27,7 +27,6 @@ function on_accordion_refresh(responseText, statusText, xhr) {
 
 function refresh_accordion(uid, order_ref) {
 	var keyword = $('#order_get_all__keyword').val();
-	$("#order_get_all input[name=keyword]").val(keyword);
 	if (uid) {
 		$("#order_get_all input[name=uid]").val(uid);
 	} else {

@@ -4,6 +4,7 @@
 :date: 2013-08-11
 :author: Laurent LAPORTE <sandlol2009@gmail.com>
 </%doc>
+<%! import json %>
 %if order_list:
 <div id="accordion">
 %for order in order_list:
@@ -26,6 +27,7 @@
 </div>
 %endfor
 </div>
+<% active_index_json = json.dumps(active_index) %>
 <script type='text/javascript'>
     "use strict";
     /*global $*/
@@ -34,12 +36,20 @@
     });
     $('#accordion form button').button();
     $("#accordion").accordion({
-        active: ${active_index},
+        active: ${active_index_json|n},
         collapsible: true,
         heightStyle: "auto",
         activate: function(event, ui) {
             if (ui.newHeader.attr('id')) {
                 var uid = ui.newHeader.attr('id').split('_')[1],
+                    url = '/pointage/order/' + uid + '/edit';
+                $('#order_content').load(url);
+                $("#order_get_all input[name=uid]").val(uid);
+            }
+        },
+        create: function(event, ui) {
+            if (ui.header.attr('id')) {
+                var uid = ui.header.attr('id').split('_')[1],
                     url = '/pointage/order/' + uid + '/edit';
                 $('#order_content').load(url);
                 $("#order_get_all input[name=uid]").val(uid);
