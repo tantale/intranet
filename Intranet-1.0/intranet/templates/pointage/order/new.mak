@@ -82,7 +82,7 @@
 				</td>
 			</tr>
 			<tr>
-				<td class="alignRight" colspan="2">
+				<td class="alignRight">
 				<button id="order_create__create" type="submit" class="create_button"
 					title="Saisir les informations concernant une nouvelle commande">Créer</button></td>
 			</tr>

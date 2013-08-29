@@ -40,6 +40,12 @@
 				$("#accordion").accordion("option", "active", false);
 			}
 		});
+		$('#confirm_dialog').dialog({
+			autoOpen: false,
+			width: 400,
+			height: 200,
+			modal: true
+		});
 		$("#order_get_all").submit();
 	});
 </script>
@@ -79,6 +85,9 @@
 	</div>
 	<div id="rightFrame" class="ui-layout-center">
 		<div id="order_content"/>
+	</div>
+	<div id="confirm_dialog" title="Confirmation">
+		<div id="confirm_dialog_content"/>
 	</div>
 </body>
 </html>

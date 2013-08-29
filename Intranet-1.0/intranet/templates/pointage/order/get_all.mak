@@ -46,7 +46,7 @@
 				$('#order_content').load(url);
 				$("#order_get_all input[name=uid]").val(uid);
 			} else if (ui.oldHeader.attr('id')) {
-				$('#order_content').text("");
+				$('#order_content').empty();
 			}
 		},
 		create: function(event, ui) {
@@ -55,8 +55,6 @@
 					url = '/pointage/order/' + uid + '/edit';
 				$('#order_content').load(url);
 				$("#order_get_all input[name=uid]").val(uid);
-			} else if (ui.oldHeader.attr('id')) {
-				$('#order_content').text("");
 			}
 		}
 	});

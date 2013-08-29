@@ -219,7 +219,7 @@ class OrderController(RestController):
         order = DBSession.query(Order).get(uid)
         return dict(order=order)
 
-    @expose('intranet.templates.pointage.order.deleted')
+    @expose('intranet.templates.pointage.order.get_delete')
     def post_delete(self, uid, **kw):
         """
         Delete an existing record.
@@ -231,6 +231,6 @@ class OrderController(RestController):
         """
         order = DBSession.query(Order).get(uid)
         DBSession.delete(order)
-        msg_fmt = (u"La commande « {order_ref} » est suppriméeée.")
+        msg_fmt = (u"La commande « {order_ref} » est supprimée.")
         flash(msg_fmt.format(order_ref=order.order_ref), status="ok")
-        return dict(order=order)
+        return dict(order=None)

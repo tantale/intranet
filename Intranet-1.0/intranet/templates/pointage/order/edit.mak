@@ -83,7 +83,7 @@
 				</td>
 			</tr>
 			<tr>
-				<td class="alignRight" colspan="2">
+				<td class="alignRight">
 				<input type="hidden" name="_method" value="PUT" />
 				<button id="order_update__update" type="submit" class="update_button"
 					title="Modifier les informations concernant la commande">Modifier</button></td>
@@ -92,16 +92,15 @@
 	</fieldset>
 </form>
 
-<form id="order_delete" class="minimal_form"
-	action="${tg.url('/pointage/order/{uid}'.format(uid=values['uid']))}"
-	method="post">
+<form id="order_get_delete" class="minimal_form"
+	action="${tg.url('/pointage/order/{uid}/delete'.format(uid=values['uid']))}"
+	method="get">
 	<p>
-		<input type="hidden" name="_method" value="DELETE" />
-		<button id="order_delete__delete" type="submit" class="delete_button"
+		<button id="order_get_delete__delete" type="submit" class="delete_button"
 			title="Supprimer les informations concernant la commande ${values.get('order_ref')}">Supprimer</button>
 	</p>
 </form>
-<% uid_json = json.dumps(values['uid']) %>
+
 <script type='text/javascript'>
 	"use strict";
 	/*global $, Modernizr*/
@@ -137,25 +136,13 @@
 			}
 		}
 	});
-	$("#order_delete .delete_button").button({
+	$("#order_get_delete .delete_button").button({
 		text : true,
 		icons : {
 			primary : "ui-icon-trash"
 		}
 	});
-	$('#order_delete').ajaxForm({
-		target : '#order_content',
-		success: function(responseText, statusText, xhr) {
-			console.log("search for '<div id=\"flash\"><div class=\"ok\">' tag...");
-			var ok = $('<div/>').append(responseText).find('#flash div.ok');
-			if (ok.length) {
-				var input = $("#order_get_all input[name=uid]");
-				console.log("OK, update the order list but don't select any order...");
-				input.val("");
-				$("#order_get_all").submit();
-			} else {
-				console.log("ERROR: don't update the order list.");
-			}
-		}
+	$('#order_get_delete').ajaxForm({
+		target : '#confirm_dialog_content'
 	});
 </script>
