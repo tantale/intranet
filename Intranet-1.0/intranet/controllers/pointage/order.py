@@ -220,7 +220,7 @@ class OrderController(RestController):
         return dict(order=order)
 
     @expose('intranet.templates.pointage.order.get_delete')
-    def post_delete(self, uid, **kw):
+    def post_delete(self, uid):
         """
         Delete an existing record.
 

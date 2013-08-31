@@ -26,10 +26,6 @@ function on_accordion_refresh(responseText, statusText, xhr) {
 }
 
 $(function() {
-	$(".editInPlace").editInPlace({
-		url : "http://edit"
-	});
-
 	$('body').layout({
 		north__size : "auto",
 		north__closable : false,
