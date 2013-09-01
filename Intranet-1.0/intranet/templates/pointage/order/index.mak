@@ -17,17 +17,15 @@
 <link rel="stylesheet" type="text/css" href="${tg.url('/css/intranet.pointage.css')}" />
 <link rel="stylesheet" type="text/css" href="${tg.url('/pointage/order_cat.css')}" />
 <script type='text/javascript' src="${tg.url('/javascript/jquery-1.9.1.js')}"></script>
-<script type='text/javascript' src="${tg.url('/javascript/jquery.editinplace.js')}"></script>
-<!--
 <script type='text/javascript' src="${tg.url('/javascript/jquery-ui-1.10.3.custom.min.js')}"></script>
-<script type='text/javascript' src="${tg.url('/javascript/jquery.ui.datepicker-fr.js')}"></script>
 <script type='text/javascript' src="${tg.url('/javascript/modernizr.custom.32767.js')}"></script>
+<script type='text/javascript' src="${tg.url('/javascript/jquery.editinplace.js')}"></script>
+<script type='text/javascript' src="${tg.url('/javascript/jquery.ui.datepicker-fr.js')}"></script>
 <script type='text/javascript' src="${tg.url('/javascript/jquery.layout-latest.min.js')}"></script>
 <script type='text/javascript' src="${tg.url('/javascript/jquery.form.js')}"></script>
 <script type='text/javascript' src="${tg.url('/javascript/intranet.js')}"></script>
 <script type='text/javascript' src="${tg.url('/javascript/intranet.pointage.js')}"></script>
 <script type='text/javascript' src="${tg.url('/javascript/intranet.pointage.order.js')}"></script>
--->
 <script type='text/javascript'>
 	"use strict";
 	/*global $*/

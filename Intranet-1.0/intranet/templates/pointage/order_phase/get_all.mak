@@ -44,8 +44,7 @@ form_post_id = 'order_phase_post_{}'.format(order_uid)
 	$("#${ul_list_id}").sortable();
 	$("#${ul_list_id}").disableSelection();
 	$("#${ul_list_id} .editable").editInPlace({
-		url : "http://com.examplesite.www/users",
-		params : "name=david"
+		url : "${tg.url('/pointage/order_phase/edit_in_place')}"
 	});
     $("#${form_post_id} .post_button").button({
         text: false,

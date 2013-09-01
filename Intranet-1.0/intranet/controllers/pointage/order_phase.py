@@ -109,14 +109,33 @@ class OrderPhaseController(RestController):
                     form_errors=form_errors)
 
     @expose()
-    def edit_in_place(self, original_html, update_value, element_id):
-        msg_fmt = (u"edit_in_place: original_html={original_html!r}, "
+    def edit_in_place(self, element_id,
+                      original_value, update_value, original_html):
+        """
+        Edit an order phase label in place.
+
+        :param element_id: HTML element id.
+
+        :param original_value: original value.
+
+        :param update_value: update value.
+
+        :param original_html: original html's content.
+        """
+        msg_fmt = (u"edit_in_place: "
+                   u"element_id={element_id!r}, "
+                   u"original_value={original_value!r}, "
                    u"update_value={update_value!r}, "
-                   u"element_id={element_id!r}")
-        LOG.info(msg_fmt.format(original_html=original_html,
+                   u"original_html={original_html!r}, ")
+        LOG.info(msg_fmt.format(element_id=element_id,
+                                original_value=original_value,
                                 update_value=update_value,
-                                element_id=element_id))
-        return dict()
+                                original_html=original_html))
+        uid = int(element_id.rsplit('_', 1)[1])
+        order_phase = DBSession.query(OrderPhase).get(uid)
+        order_phase.label = update_value
+        DBSession.flush()
+        return update_value
 
     @validate({'label': NotEmpty}, error_handler=edit)
     @expose()
