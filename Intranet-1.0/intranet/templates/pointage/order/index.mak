@@ -84,18 +84,7 @@
 		</div>
 	</div>
 	<div id="rightFrame" class="ui-layout-center">
-		<div id="order_content">
-			<p class="editable">Edit me!</p>
-		</div>
-<script type='text/javascript'>
-	"use strict";
-	$(".editable").editInPlace({
-		callback: function(unused, enteredText) {
-			console.log('here');
-			return enteredText;
-		}
-	});
-</script>
+		<div id="order_content"></div>
 	</div>
 	<div id="confirm_dialog" title="Confirmation">
 		<div id="confirm_dialog_content"/>
