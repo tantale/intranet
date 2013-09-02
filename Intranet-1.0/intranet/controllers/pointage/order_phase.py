@@ -14,7 +14,6 @@ from tg.decorators import with_trailing_slash, expose, validate
 from tg.flash import flash
 import logging
 import pylons
-import json
 
 LOG = logging.getLogger(__name__)
 
@@ -179,3 +178,21 @@ class OrderPhaseController(RestController):
         msg_fmt = (u"La phase de commande « {label} » est supprimée.")
         flash(msg_fmt.format(label=order_phase.label), status="ok")
         return dict(order_phase=None)
+
+    @expose('json')
+    def reorder(self, uids, delim='|'):
+        """
+        Re-order a list of phases.
+        """
+        uid_list = map(int, uids.split(delim))
+        msg_fmt = (u"reorder: uids='{uids}', delim='{delim}'")
+        LOG.info(msg_fmt.format(uids=uids, delim=delim))
+        order_phase_list = (DBSession.query(OrderPhase)
+                            .filter(OrderPhase.uid.in_(uid_list))
+                            .all())
+        order_phase_dict = {order_phase.uid: order_phase
+                            for order_phase in order_phase_list}
+        for position, uid in enumerate(uid_list, 1):
+            order_phase_dict[uid].position = position
+        DBSession.flush()
+        return dict(status='success')

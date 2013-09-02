@@ -44,11 +44,12 @@ form_post_id = 'order_phase_post_{}'.format(order_uid)
     "use strict";
 	$("#${ul_list_id}").sortable({
 		update: function(event, ui) {
-			var child_list = ui.item.parent().children();
-			var ids = [];
-			$.each(child_list, function(index, item) {ids[index] = $(item).attr('id').split('_')[3];})
-			console.log(ids);
-			// TODO: send update to server
+			var child_list = ui.item.parent().children(), uid_list = [], data;
+			$.each(child_list, function(index, item) {
+				uid_list[index] = $(item).attr('id').split('_')[3];
+			});
+			data = {uids: uid_list.join('|'), delim: '|'};
+			$.post("${tg.url('/pointage/order_phase/reorder')}", data);
 		}
 	});
 	$("#${ul_list_id}").disableSelection();
@@ -68,7 +69,6 @@ form_post_id = 'order_phase_post_{}'.format(order_uid)
 			}
 		},
 		success: function(response, newValue) {
-			console.dir(response);
 			if (response.status === 'error') {
 				// assume server response: 200 Ok {status: 'error', msg: 'field cannot be empty!'}
 				// msg will be shown in editable form
