@@ -13,13 +13,14 @@
 <link rel="icon" type="image/ico" href="${tg.url('/favicon.ico')}" />
 <link rel="stylesheet" type="text/css" href="${tg.url('/css/blitzer/jquery-ui-1.10.3.custom.min.css')}" />
 <link rel="stylesheet" type="text/css" href="${tg.url('/css/layout-default-latest.css')}" />
+<link rel="stylesheet" type="text/css" href="${tg.url('/css/jqueryui-editable.css')}" />
 <link rel="stylesheet" type="text/css" href="${tg.url('/css/intranet.css')}" />
 <link rel="stylesheet" type="text/css" href="${tg.url('/css/intranet.pointage.css')}" />
 <link rel="stylesheet" type="text/css" href="${tg.url('/pointage/order_cat.css')}" />
 <script type='text/javascript' src="${tg.url('/javascript/jquery-1.9.1.js')}"></script>
 <script type='text/javascript' src="${tg.url('/javascript/jquery-ui-1.10.3.custom.min.js')}"></script>
 <script type='text/javascript' src="${tg.url('/javascript/modernizr.custom.32767.js')}"></script>
-<script type='text/javascript' src="${tg.url('/javascript/jquery.editinplace.js')}"></script>
+<script type='text/javascript' src="${tg.url('/javascript/jqueryui-editable.min.js')}"></script>
 <script type='text/javascript' src="${tg.url('/javascript/jquery.ui.datepicker-fr.js')}"></script>
 <script type='text/javascript' src="${tg.url('/javascript/jquery.layout-latest.min.js')}"></script>
 <script type='text/javascript' src="${tg.url('/javascript/jquery.form.js')}"></script>
@@ -30,6 +31,7 @@
 	"use strict";
 	/*global $*/
 	$(function() {
+		$.fn.editable.defaults.mode = 'inline';
 		$('#order_get_all').ajaxForm({
 			target: '#accordion_content',
 			success: on_accordion_refresh

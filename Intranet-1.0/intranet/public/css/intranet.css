@@ -67,6 +67,11 @@ h1 {
 	vertical-align: top;
 }
 
+.editableform {
+	margin: 0;
+	padding: 0;
+}
+
 form {
 	border: 0;
 	margin: 0;

@@ -14,6 +14,7 @@ from tg.decorators import with_trailing_slash, expose, validate
 from tg.flash import flash
 import logging
 import pylons
+import json
 
 LOG = logging.getLogger(__name__)
 
@@ -108,34 +109,26 @@ class OrderPhaseController(RestController):
         return dict(order_uid=order_uid, values=values,
                     form_errors=form_errors)
 
-    @expose()
-    def edit_in_place(self, element_id,
-                      original_value, update_value, original_html):
+    @expose('json')
+    def edit_in_place(self, **kw):
         """
         Edit an order phase label in place.
 
-        :param element_id: HTML element id.
-
-        :param original_value: original value.
-
-        :param update_value: update value.
-
-        :param original_html: original html's content.
+        kw = {'pk': u'unused',
+              'name': u'order_phase_label_2',
+              'value': u'Salut'}
         """
-        msg_fmt = (u"edit_in_place: "
-                   u"element_id={element_id!r}, "
-                   u"original_value={original_value!r}, "
-                   u"update_value={update_value!r}, "
-                   u"original_html={original_html!r}, ")
-        LOG.info(msg_fmt.format(element_id=element_id,
-                                original_value=original_value,
-                                update_value=update_value,
-                                original_html=original_html))
-        uid = int(element_id.rsplit('_', 1)[1])
+        msg_fmt = (u"edit_in_place: {args!r}")
+        LOG.info(msg_fmt.format(args=kw))
+        label = kw['value']
+        if not label:
+            return dict(status='error',
+                        msg=u"Le libellé ne peut pas être vide !")
+        uid = int(kw['name'].rsplit('_', 1)[1])
         order_phase = DBSession.query(OrderPhase).get(uid)
-        order_phase.label = update_value
+        order_phase.label = label
         DBSession.flush()
-        return update_value
+        return dict(status='success')
 
     @validate({'label': NotEmpty}, error_handler=edit)
     @expose()

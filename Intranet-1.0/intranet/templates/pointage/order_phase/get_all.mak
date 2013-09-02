@@ -16,9 +16,10 @@ form_post_id = 'order_phase_post_{}'.format(order_uid)
 %if order_phase_list:
 <ul id="${ul_list_id}" class="order_phase_list sortable">
 %for order_phase in order_phase_list:
-    <li class="ui-state-default"><span
+    <li id="order_phase_li_${order_phase.uid}"
+	    class="ui-state-default"><span
         class="ui-icon ui-icon-arrowthick-2-n-s"></span><span
-        id="order_phase_${order_phase.uid}"
+        id="order_phase_label_${order_phase.uid}"
         class="order_phase editable">${order_phase.label}</span></li>
 %endfor
 </ul>
@@ -41,10 +42,39 @@ form_post_id = 'order_phase_post_{}'.format(order_uid)
 </div>
 <script type='text/javascript'>
     "use strict";
-	$("#${ul_list_id}").sortable();
+	$("#${ul_list_id}").sortable({
+		update: function(event, ui) {
+			var child_list = ui.item.parent().children();
+			var ids = [];
+			$.each(child_list, function(index, item) {ids[index] = $(item).attr('id').split('_')[3];})
+			console.log(ids);
+			// TODO: send update to server
+		}
+	});
 	$("#${ul_list_id}").disableSelection();
-	$("#${ul_list_id} .editable").editInPlace({
-		url : "${tg.url('/pointage/order_phase/edit_in_place')}"
+	$("#${ul_list_id} .editable").editable({
+		type: "text",
+		pk: "unused",
+		url: "${tg.url('/pointage/order_phase/edit_in_place')}",
+		title: "Saisir le libellé de la phase",
+		placeholder: "Libellé",
+		emptytext: "Vide",
+		clear: true,
+		showbuttons: false,
+		onblur: "cancel",
+		validate: function(value) {
+			if ($.trim(value) === '') {
+				return "Le libellé ne peut pas être vide !";
+			}
+		},
+		success: function(response, newValue) {
+			console.dir(response);
+			if (response.status === 'error') {
+				// assume server response: 200 Ok {status: 'error', msg: 'field cannot be empty!'}
+				// msg will be shown in editable form
+				return response.msg;
+			}
+		}
 	});
     $("#${form_post_id} .post_button").button({
         text: false,
