@@ -72,6 +72,9 @@
 	});
 	$('#employee_create').ajaxForm({
 		target : '#employee_content',
+		beforeSubmit: function(arr, $form, options) {
+			$('#flash').hide();
+		},
 		success: refresh_accordion
 	});
 </script>

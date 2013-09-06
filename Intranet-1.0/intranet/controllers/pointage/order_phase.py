@@ -117,17 +117,26 @@ class OrderPhaseController(RestController):
               'name': u'order_phase_label_2',
               'value': u'Salut'}
         """
-        msg_fmt = (u"edit_in_place: {args!r}")
-        LOG.info(msg_fmt.format(args=kw))
+        if LOG.isEnabledFor(logging.INFO):
+            LOG.info((u"edit_in_place: {args!r}").format(args=kw))
         label = kw['value']
-        if not label:
-            return dict(status='error',
-                        msg=u"Le libellé ne peut pas être vide !")
         uid = int(kw['name'].rsplit('_', 1)[1])
         order_phase = DBSession.query(OrderPhase).get(uid)
-        order_phase.label = label
-        DBSession.flush()
-        return dict(status='success')
+        if label:
+            if LOG.isEnabledFor(logging.INFO):
+                msf_fmt = u"Update OrderPhase #{uid}: label={label!r}..."
+                LOG.info((msf_fmt).format(uid=order_phase.uid,
+                                          label=label))
+            order_phase.label = label
+            DBSession.flush()
+            return dict(status='updated')
+        else:
+            if LOG.isEnabledFor(logging.INFO):
+                msf_fmt = u"Delete OrderPhase #{uid}: label={label!r}"
+                LOG.info((msf_fmt).format(uid=order_phase.uid,
+                                          label=order_phase.label))
+            DBSession.delete(order_phase)
+            return dict(status='deleted', label=order_phase.label)
 
     @validate({'label': NotEmpty}, error_handler=edit)
     @expose()

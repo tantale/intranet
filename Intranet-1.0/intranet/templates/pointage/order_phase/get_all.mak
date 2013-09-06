@@ -5,7 +5,7 @@
 :author: Laurent LAPORTE <sandlol2009@gmail.com>
 </%doc>
 <%
-div_frame_id = 'order_phase_frame_{}'.format(order_uid)
+div_phases_id = 'order_phase_frame_{}'.format(order_uid)
 div_content_id = 'order_phase_content_{}'.format(order_uid)
 ul_list_id = 'order_phase_list_{}'.format(order_uid)
 p_empty_id = 'order_phase_list_empty_{}'.format(order_uid)
@@ -63,16 +63,18 @@ form_post_id = 'order_phase_post_{}'.format(order_uid)
 		clear: true,
 		showbuttons: false,
 		onblur: "cancel",
-		validate: function(value) {
-			if ($.trim(value) === '') {
-				return "Le libellé ne peut pas être vide !";
-			}
-		},
 		success: function(response, newValue) {
 			if (response.status === 'error') {
 				// assume server response: 200 Ok {status: 'error', msg: 'field cannot be empty!'}
 				// msg will be shown in editable form
 				return response.msg;
+			} else if (response.status === 'deleted') {
+				$(this).editable('option', 'emptytext', response.label);
+				var div_phases = $('#${div_phases_id}'),
+					header = div_phases.prev();
+				var url = header.children('a').attr('href');
+				console.log('Load phases list from URL: ' + url);
+				div_phases.load(url);
 			}
 		}
 	});
@@ -82,7 +84,8 @@ form_post_id = 'order_phase_post_{}'.format(order_uid)
             primary: "ui-icon-plus"
         }
     });
+    $("#${form_post_id} input[name=label]").focus();
 	$('#${form_post_id}').ajaxForm({
-		target : '#${div_frame_id}'
+		target : '#${div_phases_id}'
 	});
 </script>

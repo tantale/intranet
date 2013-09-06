@@ -89,10 +89,16 @@
 	});
 	$('#employee_update').ajaxForm({
 		target : '#employee_content',
+		beforeSubmit: function(arr, $form, options) {
+			$('#flash').hide();
+		},
 		success: refresh_accordion
 	});
 	$('#employee_delete').ajaxForm({
 		target : '#employee_content',
+		beforeSubmit: function(arr, $form, options) {
+			$('#flash').hide();
+		},
 		success: refresh_accordion
 	});
 </script>

@@ -38,6 +38,9 @@
 		});
 		$('#order_new').ajaxForm({
 			target: '#order_content',
+			beforeSubmit: function(arr, $form, options) {
+				$('#flash').hide();
+			},
 			success: function(responseText, statusText, xhr) {
 				$("#accordion").accordion("option", "active", false);
 			}
@@ -63,7 +66,7 @@
 	</div>
 	<div id="leftFrame" class="ui-layout-west">
 		<div id="searchFrame">
-			<farm id="order_get_all" class="minimal_form"
+			<form id="order_get_all" class="minimal_form"
 				action="${tg.url('/pointage/order/get_all/')}" method="get">
 				<p>
 					<input id="order_get_all__keyword" type="search" name="keyword"
@@ -73,15 +76,15 @@
 					<button id="order_get_all__search" type="submit" class="search_button"
 						title="Rechercher selon le mot-clef">Rechercher</button>
 				</p>
-			</farm>
+			</form>
 		</div>\
-		<farm id="order_new" class="minimal_form alignCenter"
+		<form id="order_new" class="minimal_form alignCenter"
 			action="${tg.url('/pointage/order/new')}" method="get">
 			<p>
 				<button id="order_new__new" type="submit" class="new_button"
 					title="Ajouter une commande">Nouvelle commande</button>
 			</p>
-		</farm>
+		</form>
 		<div id="accordion_content">
 		</div>
 	</div>

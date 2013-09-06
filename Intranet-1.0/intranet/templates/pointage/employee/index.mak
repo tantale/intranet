@@ -32,7 +32,10 @@
 			success: on_accordion_refresh
 		});
 		$('#employee_new').ajaxForm({
-			target: '#employee_content'
+			target: '#employee_content',
+			beforeSubmit: function(arr, $form, options) {
+				$('#flash').hide();
+			}
 		});
 		$('#employee_get_all').ajaxForm({
 			target: '#accordion_content',

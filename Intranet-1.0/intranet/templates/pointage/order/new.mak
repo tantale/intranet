@@ -109,6 +109,9 @@
 	});
 	$('#order_create').ajaxForm({
 		target : '#order_content',
+		beforeSubmit: function(arr, $form, options) {
+			$('#flash').hide();
+		},
 		success: function(responseText, statusText, xhr) {
 			console.log("search for '<div id=\"flash\"><div class=\"ok\">' tag...");
 			var ok = $('<div/>').append(responseText).find('#flash div.ok');
