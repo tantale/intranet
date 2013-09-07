@@ -39,9 +39,9 @@
 		$('#order_new').ajaxForm({
 			target: '#order_content',
 			beforeSubmit: function(arr, $form, options) {
+				console.log("hide #flash...");
 				$('#flash').hide();
-			},
-			success: function(responseText, statusText, xhr) {
+				console.log("deactivate #accordion...");
 				$('#accordion').accordion("option", "active", false);
 			}
 		});

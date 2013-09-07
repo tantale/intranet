@@ -52,6 +52,9 @@
 		beforeActivate: function(event, ui) {
 			if (ui.newHeader.attr('id')) {
 				load_phase_list(ui.newHeader);
+			} else if (ui.oldHeader.attr('id')) {
+				console.log("empty #order_content...");
+				$('#order_content').empty();
 			}
 		},
 		activate: function(event, ui) {
@@ -59,9 +62,6 @@
 			if (ui.newHeader.attr('id')) {
 				load_order_content(ui.newHeader);
 				$('#accordion .ui-icon.ui-icon-arrowthick-2-n-s').show();
-			} else if (ui.oldHeader.attr('id')) {
-				console.log("empty #order_content...");
-				$('#order_content').empty();
 			}
 		},
 		create: function(event, ui) {
