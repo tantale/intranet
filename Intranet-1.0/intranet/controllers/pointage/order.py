@@ -9,6 +9,7 @@ from intranet.model import DBSession
 from intranet.model.pointage.order import Order
 from intranet.model.pointage.order_cat import OrderCat
 from intranet.validators.iso_date_converter import IsoDateConverter
+from sqlalchemy.exc import IntegrityError
 from tg.controllers.restcontroller import RestController
 from tg.controllers.util import redirect
 from tg.decorators import with_trailing_slash, expose, validate
@@ -16,6 +17,7 @@ from tg.flash import flash
 import collections
 import logging
 import pylons
+import transaction
 
 LOG = logging.getLogger(__name__)
 
@@ -140,11 +142,25 @@ class OrderController(RestController):
         :param close_date: close date, or None if it's status is in progress.
         :type close_date: datetime.date
         """
-        order = Order(order_ref, project_cat, creation_date, close_date)
-        DBSession.add(order)
-        msg_fmt = (u"La commande « {order_ref} » est créée.")
-        flash(msg_fmt.format(order_ref=order_ref), status="ok")
-        redirect('./new')
+        try:
+            with transaction.manager as tm:
+                order = Order(order_ref, project_cat, creation_date,
+                              close_date)
+                DBSession.add(order)
+        except IntegrityError:
+            tm.abort()
+            msg_fmt = (u"La commande « {order_ref} » existe déjà.")
+            err_msg = msg_fmt.format(order_ref=order_ref)
+            flash(err_msg, status="error")
+            redirect('./new',
+                     order_ref=order_ref,
+                     project_cat=project_cat,
+                     creation_date=creation_date,
+                     close_date=close_date)
+        else:
+            msg_fmt = (u"La commande « {order_ref} » est créée.")
+            flash(msg_fmt.format(order_ref=order_ref), status="ok")
+            redirect('./new')
 
     @expose('intranet.templates.pointage.order.edit')
     def edit(self, uid, **kw):
@@ -197,15 +213,27 @@ class OrderController(RestController):
         :param close_date: close date, or None if it's status is in progress.
         :type close_date: datetime.date
         """
-        order = DBSession.query(Order).get(uid)
-        order.order_ref = order_ref
-        order.project_cat = project_cat
-        order.creation_date = creation_date
-        order.close_date = close_date
-        DBSession.flush()
-        msg_fmt = (u"La commande « {order_ref} » est modifiée.")
-        flash(msg_fmt.format(order_ref=order_ref), status="ok")
-        redirect('./{uid}/edit'.format(uid=uid))
+        try:
+            with transaction.manager as tm:
+                order = DBSession.query(Order).get(uid)
+                order.order_ref = order_ref
+                order.project_cat = project_cat
+                order.creation_date = creation_date
+                order.close_date = close_date
+        except IntegrityError:
+            tm.abort()
+            msg_fmt = (u"La commande « {order_ref} » existe déjà.")
+            err_msg = msg_fmt.format(order_ref=order_ref)
+            flash(err_msg, status="error")
+            redirect('./{uid}/edit'.format(uid=uid),
+                     order_ref=order_ref,
+                     project_cat=project_cat,
+                     creation_date=creation_date,
+                     close_date=close_date)
+        else:
+            msg_fmt = (u"La commande « {order_ref} » est modifiée.")
+            flash(msg_fmt.format(order_ref=order_ref), status="ok")
+            redirect('./{uid}/edit'.format(uid=uid))
 
     @expose('intranet.templates.pointage.order.get_delete')
     def get_delete(self, uid):

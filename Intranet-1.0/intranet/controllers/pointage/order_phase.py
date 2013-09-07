@@ -14,6 +14,7 @@ from tg.decorators import with_trailing_slash, expose, validate
 from tg.flash import flash
 import logging
 import pylons
+import transaction
 
 LOG = logging.getLogger(__name__)
 
@@ -82,9 +83,9 @@ class OrderPhaseController(RestController):
         :param label: the order phase's label (not null)
         """
         LOG.info("post")
-        order = DBSession.query(Order).get(order_uid)
-        OrderPhase(order, label)
-        DBSession.flush()
+        with transaction.manager:
+            order = DBSession.query(Order).get(order_uid)
+            OrderPhase(order, label)
         msg_fmt = (u"La phase de commande « {label} » est créée.")
         flash(msg_fmt.format(label=label), status="ok")
         redirect('./get_all', order_uid=order_uid)
@@ -127,8 +128,8 @@ class OrderPhaseController(RestController):
                 msf_fmt = u"Update OrderPhase #{uid}: label={label!r}..."
                 LOG.info((msf_fmt).format(uid=order_phase.uid,
                                           label=label))
-            order_phase.label = label
-            DBSession.flush()
+            with transaction.manager:
+                order_phase.label = label
             return dict(status='updated')
         else:
             if LOG.isEnabledFor(logging.INFO):
@@ -153,9 +154,9 @@ class OrderPhaseController(RestController):
 
         :param label: the order phase's label (not null)
         """
-        order_phase = DBSession.query(OrderPhase).get(uid)
-        order_phase.label = label
-        DBSession.flush()
+        with transaction.manager:
+            order_phase = DBSession.query(OrderPhase).get(uid)
+            order_phase.label = label
         msg_fmt = (u"La phase de commande « {label} » est modifiée.")
         flash(msg_fmt.format(label=label), status="ok")
         redirect('./{uid}/edit'.format(uid=uid))
@@ -196,12 +197,12 @@ class OrderPhaseController(RestController):
         uid_list = map(int, uids.split(delim))
         msg_fmt = (u"reorder: uids='{uids}', delim='{delim}'")
         LOG.info(msg_fmt.format(uids=uids, delim=delim))
-        order_phase_list = (DBSession.query(OrderPhase)
-                            .filter(OrderPhase.uid.in_(uid_list))
-                            .all())
-        order_phase_dict = {order_phase.uid: order_phase
-                            for order_phase in order_phase_list}
-        for position, uid in enumerate(uid_list, 1):
-            order_phase_dict[uid].position = position
-        DBSession.flush()
+        with transaction.manager:
+            order_phase_list = (DBSession.query(OrderPhase)
+                                .filter(OrderPhase.uid.in_(uid_list))
+                                .all())
+            order_phase_dict = {order_phase.uid: order_phase
+                                for order_phase in order_phase_list}
+            for position, uid in enumerate(uid_list, 1):
+                order_phase_dict[uid].position = position
         return dict(status='success')
