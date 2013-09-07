@@ -29,7 +29,7 @@
 		}
 	});
 	$('#accordion form button').button();
-	$("#accordion").accordion({
+	$('#accordion').accordion({
 		heightStyle : "auto"
 	});
 </script>

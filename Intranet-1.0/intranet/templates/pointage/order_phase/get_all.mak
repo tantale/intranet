@@ -42,7 +42,7 @@ form_post_id = 'order_phase_post_{}'.format(order_uid)
 </div>
 <script type='text/javascript'>
     "use strict";
-	$("#${ul_list_id}").sortable({
+	$('#${ul_list_id}').sortable({
 		update: function(event, ui) {
 			var child_list = ui.item.parent().children(), uid_list = [], data;
 			$.each(child_list, function(index, item) {
@@ -52,8 +52,8 @@ form_post_id = 'order_phase_post_{}'.format(order_uid)
 			$.post("${tg.url('/pointage/order_phase/reorder')}", data);
 		}
 	});
-	$("#${ul_list_id}").disableSelection();
-	$("#${ul_list_id} .editable").editable({
+	$('#${ul_list_id}').disableSelection();
+	$('#${ul_list_id} .editable').editable({
 		type: "text",
 		pk: "unused",
 		url: "${tg.url('/pointage/order_phase/edit_in_place')}",
@@ -78,13 +78,13 @@ form_post_id = 'order_phase_post_{}'.format(order_uid)
 			}
 		}
 	});
-    $("#${form_post_id} .post_button").button({
+    $('#${form_post_id} .post_button').button({
         text: false,
         icons: {
             primary: "ui-icon-plus"
         }
     });
-    $("#${form_post_id} input[name=label]").focus();
+    $('#${form_post_id} input[name=label]').focus();
 	$('#${form_post_id}').ajaxForm({
 		target : '#${div_phases_id}'
 	});

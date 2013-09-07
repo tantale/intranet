@@ -42,7 +42,7 @@
 				$('#flash').hide();
 			},
 			success: function(responseText, statusText, xhr) {
-				$("#accordion").accordion("option", "active", false);
+				$('#accordion').accordion("option", "active", false);
 			}
 		});
 		$('#confirm_dialog').dialog({
@@ -51,7 +51,7 @@
 			height: 200,
 			modal: true
 		});
-		$("#order_get_all").submit();
+		$('#order_get_all').submit();
 	});
 </script>
 </head>

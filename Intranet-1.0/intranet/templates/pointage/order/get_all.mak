@@ -33,7 +33,7 @@
 		var url = '/pointage/order/' + uid + '/edit';
 		console.log('Load order content from URL: ' + url);
 		$('#order_content').load(url);
-		$("#order_get_all input[name=uid]").val(uid);
+		$('#order_get_all input[name=uid]').val(uid);
 	}
 	$('#accordion .minimal_form').ajaxForm({
 		target : '#order_content',
@@ -42,10 +42,10 @@
 		},
 	});
 	$('#accordion form button').button();
-	$("#accordion").click(function(){
+	$('#accordion').click(function(){
 		$('#accordion .ui-icon.ui-icon-arrowthick-2-n-s').hide();
 	});
-	$("#accordion").accordion({
+	$('#accordion').accordion({
 		active: ${active_index_json|n},
 		collapsible: true,
 		heightStyle: "content",
@@ -55,11 +55,12 @@
 			}
 		},
 		activate: function(event, ui) {
-			$("#accordion").accordion("refresh");
+			$('#accordion').accordion("refresh");
 			if (ui.newHeader.attr('id')) {
 				load_order_content(ui.newHeader);
 				$('#accordion .ui-icon.ui-icon-arrowthick-2-n-s').show();
 			} else if (ui.oldHeader.attr('id')) {
+				console.log("empty #order_content...");
 				$('#order_content').empty();
 			}
 		},

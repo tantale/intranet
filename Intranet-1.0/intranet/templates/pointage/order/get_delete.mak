@@ -16,7 +16,7 @@
 <script type='text/javascript'>
 	"use strict";
 	/*global $*/
-	$("#confirm_dialog").dialog({
+	$('#confirm_dialog').dialog({
 		width: 400,
 		height: 200,
 		buttons: {
@@ -26,7 +26,8 @@
 		},
 		title: ${confirm_dialog_title_json|n},
 		close: function() {
-			$("#order_content").empty();
+			console.log("empty #order_content...");
+			$('#order_content').empty();
 		}
 	}).dialog("open");
 </script>
@@ -59,7 +60,7 @@ confirm_dialog_title_json = json.dumps(confirm_dialog_title)
 <script type='text/javascript'>
 	"use strict";
 	/*global $*/
-	$("#confirm_dialog").dialog({
+	$('#confirm_dialog').dialog({
 		width: 500,
 		height: 200,
 		buttons: {
@@ -81,10 +82,10 @@ confirm_dialog_title_json = json.dumps(confirm_dialog_title)
 			console.log("search for '<div id=\"flash\"><div class=\"ok\">' tag...");
 			var ok = $('<div/>').append(responseText).find('#flash div.ok');
 			if (ok.length) {
-				var input = $("#order_get_all input[name=uid]");
+				var input = $('#order_get_all input[name=uid]');
 				console.log("OK, update the order list but don't select any order...");
 				input.val("");
-				$("#order_get_all").submit();
+				$('#order_get_all').submit();
 			} else {
 				console.log("ERROR: don't update the order list.");
 			}

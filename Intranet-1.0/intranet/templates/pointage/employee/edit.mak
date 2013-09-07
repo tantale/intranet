@@ -70,18 +70,18 @@
 	if (!Modernizr.inputtypes.date) {
 		$('#employee_content input[type=date]').datepicker();
 	}
-	$("#employee_content .imgLiquid").imgLiquid({
+	$('#employee_content .imgLiquid').imgLiquid({
 		fill : true,
 		horizontalAlign : "center",
 		verticalAlign : "center"
 	});
-	$("#employee_content .update_button").button({
+	$('#employee_content .update_button').button({
 		text : true,
 		icons : {
 			primary : "ui-icon-pencil"
 		}
 	});
-	$("#employee_content .delete_button").button({
+	$('#employee_content .delete_button').button({
 		text : true,
 		icons : {
 			primary : "ui-icon-trash"

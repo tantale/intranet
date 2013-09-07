@@ -101,7 +101,7 @@
 	if (!Modernizr.inputtypes.date) {
 		$('#order_content input[type=date]').datepicker();
 	}
-	$("#order_content .create_button").button({
+	$('#order_content .create_button').button({
 		text : true,
 		icons : {
 			primary : "ui-icon-check"
@@ -116,10 +116,10 @@
 			console.log("search for '<div id=\"flash\"><div class=\"ok\">' tag...");
 			var ok = $('<div/>').append(responseText).find('#flash div.ok');
 			if (ok.length) {
-				var input = $("#order_get_all input[name=uid]");
+				var input = $('#order_get_all input[name=uid]');
 				console.log("OK, update the order list but don't select any order...");
 				input.val("");
-				$("#order_get_all").submit();
+				$('#order_get_all').submit();
 			} else {
 				console.log("ERROR: don't update the order list.");
 			}
