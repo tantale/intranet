@@ -5,16 +5,13 @@
 :author: Laurent LAPORTE <sandlol2009@gmail.com>
 """
 from formencode.validators import NotEmpty
-from intranet.model import DBSession
-from intranet.model.pointage.order import Order
-from intranet.model.pointage.order_phase import OrderPhase
+from intranet.accessors.order_phase import OrderPhaseAccessor
 from tg.controllers.restcontroller import RestController
 from tg.controllers.util import redirect
 from tg.decorators import with_trailing_slash, expose, validate
 from tg.flash import flash
 import logging
 import pylons
-import transaction
 
 LOG = logging.getLogger(__name__)
 
@@ -34,7 +31,8 @@ class OrderPhaseController(RestController):
 
         :param uid: UID of the order phase to display.
         """
-        order_phase = DBSession.query(OrderPhase).get(uid)
+        accessor = OrderPhaseAccessor()
+        order_phase = accessor.get_order_phase(uid)
         return dict(order_phase=order_phase)
 
     @with_trailing_slash
@@ -49,7 +47,8 @@ class OrderPhaseController(RestController):
         :param order_uid: Current order's UID
         """
         LOG.info("get_all")
-        order = DBSession.query(Order).get(order_uid)
+        accessor = OrderPhaseAccessor()
+        order = accessor.get_order(order_uid)
         return dict(order_uid=order_uid,
                     project_cat=order.project_cat,
                     order_phase_list=order.order_phase_list)
@@ -83,9 +82,8 @@ class OrderPhaseController(RestController):
         :param label: the order phase's label (not null)
         """
         LOG.info("post")
-        with transaction.manager:
-            order = DBSession.query(Order).get(order_uid)
-            OrderPhase(order, label)
+        accessor = OrderPhaseAccessor()
+        accessor.insert_order_phase(order_uid, label=label)
         msg_fmt = (u"La phase de commande « {label} » est créée.")
         flash(msg_fmt.format(label=label), status="ok")
         redirect('./get_all', order_uid=order_uid)
@@ -102,7 +100,8 @@ class OrderPhaseController(RestController):
         :param uid: UID of the OrderPhase to edit
         """
         form_errors = pylons.tmpl_context.form_errors  # @UndefinedVariable
-        order_phase = DBSession.query(OrderPhase).get(uid)
+        accessor = OrderPhaseAccessor()
+        order_phase = accessor.get_order_phase(uid)
         values = dict(uid=order_phase.uid,
                       label=order_phase.label)
         values.update(kw)
@@ -122,22 +121,19 @@ class OrderPhaseController(RestController):
             LOG.info((u"edit_in_place: {args!r}").format(args=kw))
         label = kw['value']
         uid = int(kw['name'].rsplit('_', 1)[1])
-        order_phase = DBSession.query(OrderPhase).get(uid)
+        accessor = OrderPhaseAccessor()
         if label:
             if LOG.isEnabledFor(logging.INFO):
                 msf_fmt = u"Update OrderPhase #{uid}: label={label!r}..."
-                LOG.info((msf_fmt).format(uid=order_phase.uid,
-                                          label=label))
-            with transaction.manager:
-                order_phase.label = label
-            return dict(status='updated')
+                LOG.info((msf_fmt).format(uid=uid, label=label))
+            accessor.update_order_phase(uid, label=label)
+            return dict(status='updated', label=label)
         else:
             if LOG.isEnabledFor(logging.INFO):
-                msf_fmt = u"Delete OrderPhase #{uid}: label={label!r}"
-                LOG.info((msf_fmt).format(uid=order_phase.uid,
-                                          label=order_phase.label))
-            DBSession.delete(order_phase)
-            return dict(status='deleted', label=order_phase.label)
+                msf_fmt = u"Delete OrderPhase #{uid}"
+                LOG.info((msf_fmt).format(uid=uid))
+            old_order_phase = accessor.delete_order_phase(uid)
+            return dict(status='deleted', label=old_order_phase.label)
 
     @validate({'label': NotEmpty}, error_handler=edit)
     @expose()
@@ -154,9 +150,8 @@ class OrderPhaseController(RestController):
 
         :param label: the order phase's label (not null)
         """
-        with transaction.manager:
-            order_phase = DBSession.query(OrderPhase).get(uid)
-            order_phase.label = label
+        accessor = OrderPhaseAccessor()
+        accessor.update_order_phase(uid, label=label)
         msg_fmt = (u"La phase de commande « {label} » est modifiée.")
         flash(msg_fmt.format(label=label), status="ok")
         redirect('./{uid}/edit'.format(uid=uid))
@@ -170,7 +165,8 @@ class OrderPhaseController(RestController):
 
         :param uid: UID of the OrderPhase to delete.
         """
-        order_phase = DBSession.query(OrderPhase).get(uid)
+        accessor = OrderPhaseAccessor()
+        order_phase = accessor.get_order_phase(uid)
         return dict(order_phase=order_phase)
 
     @expose('intranet.templates.pointage.order_phase.get_delete')
@@ -183,10 +179,10 @@ class OrderPhaseController(RestController):
 
         :param uid: UID of the OrderPhase to delete.
         """
-        order_phase = DBSession.query(OrderPhase).get(uid)
-        DBSession.delete(order_phase)
+        accessor = OrderPhaseAccessor()
+        old_order_phase = accessor.delete_order_phase(uid)
         msg_fmt = (u"La phase de commande « {label} » est supprimée.")
-        flash(msg_fmt.format(label=order_phase.label), status="ok")
+        flash(msg_fmt.format(label=old_order_phase.label), status="ok")
         return dict(order_phase=None)
 
     @expose('json')
@@ -197,12 +193,6 @@ class OrderPhaseController(RestController):
         uid_list = map(int, uids.split(delim))
         msg_fmt = (u"reorder: uids='{uids}', delim='{delim}'")
         LOG.info(msg_fmt.format(uids=uids, delim=delim))
-        with transaction.manager:
-            order_phase_list = (DBSession.query(OrderPhase)
-                                .filter(OrderPhase.uid.in_(uid_list))
-                                .all())
-            order_phase_dict = {order_phase.uid: order_phase
-                                for order_phase in order_phase_list}
-            for position, uid in enumerate(uid_list, 1):
-                order_phase_dict[uid].position = position
+        accessor = OrderPhaseAccessor()
+        accessor.reorder(uid_list)
         return dict(status='success')

@@ -4,19 +4,14 @@
 :date: 2013-07-28
 :author: Laurent LAPORTE <sandlol2009@gmail.com>
 """
-from intranet.model import DBSession
-from intranet.model.file_storage import FileStorage
+from intranet.accessors import DuplicateFoundError
+from intranet.accessors.employee import EmployeeAccessor
 from intranet.model.pointage.employee import Employee
-from sqlalchemy.exc import IntegrityError
 from tg.controllers.restcontroller import RestController
 from tg.decorators import with_trailing_slash, expose
 from tg.flash import flash
 import datetime
 import logging
-import os
-import tg
-import transaction
-import time
 
 
 LOG = logging.getLogger(__name__)
@@ -84,29 +79,30 @@ class EmployeeController(RestController):
     @expose('intranet.templates.pointage.employee.index')
     @expose('json')
     def index(self):
-        employee_list = (DBSession.query(Employee)
-                         .order_by(Employee.employee_name)
-                         .all())
+        accessor = EmployeeAccessor()
+        order_by_cond = Employee.employee_name
+        employee_list = accessor.get_employee_list(order_by_cond=order_by_cond)
         return dict(employee_list=employee_list)
 
     @with_trailing_slash
     @expose('intranet.templates.pointage.employee.get_all')
     @expose('json')
     def get_all(self):
-        employee_list = (DBSession.query(Employee)
-                         .order_by(Employee.employee_name)
-                         .all())
+        accessor = EmployeeAccessor()
+        order_by_cond = Employee.employee_name
+        employee_list = accessor.get_employee_list(order_by_cond=order_by_cond)
         return dict(employee_list=employee_list)
 
     @with_trailing_slash
     @expose('intranet.templates.pointage.employee.get_all')
     @expose('json')
     def search(self, keyword):
-        predicat = Employee.employee_name.like('%' + keyword + '%')
-        employee_list = (DBSession.query(Employee)
-                         .filter(predicat)
-                         .order_by(Employee.employee_name)
-                         .all())
+        accessor = EmployeeAccessor()
+        filter_cond = (Employee.employee_name.like('%' + keyword + '%')
+                       if keyword else None)
+        order_by_cond = Employee.employee_name
+        employee_list = accessor.get_employee_list(filter_cond,
+                                                   order_by_cond)
         return dict(employee_list=employee_list)
 
     @expose('intranet.templates.pointage.employee.new')
@@ -120,7 +116,8 @@ class EmployeeController(RestController):
 
     @expose('intranet.templates.pointage.employee.edit')
     def edit(self, uid):
-        curr_employee = DBSession.query(Employee).get(int(uid))
+        accessor = EmployeeAccessor()
+        curr_employee = accessor.get_employee(int(uid))
         if curr_employee is None:
             msg_fmt = (u"La sélection n’a donnée aucun résultat : "
                        u"L’identifiant {uid} n’existe pas.")
@@ -163,54 +160,40 @@ class EmployeeController(RestController):
                 entry_date = parse_date(entry_date_field, entry_date)
                 exit_date = None
 
-            try:
-                # -- update
-                employee = DBSession.query(Employee).get(uid)
-                employee.employee_name = employee_name
-                employee.worked_hours = worked_hours
-                employee.entry_date = entry_date
-                employee.exit_date = exit_date
-                if not isinstance(photo_path, (str, unicode)):
-                    LOG.debug("Replace the photo...")
-                    self.delete_photo(employee.photo_path)
-                    new_photo_path = self.store_photo(employee.uid, photo_path)
-                    employee.photo_path = new_photo_path
-                else:
-                    LOG.debug("Do not replace the photo!")
-                transaction.commit()
-            except IntegrityError as cause:
-                LOG.error(cause)
-                transaction.abort()
-                msg_fmt = (u"Nom de l’employé en doublon ! "
-                           u"Le nom « {value} » existe déjà.")
-                raise InvalidFieldError(msg_fmt.format(value=employee_name))
+            # -- update
+            accessor = EmployeeAccessor()
+            accessor.update_employee(uid,
+                                     employee_name=employee_name,
+                                     worked_hours=worked_hours,
+                                     entry_date=entry_date,
+                                     exit_date=exit_date,
+                                     photo_path=photo_path)
+
+        except DuplicateFoundError:
+            msg_fmt = (u"Nom de l’employé en doublon ! "
+                       u"Le nom « {value} » existe déjà.")
+            flash(msg_fmt.format(value=employee_name), status="error")
 
         except InvalidFieldError as exc:
             flash(exc.message, status="error")
+
         else:
             msg_fmt = (u"La mise à jour des informations concernant "
                        u"« {employee_name} » est terminée.")
             flash(msg_fmt.format(employee_name=employee_name),
                   status="ok")
 
-        curr_employee = DBSession.query(Employee).get(int(uid))
+        accessor = EmployeeAccessor()
+        curr_employee = accessor.get_employee(uid)
         return dict(curr_employee=curr_employee)
 
     @expose('intranet.templates.pointage.employee.edit')
     def post_delete(self, uid):
-        curr_employee = DBSession.query(Employee).get(int(uid))
-
-        if LOG.isEnabledFor(logging.DEBUG):
-            msg_fmt = ("delete: uid={uid!r}")
-            LOG.debug(msg_fmt.format(uid=uid))
-
-        self.delete_photo(curr_employee.photo_path)
-        DBSession.delete(curr_employee)
-        transaction.commit()
-
+        accessor = EmployeeAccessor()
+        old_employee = accessor.delete_employee(uid)
         msg_fmt = (u"L’employé « {employee_name} » a été supprimé "
                    u"de la base de données avec succès.")
-        flash(msg_fmt.format(employee_name=curr_employee.employee_name),
+        flash(msg_fmt.format(employee_name=old_employee.employee_name),
               status="ok")
         return dict(curr_employee=None)
 
@@ -248,17 +231,23 @@ class EmployeeController(RestController):
                 entry_date = parse_date(entry_date_field, entry_date)
                 exit_date = None
 
-            try:
-                employee = Employee(employee_name, worked_hours, entry_date,
-                                    exit_date, photo_path=None)
-                DBSession.add(employee)
-                transaction.commit()
-            except IntegrityError as cause:
-                LOG.error(cause)
-                transaction.abort()
-                msg_fmt = (u"Nom de l’employé en doublon ! "
-                           u"Le nom « {value} » existe déjà.")
-                raise InvalidFieldError(msg_fmt.format(value=employee_name))
+            accessor = EmployeeAccessor()
+            accessor.insert_employee(employee_name=employee_name,
+                                              worked_hours=worked_hours,
+                                              entry_date=entry_date,
+                                              exit_date=exit_date,
+                                              photo_path=photo_path)
+
+        except DuplicateFoundError:
+            msg_fmt = (u"Nom de l’employé en doublon ! "
+                       u"Le nom « {value} » existe déjà.")
+            flash(msg_fmt.format(value=employee_name), status="error")
+            new_employee = Employee(employee_name=employee_name,
+                                    worked_hours=worked_hours,
+                                    entry_date=entry_date,
+                                    exit_date=exit_date,
+                                    photo_path=photo_path)
+            return dict(new_employee=new_employee)
 
         except InvalidFieldError as exc:
             flash(exc.message, status="error")
@@ -269,37 +258,7 @@ class EmployeeController(RestController):
                                     photo_path=photo_path)
             return dict(new_employee=new_employee)
 
-        if not isinstance(photo_path, (str, unicode)):
-            photo_storage = photo_path  # FieldStorage
-            # -- search the employee to get it's uid
-            employee = (DBSession.query(Employee)
-                        .filter(Employee.employee_name == employee_name)
-                        .one())
-            # -- update photo path in current employee
-            employee.photo_path = self.store_photo(employee.uid, photo_storage)
-            transaction.commit()
-
         msg_fmt = (u"L’employé « {employee_name} » a été créé "
                    u"dans la base de données avec succès.")
         flash(msg_fmt.format(employee_name=employee_name), status="ok")
         return dict(new_employee=None)
-
-    def store_photo(self, uid, photo_storage):
-        if photo_storage is None:
-            return None
-        # -- upload photo file (@see: FieldStorage)
-        relpath_fmt = "/photo/pointage/employee/employee_{uid}_{time}{ext}"
-        ext = os.path.splitext(photo_storage.filename)[1]
-        relpath = relpath_fmt.format(uid=uid, ext=ext, time=time.time())
-        file_storage = FileStorage(tg.config.file_storage_dir)
-        if relpath in file_storage:
-            del file_storage[relpath]
-        file_storage[relpath] = photo_storage.file.read()
-        return relpath
-
-    def delete_photo(self, photo_path):
-        if photo_path is None:
-            return
-        file_storage = FileStorage(tg.config.file_storage_dir)
-        if photo_path in file_storage:
-            del file_storage[photo_path]

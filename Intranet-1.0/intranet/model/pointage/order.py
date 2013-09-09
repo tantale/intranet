@@ -17,7 +17,12 @@ class Order(DeclarativeBase):
     project_cat = Column(Text, unique=False, nullable=False)
     creation_date = Column(Date, nullable=False)
     close_date = Column(Date, nullable=True)
+
     # generated backref: order_phase_list
+    #order_phase_list = relationship('OrderPhase,
+    #                                backref='order',
+    #                                order_by='OrderPhase.position,
+    #                                cascade='all,delete-orphan')
 
     def __init__(self, order_ref, project_cat, creation_date, close_date=None):
         """

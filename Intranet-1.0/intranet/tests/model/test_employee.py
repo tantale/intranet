@@ -10,6 +10,7 @@ from intranet.model import DBSession
 from intranet.tests.model import ModelTest
 from nose.tools import eq_
 import datetime
+import transaction
 
 
 class TestEmployee(ModelTest):
@@ -26,6 +27,7 @@ class TestEmployee(ModelTest):
 
     def test_create_obj(self):
         """Employee object can be created"""
+        self.obj = DBSession.query(model.Employee).one()
         for key, value in self.attrs.iteritems():
             eq_(getattr(self.obj, key), value)
 
@@ -37,7 +39,7 @@ class TestEmployee(ModelTest):
         """Employee objects can be deleted"""
         try:
             DBSession.delete(self.obj)
-            DBSession.flush()
+            transaction.commit()
         except:
-            DBSession.rollback()
+            transaction.abort()
             raise

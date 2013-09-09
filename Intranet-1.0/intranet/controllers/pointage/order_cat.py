@@ -3,8 +3,7 @@
 :date: 2013-08-11
 :author: Laurent LAPORTE <sandlol2009@gmail.com>
 """
-from intranet.model import DBSession
-from intranet.model.pointage.order_cat import OrderCat
+from intranet.accessors.order_cat import OrderCatAccessor
 from tg.controllers.restcontroller import RestController
 from tg.decorators import expose, with_trailing_slash
 
@@ -24,5 +23,6 @@ class OrderCatController(RestController):
 
         GET /pointage/order/
         """
-        order_cat_list = DBSession.query(OrderCat).all()
+        accessor = OrderCatAccessor()
+        order_cat_list = accessor.get_order_cat_list()
         return dict(order_cat_list=order_cat_list)

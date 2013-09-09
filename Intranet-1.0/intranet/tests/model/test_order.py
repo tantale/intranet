@@ -4,12 +4,21 @@
 :author: Laurent LAPORTE <sandlol2009@gmail.com>
 
 Test case of 'intranet.model.pointage.order' module.
+
+To run this tests:
+- activate the virtual environment and,
+- run: 'nosetests -v intranet.tests.model.test_order'
 """
 from intranet import model
 from intranet.model import DBSession
 from intranet.tests.model import ModelTest
 from nose.tools import eq_
 import datetime
+import transaction
+import logging
+
+
+LOG = logging.getLogger(__name__)
 
 
 class TestOrder(ModelTest):
@@ -27,17 +36,24 @@ class TestOrder(ModelTest):
 
     def setUp(self):
         super(TestOrder, self).setUp()
+        # -- put Order in session
+        self.obj = DBSession.query(model.Order).one()
+        order_phase_list = DBSession.query(model.OrderPhase).all()
+        eq_(len(order_phase_list), 0)
         try:
-            eq_(len(self.obj.order_phase_list), 0)
-            for label in self.label_list:
-                model.OrderPhase(self.obj, label)
-            DBSession.flush()
+            for position, label in enumerate(self.label_list, 1):
+                order_phase = model.OrderPhase(position, label)
+                self.obj.order_phase_list.append(order_phase)
+            transaction.commit()
         except:
-            DBSession.rollback()
+            transaction.abort()
             raise
+        order_phase_list = DBSession.query(model.OrderPhase).all()
+        eq_(len(order_phase_list), len(self.label_list))
 
     def test_create_obj(self):
         """Order object can be created"""
+        self.obj = DBSession.query(model.Order).one()
         for key, value in self.attrs.iteritems():
             eq_(getattr(self.obj, key), value)
 
@@ -56,9 +72,9 @@ class TestOrder(ModelTest):
         """Order objects can be deleted"""
         try:
             DBSession.delete(self.obj)
-            DBSession.flush()
+            transaction.commit()
         except:
-            DBSession.rollback()
+            transaction.abort()
             raise
         order_phase_list = DBSession.query(model.OrderPhase).all()
         eq_(len(order_phase_list), 0)
@@ -66,11 +82,14 @@ class TestOrder(ModelTest):
     def test_delete_orphan(self):
         """Order phases orphans can be deleted"""
         try:
+            self.obj = DBSession.query(model.Order).one()
             order_phase = self.obj.order_phase_list[2]
             self.obj.order_phase_list.remove(order_phase)
-            DBSession.flush()
+            LOG.info("-- dirty: " + repr(DBSession.dirty))
+            LOG.info("-- new: " + repr(DBSession.new))
+            transaction.commit()
         except:
-            DBSession.rollback()
+            transaction.abort()
             raise
         order_phase_list = DBSession.query(model.OrderPhase).all()
         eq_(len(order_phase_list), len(self.label_list) - 1)
@@ -78,10 +97,15 @@ class TestOrder(ModelTest):
     def test_append_order_phase(self):
         """Order phases can be appended"""
         try:
+            self.obj = DBSession.query(model.Order).one()
             last_position = self.obj.order_phase_list[-1].position
-            model.OrderPhase(self.obj, "New phase")
-            DBSession.flush()
+            order_phase = model.OrderPhase(last_position + 1, "New phase")
+            self.obj.order_phase_list.append(order_phase)
+            LOG.info("-- dirty: " + repr(DBSession.dirty))
+            LOG.info("-- new: " + repr(DBSession.new))
+            transaction.commit()
         except:
-            DBSession.rollback()
+            transaction.abort()
             raise
-        eq_(self.obj.order_phase_list[-1].position, last_position + 1)
+        order_phase_list = DBSession.query(model.OrderPhase).all()
+        eq_(order_phase_list[-1].position, last_position + 1)

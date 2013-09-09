@@ -5,11 +5,10 @@
 :author: Laurent LAPORTE <sandlol2009@gmail.com>
 """
 from formencode.validators import NotEmpty
-from intranet.model import DBSession
+from intranet.accessors import DuplicateFoundError
+from intranet.accessors.order import OrderAccessor
 from intranet.model.pointage.order import Order
-from intranet.model.pointage.order_cat import OrderCat
 from intranet.validators.iso_date_converter import IsoDateConverter
-from sqlalchemy.exc import IntegrityError
 from tg.controllers.restcontroller import RestController
 from tg.controllers.util import redirect
 from tg.decorators import with_trailing_slash, expose, validate
@@ -17,7 +16,6 @@ from tg.flash import flash
 import collections
 import logging
 import pylons
-import transaction
 
 LOG = logging.getLogger(__name__)
 
@@ -32,7 +30,8 @@ class OrderController(RestController):
         :return: order categories grouped by category's group.
         """
         cat_dict = collections.OrderedDict()
-        order_cat_list = DBSession.query(OrderCat).all()
+        accessor = OrderAccessor()
+        order_cat_list = accessor.get_order_cat_list()
         for order_cat in order_cat_list:
             if order_cat.cat_group not in cat_dict:
                 cat_dict[order_cat.cat_group] = []
@@ -63,8 +62,9 @@ class OrderController(RestController):
 
         :param uid: UID of the order to display.
         """
-        order = DBSession.query(Order).get(uid)
-        order_cat_list = DBSession.query(OrderCat).all()
+        accessor = OrderAccessor()
+        order = accessor.get_order(uid)
+        order_cat_list = accessor.get_order_cat_list()
         cat_label_dict = {order_cat.cat_name: order_cat.label
                           for order_cat in order_cat_list}
         return dict(order=order,
@@ -83,16 +83,12 @@ class OrderController(RestController):
         :param uid: Active order's UID if any
         """
         # -- filter the order list/keyword
-        if keyword:
-            predicat = Order.order_ref.like('%' + keyword + '%')
-            order_list = (DBSession.query(Order)
-                          .filter(predicat)
-                          .order_by(Order.order_ref)
-                          .all())
-        else:
-            order_list = (DBSession.query(Order)
-                          .order_by(Order.order_ref)
-                          .all())
+        accessor = OrderAccessor()
+        order_by_cond = Order.order_ref
+        filter_cond = (Order.order_ref.like('%' + keyword + '%')
+                       if keyword else None)
+        order_list = accessor.get_order_list(filter_cond, order_by_cond)
+
         # -- active_index of the order by uid
         active_index = False
         if uid:
@@ -143,12 +139,12 @@ class OrderController(RestController):
         :type close_date: datetime.date
         """
         try:
-            with transaction.manager as tm:
-                order = Order(order_ref, project_cat, creation_date,
-                              close_date)
-                DBSession.add(order)
-        except IntegrityError:
-            tm.abort()
+            accessor = OrderAccessor()
+            accessor.insert_order(order_ref=order_ref,
+                                        project_cat=project_cat,
+                                        creation_date=creation_date,
+                                        close_date=close_date)
+        except DuplicateFoundError:
             msg_fmt = (u"La commande « {order_ref} » existe déjà.")
             err_msg = msg_fmt.format(order_ref=order_ref)
             flash(err_msg, status="error")
@@ -172,7 +168,8 @@ class OrderController(RestController):
         :param uid: UID of the Order to edit
         """
         form_errors = pylons.tmpl_context.form_errors  # @UndefinedVariable
-        order = DBSession.query(Order).get(uid)
+        accessor = OrderAccessor()
+        order = accessor.get_order(uid)
         creation_date = order.creation_date.strftime("%Y-%m-%d")
         close_date = (None if order.close_date is None
                       else order.close_date.strftime("%Y-%m-%d"))
@@ -214,14 +211,13 @@ class OrderController(RestController):
         :type close_date: datetime.date
         """
         try:
-            with transaction.manager as tm:
-                order = DBSession.query(Order).get(uid)
-                order.order_ref = order_ref
-                order.project_cat = project_cat
-                order.creation_date = creation_date
-                order.close_date = close_date
-        except IntegrityError:
-            tm.abort()
+            accessor = OrderAccessor()
+            accessor.update_order(uid,
+                                        order_ref=order_ref,
+                                        project_cat=project_cat,
+                                        creation_date=creation_date,
+                                        close_date=close_date)
+        except DuplicateFoundError:
             msg_fmt = (u"La commande « {order_ref} » existe déjà.")
             err_msg = msg_fmt.format(order_ref=order_ref)
             flash(err_msg, status="error")
@@ -244,7 +240,8 @@ class OrderController(RestController):
 
         :param uid: UID of the Order to delete.
         """
-        order = DBSession.query(Order).get(uid)
+        accessor = OrderAccessor()
+        order = accessor.get_order(uid)
         return dict(order=order)
 
     @expose('intranet.templates.pointage.order.get_delete')
@@ -257,8 +254,8 @@ class OrderController(RestController):
 
         :param uid: UID of the Order to delete.
         """
-        order = DBSession.query(Order).get(uid)
-        DBSession.delete(order)
+        accessor = OrderAccessor()
+        old_order = accessor.delete_order(uid)
         msg_fmt = (u"La commande « {order_ref} » est supprimée.")
-        flash(msg_fmt.format(order_ref=order.order_ref), status="ok")
+        flash(msg_fmt.format(order_ref=old_order.order_ref), status="ok")
         return dict(order=None)

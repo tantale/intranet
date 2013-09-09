@@ -4,10 +4,10 @@
 :author: Laurent LAPORTE <sandlol2009@gmail.com>
 """
 from intranet.model import DeclarativeBase
+from sqlalchemy import ForeignKey
+from sqlalchemy.orm import relationship, backref
 from sqlalchemy.schema import Column
 from sqlalchemy.types import Integer, Text
-from sqlalchemy.orm import relationship, backref
-from sqlalchemy import ForeignKey
 
 
 class OrderPhase(DeclarativeBase):
@@ -21,25 +21,20 @@ class OrderPhase(DeclarativeBase):
                        nullable=False, index=True)
     position = Column(Integer, nullable=False)
     label = Column(Text, nullable=False)
-    order = relationship("Order", backref=backref('order_phase_list',
-                                                  order_by=position,
-                                                  cascade='all,delete-orphan'))
+    order = relationship('Order',
+                         backref=backref('order_phase_list',
+                                         order_by='OrderPhase.position',
+                                         cascade='all,delete-orphan'))
 
-    def __init__(self, order, label):
+    def __init__(self, position, label):
         """
         Initialize a phase for the given order.
 
-        :param order: the order which will contains this new phase (required)
-        :type order: Order
+        :param position: the index position of the phase in it's parent order.
+        :type position: int
 
         :param label: the phase's label (required)
         """
-        # -- calc the new position to place this phase at the end of the list
-        position_list = [0]
-        position_list.extend([phase.position
-                              for phase in order.order_phase_list])
-        position = max(position_list) + 1
-        self.order = order
         self.position = position
         self.label = label
 

@@ -3,6 +3,7 @@
 from intranet.model import DBSession
 from intranet.tests import setup_db, teardown_db
 from nose.tools import eq_
+import transaction
 
 __all__ = ['ModelTest']
 
@@ -36,14 +37,20 @@ class ModelTest(object):
             new_attrs.update(self.do_get_dependencies())
             self.obj = self.klass(**new_attrs)
             DBSession.add(self.obj)
-            DBSession.flush()
+            transaction.commit()
         except:
-            DBSession.rollback()
+            transaction.abort()
             raise
 
     def tearDown(self):
         """Finish model test fixture."""
-        DBSession.rollback()
+        try:
+            for obj in DBSession.query(self.klass).all():
+                DBSession.delete(obj)
+            transaction.commit()
+        except:
+            transaction.abort()
+            raise
 
     def do_get_dependencies(self):
         """Get model test dependencies.
@@ -56,6 +63,6 @@ class ModelTest(object):
 
     def test_query_obj(self):
         """Model objects can be queried"""
-        obj = DBSession.query(self.klass).one()
-        for key, value in self.attrs.iteritems():
-            eq_(getattr(obj, key), value)
+        for obj in DBSession.query(self.klass).all():
+            for key, value in self.attrs.iteritems():
+                eq_(getattr(obj, key), value)
