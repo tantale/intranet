@@ -11,7 +11,8 @@ from intranet.model.pointage.order import Order
 from intranet.validators.iso_date_converter import IsoDateConverter
 from tg.controllers.restcontroller import RestController
 from tg.controllers.util import redirect
-from tg.decorators import with_trailing_slash, expose, validate
+from tg.decorators import with_trailing_slash, expose, validate,\
+    without_trailing_slash
 from tg.flash import flash
 import collections
 import logging
@@ -43,22 +44,19 @@ class OrderController(RestController):
     def index(self):
         """
         Display the index page.
-
-        use '/pointage/order_cat.css' to get the order category's styles heet.
         """
-        #order_list = (DBSession.query(Order)
-        #              .order_by(Order.order_ref)
-        #              .all())
-        #return dict(order_list=order_list)
         return dict()
 
-    @with_trailing_slash
+    @without_trailing_slash
     @expose('json')
     def get_one(self, uid):
         """
         Display one record.
 
         GET /pointage/order/1
+        GET /pointage/order/1.json
+        GET /pointage/order/get_one?uid=1
+        GET /pointage/order/get_one.json?uid=1
 
         :param uid: UID of the order to display.
         """
@@ -67,8 +65,9 @@ class OrderController(RestController):
         order_cat_list = accessor.get_order_cat_list()
         cat_label_dict = {order_cat.cat_name: order_cat.label
                           for order_cat in order_cat_list}
+        # populate the lazy loaded order_phase_list for json result:
+        __ = order.order_phase_list
         return dict(order=order,
-                    order_phase_list=order.order_phase_list,
                     order_cat_label=cat_label_dict[order.project_cat])
 
     @with_trailing_slash
@@ -79,6 +78,9 @@ class OrderController(RestController):
         Display all records in a resource.
 
         GET /pointage/order/
+        GET /pointage/order.json
+        GET /pointage/order/get_all
+        GET /pointage/order/get_all.json
 
         :param uid: Active order's UID if any
         """
