@@ -14,6 +14,18 @@ import logging
 LOG = logging.getLogger(__name__)
 
 
+class RecordNotFoundError(StandardError):
+    """
+    Exception raised when a record is missing in the database. Wrong uid?...
+    """
+    def __init__(self, class_name, uid):
+        msg_fmt = "Record #{uid} not found in {class_name} table!"
+        err_msg = msg_fmt.format(class_name=class_name,
+                                 uid=uid)
+        super(RecordNotFoundError, self).__init__(err_msg)
+        self.uid = uid
+
+
 class DuplicateFoundError(StandardError):
     """
     Exception raised when a attempt was made to create (or update)
@@ -30,10 +42,14 @@ class BasicAccessor(object):
 
     def __init__(self, record_class, session=None):
         self.record_class = record_class
+        self.class_name = self.record_class.__name__
         self.session = session or DBSession
 
     def _get_record(self, uid):
-        return self.session.query(self.record_class).get(int(uid))
+        record = self.session.query(self.record_class).get(int(uid))
+        if record is None:
+            raise RecordNotFoundError(self.class_name, uid)
+        return record
 
     def _get_record_list(self, filter_cond=None, order_by_cond=None):
         if filter_cond is None:
@@ -62,7 +78,7 @@ class BasicAccessor(object):
             transaction.commit()
         except IntegrityError:
             transaction.abort()
-            raise DuplicateFoundError(self.record_class.__name__, **kwargs)
+            raise DuplicateFoundError(self.class_name, **kwargs)
         except:
             transaction.abort()
             raise
@@ -77,7 +93,7 @@ class BasicAccessor(object):
             transaction.commit()
         except IntegrityError:
             transaction.abort()
-            raise DuplicateFoundError(self.record_class.__name__, **kwargs)
+            raise DuplicateFoundError(self.class_name, **kwargs)
         except:
             transaction.abort()
             raise
