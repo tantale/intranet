@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 <%doc>
 :template: intranet.templates.pointage.employee.index
-:date: 2013-08-11
+:date: 2013-08-10
 :author: Laurent LAPORTE <sandlol2009@gmail.com>
 </%doc>
 <!DOCTYPE html>
@@ -17,8 +17,8 @@
 <link rel="stylesheet" type="text/css" href="${tg.url('/css/intranet.pointage.css')}" />
 <script type='text/javascript' src="${tg.url('/javascript/jquery-1.9.1.js')}"></script>
 <script type='text/javascript' src="${tg.url('/javascript/jquery-ui-1.10.3.custom.min.js')}"></script>
-<script type='text/javascript' src="${tg.url('/javascript/jquery.ui.datepicker-fr.js')}"></script>
 <script type='text/javascript' src="${tg.url('/javascript/modernizr.custom.32767.js')}"></script>
+<script type='text/javascript' src="${tg.url('/javascript/jquery.ui.datepicker-fr.js')}"></script>
 <script type='text/javascript' src="${tg.url('/javascript/imgLiquid-min.js')}"></script>
 <script type='text/javascript' src="${tg.url('/javascript/jquery.layout-latest.min.js')}"></script>
 <script type='text/javascript' src="${tg.url('/javascript/jquery.form.js')}"></script>
@@ -26,22 +26,29 @@
 <script type='text/javascript' src="${tg.url('/javascript/intranet.pointage.js')}"></script>
 <script type='text/javascript' src="${tg.url('/javascript/intranet.pointage.employee.js')}"></script>
 <script type='text/javascript'>
+	"use strict";
+	/*global $*/
 	$(function() {
-		$('#search_form').ajaxForm({
+		$('#employee_get_all').ajaxForm({
 			target: '#accordion_content',
 			success: on_accordion_refresh
 		});
 		$('#employee_new').ajaxForm({
 			target: '#employee_content',
 			beforeSubmit: function(arr, $form, options) {
+				console.log("hide #flash...");
 				$('#flash').hide();
+				console.log("deactivate #accordion...");
+				$('#accordion').accordion("option", "active", false);
 			}
 		});
-		$('#employee_get_all').ajaxForm({
-			target: '#accordion_content',
-			success: on_accordion_refresh
+		$('#confirm_dialog').dialog({
+			autoOpen: false,
+			width: 400,
+			height: 200,
+			modal: true
 		});
-		refresh_accordion();
+		$('#employee_get_all').submit();
 	});
 </script>
 </head>
@@ -56,36 +63,32 @@
 	</div>
 	<div id="leftFrame" class="ui-layout-west">
 		<div id="searchFrame">
-			<form id="search_form" class="minimal_form"
-				action="${tg.url('/pointage/employee/search')}" method="get">
+			<form id="employee_get_all" class="minimal_form"
+				action="${tg.url('/pointage/employee/get_all/')}" method="get">
 				<p>
-					<input id="search_form__keyword" type="search" name="keyword"
+					<input id="employee_get_all__keyword" type="search" name="keyword"
 						placeholder="Mot-clef"
 						title="Saisir un mot-clef" />
-					<button id="search_form__search" type="submit" class="search_button"
+					<input type="hidden" name="uid" value="" />
+					<button id="employee_get_all__search" type="submit" class="search_button"
 						title="Rechercher selon le mot-clef">Rechercher</button>
 				</p>
 			</form>
 		</div>\
-		<form id="employee_get_all" class="inline_form alignCenter"
-			action="${tg.url('/pointage/employee/get_all/')}" method="get">
-			<p>
-				<button id="employee_get_all__refresh" type="submit" class="refresh_button"
-					title="Mettre à jour la liste des employés">Mettre à jour</button>
-			</p>
-		</form>
-		<form id="employee_new" class="inline_form alignCenter"
+		<form id="employee_new" class="minimal_form alignCenter"
 			action="${tg.url('/pointage/employee/new')}" method="get">
 			<p>
 				<button id="employee_new__new" type="submit" class="new_button"
 					title="Ajouter un employé">Nouvel employé</button>
 			</p>
 		</form>
-		<div id="accordion_content">
-		</div>
+		<div id="accordion_content"></div>
 	</div>
 	<div id="rightFrame" class="ui-layout-center">
-		<div id="employee_content"/>
+		<div id="employee_content"></div>
+	</div>
+	<div id="confirm_dialog" title="Confirmation">
+		<div id="confirm_dialog_content"></div>
 	</div>
 </body>
 </html>

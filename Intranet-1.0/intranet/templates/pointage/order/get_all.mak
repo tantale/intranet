@@ -39,7 +39,7 @@
 		target : '#order_content',
 		beforeSubmit: function(arr, $form, options) {
 			$('#flash').hide();
-		},
+		}
 	});
 	$('#accordion form button').button();
 	$('#accordion').click(function(){

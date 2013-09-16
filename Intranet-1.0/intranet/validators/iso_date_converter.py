@@ -12,6 +12,7 @@ class IsoDateConverter(FancyValidator):
     Date converter for ISO formatted dates.
     """
 
+    # TODO: i18n
     messages = dict(invalidDate=u'Date invalide : "%(value)s"')
 
     def _to_python(self, value, state):

@@ -1,4 +1,10 @@
 # -*- coding: utf-8 -*-
+<%doc>
+:template: intranet.templates.pointage.employee.get_all
+:date: 2013-08-10
+:author: Laurent LAPORTE <sandlol2009@gmail.com>
+</%doc>
+<%! import json %>
 <div id="accordion">
 <h2>Employés</h2>
 <div>
@@ -22,14 +28,23 @@
 </div>
 </div>
 <script type='text/javascript'>
+	"use strict";
+	/*global $*/
 	$('#accordion .minimal_form').ajaxForm({
-		target : '#employee_content',
+		target: '#employee_content',
 		beforeSubmit: function(arr, $form, options) {
 			$('#flash').hide();
 		}
 	});
 	$('#accordion form button').button();
 	$('#accordion').accordion({
-		heightStyle : "auto"
+		collapsible: false,
+		heightStyle: "content",
+		beforeActivate: function(event, ui) {
+			if (ui.oldHeader.attr('id')) {
+				console.log("empty #employee_content...");
+				$('#employee_content').empty();
+			}
+		}
 	});
 </script>

@@ -116,7 +116,7 @@
 	$('#order_content .update_button').button({
 		text : true,
 		icons : {
-			primary : "ui-icon-check"
+			primary : "ui-icon-pencil"
 		}
 	});
 	$('#order_update').ajaxForm({
@@ -135,7 +135,7 @@
 				$('#order_get_all').submit();
 				input.val(uid);
 			} else {
-				console.log("ERROR: don't update the order list.");
+				console.log("ERROR: don't update the orders list.");
 			}
 		}
 	});

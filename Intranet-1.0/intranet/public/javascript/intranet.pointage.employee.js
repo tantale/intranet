@@ -2,21 +2,16 @@
 /*jslint browser: true, devel: true, es5: false, plusplus: true, unparam: true, white: true */
 /*global $*/
 
-
-function on_accordion_refresh() {
-	var index, search_list = [], searchable_node_list = $("#accordion .searchable");
+function on_accordion_refresh(responseText, statusText, xhr) {
+	var index, search_list = [], searchable_node_list = $("#accordion .searchable"), keyword;
 	for (index = 0; index < searchable_node_list.length; ++index) {
-		var keyword = $.trim($(searchable_node_list[index]).text());
+		keyword = $.trim($(searchable_node_list[index]).text());
 		search_list.push(keyword);
 	}
-	$('#search_form__keyword').autocomplete({
+	$('#employee_get_all__keyword').autocomplete({
 		source : search_list
 	});
-	$('#search_form__keyword').val('').autocomplete('close');
-}
-
-function refresh_accordion() {
-	$("#employee_get_all").submit();
+	$('#employee_get_all__keyword').autocomplete('close');
 }
 
 $(function() {
@@ -32,4 +27,13 @@ $(function() {
 		west__minSize : 230,
 		west__maxSize : 500
 	});
+});
+
+$('#employee_new').ajaxForm({
+    target: '#employee_content',
+    success: function(responseText, statusText, xhr) {
+        alert('status: ' + statusText + '\n\nresponseText: \n' + responseText +
+			'\n\nThe output div should have already been updated with the responseText.'); 
+    	$("#accordion").accordion("option", "active", false);
+    }
 });

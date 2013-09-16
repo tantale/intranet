@@ -85,14 +85,13 @@
 					title="Ajouter une commande">Nouvelle commande</button>
 			</p>
 		</form>
-		<div id="accordion_content">
-		</div>
+		<div id="accordion_content"></div>
 	</div>
 	<div id="rightFrame" class="ui-layout-center">
 		<div id="order_content"></div>
 	</div>
 	<div id="confirm_dialog" title="Confirmation">
-		<div id="confirm_dialog_content"/>
+		<div id="confirm_dialog_content"></div>
 	</div>
 </body>
 </html>
