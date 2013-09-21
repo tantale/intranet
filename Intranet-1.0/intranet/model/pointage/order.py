@@ -5,7 +5,7 @@
 """
 from intranet.model import DeclarativeBase
 from sqlalchemy.schema import Column
-from sqlalchemy.types import Integer, Text, Date
+from sqlalchemy.types import Integer, String, Date
 
 
 class Order(DeclarativeBase):
@@ -13,10 +13,10 @@ class Order(DeclarativeBase):
     __tablename__ = 'Order'
 
     uid = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
-    order_ref = Column(Text, unique=True, nullable=False, index=True)
-    project_cat = Column(Text, unique=False, nullable=False)
-    creation_date = Column(Date, nullable=False)
-    close_date = Column(Date, nullable=True)
+    order_ref = Column(String(length=50), unique=True, nullable=False, index=True)  # @IgnorePep8
+    project_cat = Column(String(length=50), unique=False, nullable=False)
+    creation_date = Column(Date, nullable=False, index=True)
+    close_date = Column(Date, nullable=True, index=True)
 
     # generated backref: order_phase_list
     #order_phase_list = relationship('OrderPhase,

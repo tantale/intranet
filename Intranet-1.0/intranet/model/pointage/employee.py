@@ -5,7 +5,7 @@
 """
 from intranet.model import DeclarativeBase
 from sqlalchemy.schema import Column
-from sqlalchemy.types import Integer, Text, Date
+from sqlalchemy.types import Integer, String, Date
 
 
 class Employee(DeclarativeBase):
@@ -13,11 +13,12 @@ class Employee(DeclarativeBase):
     __tablename__ = 'Employee'
 
     uid = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
-    employee_name = Column(Text, unique=True, nullable=False, index=True)
+    employee_name = Column(String(length=50), unique=True, nullable=False,
+                           index=True)
     worked_hours = Column(Integer, nullable=False)
-    entry_date = Column(Date, nullable=False)
-    exit_date = Column(Date, nullable=True)
-    photo_path = Column(Text, nullable=True)
+    entry_date = Column(Date, nullable=False, index=True)
+    exit_date = Column(Date, nullable=True, index=True)
+    photo_path = Column(String(length=200), nullable=True)
 
     def __init__(self, employee_name, worked_hours, entry_date,
                  exit_date=None, photo_path=None):

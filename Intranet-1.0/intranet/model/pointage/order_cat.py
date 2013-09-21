@@ -5,7 +5,7 @@
 """
 from intranet.model import DeclarativeBase
 from sqlalchemy.schema import Column
-from sqlalchemy.types import Integer, Text
+from sqlalchemy.types import Integer, String
 
 
 class OrderCat(DeclarativeBase):
@@ -15,10 +15,10 @@ class OrderCat(DeclarativeBase):
     __tablename__ = 'OrderCat'
 
     uid = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
-    cat_name = Column(Text, unique=True, nullable=False, index=True)
-    cat_group = Column(Text, nullable=False, index=True)
-    label = Column(Text, nullable=False)
-    css_def = Column(Text, nullable=False)
+    cat_name = Column(String(length=50), unique=True, nullable=False, index=True)  # @IgnorePep8
+    cat_group = Column(String(length=50), nullable=False, index=True)
+    label = Column(String(length=50), nullable=False)
+    css_def = Column(String(length=200), nullable=False)
 
     def __init__(self, cat_name, cat_group, label, css_def):
         """

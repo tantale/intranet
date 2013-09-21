@@ -7,7 +7,7 @@ from intranet.model import DeclarativeBase
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import relationship, backref
 from sqlalchemy.schema import Column
-from sqlalchemy.types import Integer, Text
+from sqlalchemy.types import Integer, String
 
 
 class OrderPhase(DeclarativeBase):
@@ -20,7 +20,7 @@ class OrderPhase(DeclarativeBase):
                                            onupdate='CASCADE'),
                        nullable=False, index=True)
     position = Column(Integer, nullable=False)
-    label = Column(Text, nullable=False)
+    label = Column(String(length=50), nullable=False)
     order = relationship('Order',
                          backref=backref('order_phase_list',
                                          order_by='OrderPhase.position',
