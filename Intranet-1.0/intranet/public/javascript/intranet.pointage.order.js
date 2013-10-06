@@ -2,17 +2,6 @@
 /*jslint browser: true, devel: true, es5: false, plusplus: true, unparam: true, white: true */
 /*global $*/
 
-//function find_accordion_active(uid) {
-//	var index, search_id = "order_" + uid, searchable_node_list = $("#accordion .searchable");
-//	for (index = 0; index < searchable_node_list.length; ++index) {
-//		var curr_id = $(searchable_node_list[index]).attr('id');
-//		if (curr_id === search_id) {
-//			return index;
-//		}
-//	}
-//	return -1;
-//}
-
 function on_accordion_refresh(responseText, statusText, xhr) {
 	var index, search_list = [], searchable_node_list = $("#accordion .searchable"), keyword;
 	for (index = 0; index < searchable_node_list.length; ++index) {

@@ -46,7 +46,11 @@ class BasicAccessor(object):
         self.session = session or DBSession
 
     def _get_record(self, uid):
-        record = self.session.query(self.record_class).get(int(uid))
+        if isinstance(uid, basestring):
+            uid = int(uid)
+        elif isinstance(uid, (tuple, list)):
+            uid = map(int, uid)
+        record = self.session.query(self.record_class).get(uid)
         if record is None:
             raise RecordNotFoundError(self.class_name, uid)
         return record

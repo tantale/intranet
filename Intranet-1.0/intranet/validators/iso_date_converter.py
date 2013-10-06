@@ -24,4 +24,26 @@ class IsoDateConverter(FancyValidator):
                           value, state)
 
     def _from_python(self, value, state=None):
-        return datetime.datetime.strftime("%Y-%m-%d")
+        return value.strftime("%Y-%m-%d")
+
+
+class IsoDatetimeConverter(FancyValidator):
+    """
+    Date/time converter for ISO formatted dates.
+    """
+
+    # TODO: i18n
+    messages = dict(invalidDate=u'Date/heure invalide : "%(value)s"')
+
+    def _to_python(self, value, state):
+        fmt_list = ["%Y-%m-%dT%H:%M:%S", "%Y-%m-%dT%H:%M"]
+        for fmt in fmt_list:
+            try:
+                return datetime.datetime.strptime(value, fmt)
+            except ValueError:
+                pass
+        raise Invalid(self.message('invalidDate', state, value=value),
+                      value, state)
+
+    def _from_python(self, value, state=None):
+        return value.isoformat()

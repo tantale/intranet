@@ -17,17 +17,20 @@ class CalEvent(DeclarativeBase):
     """
     __tablename__ = 'CalEvent'
 
+    # uid -- non-standard field
+    uid = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
+
     # employee_uid -- non-standard field
     employee_uid = Column(Integer, ForeignKey('Employee.uid',
                                               ondelete='SET NULL',
                                               onupdate='CASCADE'),
-                          primary_key=True, nullable=True, index=True)
+                          nullable=True, index=True)
 
     # order_phase_uid -- non-standard field
     order_phase_uid = Column(Integer, ForeignKey('OrderPhase.uid',
                                                  ondelete='SET NULL',
                                                  onupdate='CASCADE'),
-                             primary_key=True, nullable=True, index=True)
+                             nullable=True, index=True)
 
     # title -- The text on an event's element
     title = Column(String(length=50), nullable=False)
@@ -37,9 +40,6 @@ class CalEvent(DeclarativeBase):
 
     # end -- The date/time an event ends (exclusive).
     event_end = Column(DateTime, nullable=False, index=True)
-
-    # className -- The project's category which determines its color (required)
-    project_cat = Column(String(length=50), nullable=False)
 
     # comment -- non-standard field: employee's comment
     comment = Column(String(length=200), nullable=True)
@@ -52,7 +52,7 @@ class CalEvent(DeclarativeBase):
                                backref=backref('cal_event_list',
                                                order_by='CalEvent.event_start'))  # @IgnorePep8
 
-    def __init__(self, title, event_start, event_end, project_cat, comment):
+    def __init__(self, title, event_start, event_end, comment):
         """
         Initialize an calendar's event.
 
@@ -64,14 +64,11 @@ class CalEvent(DeclarativeBase):
         :param event_end: The date/time an event ends (exclusive).
         :type event_end: datetime.datetime
 
-        :param project_cat: The project's category which determines its color.
-
         :param comment: The employee's comment
         """
         self.title = title
         self.event_start = event_start
         self.event_end = event_end
-        self.project_cat = project_cat
         self.comment = comment
 
     def __repr__(self):
@@ -81,6 +78,25 @@ class CalEvent(DeclarativeBase):
                     "title={self.title!r}, "
                     "event_start={self.event_start!r}, "
                     "event_end={self.event_end!r}, "
-                    "project_cat={self.project_cat!r}, "
                     "comment={self.comment!r})")
         return repr_fmt.format(self=self)
+
+    def event_obj(self):
+        """
+        http://arshaw.com/fullcalendar/docs/event_data/Event_Object/
+        @return: Event object as a Python dictionary
+        """
+        dict_ = dict()
+        # -- Standard fields
+        dict_['id'] = ('cal_event_{uid}'.format(uid=self.uid))
+        dict_['title'] = self.title
+        dict_['allDay'] = False
+        dict_['start'] = self.event_start.strftime('%Y-%m-%dT%H:%M%SZ')
+        dict_['end'] = self.event_end.strftime('%Y-%m-%dT%H:%M%SZ')
+        dict_['className'] = self.order_phase.order.project_cat
+        # -- Non-standard Fields
+        dict_['employee_name'] = self.employee.employee_name
+        dict_['order_ref'] = self.order_phase.order.order_ref
+        dict_['order_phase_label'] = self.order_phase.label
+        dict_['comment'] = self.comment
+        return dict_

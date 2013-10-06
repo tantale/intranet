@@ -1,0 +1,50 @@
+[ {
+    "exit_date" : null,
+    "worked_hours" : 39,
+    "uid" : 2,
+    "photo_path" : "/photo/pointage/employee/employee_2_1380980350.28.jpg",
+    "entry_date" : "2001-01-01",
+    "employee_name" : "Bernard"
+}, {
+    "exit_date" : null,
+    "worked_hours" : 39,
+    "uid" : 5,
+    "photo_path" : "/photo/pointage/employee/employee_5_1380980403.03.jpg",
+    "entry_date" : "2001-01-01",
+    "employee_name" : "Charlie"
+}, {
+    "exit_date" : null,
+    "worked_hours" : 39,
+    "uid" : 6,
+    "photo_path" : null,
+    "entry_date" : "2001-01-01",
+    "employee_name" : "Damien"
+}, {
+    "exit_date" : null,
+    "worked_hours" : 39,
+    "uid" : 7,
+    "photo_path" : "/photo/pointage/employee/employee_7_1380980436.08.jpg",
+    "entry_date" : "2001-01-01",
+    "employee_name" : "Fabrice"
+}, {
+    "exit_date" : null,
+    "worked_hours" : 39,
+    "uid" : 3,
+    "photo_path" : "/photo/pointage/employee/employee_3_1380980369.67.jpg",
+    "entry_date" : "2001-01-01",
+    "employee_name" : "Nicolas P."
+}, {
+    "exit_date" : null,
+    "worked_hours" : 39,
+    "uid" : 1,
+    "photo_path" : "/photo/pointage/employee/employee_1_1380980337.67.jpg",
+    "entry_date" : "2001-01-01",
+    "employee_name" : "Thierry"
+}, {
+    "exit_date" : null,
+    "worked_hours" : 39,
+    "uid" : 4,
+    "photo_path" : null,
+    "entry_date" : "2001-01-01",
+    "employee_name" : "\u00c9lise"
+} ]

@@ -3,6 +3,7 @@
 :date: 2013-07-28
 :author: Laurent LAPORTE <sandlol2009@gmail.com>
 """
+from intranet.controllers.pointage.trcal import CalendarController
 from intranet.controllers.pointage.employee import EmployeeController
 from intranet.controllers.pointage.order import OrderController
 from intranet.controllers.pointage.order_cat import OrderCatController
@@ -19,3 +20,4 @@ class PointageControoler(BaseController):
     order = OrderController()
     order_cat = OrderCatController()
     order_phase = OrderPhaseController()
+    trcal = CalendarController()  # Time Recording Calendar

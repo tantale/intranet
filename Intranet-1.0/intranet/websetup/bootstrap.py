@@ -1,11 +1,17 @@
 # -*- coding: utf-8 -*-
 """Setup the Intranet-1.0 application"""
 from intranet import model
+from intranet.accessors.employee import EmployeeAccessor
+from intranet.accessors.order import OrderAccessor
+from intranet.accessors.order_phase import OrderPhaseAccessor
+from intranet.model.pointage.order_phase import OrderPhase
+from intranet.websetup.employee_list import get_employee_list
+from intranet.websetup.order_list import get_order_list
 from sqlalchemy.exc import IntegrityError
 import collections
 import logging
+import traceback
 import transaction
-#from tg import config
 
 LOG = logging.getLogger(__name__)
 
@@ -31,7 +37,7 @@ def bootstrap(command, conf, vars):  # @ReservedAssignment
                           dict(cat_name=u"colorMenuiserie",
                                label=u"Menuiserie",
                                css_def=u"background-color: #f7c181; color: black;"),  # @IgnorePep8
-						  dict(cat_name=u"colorBain",
+                          dict(cat_name=u"colorBain",
                                label=u"Salle de bain",
                                css_def=u"background-color: #009fe5; color: white;"),  # @IgnorePep8
                           dict(cat_name=u"colorCuisine",
@@ -59,9 +65,24 @@ def bootstrap(command, conf, vars):  # @ReservedAssignment
                 model.DBSession.add(order_cat)
             transaction.commit()
     except IntegrityError:
-        print ('There was a problem adding your order categories data, '
-               'they may have already been added:')
-        import traceback
-        print traceback.format_exc()
+        LOG.warning(('There was a problem adding your order categories data, '
+                     'they may have already been added'), exc_info=True)
         transaction.abort()
-        print 'Continuing with bootstrapping...'
+
+    # -- initialize the employee list
+    employee_list = get_employee_list()
+    try:
+        model.DBSession.add_all(employee_list)
+        transaction.commit()
+    except IntegrityError:
+        LOG.warning(('There was a problem adding your employees data, '
+                   'they may have already been added:'), exc_info=True)
+
+    # -- initialize the order list
+    order_list = get_order_list()
+    try:
+        model.DBSession.add_all(order_list)
+        transaction.commit()
+    except IntegrityError:
+        LOG.warning(('There was a problem adding your orders data, '
+                   'they may have already been added:'), exc_info=True)

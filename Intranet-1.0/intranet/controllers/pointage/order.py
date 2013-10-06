@@ -11,7 +11,7 @@ from intranet.model.pointage.order import Order
 from intranet.validators.iso_date_converter import IsoDateConverter
 from tg.controllers.restcontroller import RestController
 from tg.controllers.util import redirect
-from tg.decorators import with_trailing_slash, expose, validate,\
+from tg.decorators import with_trailing_slash, expose, validate, \
     without_trailing_slash
 from tg.flash import flash
 import collections
@@ -73,7 +73,7 @@ class OrderController(RestController):
     @with_trailing_slash
     @expose('json')
     @expose('intranet.templates.pointage.order.get_all')
-    def get_all(self, keyword=None, uid=None):
+    def get_all(self, keyword=None, uid=None, _load=False):
         """
         Display all records in a resource.
 
@@ -90,6 +90,11 @@ class OrderController(RestController):
         filter_cond = (Order.order_ref.like('%' + keyword + '%')
                        if keyword else None)
         order_list = accessor.get_order_list(filter_cond, order_by_cond)
+
+        # -- heavy loading for debug
+        if _load:
+            for order in order_list:
+                order.order_phase_list
 
         # -- active_index of the order by uid
         active_index = False

@@ -12,7 +12,6 @@ from intranet.model.pointage.employee import Employee
 from intranet.model.pointage.order import Order
 from intranet.tests import setup_db, teardown_db
 from intranet.tests.model.test_cal_event_data import EMPLOYEE_LIST, ORDER_LIST
-from nose.tools import eq_
 import datetime
 import transaction
 import unittest
@@ -69,7 +68,6 @@ class TestCalEvent(unittest.TestCase):
             event_0 = CalEvent(title=u"Preparation [100]",
                               event_start=datetime.datetime(2010, 5, 2, 8, 0),
                               event_end=datetime.datetime(2010, 5, 2, 9, 0),
-                              project_cat=order_0.project_cat,
                               comment=u"Préparation commande #1")
             employee_0.cal_event_list.append(event_0)
             order_0.order_phase_list[0].cal_event_list.append(event_0)
@@ -77,7 +75,6 @@ class TestCalEvent(unittest.TestCase):
             event_1 = CalEvent(title=u"Usinage [200]",
                               event_start=datetime.datetime(2010, 5, 2, 9, 0),
                               event_end=datetime.datetime(2010, 5, 2, 11, 0),
-                              project_cat=order_0.project_cat,
                               comment=u"Usinage commande #1")
             employee_0.cal_event_list.append(event_1)
             order_0.order_phase_list[1].cal_event_list.append(event_1)
@@ -85,7 +82,6 @@ class TestCalEvent(unittest.TestCase):
             event_2 = CalEvent(title=u"Assemblage [100]",
                               event_start=datetime.datetime(2010, 5, 2, 11, 0),
                               event_end=datetime.datetime(2010, 5, 2, 12, 0),
-                              project_cat=order_0.project_cat,
                               comment=u"Assemblage commande #1")
             employee_0.cal_event_list.append(event_2)
             order_0.order_phase_list[2].cal_event_list.append(event_2)
@@ -93,7 +89,6 @@ class TestCalEvent(unittest.TestCase):
             event_3 = CalEvent(title=u"Preparation [200]",
                               event_start=datetime.datetime(2010, 5, 2, 14, 0),
                               event_end=datetime.datetime(2010, 5, 2, 16, 0),
-                              project_cat=order_1.project_cat,
                               comment=u"Préparation command #2")
             employee_0.cal_event_list.append(event_3)
             order_1.order_phase_list[0].cal_event_list.append(event_3)
@@ -101,7 +96,6 @@ class TestCalEvent(unittest.TestCase):
             event_3 = CalEvent(title=u"Finition [100]",
                               event_start=datetime.datetime(2010, 5, 2, 17, 0),
                               event_end=datetime.datetime(2010, 5, 2, 18, 0),
-                              project_cat=order_0.project_cat,
                               comment=u"Finition commande #1")
             employee_0.cal_event_list.append(event_3)
             order_0.order_phase_list[2].cal_event_list.append(event_3)

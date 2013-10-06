@@ -14,19 +14,31 @@ form_post_id = 'order_phase_post_{}'.format(order_uid)
 %>
 <div id="${div_content_id}" class="order_phase_content ${project_cat}">
 %if order_phase_list:
-<ul id="${ul_list_id}" class="order_phase_list sortable">
-%for order_phase in order_phase_list:
-    <li id="order_phase_li_${order_phase.uid}"
-	    class="ui-state-default"><span
-        class="ui-icon ui-icon-arrowthick-2-n-s"></span><span
-        id="order_phase_label_${order_phase.uid}"
-        class="order_phase editable">${order_phase.label}</span></li>
-%endfor
-</ul>
+	%if editable:
+	<ul id="${ul_list_id}" class="order_phase_list sortable">
+	%for order_phase in order_phase_list:
+	    <li id="order_phase_li_${order_phase.uid}"
+		    class="ui-state-default"><span
+	        class="ui-icon ui-icon-arrowthick-2-n-s"></span><span
+	        id="order_phase_label_${order_phase.uid}"
+	        class="order_phase editable">${order_phase.label}</span></li>
+	%endfor
+	</ul>
+	%elif selectable:
+	<ul id="${ul_list_id}" class="order_phase_list selectable">
+	%for order_phase in order_phase_list:
+	    <li id="order_phase_li_${order_phase.uid}"
+		    class="ui-widget-content"><span
+	        id="order_phase_label_${order_phase.uid}"
+	        class="order_phase selectable">${order_phase.label}</span></li>
+	%endfor
+	</ul>
+	%endif
 %else:
     <p id="${p_empty_id}"
     class="empty_order_phase_list alignCenter"><em>Aucune phase</em></p>
 %endif
+%if editable:
 <div id="${div_bottom_id}" class="order_phase_bottom">
 <form id="${form_post_id}" class="inline_form alignCenter"
     action="${tg.url('/pointage/order_phase/')}"
@@ -39,10 +51,12 @@ form_post_id = 'order_phase_post_{}'.format(order_uid)
                     title="Ajoute une nouvelle phase">Ajouter</button></p>
 </form>
 </div>
+%endif
 </div>
 <script type='text/javascript'>
     "use strict";
-	$('#${ul_list_id}').sortable({
+    %if editable:
+    $('#${ul_list_id}').sortable({
 		update: function(event, ui) {
 			var child_list = ui.item.parent().children(), uid_list = [], data;
 			$.each(child_list, function(index, item) {
@@ -78,6 +92,10 @@ form_post_id = 'order_phase_post_{}'.format(order_uid)
 			}
 		}
 	});
+    %elif selectable:
+	$('#${ul_list_id}').selectable({
+	});
+	%endif
     $('#${form_post_id} .post_button').button({
         text: false,
         icons: {

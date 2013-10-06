@@ -32,6 +32,23 @@
 	font-weight: bold;
 }
 
+#cal_event_update label {
+	width: 10em;
+	display: inline-block;
+	text-align: left;
+	font-size: .9em;
+	font-weight: bold;
+}
+
+#cal_event_create label {
+	width: 10em;
+	display: inline-block;
+	text-align: left;
+	font-size: .9em;
+	font-weight: bold;
+	vertical-align: top;
+}
+
 .noColor {
 	color: black;
 	background-color: white;
@@ -61,6 +78,25 @@
 }
 
 .sortable li span.ui-icon {
+	position: absolute;
+	margin-left: -1.3em;
+}
+
+.selectable {
+	list-style-type: none;
+	margin: 0;
+	padding: 3px 0 1px 0;
+}
+.selectable .ui-selecting { background: #FECA40; }
+.selectable .ui-selected { background: #F39814; color: white; }
+
+.selectable li {
+	margin: 0 3px 3px 3px;
+	padding: 0.4em;
+	padding-left: 1.5em;
+}
+
+.selectable li span.ui-icon {
 	position: absolute;
 	margin-left: -1.3em;
 }

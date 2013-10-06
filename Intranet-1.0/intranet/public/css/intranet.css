@@ -67,6 +67,10 @@ h1 {
 	vertical-align: top;
 }
 
+.valignMiddle {
+	vertical-align: middle;
+}
+
 .editableform {
 	margin: 0;
 	padding: 0;

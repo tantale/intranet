@@ -1,0 +1,887 @@
+[ {
+	"uid" : 3,
+	"order_phase_list" : [ {
+		"position" : 1,
+		"uid" : 12,
+		"order_uid" : 3,
+		"label" : "\u00c9tude"
+	}, {
+		"position" : 2,
+		"uid" : 13,
+		"order_uid" : 3,
+		"label" : "Fabrication"
+	}, {
+		"position" : 3,
+		"uid" : 14,
+		"order_uid" : 3,
+		"label" : "Finition"
+	}, {
+		"position" : 4,
+		"uid" : 15,
+		"order_uid" : 3,
+		"label" : "Livraison"
+	}, {
+		"position" : 5,
+		"uid" : 16,
+		"order_uid" : 3,
+		"label" : "Pose"
+	} ],
+	"project_cat" : "colorBureau",
+	"creation_date" : "2013-09-15",
+	"close_date" : "2013-10-15",
+	"order_ref" : "BERNARD - Bureau"
+}, {
+	"uid" : 4,
+	"order_phase_list" : [ {
+		"position" : 1,
+		"uid" : 17,
+		"order_uid" : 4,
+		"label" : "\u00c9tude"
+	}, {
+		"position" : 2,
+		"uid" : 18,
+		"order_uid" : 4,
+		"label" : "Fabrication"
+	}, {
+		"position" : 3,
+		"uid" : 19,
+		"order_uid" : 4,
+		"label" : "Finition"
+	}, {
+		"position" : 4,
+		"uid" : 20,
+		"order_uid" : 4,
+		"label" : "Livraison"
+	}, {
+		"position" : 5,
+		"uid" : 21,
+		"order_uid" : 4,
+		"label" : "Pose"
+	} ],
+	"project_cat" : "colorDressing",
+	"creation_date" : "2013-10-01",
+	"close_date" : null,
+	"order_ref" : "DUBOIS - Dressing"
+}, {
+	"uid" : 4,
+	"order_phase_list" : [ {
+		"position" : 1,
+		"uid" : 17,
+		"order_uid" : 4,
+		"label" : "\u00c9tude"
+	}, {
+		"position" : 2,
+		"uid" : 18,
+		"order_uid" : 4,
+		"label" : "Fabrication"
+	}, {
+		"position" : 3,
+		"uid" : 19,
+		"order_uid" : 4,
+		"label" : "Finition"
+	}, {
+		"position" : 4,
+		"uid" : 20,
+		"order_uid" : 4,
+		"label" : "Livraison"
+	}, {
+		"position" : 5,
+		"uid" : 21,
+		"order_uid" : 4,
+		"label" : "Pose"
+	} ],
+	"project_cat" : "colorDressing",
+	"creation_date" : "2013-10-25",
+	"close_date" : "2013-11-25",
+	"order_ref" : "LEROY - Dressing"
+}, {
+	"uid" : 4,
+	"order_phase_list" : [ {
+		"position" : 1,
+		"uid" : 17,
+		"order_uid" : 4,
+		"label" : "\u00c9tude"
+	}, {
+		"position" : 2,
+		"uid" : 18,
+		"order_uid" : 4,
+		"label" : "Fabrication"
+	}, {
+		"position" : 3,
+		"uid" : 19,
+		"order_uid" : 4,
+		"label" : "Finition"
+	}, {
+		"position" : 4,
+		"uid" : 20,
+		"order_uid" : 4,
+		"label" : "Livraison"
+	}, {
+		"position" : 5,
+		"uid" : 21,
+		"order_uid" : 4,
+		"label" : "Pose"
+	} ],
+	"project_cat" : "colorDressing",
+	"creation_date" : "2013-09-25",
+	"close_date" : null,
+	"order_ref" : "DUPONT - Dressing"
+}, {
+	"uid" : 9,
+	"order_phase_list" : [ {
+		"position" : 1,
+		"uid" : 43,
+		"order_uid" : 9,
+		"label" : "\u00c9tude"
+	}, {
+		"position" : 2,
+		"uid" : 44,
+		"order_uid" : 9,
+		"label" : "Fabrication"
+	}, {
+		"position" : 3,
+		"uid" : 45,
+		"order_uid" : 9,
+		"label" : "Finition"
+	}, {
+		"position" : 4,
+		"uid" : 46,
+		"order_uid" : 9,
+		"label" : "Livraison"
+	} ],
+	"project_cat" : "colorMagasin",
+	"creation_date" : "2013-09-29",
+	"close_date" : null,
+	"order_ref" : "DURAND - Magasin"
+}, {
+	"uid" : 9,
+	"order_phase_list" : [ {
+		"position" : 1,
+		"uid" : 43,
+		"order_uid" : 9,
+		"label" : "\u00c9tude"
+	}, {
+		"position" : 2,
+		"uid" : 44,
+		"order_uid" : 9,
+		"label" : "Fabrication"
+	}, {
+		"position" : 3,
+		"uid" : 45,
+		"order_uid" : 9,
+		"label" : "Finition"
+	}, {
+		"position" : 4,
+		"uid" : 46,
+		"order_uid" : 9,
+		"label" : "Livraison"
+	} ],
+	"project_cat" : "colorMagasin",
+	"creation_date" : "2013-09-21",
+	"close_date" : "2013-10-15",
+	"order_ref" : "LEFEVRE - Magasin"
+}, {
+	"uid" : 2,
+	"order_phase_list" : [ {
+		"position" : 1,
+		"uid" : 6,
+		"order_uid" : 2,
+		"label" : "\u00c9tude"
+	}, {
+		"position" : 2,
+		"uid" : 7,
+		"order_uid" : 2,
+		"label" : "Fabrication"
+	}, {
+		"position" : 3,
+		"uid" : 8,
+		"order_uid" : 2,
+		"label" : "Finition"
+	}, {
+		"position" : 4,
+		"uid" : 9,
+		"order_uid" : 2,
+		"label" : "Livraison"
+	}, {
+		"position" : 5,
+		"uid" : 10,
+		"order_uid" : 2,
+		"label" : "Pose"
+	}, {
+		"position" : 6,
+		"uid" : 11,
+		"order_uid" : 2,
+		"label" : "Divers"
+	} ],
+	"project_cat" : "colorMagasin",
+	"creation_date" : "2013-09-10",
+	"close_date" : "2013-09-20",
+	"order_ref" : "MARTIN - Magasin"
+}, {
+	"uid" : 8,
+	"order_phase_list" : [ {
+		"position" : 1,
+		"uid" : 38,
+		"order_uid" : 8,
+		"label" : "\u00c9tude"
+	}, {
+		"position" : 2,
+		"uid" : 39,
+		"order_uid" : 8,
+		"label" : "Fabrication"
+	}, {
+		"position" : 3,
+		"uid" : 40,
+		"order_uid" : 8,
+		"label" : "Finition"
+	}, {
+		"position" : 4,
+		"uid" : 41,
+		"order_uid" : 8,
+		"label" : "Livraison"
+	}, {
+		"position" : 5,
+		"uid" : 42,
+		"order_uid" : 8,
+		"label" : "Pose"
+	} ],
+	"project_cat" : "colorMagasin",
+	"creation_date" : "2013-10-03",
+	"close_date" : null,
+	"order_ref" : "PETIT - Magasin"
+}, {
+	"uid" : 7,
+	"order_phase_list" : [ {
+		"position" : 1,
+		"uid" : 32,
+		"order_uid" : 7,
+		"label" : "\u00c9tude"
+	}, {
+		"position" : 2,
+		"uid" : 33,
+		"order_uid" : 7,
+		"label" : "Fabrication"
+	}, {
+		"position" : 3,
+		"uid" : 34,
+		"order_uid" : 7,
+		"label" : "Finition"
+	}, {
+		"position" : 4,
+		"uid" : 35,
+		"order_uid" : 7,
+		"label" : "Livraison"
+	}, {
+		"position" : 5,
+		"uid" : 36,
+		"order_uid" : 7,
+		"label" : "Pose"
+	}, {
+		"position" : 6,
+		"uid" : 37,
+		"order_uid" : 7,
+		"label" : "Divers"
+	} ],
+	"project_cat" : "colorBain",
+	"creation_date" : "2013-09-23",
+	"close_date" : null,
+	"order_ref" : "RICHARD - Bain"
+}, {
+	"uid" : 7,
+	"order_phase_list" : [ {
+		"position" : 1,
+		"uid" : 32,
+		"order_uid" : 7,
+		"label" : "\u00c9tude"
+	}, {
+		"position" : 2,
+		"uid" : 33,
+		"order_uid" : 7,
+		"label" : "Fabrication"
+	}, {
+		"position" : 3,
+		"uid" : 34,
+		"order_uid" : 7,
+		"label" : "Finition"
+	}, {
+		"position" : 4,
+		"uid" : 35,
+		"order_uid" : 7,
+		"label" : "Livraison"
+	}, {
+		"position" : 5,
+		"uid" : 36,
+		"order_uid" : 7,
+		"label" : "Pose"
+	}, {
+		"position" : 6,
+		"uid" : 37,
+		"order_uid" : 7,
+		"label" : "Divers"
+	} ],
+	"project_cat" : "colorBain",
+	"creation_date" : "2013-09-12",
+	"close_date" : "2013-09-25",
+	"order_ref" : "DUJARDIN - Bain"
+}, {
+	"uid" : 7,
+	"order_phase_list" : [ {
+		"position" : 1,
+		"uid" : 32,
+		"order_uid" : 7,
+		"label" : "\u00c9tude"
+	}, {
+		"position" : 2,
+		"uid" : 33,
+		"order_uid" : 7,
+		"label" : "Fabrication"
+	}, {
+		"position" : 3,
+		"uid" : 34,
+		"order_uid" : 7,
+		"label" : "Finition"
+	}, {
+		"position" : 4,
+		"uid" : 35,
+		"order_uid" : 7,
+		"label" : "Livraison"
+	}, {
+		"position" : 5,
+		"uid" : 36,
+		"order_uid" : 7,
+		"label" : "Pose"
+	}, {
+		"position" : 6,
+		"uid" : 37,
+		"order_uid" : 7,
+		"label" : "Divers"
+	} ],
+	"project_cat" : "colorBain",
+	"creation_date" : "2013-09-25",
+	"close_date" : null,
+	"order_ref" : "DUJARDIN - Bain (2)"
+}, {
+	"uid" : 6,
+	"order_phase_list" : [ {
+		"position" : 1,
+		"uid" : 27,
+		"order_uid" : 6,
+		"label" : "\u00c9tude"
+	}, {
+		"position" : 2,
+		"uid" : 28,
+		"order_uid" : 6,
+		"label" : "Fabrication"
+	}, {
+		"position" : 3,
+		"uid" : 29,
+		"order_uid" : 6,
+		"label" : "Finition"
+	}, {
+		"position" : 4,
+		"uid" : 30,
+		"order_uid" : 6,
+		"label" : "Livraison"
+	}, {
+		"position" : 5,
+		"uid" : 31,
+		"order_uid" : 6,
+		"label" : "Pose"
+	} ],
+	"project_cat" : "colorMenuiserie",
+	"creation_date" : "2013-10-01",
+	"close_date" : null,
+	"order_ref" : "ROBERT - Menuiserie"
+}, {
+	"uid" : 6,
+	"order_phase_list" : [ {
+		"position" : 1,
+		"uid" : 27,
+		"order_uid" : 6,
+		"label" : "\u00c9tude"
+	}, {
+		"position" : 2,
+		"uid" : 28,
+		"order_uid" : 6,
+		"label" : "Fabrication"
+	}, {
+		"position" : 3,
+		"uid" : 29,
+		"order_uid" : 6,
+		"label" : "Finition"
+	}, {
+		"position" : 4,
+		"uid" : 30,
+		"order_uid" : 6,
+		"label" : "Livraison"
+	}, {
+		"position" : 5,
+		"uid" : 31,
+		"order_uid" : 6,
+		"label" : "Pose"
+	} ],
+	"project_cat" : "colorMenuiserie",
+	"creation_date" : "2013-10-25",
+	"close_date" : "2013-11-25",
+	"order_ref" : "MOREAU - Menuiserie"
+}, {
+	"uid" : 6,
+	"order_phase_list" : [ {
+		"position" : 1,
+		"uid" : 27,
+		"order_uid" : 6,
+		"label" : "\u00c9tude"
+	}, {
+		"position" : 2,
+		"uid" : 28,
+		"order_uid" : 6,
+		"label" : "Fabrication"
+	}, {
+		"position" : 3,
+		"uid" : 29,
+		"order_uid" : 6,
+		"label" : "Finition"
+	}, {
+		"position" : 4,
+		"uid" : 30,
+		"order_uid" : 6,
+		"label" : "Livraison"
+	}, {
+		"position" : 5,
+		"uid" : 31,
+		"order_uid" : 6,
+		"label" : "Pose"
+	} ],
+	"project_cat" : "colorMenuiserie",
+	"creation_date" : "2013-10-15",
+	"close_date" : null,
+	"order_ref" : "SIMON - Menuiserie"
+}, {
+	"uid" : 1,
+	"order_phase_list" : [ {
+		"position" : 1,
+		"uid" : 1,
+		"order_uid" : 1,
+		"label" : "\u00c9tude"
+	}, {
+		"position" : 2,
+		"uid" : 2,
+		"order_uid" : 1,
+		"label" : "Fabrication"
+	}, {
+		"position" : 3,
+		"uid" : 3,
+		"order_uid" : 1,
+		"label" : "Finition"
+	}, {
+		"position" : 4,
+		"uid" : 4,
+		"order_uid" : 1,
+		"label" : "Livraison"
+	}, {
+		"position" : 5,
+		"uid" : 5,
+		"order_uid" : 1,
+		"label" : "Pose"
+	} ],
+	"project_cat" : "colorCuisine",
+	"creation_date" : "2013-10-05",
+	"close_date" : null,
+	"order_ref" : "RUELLE - PDT + Cr\u00e9dences"
+}, {
+	"uid" : 1,
+	"order_phase_list" : [ {
+		"position" : 1,
+		"uid" : 1,
+		"order_uid" : 1,
+		"label" : "\u00c9tude"
+	}, {
+		"position" : 2,
+		"uid" : 2,
+		"order_uid" : 1,
+		"label" : "Fabrication"
+	}, {
+		"position" : 3,
+		"uid" : 3,
+		"order_uid" : 1,
+		"label" : "Finition"
+	}, {
+		"position" : 4,
+		"uid" : 4,
+		"order_uid" : 1,
+		"label" : "Livraison"
+	}, {
+		"position" : 5,
+		"uid" : 5,
+		"order_uid" : 1,
+		"label" : "Pose"
+	} ],
+	"project_cat" : "colorCuisine",
+	"creation_date" : "2013-11-05",
+	"close_date" : "2013-11-15",
+	"order_ref" : "ROUX - Cuisine"
+}, {
+	"uid" : 1,
+	"order_phase_list" : [ {
+		"position" : 1,
+		"uid" : 1,
+		"order_uid" : 1,
+		"label" : "\u00c9tude"
+	}, {
+		"position" : 2,
+		"uid" : 2,
+		"order_uid" : 1,
+		"label" : "Fabrication"
+	}, {
+		"position" : 3,
+		"uid" : 3,
+		"order_uid" : 1,
+		"label" : "Finition"
+	}, {
+		"position" : 4,
+		"uid" : 4,
+		"order_uid" : 1,
+		"label" : "Livraison"
+	}, {
+		"position" : 5,
+		"uid" : 5,
+		"order_uid" : 1,
+		"label" : "Pose"
+	} ],
+	"project_cat" : "colorCuisine",
+	"creation_date" : "2013-09-04",
+	"close_date" : "2013-09-24",
+	"order_ref" : "FOURNIER - Cuisine"
+}, {
+	"uid" : 1,
+	"order_phase_list" : [ {
+		"position" : 1,
+		"uid" : 1,
+		"order_uid" : 1,
+		"label" : "\u00c9tude"
+	}, {
+		"position" : 2,
+		"uid" : 2,
+		"order_uid" : 1,
+		"label" : "Fabrication"
+	}, {
+		"position" : 3,
+		"uid" : 3,
+		"order_uid" : 1,
+		"label" : "Finition"
+	}, {
+		"position" : 4,
+		"uid" : 4,
+		"order_uid" : 1,
+		"label" : "Livraison"
+	}, {
+		"position" : 5,
+		"uid" : 5,
+		"order_uid" : 1,
+		"label" : "Pose"
+	} ],
+	"project_cat" : "colorCuisine",
+	"creation_date" : "2013-08-24",
+	"close_date" : "2013-09-03",
+	"order_ref" : "MOREL - Cuisine"
+}, {
+	"uid" : 5,
+	"order_phase_list" : [ {
+		"position" : 1,
+		"uid" : 22,
+		"order_uid" : 5,
+		"label" : "Commercialisation"
+	}, {
+		"position" : 2,
+		"uid" : 23,
+		"order_uid" : 5,
+		"label" : "Fabrication"
+	}, {
+		"position" : 3,
+		"uid" : 24,
+		"order_uid" : 5,
+		"label" : "Finition"
+	}, {
+		"position" : 4,
+		"uid" : 25,
+		"order_uid" : 5,
+		"label" : "Livraison"
+	}, {
+		"position" : 5,
+		"uid" : 26,
+		"order_uid" : 5,
+		"label" : "Pose"
+	} ],
+	"project_cat" : "colorMeuble",
+	"creation_date" : "2013-09-01",
+	"close_date" : "2013-09-15",
+	"order_ref" : "THOMAS - Meuble"
+}, {
+	"uid" : 5,
+	"order_phase_list" : [ {
+		"position" : 1,
+		"uid" : 22,
+		"order_uid" : 5,
+		"label" : "Commercialisation"
+	}, {
+		"position" : 2,
+		"uid" : 23,
+		"order_uid" : 5,
+		"label" : "Fabrication"
+	}, {
+		"position" : 3,
+		"uid" : 24,
+		"order_uid" : 5,
+		"label" : "Finition"
+	}, {
+		"position" : 4,
+		"uid" : 25,
+		"order_uid" : 5,
+		"label" : "Livraison"
+	}, {
+		"position" : 5,
+		"uid" : 26,
+		"order_uid" : 5,
+		"label" : "Pose"
+	} ],
+	"project_cat" : "colorMeuble",
+	"creation_date" : "2013-09-29",
+	"close_date" : "2013-10-14",
+	"order_ref" : "GIRARD - Meuble"
+}, {
+	"uid" : 5,
+	"order_phase_list" : [ {
+		"position" : 1,
+		"uid" : 22,
+		"order_uid" : 5,
+		"label" : "Commercialisation"
+	}, {
+		"position" : 2,
+		"uid" : 23,
+		"order_uid" : 5,
+		"label" : "Fabrication"
+	}, {
+		"position" : 3,
+		"uid" : 24,
+		"order_uid" : 5,
+		"label" : "Finition"
+	}, {
+		"position" : 4,
+		"uid" : 25,
+		"order_uid" : 5,
+		"label" : "Livraison"
+	}, {
+		"position" : 5,
+		"uid" : 26,
+		"order_uid" : 5,
+		"label" : "Pose"
+	} ],
+	"project_cat" : "colorMeuble",
+	"creation_date" : "2013-11-03",
+	"close_date" : "2013-11-19",
+	"order_ref" : "MERCIER - Meuble"
+}, {
+	"uid" : 10,
+	"order_phase_list" : [ {
+		"position" : 1,
+		"uid" : 49,
+		"order_uid" : 11,
+		"label" : "\u00c9t\u00e9"
+	}, {
+		"position" : 2,
+		"uid" : 52,
+		"order_uid" : 11,
+		"label" : "Automne"
+	}, {
+		"position" : 3,
+		"uid" : 53,
+		"order_uid" : 11,
+		"label" : "Hivers"
+	} ],
+	"project_cat" : "colorConges",
+	"creation_date" : "2012-01-01",
+	"close_date" : "2012-12-31",
+	"order_ref" : "^ Cong\u00e9s 2012"
+}, {
+	"uid" : 11,
+	"order_phase_list" : [ {
+		"position" : 1,
+		"uid" : 54,
+		"order_uid" : 13,
+		"label" : "D\u00e9chargement"
+	} ],
+	"project_cat" : "colorDechargement",
+	"creation_date" : "2012-01-01",
+	"close_date" : "2012-12-31",
+	"order_ref" : "^ D\u00e9chargement 2012"
+}, {
+	"uid" : 12,
+	"order_phase_list" : [ {
+		"position" : 1,
+		"uid" : 50,
+		"order_uid" : 12,
+		"label" : "Nettoyage atelier"
+	}, {
+		"position" : 2,
+		"uid" : 51,
+		"order_uid" : 12,
+		"label" : "Nettoyage bureaux"
+	} ],
+	"project_cat" : "colorNettoyage",
+	"creation_date" : "2012-01-01",
+	"close_date" : "2012-12-31",
+	"order_ref" : "^ Nettoyage 2012"
+}, {
+	"uid" : 13,
+	"order_phase_list" : [ {
+		"position" : 1,
+		"uid" : 47,
+		"order_uid" : 10,
+		"label" : "Zone fabrication"
+	}, {
+		"position" : 2,
+		"uid" : 48,
+		"order_uid" : 10,
+		"label" : "Zone Exp\u00e9dition"
+	} ],
+	"project_cat" : "colorRenovation",
+	"creation_date" : "2012-01-01",
+	"close_date" : "2012-12-31",
+	"order_ref" : "^ R\u00e9novation atelier 2012"
+}, {
+	"uid" : 14,
+	"order_phase_list" : [ {
+		"position" : 1,
+		"uid" : 49,
+		"order_uid" : 11,
+		"label" : "\u00c9t\u00e9"
+	}, {
+		"position" : 2,
+		"uid" : 52,
+		"order_uid" : 11,
+		"label" : "Automne"
+	}, {
+		"position" : 3,
+		"uid" : 53,
+		"order_uid" : 11,
+		"label" : "Hivers"
+	} ],
+	"project_cat" : "colorConges",
+	"creation_date" : "2013-01-01",
+	"close_date" : "2013-12-31",
+	"order_ref" : "^ Cong\u00e9s 2013"
+}, {
+	"uid" : 15,
+	"order_phase_list" : [ {
+		"position" : 1,
+		"uid" : 54,
+		"order_uid" : 13,
+		"label" : "D\u00e9chargement"
+	} ],
+	"project_cat" : "colorDechargement",
+	"creation_date" : "2013-01-01",
+	"close_date" : "2013-12-31",
+	"order_ref" : "^ D\u00e9chargement 2013"
+}, {
+	"uid" : 16,
+	"order_phase_list" : [ {
+		"position" : 1,
+		"uid" : 50,
+		"order_uid" : 12,
+		"label" : "Nettoyage atelier"
+	}, {
+		"position" : 2,
+		"uid" : 51,
+		"order_uid" : 12,
+		"label" : "Nettoyage bureaux"
+	} ],
+	"project_cat" : "colorNettoyage",
+	"creation_date" : "2013-01-01",
+	"close_date" : "2013-12-31",
+	"order_ref" : "^ Nettoyage 2013"
+}, {
+	"uid" : 17,
+	"order_phase_list" : [ {
+		"position" : 1,
+		"uid" : 47,
+		"order_uid" : 10,
+		"label" : "Zone fabrication"
+	}, {
+		"position" : 2,
+		"uid" : 48,
+		"order_uid" : 10,
+		"label" : "Zone Exp\u00e9dition"
+	} ],
+	"project_cat" : "colorRenovation",
+	"creation_date" : "2013-01-01",
+	"close_date" : "2013-12-31",
+	"order_ref" : "^ R\u00e9novation atelier 2013"
+}, {
+	"uid" : 18,
+	"order_phase_list" : [ {
+		"position" : 1,
+		"uid" : 49,
+		"order_uid" : 11,
+		"label" : "\u00c9t\u00e9"
+	}, {
+		"position" : 2,
+		"uid" : 52,
+		"order_uid" : 11,
+		"label" : "Automne"
+	}, {
+		"position" : 3,
+		"uid" : 53,
+		"order_uid" : 11,
+		"label" : "Hivers"
+	} ],
+	"project_cat" : "colorConges",
+	"creation_date" : "2014-01-01",
+	"close_date" : "2014-12-31",
+	"order_ref" : "^ Cong\u00e9s 2014"
+}, {
+	"uid" : 19,
+	"order_phase_list" : [ {
+		"position" : 1,
+		"uid" : 54,
+		"order_uid" : 13,
+		"label" : "D\u00e9chargement"
+	} ],
+	"project_cat" : "colorDechargement",
+	"creation_date" : "2014-01-01",
+	"close_date" : "2014-12-31",
+	"order_ref" : "^ D\u00e9chargement 2014"
+}, {
+	"uid" : 20,
+	"order_phase_list" : [ {
+		"position" : 1,
+		"uid" : 50,
+		"order_uid" : 12,
+		"label" : "Nettoyage atelier"
+	}, {
+		"position" : 2,
+		"uid" : 51,
+		"order_uid" : 12,
+		"label" : "Nettoyage bureaux"
+	} ],
+	"project_cat" : "colorNettoyage",
+	"creation_date" : "2014-01-01",
+	"close_date" : "2014-12-31",
+	"order_ref" : "^ Nettoyage 2014"
+}, {
+	"uid" : 21,
+	"order_phase_list" : [ {
+		"position" : 1,
+		"uid" : 47,
+		"order_uid" : 10,
+		"label" : "Zone fabrication"
+	}, {
+		"position" : 2,
+		"uid" : 48,
+		"order_uid" : 10,
+		"label" : "Zone Exp\u00e9dition"
+	} ],
+	"project_cat" : "colorRenovation",
+	"creation_date" : "2014-01-01",
+	"close_date" : "2014-12-31",
+	"order_ref" : "^ R\u00e9novation atelier 2014"
+} ]

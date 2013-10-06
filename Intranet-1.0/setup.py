@@ -29,7 +29,7 @@ testpkgs = ['WebTest >= 1.2.3',
             'coverage',
             'wsgiref']
 
-install_requires = ["TurboGears2 >= 2.2.2",
+install_requires = ["TurboGears2 == 2.2.2",
                     "Genshi",
                     "Mako",
                     "zope.sqlalchemy >= 0.4",
@@ -41,10 +41,10 @@ install_requires = ["TurboGears2 >= 2.2.2",
 setup(
     name='Intranet-1.0',
     version='0.1',
-    description='',
-    author='',
-    author_email='',
-    # url='',
+    description='Intranet for time recording',
+    author='Laurent LAPORTE',
+    author_email='sandlol2009@gmail.com',
+    url='',
     setup_requires=["PasteScript >= 1.7"],
     paster_plugins=['PasteScript', 'Pylons', 'TurboGears2', 'tg.devtools'],
     packages=find_packages(exclude=['ez_setup']),
@@ -66,6 +66,14 @@ setup(
     [paste.app_install]
     main = pylons.util:PylonsInstaller
     """,
+    # entry_points={
+    # 	'paste.app_factory': [
+    # 		'main = intranet.config.middleware:make_app'
+    # 	],
+    # 	'gearbox.plugins': [
+    # 		'turbogears-devtools = tg.devtools'
+    # 	]
+    # },
     dependency_links=["http://tg.gy/222"],
     zip_safe=False
 )

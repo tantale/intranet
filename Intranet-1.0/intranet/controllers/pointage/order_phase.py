@@ -38,7 +38,7 @@ class OrderPhaseController(RestController):
     @with_trailing_slash
     @expose('json')
     @expose('intranet.templates.pointage.order_phase.get_all')
-    def get_all(self, order_uid):
+    def get_all(self, order_uid, editable=True, selectable=False):
         """
         Display all records in a resource.
 
@@ -46,12 +46,19 @@ class OrderPhaseController(RestController):
 
         :param order_uid: Current order's UID
         """
+        asbool = lambda obj: str(obj).lower() in ('true', 'yes', 'on', 'y', 't', '1')  # @IgnorePep8
+        editable = asbool(editable)
+        selectable = asbool(selectable)
+
         LOG.info("get_all")
+
         accessor = OrderPhaseAccessor()
         order = accessor.get_order(order_uid)
         return dict(order_uid=order_uid,
                     project_cat=order.project_cat,
-                    order_phase_list=order.order_phase_list)
+                    order_phase_list=order.order_phase_list,
+                    editable=editable,
+                    selectable=selectable)
 
     @expose('intranet.templates.pointage.order_phase.new')
     def new(self, order_uid, **kw):
