@@ -91,8 +91,8 @@ class CalEvent(DeclarativeBase):
         dict_['id'] = ('cal_event_{uid}'.format(uid=self.uid))
         dict_['title'] = self.title
         dict_['allDay'] = False
-        dict_['start'] = self.event_start.strftime('%Y-%m-%dT%H:%M%SZ')
-        dict_['end'] = self.event_end.strftime('%Y-%m-%dT%H:%M%SZ')
+        dict_['start'] = self.event_start.strftime('%Y-%m-%dT%H:%M:%SZ')
+        dict_['end'] = self.event_end.strftime('%Y-%m-%dT%H:%M:%SZ')
         dict_['className'] = self.order_phase.order.project_cat
         # -- Non-standard Fields
         dict_['employee_name'] = self.employee.employee_name

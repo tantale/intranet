@@ -4,7 +4,6 @@
 ## end_date=end_date,
 ## employee=employee,
 ## employee_list=employee_list,
-## cal_event_list=cal_event_list
 <%! import json %>
 <div id='caltoolbar'>
 <%
@@ -49,12 +48,10 @@ else:
 </div>
 <div id='calendar'><!-- calendar placeholder --></div>
 <%
-json_event_list = []
-for cal_event in cal_event_list:
-	json_event_list.append(cal_event.event_obj())
-json_events = json.dumps(json_event_list)
+events_url = tg.url('/pointage/trcal/events', dict(employee_uid=employee.uid))
+events_url_json = json.dumps(events_url)
 
-new_url = tg.url('/pointage/trcal/new', dict(employee_uid=employee.uid, order_phase_uid=2))
+new_url = tg.url('/pointage/trcal/new', dict(employee_uid=employee.uid))
 new_url_json = json.dumps(new_url)
 %>\
 <script type='text/javascript'>
@@ -75,6 +72,64 @@ new_url_json = json.dumps(new_url)
 	$('#employee_refresh__select').change(function(){
 		$('#employee_refresh').submit();
 	});
+	
+	function open_new_event_dialog(calendar, date, allDay) {
+		if (allDay) {
+			console.debug("allDay == true => set hour to 8 O'clock...")
+			date.setHours(8, 0, 0);
+			console.debug("date: " + date.toISOString());
+		}
+		var time_zone_offset = date.getTimezoneOffset(),
+			local_date = new Date(date.getTime() - (time_zone_offset / 60) * 3600000);
+		console.debug("local_date: " + local_date.toISOString());
+
+		var url = ${new_url_json|n},
+			iso = local_date.toISOString().replace(/\.\d+Z$/, "");
+		url += "&event_start=" + iso;
+		url += "&time_zone_offset=" + time_zone_offset.toString();
+		
+		var selected = $('ul.selectable .ui-selected');
+		if (selected.length) {
+			console.debug("Selected: " + selected.attr('id'));
+			// order_phase_li_###
+			var order_phase_uid =  selected.attr('id').split('_')[3];
+			url += "&order_phase_uid=" + order_phase_uid;
+			$('#confirm_dialog_content').load(url);
+			$('#confirm_dialog').dialog({
+				width: 	600,
+				height: 400,
+				buttons: {
+					"Ajouter": function() {
+						$('#cal_event_create').submit();
+						$(this).dialog("close");
+					},
+					"Annuler": function() {
+						$(this).dialog("close");
+					}
+				},
+				title: "Saisir un pointage pour le " + local_date.getDate() + "/" + local_date.getMonth(),
+				close: function() {
+				}
+			}).dialog("open");
+		} else {
+			var msg = $('<div id="flash"></div>')
+				.append($('<div class="error"/>')
+						.text("Veuillez sélectionner une phase dans la liste des commandes\u00a0!"));
+			$('#confirm_dialog_content').empty().append(msg);
+			$('#confirm_dialog').dialog({
+				width: 	400,
+				height: 200,
+				buttons: {
+					"OK": function() {
+						$(this).dialog("close");
+					}
+				},
+				title: "Aucune phase sélectionnée"
+			}).dialog("open");
+		}
+	}
+	
+	
 	$('#calendar').fullCalendar(
 			{
 				theme : true,
@@ -124,47 +179,32 @@ new_url_json = json.dumps(new_url)
 					week : 'semaine',
 					day : 'jour'
 				},
-				dayClick: function(date, allDay, jsEvent, view) {
-					var url = ${new_url_json|n},
-						time_zone_offset = date.getTimezoneOffset(),
-						local_date = new Date(date.getTime() - (time_zone_offset / 60) * 3600000);
-					if (allDay) {
-						local_date.setHours(8, 0, 0);
-					}
-					local_date.setMilliseconds(0);
-					var iso = local_date.toISOString().replace("Z", "");
-					url += "&event_start=" + iso;
-					url += "&time_zone_offset=" + time_zone_offset.toString();
-					$('#confirm_dialog_content').load(url);
-					$('#confirm_dialog').dialog({
-						width: 	600,
-						height: 400,
-						buttons: {
-							"Ajouter": function() {
-								$('#cal_event_create').submit();
-								$(this).dialog("close");
-							},
-							"Annuler": function() {
-								$(this).dialog("close");
-							}
-						},
-						title: "Saisir un pointage pour le " + date.getDate() + "/" + date.getMonth(),
-						close: function() {
-						}
-					}).dialog("open");
-
-					/* if (allDay) {
-			            alert('Clicked on the entire day: ' + date);
-			        } else {
-			            alert('Clicked on the slot: ' + date);
-			        }
-			        alert('Coordinates: ' + jsEvent.pageX + ',' + jsEvent.pageY);
-			        alert('Current view: ' + view.name);
-			        // change the day's background color just for fun
-			        $(this).css('background-color', 'red'); */
-			        
+				droppable: true,
+				drop: function(date, allDay) {
+					open_new_event_dialog(this, date, allDay);
 			    },
-				events : ${json_events|n},
+				dayClick: function(date, allDay, jsEvent, view) {
+					open_new_event_dialog(this, date, allDay);
+			    },
+				eventSources: [{
+					url: ${events_url_json|n},
+					error: function() {
+						var msg = $('<div id="flash"></div>')
+							.append($('<div class="error"/>')
+									.text("Impossible de récupérer les événements\u00a0!"));
+						$('#confirm_dialog_content').empty().append(msg);
+						$('#confirm_dialog').dialog({
+							width: 	400,
+							height: 200,
+							buttons: {
+								"OK": function() {
+									$(this).dialog("close");
+								}
+							},
+							title: "Erreur interne"
+						}).dialog("open");
+		            },
+				}],
 				eventRender : on_event_render
 			});
 

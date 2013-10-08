@@ -99,6 +99,7 @@
 		$('#cal_event_create input[type=date]').datepicker();
 	}
 	$('#cal_event_create input[name=time_zone_offset]').val(time_zone_offset());
+	$('#cal_event_create input[name=event_duration]').focus();
 	$('#cal_event_create .create_button').button({
 		text : true,
 		icons : {
@@ -115,6 +116,7 @@
 			var ok = $('<div/>').append(responseText).find('#flash div.ok');
 			if (ok.length) {
 				console.log("OK, update the cal_event list but don't select any cal_event...");
+				$('#calendar').fullCalendar('renderEvent', jQuery.parseJSON(responseText));
 			} else {
 				console.log("ERROR: don't update the cal_event list.");
 			}

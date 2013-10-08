@@ -22,6 +22,7 @@ import datetime
 import logging
 import pylons
 import math
+import json
 
 LOG = logging.getLogger(__name__)
 
@@ -169,13 +170,13 @@ class CalendarController(RestController):
         # -- current employee, if any
         if employee_uid:
             employee = accessor.get_employee(employee_uid)
-            err_msg = (u"Pointage de {name} à la date du {date:%d/%m/%Y}"
+            err_msg = (u"Employé {name} à la date du {date:%d/%m/%Y}"
                        .format(name=employee.employee_name,
                                date=cal_date))
             LOG.info(err_msg)
         elif len(employee_list):
             employee = employee_list[0]
-            err_msg = (u"Pointage de {name} à la date du {date:%d/%m/%Y}"
+            err_msg = (u"Employé {name} à la date du {date:%d/%m/%Y}"
                        .format(name=employee.employee_name,
                                date=cal_date))
             LOG.info(err_msg)
@@ -185,27 +186,51 @@ class CalendarController(RestController):
                        .format(date=cal_date))
             LOG.warning(err_msg)
 
-        # -- event list of the current employee
-        if employee is None:
-            cal_event_list = []
-        else:
-            # -- current events of the current employee
-            cal_overlap_cond = overlap_cond(start_date, end_date,
-                                            CalEvent.event_start,
-                                            CalEvent.event_end)
-            cal_filter_cond = and_(CalEvent.employee == employee,
-                                   cal_overlap_cond)
-            cal_order_by_cond = CalEvent.event_start
-            cal_event_list = accessor.get_cal_event_list(cal_filter_cond,
-                                                         cal_order_by_cond)
-
         return dict(time_zone_offset=time_zone_offset,
                     cal_date=cal_date,
                     start_date=start_date,
                     end_date=end_date,
                     employee=employee,
-                    employee_list=employee_list,
-                    cal_event_list=cal_event_list)
+                    employee_list=employee_list)
+
+    @expose()
+    def events(self, employee_uid, start, end, **kw):
+        """
+        Generate the events list as a JSON object.
+
+        GET /pointage/trcal/events?employee_uid=&start_date=&end_date=
+        @see: http://arshaw.com/fullcalendar/docs/event_data/events_json_feed/
+
+        :param employee_uid: Current employee uid's UID
+        """
+        LOG.info("CalendarController.events")
+        LOG.debug("- employee_uid: {!r}".format(employee_uid))
+        LOG.debug("- start:        {!r}".format(start))
+        LOG.debug("- end:          {!r}".format(end))
+
+        # -- date interval from the calendar's timestamps
+        start_date = datetime.datetime.utcfromtimestamp(float(start))
+        end_date = datetime.datetime.utcfromtimestamp(float(end))
+        LOG.debug("date interval from the calendar's timestamps: [{start_date} ; {end_date}]"
+                  .format(start_date=start_date,
+                          end_date=end_date))
+
+        # -- current employee
+        accessor = CalEventAccessor()
+        employee = accessor.get_employee(employee_uid)
+
+        # -- current events of the current employee
+        cal_overlap_cond = overlap_cond(start_date, end_date,
+                                        CalEvent.event_start,
+                                        CalEvent.event_end)
+        cal_filter_cond = and_(CalEvent.employee == employee,
+                               cal_overlap_cond)
+        cal_order_by_cond = CalEvent.event_start
+        cal_event_list = accessor.get_cal_event_list(cal_filter_cond,
+                                                     cal_order_by_cond)
+
+        return json.dumps([cal_event.event_obj()
+                           for cal_event in cal_event_list])
 
     @expose('intranet.templates.pointage.trcal.new')
     def new(self, employee_uid, order_phase_uid, time_zone_offset, **kw):
@@ -243,7 +268,7 @@ class CalendarController(RestController):
                'event_start': IsoDatetimeConverter,
                'event_duration': Int(min=1, max=999, not_empty=True)},
               error_handler=new)
-    @expose()
+    @expose('json')
     def post(self, employee_uid, order_phase_uid, time_zone_offset,
              title, event_start, event_duration, comment, **kwagrs):
         """
@@ -255,18 +280,27 @@ class CalendarController(RestController):
 
         :param order_phase_uid: Current order phase uid's UID
         """
-        LOG.info("post")
+        LOG.info("CalendarController.post")
+        LOG.debug("- employee_uid:     {!r}".format(employee_uid))
+        LOG.debug("- order_phase_uid:  {!r}".format(order_phase_uid))
+        LOG.debug("- time_zone_offset: {!r}".format(time_zone_offset))
+        LOG.debug("- title:            {!r}".format(title))
+        LOG.debug("- event_start:      {!r}".format(event_start))
+        LOG.debug("- event_duration:   {!r}".format(event_duration))
+        LOG.debug("- comment:          {!r}".format(comment))
+
         # -- convert parameters
-        event_start_utc = event_start - datetime.timedelta(hours=float(time_zone_offset) / 100)  # @IgnorePep8
+        event_start_utc = event_start + datetime.timedelta(minutes=time_zone_offset)  # @IgnorePep8
         event_end_utc = event_start_utc + datetime.timedelta(hours=float(event_duration) / 100)  # @IgnorePep8
+        LOG.debug("- event_start_utc:  {!r}".format(event_start_utc))
+        LOG.debug("- event_end_utc:    {!r}".format(event_end_utc))
+
         # -- insert event in database
         accessor = CalEventAccessor()
         cal_event = accessor.insert_cal_event(employee_uid, order_phase_uid,
                                               title, event_start_utc,
                                               event_end_utc, comment)
-        msg_fmt = (u"L’événement « {title} » est créée.")
-        flash(msg_fmt.format(title=title), status="ok")
-        return dict(cal_event=cal_event)
+        return dict(cal_event=cal_event.event_obj())
 
     @expose('intranet.templates.pointage.trcal.edit')
     def edit(self, employee_uid, order_phase_uid, uid, **kw):

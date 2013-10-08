@@ -17,46 +17,46 @@ form_post_id = 'order_phase_post_{}'.format(order_uid)
 	%if editable:
 	<ul id="${ul_list_id}" class="order_phase_list sortable">
 	%for order_phase in order_phase_list:
-	    <li id="order_phase_li_${order_phase.uid}"
-		    class="ui-state-default"><span
-	        class="ui-icon ui-icon-arrowthick-2-n-s"></span><span
-	        id="order_phase_label_${order_phase.uid}"
-	        class="order_phase editable">${order_phase.label}</span></li>
+		<li id="order_phase_li_${order_phase.uid}"
+			class="ui-state-default"><span
+			class="ui-icon ui-icon-arrowthick-2-n-s"></span><span
+			id="order_phase_label_${order_phase.uid}"
+			class="order_phase editable">${order_phase.label}</span></li>
 	%endfor
 	</ul>
 	%elif selectable:
 	<ul id="${ul_list_id}" class="order_phase_list selectable">
 	%for order_phase in order_phase_list:
-	    <li id="order_phase_li_${order_phase.uid}"
-		    class="ui-widget-content"><span
-	        id="order_phase_label_${order_phase.uid}"
-	        class="order_phase selectable">${order_phase.label}</span></li>
+		<li id="order_phase_li_${order_phase.uid}"
+			class="ui-widget-content"><span
+			id="order_phase_label_${order_phase.uid}"
+			class="order_phase">${order_phase.label}</span></li>
 	%endfor
 	</ul>
 	%endif
 %else:
-    <p id="${p_empty_id}"
-    class="empty_order_phase_list alignCenter"><em>Aucune phase</em></p>
+	<p id="${p_empty_id}"
+	class="empty_order_phase_list alignCenter"><em>Aucune phase</em></p>
 %endif
 %if editable:
 <div id="${div_bottom_id}" class="order_phase_bottom">
 <form id="${form_post_id}" class="inline_form alignCenter"
-    action="${tg.url('/pointage/order_phase/')}"
-    method="post">
-    <p><input type="hidden" name="order_uid" value="${order_uid}"
-    	/><input id="${form_post_id}__label" type="text" name="label"
-        value="" placeholder="Libellé"
-        title="Libellé de la phase (requis)" />
-        <button id="${form_post_id}__post" type="submit" class="post_button"
-                    title="Ajoute une nouvelle phase">Ajouter</button></p>
+	action="${tg.url('/pointage/order_phase/')}"
+	method="post">
+	<p><input type="hidden" name="order_uid" value="${order_uid}"
+		/><input id="${form_post_id}__label" type="text" name="label"
+		value="" placeholder="Libellé"
+		title="Libellé de la phase (requis)" />
+		<button id="${form_post_id}__post" type="submit" class="post_button"
+					title="Ajoute une nouvelle phase">Ajouter</button></p>
 </form>
 </div>
 %endif
 </div>
 <script type='text/javascript'>
-    "use strict";
-    %if editable:
-    $('#${ul_list_id}').sortable({
+	"use strict";
+	%if editable:
+	$('#${ul_list_id}').sortable({
 		update: function(event, ui) {
 			var child_list = ui.item.parent().children(), uid_list = [], data;
 			$.each(child_list, function(index, item) {
@@ -92,17 +92,53 @@ form_post_id = 'order_phase_post_{}'.format(order_uid)
 			}
 		}
 	});
-    %elif selectable:
-	$('#${ul_list_id}').selectable({
+	%elif selectable:
+	$("#${ul_list_id} li" )
+	.zIndex(1000)
+	.draggable({
+		appendTo: 'body',
+		containment: false,
+		cursor: 'move',
+		cursorAt: {left: 5},
+		delay: 300,
+		distance: 10,
+		helper: 'clone',
+		opacity: 0.7,
+		revert: 'invalid',
+		revertDuration: 300,
+		scroll: false,
+		start: function() {
+			$(this).trigger('click');
+		}
+	})
+	.removeClass('ui-selecting ui-selected')
+	.mouseenter(function() {
+		if ($(this).hasClass('ui-selected')) {
+		} else {
+			console.info('mouseenter: ' + $(this).attr('id'));
+			$(this).addClass('ui-selecting');
+		}
+	})
+	.mouseleave(function() {
+		if ($(this).hasClass('ui-selected')) {
+		} else {
+			console.info('mouseleave: ' + $(this).attr('id'));
+			$(this).removeClass('ui-selecting');
+		}
+	})
+	.click(function() {
+		console.info('click: ' + $(this).attr('id'));
+		$('ul.selectable li').removeClass('ui-selecting ui-selected');
+		$(this).addClass('ui-selected');
 	});
 	%endif
-    $('#${form_post_id} .post_button').button({
-        text: false,
-        icons: {
-            primary: "ui-icon-plus"
-        }
-    });
-    $('#${form_post_id} input[name=label]').focus();
+	$('#${form_post_id} .post_button').button({
+		text: false,
+		icons: {
+			primary: "ui-icon-plus"
+		}
+	});
+	$('#${form_post_id} input[name=label]').focus();
 	$('#${form_post_id}').ajaxForm({
 		target : '#${div_phases_id}'
 	});
