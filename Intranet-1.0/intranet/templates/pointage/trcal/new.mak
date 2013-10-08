@@ -91,9 +91,14 @@
 				// keep '#confirm_dialog' opened
 				console.log("ERROR: don't update the cal_event list.");
 			} else {
+				var event_obj = jQuery.parseJSON(responseText),
+					start = $.fullCalendar.parseISO8601(event_obj.start);
 				console.log("OK, update the cal_event list but don't select any cal_event...");
+				console.log("start: " + start.toISOString());
 				$('#confirm_dialog').dialog("close");
-				$('#calendar').fullCalendar('renderEvent', jQuery.parseJSON(responseText));
+				$('#calendar')
+					.fullCalendar('renderEvent', event_obj)
+					.fullCalendar('gotoDate', start);
 			}
 		}
 	});

@@ -86,12 +86,10 @@ event_resize_url_json = json.dumps(event_resize_url)
 			date.setHours(8, 0, 0);
 			console.debug("date: " + date.toISOString());
 		}
-		var time_zone_offset = date.getTimezoneOffset(),
-			local_date = new Date(date.getTime() - (time_zone_offset / 60) * 3600000);
-		console.debug("local_date: " + local_date.toISOString());
+		var time_zone_offset = date.getTimezoneOffset();
 
 		var url = ${new_url_json|n},
-			iso = local_date.toISOString().replace(/\.\d+Z$/, "");
+			iso = $.fullCalendar.formatDate(date, "yyyy-MM-dd'T'HH:mm:ss"); // local date
 		url += "&event_start=" + iso;
 		url += "&time_zone_offset=" + time_zone_offset.toString();
 		
@@ -113,7 +111,7 @@ event_resize_url_json = json.dumps(event_resize_url)
 						$(this).dialog("close");
 					}
 				},
-				title: "Saisir un pointage pour le " + local_date.getDate() + "/" + local_date.getMonth(),
+				title: "Saisir un pointage",
 				close: function() {
 				}
 			}).dialog("open");
@@ -207,6 +205,8 @@ event_resize_url_json = json.dumps(event_resize_url)
 			    			},
 			    			success: function(){
 			    				console.info("Event day/time succefully updated.");
+					    		console.info("gotoDate: " + event.start.toISOString());
+					    		$('#calendar').fullCalendar('gotoDate', event.start);
 			    			}
 			    		});
 			    	}
@@ -229,6 +229,8 @@ event_resize_url_json = json.dumps(event_resize_url)
 			    			},
 			    			success: function(){
 			    				console.info("Event duration succefully updated.");
+					    		console.info("gotoDate: " + event.start.toISOString());
+					    		$('#calendar').fullCalendar('gotoDate', event.start);
 			    			}
 			    		});
 			    	}
