@@ -285,13 +285,12 @@ class CalendarController(RestController):
     @validate({'employee_uid': Int(min=0, not_empty=True),
                'order_phase_uid': Int(min=0, not_empty=True),
                'time_zone_offset': Int(min=-1200, max=1200, not_empty=True),
-               'title': NotEmpty,
                'event_start': IsoDatetimeConverter,
                'event_duration': Int(min=1, max=999, not_empty=True)},
               error_handler=new)
     @expose()
     def post(self, employee_uid, order_phase_uid, time_zone_offset,
-             title, event_start, event_duration, comment, **kwagrs):
+             event_start, event_duration, comment, **kwagrs):
         """
         Create a new record.
 
@@ -305,7 +304,6 @@ class CalendarController(RestController):
         LOG.debug("- employee_uid:     {!r}".format(employee_uid))
         LOG.debug("- order_phase_uid:  {!r}".format(order_phase_uid))
         LOG.debug("- time_zone_offset: {!r}".format(time_zone_offset))
-        LOG.debug("- title:            {!r}".format(title))
         LOG.debug("- event_start:      {!r}".format(event_start))
         LOG.debug("- event_duration:   {!r}".format(event_duration))
         LOG.debug("- comment:          {!r}".format(comment))
@@ -319,7 +317,7 @@ class CalendarController(RestController):
         # -- insert event in database
         accessor = CalEventAccessor()
         accessor.insert_cal_event(employee_uid, order_phase_uid,
-                                  title, event_start_utc,
+                                  event_start_utc,
                                   event_end_utc, comment)
 
         # -- return the newly created event
@@ -344,16 +342,14 @@ class CalendarController(RestController):
         form_errors = pylons.tmpl_context.form_errors  # @UndefinedVariable
         accessor = CalEventAccessor()
         cal_event = accessor.get_cal_event(uid)
-        values = dict(uid=cal_event.uid,
-                      title=cal_event.title)
+        values = dict(uid=cal_event.uid)
         values.update(kw)
         return dict(employee_uid=employee_uid, order_phase_uid=order_phase_uid,
                     values=values,
                     form_errors=form_errors)
 
-    @validate({'title': NotEmpty}, error_handler=edit)
     @expose()
-    def put(self, employee_uid, order_phase_uid, uid, title, **kw):
+    def put(self, employee_uid, order_phase_uid, uid, **kw):
         """
         Update an existing record.
 
@@ -365,13 +361,11 @@ class CalendarController(RestController):
         :param order_phase_uid: Current order phase uid's UID
 
         :param uid: UID of the CalEvent to update
-
-        :param title: the order phase's title (not null)
         """
         accessor = CalEventAccessor()
-        accessor.update_cal_event(uid, title=title)
-        msg_fmt = (u"La phase de commande « {title} » est modifiée.")
-        flash(msg_fmt.format(title=title), status="ok")
+        accessor.update_cal_event(uid)
+        # msg_fmt = (u"La phase de commande « {title} » est modifiée.")
+        # flash(msg_fmt.format(title=title), status="ok")
         redirect('./{uid}/edit'.format(uid=uid))
 
     @expose('intranet.templates.pointage.trcal.get_delete')
@@ -398,7 +392,7 @@ class CalendarController(RestController):
         :param uid: UID of the CalEvent to delete.
         """
         accessor = CalEventAccessor()
-        old_cal_event = accessor.delete_cal_event(uid)
-        msg_fmt = (u"La phase de commande « {title} » est supprimée.")
-        flash(msg_fmt.format(title=old_cal_event.title), status="ok")
+        # old_cal_event = accessor.delete_cal_event(uid)
+        # msg_fmt = (u"La phase de commande « {title} » est supprimée.")
+        # flash(msg_fmt.format(title=old_cal_event.title), status="ok")
         return dict(cal_event=None)

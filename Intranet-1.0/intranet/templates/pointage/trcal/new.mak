@@ -42,19 +42,8 @@
 			disabled="disabled"
 			title="Pointage pour la phase : ${order_phase.label}" /></p>
 ##
-## Calendar event fields: title, event_start, event_duration, comment
+## Calendar event fields: event_start, event_duration, comment
 ##
-	<p><label for="cal_event_create__title">Titre :</label>
-		<input id="cal_event_create__title" type="text" name="title"
-			size="50"
-			value="${values.get('title')}"
-			placeholder="Titre"
-			title="Titre du pointage" />
-	%if 'title' in form_errors:
-	<span class="error">${form_errors['title']}</span>
-	%endif
-	</p>
-
 	<p><label for="cal_event_create__event_start">Date / Heure :</label>
 		<input id="cal_event_create__event_start" type="datetime-local" name="event_start"
 			value="${values.get('event_start')}"
@@ -84,9 +73,7 @@
 	<span class="error">${form_errors['comment']}</span>
 	%endif
 	</p>
-
-	<!-- <p><button id="cal_event_create__create" type="submit" class="create_button"
-		title="Saisir les informations concernant un pointage">Créer</button></p> -->
+	
 </form>
 <script type='text/javascript'>
 	"use strict";

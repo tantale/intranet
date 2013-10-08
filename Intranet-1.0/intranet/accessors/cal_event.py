@@ -52,14 +52,14 @@ class CalEventAccessor(BasicAccessor):
         return self._get_record_list(filter_cond, order_by_cond)
 
     def insert_cal_event(self, employee_uid, order_phase_uid,
-                         title, event_start, event_end, comment):
+                         event_start, event_end, comment):
         try:
             # NOTE: selection/insertion order is important:
             # first query the foreign objects...
             employee = self.get_employee(employee_uid)
             order_phase = self.get_order_phase(order_phase_uid)
             # ... then create a new calendar event and attach them...
-            cal_event = CalEvent(title, event_start, event_end, comment)
+            cal_event = CalEvent(event_start, event_end, comment)
             cal_event.employee = employee
             cal_event.order_phase = order_phase
             # ... and commit.
