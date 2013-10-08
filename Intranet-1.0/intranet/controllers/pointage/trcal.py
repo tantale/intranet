@@ -257,6 +257,26 @@ class CalendarController(RestController):
         return json.dumps([cal_event.event_obj()
                            for cal_event in cal_event_list])
 
+    @expose()
+    def event_resize(self, uid, minute_delta):
+        LOG.info("CalendarController.event_resize")
+        LOG.debug("- uid:          {!r}".format(uid))
+        LOG.debug("- minute_delta: {!r}".format(minute_delta))
+        accessor = CalEventAccessor()
+        delta = datetime.timedelta(minutes=int(minute_delta))
+        accessor.increase_duration(uid, delta)
+
+    @expose()
+    def event_drop(self, uid, day_delta, minute_delta):
+        LOG.info("CalendarController.event_drop")
+        LOG.debug("- uid:          {!r}".format(uid))
+        LOG.debug("- day_delta:    {!r}".format(day_delta))
+        LOG.debug("- minute_delta: {!r}".format(minute_delta))
+        accessor = CalEventAccessor()
+        delta = datetime.timedelta(days=int(day_delta),
+                                   minutes=int(minute_delta))
+        accessor.move_datetime(uid, delta)
+
     @expose('intranet.templates.pointage.trcal.new')
     def new(self, employee_uid, order_phase_uid, time_zone_offset, **kw):
         """

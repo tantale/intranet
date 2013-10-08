@@ -79,3 +79,44 @@ class CalEventAccessor(BasicAccessor):
         LOG.debug("delete_cal_event: {uid!r}"
                   .format(uid=uid))
         return self._delete_record(self, uid)
+
+    def increase_duration(self, uid, end_timedelta):
+        """
+        Event has changed in duration.
+
+        :param uid:
+        :param end_timedelta:
+        """
+        LOG.debug("move_datetime: {uid!r}".format(uid=uid))
+        record = self._get_record(uid)
+        try:
+            LOG.debug("before: [{record.event_start}, {record.event_end}]"
+                      .format(record=record))
+            record.event_end += end_timedelta
+            LOG.debug("after:  [{record.event_start}, {record.event_end}]"
+                      .format(record=record))
+            transaction.commit()
+        except:
+            transaction.abort()
+            raise
+
+    def move_datetime(self, uid, timedelta):
+        """
+        Event has moved to a different day/time.
+
+        :param uid:
+        :param timedelta:
+        """
+        LOG.debug("move_datetime: {uid!r}".format(uid=uid))
+        record = self._get_record(uid)
+        try:
+            LOG.debug("before: [{record.event_start}, {record.event_end}]"
+                      .format(record=record))
+            record.event_start += timedelta
+            record.event_end += timedelta
+            LOG.debug("after:  [{record.event_start}, {record.event_end}]"
+                      .format(record=record))
+            transaction.commit()
+        except:
+            transaction.abort()
+            raise

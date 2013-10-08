@@ -53,6 +53,13 @@ events_url_json = json.dumps(events_url)
 
 new_url = tg.url('./new', dict(employee_uid=employee.uid))
 new_url_json = json.dumps(new_url)
+
+event_drop_url = tg.url('./event_drop')
+event_drop_url_json = json.dumps(event_drop_url)
+
+event_resize_url = tg.url('./event_resize')
+event_resize_url_json = json.dumps(event_resize_url)
+
 %>\
 <script type='text/javascript'>
 	"use strict";
@@ -91,7 +98,7 @@ new_url_json = json.dumps(new_url)
 		var selected = $('ul.selectable .ui-selected');
 		if (selected.length) {
 			console.debug("Selected: " + selected.attr('id'));
-			// order_phase_li_###
+			// id = 'order_phase_li_###'
 			var order_phase_uid =  selected.attr('id').split('_')[3];
 			url += "&order_phase_uid=" + order_phase_uid;
 			$('#confirm_dialog_content').load(url);
@@ -138,6 +145,8 @@ new_url_json = json.dumps(new_url)
 					right : 'today prev,next'
 				},
 				editable : true,
+				eventStartEditable : true,
+				eventDurationEditable : true,
 				firstDay : 1, // Monday
 				firstHour : 8, // 8h
 				weekends : true, // 7 days
@@ -182,8 +191,47 @@ new_url_json = json.dumps(new_url)
 				drop: function(date, allDay) {
 					open_new_event_dialog(this, date, allDay);
 			    },
+			    eventDrop: function(event, dayDelta, minuteDelta, allDay, revertFunc, jsEvent, ui, view) {
+			    	if (allDay) {
+			    		console.info("Please, this event ins't a all day event !");
+			    		revertFunc();
+			    	} else {
+			    		$.ajax({
+			    			type: "GET",
+			    			url: ${event_drop_url_json|n},
+			    			data: {
+			    				// id = 'cal_event_###'
+			    				uid: event.id.split('_')[2],
+			    				day_delta: dayDelta,
+			    				minute_delta: minuteDelta
+			    			},
+			    			success: function(){
+			    				console.info("Event day/time succefully updated.");
+			    			}
+			    		});
+			    	}
+			    },
 				dayClick: function(date, allDay, jsEvent, view) {
 					open_new_event_dialog(this, date, allDay);
+			    },
+			    eventResize: function(event, dayDelta, minuteDelta, revertFunc, jsEvent, ui, view) {
+			    	if (dayDelta != 0) {
+			    		console.info("Please, don't change the number of days !");
+			    		revertFunc();
+			    	} else {
+			    		$.ajax({
+			    			type: "GET",
+			    			url: ${event_resize_url_json|n},
+			    			data: {
+			    				// id = 'cal_event_###'
+			    				uid: event.id.split('_')[2],
+			    				minute_delta: minuteDelta
+			    			},
+			    			success: function(){
+			    				console.info("Event duration succefully updated.");
+			    			}
+			    		});
+			    	}
 			    },
 				eventSources: [{
 					url: ${events_url_json|n},
