@@ -115,9 +115,11 @@
 			console.log("search for '<div id=\"flash\"><div class=\"error\">' tag...");
 			var error = $('<div/>').append(responseText).find('#flash div.error');
 			if (error.length) {
+				// keep '#confirm_dialog' opened
 				console.log("ERROR: don't update the cal_event list.");
 			} else {
 				console.log("OK, update the cal_event list but don't select any cal_event...");
+				$('#confirm_dialog').dialog("close");
 				$('#calendar').fullCalendar('renderEvent', jQuery.parseJSON(responseText));
 			}
 		}

@@ -101,7 +101,6 @@ new_url_json = json.dumps(new_url)
 				buttons: {
 					"Ajouter": function() {
 						$('#cal_event_create').submit();
-						$(this).dialog("close");
 					},
 					"Annuler": function() {
 						$(this).dialog("close");
