@@ -11,7 +11,7 @@
 %endif
 <%img_src = values.get('photo_path') or tg.url('/images/silhouette.png')%>\
 <form id="employee_update" class="ui-widget"
-	action="${tg.url('/pointage/employee/{uid}'.format(uid=values['uid']))}"
+	action="${tg.url('./{uid}'.format(uid=values['uid']))}"
 	method="post" enctype="multipart/form-data">
 	<fieldset>
 		<legend class="ui-widget-header">Modifier les informations concernant ${values.get('employee_name')}</legend>
@@ -79,7 +79,7 @@
 </form>
 
 <form id="employee_get_delete" class="minimal_form"
-	action="${tg.url('/pointage/employee/{uid}/delete'.format(uid=values['uid']))}"
+	action="${tg.url('./{uid}/delete'.format(uid=values['uid']))}"
 	method="get">
 	<p>
 		<button id="employee_get_delete__delete" type="submit" class="delete_button"

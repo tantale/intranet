@@ -41,7 +41,7 @@ form_post_id = 'order_phase_post_{}'.format(order_uid)
 %if editable:
 <div id="${div_bottom_id}" class="order_phase_bottom">
 <form id="${form_post_id}" class="inline_form alignCenter"
-	action="${tg.url('/pointage/order_phase/')}"
+	action="${tg.url('../order_phase/')}"
 	method="post">
 	<p><input type="hidden" name="order_uid" value="${order_uid}"
 		/><input id="${form_post_id}__label" type="text" name="label"
@@ -63,14 +63,14 @@ form_post_id = 'order_phase_post_{}'.format(order_uid)
 				uid_list[index] = $(item).attr('id').split('_')[3];
 			});
 			data = {uids: uid_list.join('|'), delim: '|'};
-			$.post("${tg.url('/pointage/order_phase/reorder')}", data);
+			$.post("${tg.url('../order_phase/reorder')}", data);
 		}
 	});
 	$('#${ul_list_id}').disableSelection();
 	$('#${ul_list_id} .editable').editable({
 		type: "text",
 		pk: "unused",
-		url: "${tg.url('/pointage/order_phase/edit_in_place')}",
+		url: "${tg.url('../order_phase/edit_in_place')}",
 		title: "Saisir le libellé de la phase",
 		placeholder: "Libellé",
 		emptytext: "Vide",

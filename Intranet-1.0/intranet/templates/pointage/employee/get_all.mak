@@ -12,7 +12,7 @@
 	%for employee in employee_list:
 		<%img_src = employee.photo_path if employee.photo_path else tg.url('/images/silhouette.min.png')%>\
 		<form id="employee_edit_${employee.uid}" class="minimal_form"
-			action="${tg.url('/pointage/employee/{employee.uid}/edit'.format(employee=employee))}" method="get">
+			action="${tg.url('./{employee.uid}/edit'.format(employee=employee))}" method="get">
 			<p><button id="employee_edit_${employee.uid}__edit" type="submit"
 				class="edit_button searchable"
 				title="Sélectionner ${employee.employee_name}"><img

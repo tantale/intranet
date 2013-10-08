@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """Main Controller"""
 
+from intranet.controllers.admin import AdminController
 from intranet.controllers.error import ErrorController
 from intranet.controllers.pointage import PointageControoler
 from intranet.lib.base import BaseController
@@ -29,6 +30,7 @@ class RootController(BaseController):
     """
 
     error = ErrorController()
+    admin = AdminController()
     pointage = PointageControoler()
 
     def _before(self, *args, **kw):

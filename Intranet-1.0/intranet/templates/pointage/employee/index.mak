@@ -55,16 +55,16 @@
 <body>
 	<div id="topFrame" class="ui-layout-north">
 		<div id="toolbar" class="ui-widget-header">
-			<h1>Gestion des pointages</h1>
-			<a id="toolbar_employee" href="${tg.url('/pointage/employee/index')}">Employés</a>
-			<a id="toolbar_order" href="${tg.url('/pointage/order/index')}">Commandes</a>
-			<a id="toolbar_calendar" href="${tg.url('/pointage/trcal/index')}">Calendrier</a>
+			<h1>${main_menu['title']}</h1>
+			%for item in main_menu['item_list']:
+			<a id="${item['id']}" href="${item['href']}" title="${item['title']}">${item['content']}</a>
+			%endfor
 		</div>\
 	</div>
 	<div id="leftFrame" class="ui-layout-west">
 		<div id="searchFrame">
 			<form id="employee_get_all" class="minimal_form"
-				action="${tg.url('/pointage/employee/get_all/')}" method="get">
+				action="${tg.url('./get_all/')}" method="get">
 				<p>
 					<input id="employee_get_all__keyword" type="search" name="keyword"
 						placeholder="Mot-clef"
@@ -76,7 +76,7 @@
 			</form>
 		</div>\
 		<form id="employee_new" class="minimal_form alignCenter"
-			action="${tg.url('/pointage/employee/new')}" method="get">
+			action="${tg.url('./new')}" method="get">
 			<p>
 				<button id="employee_new__new" type="submit" class="new_button"
 					title="Ajouter un employé">Nouvel employé</button>

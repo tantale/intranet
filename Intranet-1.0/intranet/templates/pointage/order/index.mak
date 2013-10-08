@@ -16,7 +16,7 @@
 <link rel="stylesheet" type="text/css" href="${tg.url('/css/jqueryui-editable.css')}" />
 <link rel="stylesheet" type="text/css" href="${tg.url('/css/intranet.css')}" />
 <link rel="stylesheet" type="text/css" href="${tg.url('/css/intranet.pointage.css')}" />
-<link rel="stylesheet" type="text/css" href="${tg.url('/pointage/order_cat.css')}" />
+<link rel="stylesheet" type="text/css" href="${tg.url('../order_cat.css')}" />
 <script type='text/javascript' src="${tg.url('/javascript/jquery-1.9.1.js')}"></script>
 <script type='text/javascript' src="${tg.url('/javascript/jquery-ui-1.10.3.custom.min.js')}"></script>
 <script type='text/javascript' src="${tg.url('/javascript/modernizr.custom.32767.js')}"></script>
@@ -58,16 +58,16 @@
 <body>
 	<div id="topFrame" class="ui-layout-north">
 		<div id="toolbar" class="ui-widget-header">
-			<h1>Gestion des pointages</h1>
-			<a id="toolbar_employee" href="${tg.url('/pointage/employee/index')}">Employés</a>
-			<a id="toolbar_order" href="${tg.url('/pointage/order/index')}">Commandes</a>
-			<a id="toolbar_calendar" href="${tg.url('/pointage/trcal/index')}">Calendrier</a>
+			<h1>${main_menu['title']}</h1>
+			%for item in main_menu['item_list']:
+			<a id="${item['id']}" href="${item['href']}" title="${item['title']}">${item['content']}</a>
+			%endfor
 		</div>\
 	</div>
 	<div id="leftFrame" class="ui-layout-west">
 		<div id="searchFrame">
 			<form id="order_get_all" class="minimal_form"
-				action="${tg.url('/pointage/order/get_all/')}" method="get">
+				action="${tg.url('./get_all/')}" method="get">
 				<p>
 					<input id="order_get_all__keyword" type="search" name="keyword"
 						placeholder="Mot-clef"
@@ -79,7 +79,7 @@
 			</form>
 		</div>\
 		<form id="order_new" class="minimal_form alignCenter"
-			action="${tg.url('/pointage/order/new')}" method="get">
+			action="${tg.url('./new')}" method="get">
 			<p>
 				<button id="order_new__new" type="submit" class="new_button"
 					title="Ajouter une commande">Nouvelle commande</button>

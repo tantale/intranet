@@ -16,7 +16,7 @@ else:
 %>\
 
 <form id="employee_refresh" class="inline_form"
-	action="${tg.url('/pointage/trcal/get_all/')}" method="get">
+	action="${tg.url('./get_all/')}" method="get">
 	<p><img class="valignMiddle picture_box_inner_min"
 			id="employee_refresh__picture"
 			alt="${img_alt}"
@@ -48,10 +48,10 @@ else:
 </div>
 <div id='calendar'><!-- calendar placeholder --></div>
 <%
-events_url = tg.url('/pointage/trcal/events', dict(employee_uid=employee.uid))
+events_url = tg.url('./events', dict(employee_uid=employee.uid))
 events_url_json = json.dumps(events_url)
 
-new_url = tg.url('/pointage/trcal/new', dict(employee_uid=employee.uid))
+new_url = tg.url('./new', dict(employee_uid=employee.uid))
 new_url_json = json.dumps(new_url)
 %>\
 <script type='text/javascript'>

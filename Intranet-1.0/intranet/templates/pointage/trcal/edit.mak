@@ -10,7 +10,7 @@
 	${flash | n}
 %endif
 <form id="cal_event_update" class="ui-widget"
-	action="${tg.url('/pointage/trcal/{uid}'.format(uid=values['uid']))}"
+	action="${tg.url('./{uid}'.format(uid=values['uid']))}"
 	method="post" enctype="multipart/form-data">
 	<fieldset>
 		<legend class="ui-widget-header">Modifier les informations concernant la commande ${values.get('title')}</legend>
@@ -93,7 +93,7 @@
 </form>
 
 <form id="cal_event_get_delete" class="minimal_form"
-	action="${tg.url('/pointage/trcal/{uid}/delete'.format(uid=values['uid']))}"
+	action="${tg.url('./{uid}/delete'.format(uid=values['uid']))}"
 	method="get">
 	<p>
 		<button id="cal_event_get_delete__delete" type="submit" class="delete_button"

@@ -35,7 +35,7 @@
 %else:
 
 <form id="order_post_delete" class="ui-widget"
-	action="${tg.url('/pointage/order/{uid}'.format(uid=order.uid))}"
+	action="${tg.url('./{uid}'.format(uid=order.uid))}"
 	method="post">
 	<% order_phase_count = len(order.order_phase_list) %>
 	%if order_phase_count == 0:

@@ -9,7 +9,7 @@
 	${flash | n}
 %endif
 <form id="cal_event_create" class="ui-widget"
-	action="${tg.url('/pointage/trcal/')}"
+	action="${tg.url('./')}"
 	method="post" enctype="multipart/form-data">
 ##
 ## Hidden fields for the relationships: employee_uid, order_phase_uid (required)

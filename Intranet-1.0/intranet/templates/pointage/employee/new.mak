@@ -9,7 +9,7 @@
 	${flash | n}
 %endif
 <form id="employee_create" class="ui-widget"
-	action="${tg.url('/pointage/employee/')}"
+	action="${tg.url('./')}"
 	method="post" enctype="multipart/form-data">
 	<fieldset>
 		<legend class="ui-widget-header">Saisir les informations concernant un nouvel employé</legend>

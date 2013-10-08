@@ -35,7 +35,7 @@
 %else:
 
 <form id="cal_event_post_delete" class="ui-widget"
-	action="${tg.url('/pointage/trcal/{uid}'.format(uid=cal_event.uid))}"
+	action="${tg.url('./{uid}'.format(uid=cal_event.uid))}"
 	method="post">
 	<% cal_event_phase_count = len(cal_event.cal_event_phase_list) %>
 	%if cal_event_phase_count == 0:

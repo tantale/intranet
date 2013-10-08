@@ -9,7 +9,7 @@
 	${flash | n}
 %endif
 <form id="order_create" class="ui-widget"
-	action="${tg.url('/pointage/order/')}"
+	action="${tg.url('./')}"
 	method="post" enctype="multipart/form-data">
 	<fieldset>
 		<legend class="ui-widget-header">Saisir les informations concernant une nouvelle commande</legend>

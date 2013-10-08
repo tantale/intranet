@@ -10,7 +10,7 @@
 %for order in order_list:
 <% div_phases_id = 'order_phase_frame_{}'.format(order.uid) %>
 <h2 id="order_${order.uid}" class="searchable"><a
-	href="/pointage/order_phase/?order_uid=${order.uid}&editable=False&selectable=True">${order.order_ref}</a></h2>
+	href="../order_phase/?order_uid=${order.uid}&editable=False&selectable=True">${order.order_ref}</a></h2>
 <div id="${div_phases_id}"><em class="loading">Chargement en cours...</em></div>
 %endfor
 </div>

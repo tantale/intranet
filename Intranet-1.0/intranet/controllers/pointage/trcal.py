@@ -4,7 +4,7 @@
 :date: 2013-08-29
 :author: Laurent LAPORTE <sandlol2009@gmail.com>
 """
-from formencode.validators import NotEmpty, Int
+from formencode.validators import Int
 from intranet.accessors.cal_event import CalEventAccessor
 from intranet.accessors.order import OrderAccessor
 from intranet.model.pointage.cal_event import CalEvent
@@ -15,14 +15,15 @@ from intranet.validators.iso_date_converter import IsoDateConverter, \
 from sqlalchemy.sql.expression import or_, and_
 from tg.controllers.restcontroller import RestController
 from tg.controllers.util import redirect
-from tg.decorators import with_trailing_slash, expose, validate
+from tg.decorators import with_trailing_slash, expose, validate, \
+    without_trailing_slash
 from tg.flash import flash
 import calendar
 import datetime
-import logging
-import pylons
-import math
 import json
+import logging
+import math
+import pylons
 
 LOG = logging.getLogger(__name__)
 
@@ -65,13 +66,16 @@ class CalendarController(RestController):
     Calendar controller.
     """
 
-    @with_trailing_slash
+    def __init__(self, main_menu):
+        self.main_menu = main_menu
+
+    @without_trailing_slash
     @expose('intranet.templates.pointage.trcal.index')
     def index(self):
         """
         Display the index page.
         """
-        return dict()
+        return dict(main_menu=self.main_menu)
 
     @with_trailing_slash
     @expose('json')
@@ -391,7 +395,7 @@ class CalendarController(RestController):
 
         :param uid: UID of the CalEvent to delete.
         """
-        accessor = CalEventAccessor()
+        # accessor = CalEventAccessor()
         # old_cal_event = accessor.delete_cal_event(uid)
         # msg_fmt = (u"La phase de commande « {title} » est supprimée.")
         # flash(msg_fmt.format(title=old_cal_event.title), status="ok")

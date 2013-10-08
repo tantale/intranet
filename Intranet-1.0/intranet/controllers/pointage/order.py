@@ -26,6 +26,9 @@ class OrderController(RestController):
     The 'order' controller
     """
 
+    def __init__(self, main_menu):
+        self.main_menu = main_menu
+
     def _get_cat_dict(self):
         """
         :return: order categories grouped by category's group.
@@ -39,13 +42,13 @@ class OrderController(RestController):
             cat_dict[order_cat.cat_group].append(order_cat)
         return cat_dict
 
-    @with_trailing_slash
+    @without_trailing_slash
     @expose('intranet.templates.pointage.order.index')
     def index(self):
         """
         Display the index page.
         """
-        return dict()
+        return dict(main_menu=self.main_menu)
 
     @without_trailing_slash
     @expose('json')

@@ -26,13 +26,16 @@ class EmployeeController(RestController):
     Create / Modify / Remove Employees
     """
 
-    @with_trailing_slash
+    def __init__(self, main_menu):
+        self.main_menu = main_menu
+
+    @without_trailing_slash
     @expose('intranet.templates.pointage.employee.index')
     def index(self):
         """
         Display the index page.
         """
-        return dict()
+        return dict(main_menu=self.main_menu)
 
     @without_trailing_slash
     @expose('json')
