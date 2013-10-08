@@ -112,13 +112,13 @@
 			$('#flash').hide();
 		},
 		success: function(responseText, statusText, xhr) {
-			console.log("search for '<div id=\"flash\"><div class=\"ok\">' tag...");
-			var ok = $('<div/>').append(responseText).find('#flash div.ok');
-			if (ok.length) {
+			console.log("search for '<div id=\"flash\"><div class=\"error\">' tag...");
+			var error = $('<div/>').append(responseText).find('#flash div.error');
+			if (error.length) {
+				console.log("ERROR: don't update the cal_event list.");
+			} else {
 				console.log("OK, update the cal_event list but don't select any cal_event...");
 				$('#calendar').fullCalendar('renderEvent', jQuery.parseJSON(responseText));
-			} else {
-				console.log("ERROR: don't update the cal_event list.");
 			}
 		}
 	});

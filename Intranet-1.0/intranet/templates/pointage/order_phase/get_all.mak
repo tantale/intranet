@@ -115,19 +115,16 @@ form_post_id = 'order_phase_post_{}'.format(order_uid)
 	.mouseenter(function() {
 		if ($(this).hasClass('ui-selected')) {
 		} else {
-			console.info('mouseenter: ' + $(this).attr('id'));
 			$(this).addClass('ui-selecting');
 		}
 	})
 	.mouseleave(function() {
 		if ($(this).hasClass('ui-selected')) {
 		} else {
-			console.info('mouseleave: ' + $(this).attr('id'));
 			$(this).removeClass('ui-selecting');
 		}
 	})
 	.click(function() {
-		console.info('click: ' + $(this).attr('id'));
 		$('ul.selectable li').removeClass('ui-selecting ui-selected');
 		$(this).addClass('ui-selected');
 	});

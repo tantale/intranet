@@ -117,8 +117,12 @@ class CalendarController(RestController):
                     active_index=active_index)
 
     @with_trailing_slash
-    @expose('json')
-    def get_one(self, uid):
+    @expose()
+    def get_one(self,
+                uid=None,
+                employee_uid=None,
+                order_phase_uid=None,
+                event_start=None):
         """
         Display one record.
 
@@ -126,9 +130,25 @@ class CalendarController(RestController):
 
         :param uid: UID of the calendar event to display.
         """
+        LOG.info("CalendarController.get_one")
+        LOG.debug("- uid:             {!r}".format(uid))
+        LOG.debug("- employee_uid:    {!r}".format(employee_uid))
+        LOG.debug("- order_phase_uid: {!r}".format(order_phase_uid))
+        LOG.debug("- event_start:     {!r}".format(event_start))
+
         accessor = CalEventAccessor()
-        cal_event = accessor.get_cal_event(uid)
-        return dict(cal_event=cal_event)
+        if uid:
+            cal_event = accessor.get_cal_event(uid)
+        else:
+            employee_uid = int(employee_uid)
+            order_phase_uid = int(order_phase_uid)
+            event_start = datetime.datetime.strptime(event_start, "%Y-%m-%d %H:%M:%S")  # @IgnorePep8
+            filter_cond = and_(CalEvent.employee_uid == employee_uid,
+                               CalEvent.order_phase_uid == order_phase_uid,
+                               CalEvent.event_start == event_start)
+            cal_event_list = accessor.get_cal_event_list(filter_cond)
+            cal_event = cal_event_list[0]
+        return json.dumps(cal_event.event_obj())
 
     @with_trailing_slash
     @validate({'cal_date': IsoDateConverter(not_empty=False)})
@@ -211,7 +231,8 @@ class CalendarController(RestController):
         # -- date interval from the calendar's timestamps
         start_date = datetime.datetime.utcfromtimestamp(float(start))
         end_date = datetime.datetime.utcfromtimestamp(float(end))
-        LOG.debug("date interval from the calendar's timestamps: [{start_date} ; {end_date}]"
+        LOG.debug(("date interval from the calendar's timestamps: "
+                   "[{start_date} ; {end_date}]")
                   .format(start_date=start_date,
                           end_date=end_date))
 
@@ -268,7 +289,7 @@ class CalendarController(RestController):
                'event_start': IsoDatetimeConverter,
                'event_duration': Int(min=1, max=999, not_empty=True)},
               error_handler=new)
-    @expose('json')
+    @expose()
     def post(self, employee_uid, order_phase_uid, time_zone_offset,
              title, event_start, event_duration, comment, **kwagrs):
         """
@@ -297,10 +318,15 @@ class CalendarController(RestController):
 
         # -- insert event in database
         accessor = CalEventAccessor()
-        cal_event = accessor.insert_cal_event(employee_uid, order_phase_uid,
-                                              title, event_start_utc,
-                                              event_end_utc, comment)
-        return dict(cal_event=cal_event.event_obj())
+        accessor.insert_cal_event(employee_uid, order_phase_uid,
+                                  title, event_start_utc,
+                                  event_end_utc, comment)
+
+        # -- return the newly created event
+        redirect('./get_one',
+                 employee_uid=employee_uid,
+                 order_phase_uid=order_phase_uid,
+                 event_start=event_start_utc)
 
     @expose('intranet.templates.pointage.trcal.edit')
     def edit(self, employee_uid, order_phase_uid, uid, **kw):
