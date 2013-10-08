@@ -21,26 +21,12 @@
 	<input name="time_zone_offset" type="hidden" value="${time_zone_offset}" />
 	</p>
 ##
-## Referenced objects: employee, order, order phase (with project_cat's css)
+## Referenced objects: order, order phase (with project_cat's css)
 ##
-	<p><label for="cal_event_create__employee_name">Nom :</label>
-		<input id="cal_event_create__employee_name" type="text"
-			value="${employee.employee_name}"
-			disabled="disabled"
-			title="Pointage pour l’employé : ${employee.employee_name}" /></p>
+	<p class="colorFrame ${order_phase.order.project_cat}"><span
+	title="Pointage pour la commande : ${order_phase.order.order_ref}">${order_phase.order.order_ref}</span><span> : </span><span
+	title="Pointage pour la phase : ${order_phase.label}">${order_phase.label}</span></p>
 	
-	<p><label for="cal_event_create__order_ref">Réf. commande :</label>
-		<input id="cal_event_create__order_ref" type="text"
-			value="${order_phase.order.order_ref}"
-			disabled="disabled"
-			title="Pointage pour la commande : ${order_phase.order.order_ref}" /></p>
-	
-	<p><label for="cal_event_create__order_phase_label">Phase :</label>
-		<input id="cal_event_create__order_phase_label" type="text"
-			class="${order_phase.order.project_cat}"
-			value="${order_phase.label}"
-			disabled="disabled"
-			title="Pointage pour la phase : ${order_phase.label}" /></p>
 ##
 ## Calendar event fields: event_start, event_duration, comment
 ##

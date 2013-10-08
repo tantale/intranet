@@ -54,6 +54,16 @@
 	background-color: white;
 }
 
+.colorFrame {
+	padding: 8px;
+	margin: 0 0 8px 0;
+	text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
+	border: 1px solid gray;
+	-webkit-border-radius: 6px;
+	-moz-border-radius: 6px;
+	border-radius: 6px;
+}
+
 .edit_button {
 	width: 13em;
 	text-align: left;

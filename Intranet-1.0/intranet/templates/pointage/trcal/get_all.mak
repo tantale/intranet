@@ -96,8 +96,8 @@ new_url_json = json.dumps(new_url)
 			url += "&order_phase_uid=" + order_phase_uid;
 			$('#confirm_dialog_content').load(url);
 			$('#confirm_dialog').dialog({
-				width: 	600,
-				height: 400,
+				width: 	560,
+				height: 370,
 				buttons: {
 					"Ajouter": function() {
 						$('#cal_event_create').submit();
