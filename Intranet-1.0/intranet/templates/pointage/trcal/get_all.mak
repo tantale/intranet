@@ -147,7 +147,8 @@ event_resize_url_json = json.dumps(event_resize_url)
 				eventDurationEditable : true,
 				firstDay : 1, // Monday
 				firstHour : 8, // 8h
-				weekends : true, // 7 days
+				weekends : false, // 5 days
+				ignoreTimezone: false,
 
 				allDayText : 'Toute la journ\u00e9e',
 				axisFormat : 'H:mm',
@@ -215,25 +216,24 @@ event_resize_url_json = json.dumps(event_resize_url)
 					open_new_event_dialog(this, date, allDay);
 			    },
 			    eventResize: function(event, dayDelta, minuteDelta, revertFunc, jsEvent, ui, view) {
-			    	if (dayDelta != 0) {
-			    		console.info("Please, don't change the number of days !");
-			    		revertFunc();
-			    	} else {
-			    		$.ajax({
-			    			type: "GET",
-			    			url: ${event_resize_url_json|n},
-			    			data: {
-			    				// id = 'cal_event_###'
-			    				uid: event.id.split('_')[2],
-			    				minute_delta: minuteDelta
-			    			},
-			    			success: function(){
-			    				console.info("Event duration succefully updated.");
-					    		console.info("gotoDate: " + event.start.toISOString());
-					    		$('#calendar').fullCalendar('gotoDate', event.start);
-			    			}
-			    		});
-			    	}
+		    		$.ajax({
+		    			type: "GET",
+		    			url: ${event_resize_url_json|n},
+		    			data: {
+		    				// id = 'cal_event_###'
+		    				uid: event.id.split('_')[2],
+		    				day_delta: dayDelta,
+		    				minute_delta: minuteDelta
+		    			},
+		    			success: function(){
+		    				console.info("Event duration succefully updated.");
+				    		console.info("gotoDate: " + event.start.toISOString());
+				    		$('#calendar').fullCalendar('gotoDate', event.start);
+				    		if (dayDelta) {
+				    			$('#calendar').fullCalendar('refetchEvents');
+				    		}
+		    			}
+		    		});
 			    },
 				eventSources: [{
 					url: ${events_url_json|n},

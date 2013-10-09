@@ -258,13 +258,33 @@ class CalendarController(RestController):
                            for cal_event in cal_event_list])
 
     @expose()
-    def event_resize(self, uid, minute_delta):
+    def event_resize(self, uid, day_delta, minute_delta):
         LOG.info("CalendarController.event_resize")
         LOG.debug("- uid:          {!r}".format(uid))
+        LOG.debug("- day_delta:    {!r}".format(day_delta))
         LOG.debug("- minute_delta: {!r}".format(minute_delta))
         accessor = CalEventAccessor()
-        delta = datetime.timedelta(minutes=int(minute_delta))
-        accessor.increase_duration(uid, delta)
+        day_delta = int(day_delta)
+        minute_delta = int(minute_delta)
+        if day_delta:
+            event = accessor.get_cal_event(uid)
+            employee_uid = event.employee_uid
+            order_phase_uid = event.order_phase_uid
+            event_start = event.event_start
+            event_end = event.event_end
+            comment = event.comment
+            for day in xrange(day_delta):
+                timedelta = datetime.timedelta(days=day + 1)
+                new_event_start = event_start + timedelta
+                new_event_end = event_end + timedelta
+                accessor.insert_cal_event(employee_uid,
+                                          order_phase_uid,
+                                          new_event_start,
+                                          new_event_end,
+                                          comment)
+        else:
+            delta = datetime.timedelta(minutes=minute_delta)
+            accessor.increase_duration(uid, delta)
 
     @expose()
     def event_drop(self, uid, day_delta, minute_delta):
