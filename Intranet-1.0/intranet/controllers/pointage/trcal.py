@@ -264,26 +264,10 @@ class CalendarController(RestController):
         LOG.debug("- day_delta:    {!r}".format(day_delta))
         LOG.debug("- minute_delta: {!r}".format(minute_delta))
         accessor = CalEventAccessor()
-        day_delta = int(day_delta)
-        minute_delta = int(minute_delta)
         if day_delta:
-            event = accessor.get_cal_event(uid)
-            employee_uid = event.employee_uid
-            order_phase_uid = event.order_phase_uid
-            event_start = event.event_start
-            event_end = event.event_end
-            comment = event.comment
-            for day in xrange(day_delta):
-                timedelta = datetime.timedelta(days=day + 1)
-                new_event_start = event_start + timedelta
-                new_event_end = event_end + timedelta
-                accessor.insert_cal_event(employee_uid,
-                                          order_phase_uid,
-                                          new_event_start,
-                                          new_event_end,
-                                          comment)
+            accessor.divide_event(uid, int(day_delta))
         else:
-            delta = datetime.timedelta(minutes=minute_delta)
+            delta = datetime.timedelta(minutes=int(minute_delta))
             accessor.increase_duration(uid, delta)
 
     @expose()

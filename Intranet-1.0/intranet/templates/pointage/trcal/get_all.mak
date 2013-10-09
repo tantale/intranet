@@ -133,6 +133,13 @@ event_resize_url_json = json.dumps(event_resize_url)
 		}
 	}
 	
+	function on_event_render(event, element, view) {
+		var start_date = $.fullCalendar.parseDate(event.start),
+			end_date = $.fullCalendar.parseDate(event.end),
+			duration = Math.ceil((end_date - start_date) / 36000.0);
+		element.attr('title', event.comment).find('.fc-event-time')
+			.text(duration).css('padding-left: .5em;');
+	}
 	
 	$('#calendar').fullCalendar(
 			{

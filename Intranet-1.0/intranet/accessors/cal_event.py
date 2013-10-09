@@ -8,6 +8,7 @@ from intranet.accessors.employee import EmployeeAccessor
 from intranet.accessors.order import OrderAccessor
 from intranet.accessors.order_phase import OrderPhaseAccessor
 from intranet.model.pointage.cal_event import CalEvent
+import datetime
 import logging
 import transaction
 
@@ -95,6 +96,35 @@ class CalEventAccessor(BasicAccessor):
             record.event_end += end_timedelta
             LOG.debug("after:  [{record.event_start}, {record.event_end}]"
                       .format(record=record))
+            transaction.commit()
+        except:
+            transaction.abort()
+            raise
+
+    def divide_event(self, uid, days):
+        """
+        Divide the event and insert a new event for each extra day.
+
+        :param uid: clendar event's UID.
+        :type uid: int
+
+        :param days: number of days
+        :type days: int
+        """
+        event = self._get_record(uid)
+
+        def divide(day):
+            timedelta = datetime.timedelta(days=day + 1)
+            new_event_start = event.event_start + timedelta
+            new_event_end = event.event_end + timedelta
+            new_event = CalEvent(new_event_start, new_event_end, event.comment)
+            new_event.employee_uid = event.employee_uid
+            new_event.order_phase = event.order_phase
+            return new_event
+
+        try:
+            event_list = map(divide, xrange(days))
+            self.session.add_all(event_list)
             transaction.commit()
         except:
             transaction.abort()

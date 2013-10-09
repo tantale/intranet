@@ -15,25 +15,6 @@ function on_accordion_refresh(responseText, statusText, xhr) {
 	$('#order_get_all__keyword').autocomplete('close');
 }
 
-/**
- * Change the rendering of an event in the calendar.
- * 
- * Display the event duration in 1/100th hours.
- * 
- * @param event
- *            Event object
- * @param element
- *            jQuery element
- * @param view
- */
-function on_event_render(event, element, view) {
-	var start_date = $.fullCalendar.parseDate(event.start),
-		end_date = $.fullCalendar.parseDate(event.end),
-		duration = Math.ceil((end_date - start_date) / 36000.0);
-	element.attr('title', event.comment).find('.fc-event-time')
-		.text(duration).css('padding-left: .5em;');
-}
-
 $(function() {
 
 	$(".editButton").button({
