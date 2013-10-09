@@ -22,13 +22,13 @@ class CalEvent(DeclarativeBase):
 
     # employee_uid -- non-standard field
     employee_uid = Column(Integer, ForeignKey('Employee.uid',
-                                              ondelete='SET NULL',
+                                              ondelete='CASCADE',
                                               onupdate='CASCADE'),
                           nullable=True, index=True)
 
     # order_phase_uid -- non-standard field
     order_phase_uid = Column(Integer, ForeignKey('OrderPhase.uid',
-                                                 ondelete='SET NULL',
+                                                 ondelete='CASCADE',
                                                  onupdate='CASCADE'),
                              nullable=True, index=True)
 
@@ -44,10 +44,12 @@ class CalEvent(DeclarativeBase):
     # -- relationships
     employee = relationship('Employee',
                             backref=backref('cal_event_list',
-                                            order_by='CalEvent.event_start'))
+                                            order_by='CalEvent.event_start',
+                                            cascade='all,delete-orphan'))
     order_phase = relationship('OrderPhase',
                                backref=backref('cal_event_list',
-                                               order_by='CalEvent.event_start'))  # @IgnorePep8
+                                               order_by='CalEvent.event_start',
+                                               cascade='all,delete-orphan'))  # @IgnorePep8
 
     def __init__(self, event_start, event_end, comment):
         """
@@ -82,8 +84,8 @@ class CalEvent(DeclarativeBase):
         dict_ = dict()
         # -- Standard fields
         dict_['id'] = ('cal_event_{uid}'.format(uid=self.uid))
-        dict_['title'] = u"{ref}\u00a0: {label}".format(ref=self.order_phase.order.order_ref,
-                                                        label=self.order_phase.label)
+        dict_['title'] = u"{ref}\u00a0: {label}".format(ref=self.order_phase.order.order_ref,  # @IgnorePep8
+                                                        label=self.order_phase.label)  # @IgnorePep8
         dict_['allDay'] = False
         dict_['start'] = self.event_start.strftime('%Y-%m-%dT%H:%M:%SZ')
         dict_['end'] = self.event_end.strftime('%Y-%m-%dT%H:%M:%SZ')

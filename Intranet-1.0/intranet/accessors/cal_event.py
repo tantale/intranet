@@ -71,15 +71,26 @@ class CalEventAccessor(BasicAccessor):
         else:
             return cal_event
 
-    def update_cal_event(self, uid, **kwargs):
-        LOG.debug("update_cal_event: {uid!r}"
-                  .format(uid=uid))
-        return self._update_record(self, uid, **kwargs)
+    def update_duration(self, uid, end_timedelta, comment):
+        """
+        Update the event's duration and comment.
 
-    def delete_cal_event(self, uid):
-        LOG.debug("delete_cal_event: {uid!r}"
-                  .format(uid=uid))
-        return self._delete_record(self, uid)
+        :param uid:
+        :param end_timedelta:
+        """
+        LOG.debug("update_duration: {uid!r}".format(uid=uid))
+        event = self._get_record(uid)
+        try:
+            LOG.debug("before: [{event.event_start}, {event.event_end}]"
+                      .format(event=event))
+            event.event_end = event.event_start + end_timedelta
+            LOG.debug("after:  [{event.event_start}, {event.event_end}]"
+                      .format(event=event))
+            event.comment = comment
+            transaction.commit()
+        except:
+            transaction.abort()
+            raise
 
     def increase_duration(self, uid, end_timedelta):
         """
@@ -88,14 +99,14 @@ class CalEventAccessor(BasicAccessor):
         :param uid:
         :param end_timedelta:
         """
-        LOG.debug("move_datetime: {uid!r}".format(uid=uid))
-        record = self._get_record(uid)
+        LOG.debug("increase_duration: {uid!r}".format(uid=uid))
+        event = self._get_record(uid)
         try:
-            LOG.debug("before: [{record.event_start}, {record.event_end}]"
-                      .format(record=record))
-            record.event_end += end_timedelta
-            LOG.debug("after:  [{record.event_start}, {record.event_end}]"
-                      .format(record=record))
+            LOG.debug("before: [{event.event_start}, {event.event_end}]"
+                      .format(event=event))
+            event.event_end += end_timedelta
+            LOG.debug("after:  [{event.event_start}, {event.event_end}]"
+                      .format(event=event))
             transaction.commit()
         except:
             transaction.abort()
@@ -150,3 +161,8 @@ class CalEventAccessor(BasicAccessor):
         except:
             transaction.abort()
             raise
+
+    def delete_cal_event(self, uid):
+        LOG.debug("delete_cal_event: {uid!r}"
+                  .format(uid=uid))
+        return self._delete_record(uid)

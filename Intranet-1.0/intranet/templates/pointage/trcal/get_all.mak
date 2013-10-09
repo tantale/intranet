@@ -54,6 +54,9 @@ events_url_json = json.dumps(events_url)
 new_url = tg.url('./new', dict(employee_uid=employee.uid))
 new_url_json = json.dumps(new_url)
 
+edit_url = tg.url('./edit')
+edit_url_json = json.dumps(edit_url)
+
 event_drop_url = tg.url('./event_drop')
 event_drop_url_json = json.dumps(event_drop_url)
 
@@ -101,7 +104,7 @@ event_resize_url_json = json.dumps(event_resize_url)
 			url += "&order_phase_uid=" + order_phase_uid;
 			$('#confirm_dialog_content').load(url);
 			$('#confirm_dialog').dialog({
-				width: 	560,
+				width: 	540,
 				height: 370,
 				buttons: {
 					"Ajouter": function() {
@@ -131,6 +134,32 @@ event_resize_url_json = json.dumps(event_resize_url)
 				title: "Aucune phase sélectionnée"
 			}).dialog("open");
 		}
+	}
+	
+	function open_edit_event_dialog(event_div, event, view) {
+		// 'this' is set to the event's <div> element.
+		// id = 'cal_event_###'
+		var uid = event.id.split('_')[2],
+			url = ${edit_url_json|n} + "?uid=" + uid;
+		$('#confirm_dialog_content').load(url);
+		$('#confirm_dialog').dialog({
+			width: 	540,
+			height: 300,
+			buttons: {
+				"Modifier": function() {
+					$('#cal_event_update').submit();
+				},
+				"Supprimer": function() {
+					$('#cal_event_delete').submit();
+				},
+				"Annuler": function() {
+					$(this).dialog("close");
+				}
+			},
+			title: "Modifier un pointage",
+			close: function() {
+			}
+		}).dialog("open");
 	}
 	
 	function on_event_render(event, element, view) {
@@ -221,6 +250,10 @@ event_resize_url_json = json.dumps(event_resize_url)
 			    },
 				dayClick: function(date, allDay, jsEvent, view) {
 					open_new_event_dialog(this, date, allDay);
+			    },
+			    eventClick: function(event, jsEvent, view) {
+			    	// 'this' is set to the event's <div> element
+					open_edit_event_dialog(this, event, view);
 			    },
 			    eventResize: function(event, dayDelta, minuteDelta, revertFunc, jsEvent, ui, view) {
 		    		$.ajax({

@@ -37,7 +37,11 @@
 <form id="employee_post_delete" class="ui-widget"
 	action="${tg.url('./{uid}'.format(uid=employee.uid))}"
 	method="post">
-	<p><strong>NB :</strong> tous les pointages associées à cette employé seront supprimés.</p>
+	%if employee.cal_event_list:
+	<p><strong>NB :</strong> les ${len(employee.cal_event_list)} pointages associées à cette employé seront supprimés.</p>
+	%else:
+	<p>Cet employé ne possède pas de pointage.</p>
+	%endif
 	<input type="hidden" name="_method" value="DELETE" />
 </form>
 

@@ -33,15 +33,16 @@
 }
 
 #cal_event_update label {
-	width: 10em;
+	width: 8em;
 	display: inline-block;
 	text-align: left;
 	font-size: .9em;
 	font-weight: bold;
+	vertical-align: top;
 }
 
 #cal_event_create label {
-	width: 10em;
+	width: 8em;
 	display: inline-block;
 	text-align: left;
 	font-size: .9em;

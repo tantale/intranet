@@ -313,7 +313,7 @@ class CalendarController(RestController):
     @validate({'employee_uid': Int(min=0, not_empty=True),
                'order_phase_uid': Int(min=0, not_empty=True),
                'time_zone_offset': Int(min=-1200, max=1200, not_empty=True),
-               'event_start': IsoDatetimeConverter,
+               'event_start': IsoDatetimeConverter(),
                'event_duration': Int(min=1, max=999, not_empty=True)},
               error_handler=new)
     @expose()
@@ -355,61 +355,50 @@ class CalendarController(RestController):
                  event_start=event_start_utc)
 
     @expose('intranet.templates.pointage.trcal.edit')
-    def edit(self, employee_uid, order_phase_uid, uid, **kw):
+    def edit(self, uid, **kw):
         """
         Display a page to prompt the User for resource modification.
 
-        GET /pointage/trcal/1/?order_uid
-
-        :param employee_uid: Current employee uid's UID
-
-        :param order_phase_uid: Current order phase uid's UID
+        GET /pointage/trcal/1/?uid
 
         :param uid: UID of the CalEvent to update
         """
         form_errors = pylons.tmpl_context.form_errors  # @UndefinedVariable
         accessor = CalEventAccessor()
         cal_event = accessor.get_cal_event(uid)
-        values = dict(uid=cal_event.uid)
+        timedelta = cal_event.event_end - cal_event.event_start
+        event_duration = int(100.0 * timedelta.seconds / 3600)
+        values = dict(uid=cal_event.uid,
+                      event_duration=event_duration,
+                      comment=cal_event.comment)
         values.update(kw)
-        return dict(employee_uid=employee_uid, order_phase_uid=order_phase_uid,
-                    values=values,
+        return dict(values=values,
+                    employee=cal_event.employee,
+                    order_phase=cal_event.order_phase,
                     form_errors=form_errors)
 
+    @validate({'uid': Int(min=0, not_empty=True),
+               'event_duration': Int(min=1, max=999, not_empty=True)},
+              error_handler=edit)
     @expose()
-    def put(self, employee_uid, order_phase_uid, uid, **kw):
+    def put(self, uid, event_duration, comment, **kw):
         """
         Update an existing record.
 
         POST /pointage/trcal/1?_method=PUT
         PUT /pointage/trcal/1
 
-        :param employee_uid: Current employee uid's UID
-
-        :param order_phase_uid: Current order phase uid's UID
-
         :param uid: UID of the CalEvent to update
         """
+        # -- update the event's duration and comment
         accessor = CalEventAccessor()
-        accessor.update_cal_event(uid)
-        # msg_fmt = (u"La phase de commande « {title} » est modifiée.")
-        # flash(msg_fmt.format(title=title), status="ok")
-        redirect('./{uid}/edit'.format(uid=uid))
+        end_timedelta = datetime.timedelta(hours=float(event_duration) / 100)  # @IgnorePep8
+        accessor.update_duration(uid, end_timedelta, comment)
 
-    @expose('intranet.templates.pointage.trcal.get_delete')
-    def get_delete(self, uid):
-        """
-        Display a delete Confirmation page.
+        # -- return the updated event
+        redirect('./get_one', uid=uid)
 
-        GET /pointage/trcal/1/delete
-
-        :param uid: UID of the CalEvent to delete.
-        """
-        accessor = CalEventAccessor()
-        cal_event = accessor.get_cal_event(uid)
-        return dict(cal_event=cal_event)
-
-    @expose('intranet.templates.pointage.trcal.get_delete')
+    @expose()
     def post_delete(self, uid):
         """
         Delete an existing record.
@@ -419,8 +408,9 @@ class CalendarController(RestController):
 
         :param uid: UID of the CalEvent to delete.
         """
-        # accessor = CalEventAccessor()
-        # old_cal_event = accessor.delete_cal_event(uid)
-        # msg_fmt = (u"La phase de commande « {title} » est supprimée.")
-        # flash(msg_fmt.format(title=old_cal_event.title), status="ok")
-        return dict(cal_event=None)
+        LOG.info("CalendarController.post_delete")
+        LOG.debug("- uid: {!r}".format(uid))
+        accessor = CalEventAccessor()
+        accessor.delete_cal_event(uid)
+        # -- return an event object with it's id only
+        return json.dumps(dict(id='cal_event_{uid}'.format(uid=uid)))

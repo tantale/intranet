@@ -12,140 +12,89 @@
 <form id="cal_event_update" class="ui-widget"
 	action="${tg.url('./{uid}'.format(uid=values['uid']))}"
 	method="post" enctype="multipart/form-data">
-	<fieldset>
-		<legend class="ui-widget-header">Modifier les informations concernant la commande ${values.get('title')}</legend>
-		<table>
-			<tr>
-				<td><p><label for="cal_event_update__title">Ref. commande :</label>
-						<input id="cal_event_update__title" type="text" name="title"
-							value="${values.get('title')}"
-							placeholder="Référence"
-							title="Référence de la commande (requis)" />
-					%if 'title' in form_errors:
-					<span class="error">${form_errors['title']}</span>
-					%endif
-					</p>
-				</td>
-			</tr>
-			<tr>
-				<td><p><label for="cal_event_update__project_cat">Catégorie :</label>
-					<%
-						project_cat_list = [cat for cat_list in cat_dict.itervalues()
-											for cat in cat_list]
-						default_cat = project_cat_list[0].cat_name if project_cat_list else None
-						curr_project_cat = values.get('project_cat', default_cat)
-					%>
-						<select id="cal_event_update__project_cat" name="project_cat"
-							class="${curr_project_cat}"
-							title="Catégorie de projet">
-							%for cat_group, order_cat_list in cat_dict.iteritems():
-							<optgroup label="${cat_group}" class="noColor">
-								%for order_cat in order_cat_list:
-								%if order_cat.cat_name == curr_project_cat:
-								<option selected="selected"
-									class="${order_cat.cat_name}"
-									value="${order_cat.cat_name}">${order_cat.label}</option>
-								%else:
-								<option
-									class="${order_cat.cat_name}"
-									value="${order_cat.cat_name}">${order_cat.label}</option>
-								%endif
-								%endfor
-							</optgroup>
-							%endfor
-						</select>
-					%if 'project_cat' in form_errors:
-					<span class="error">${form_errors['project_cat']}</span>
-					%endif
-					</p>
-				</td>
-			</tr>
-			<tr>
-				<td><p><label for="cal_event_update__creation_date">Date de création :</label>
-						<input id="cal_event_update__creation_date" type="date" name="creation_date"
-							value="${values.get('creation_date')}"
-							title="Date de création de la commande (requis)" />
-					%if 'creation_date' in form_errors:
-					<span class="error">${form_errors['creation_date']}</span>
-					%endif
-					</p>
-				</td>
-			</tr>
-			<tr>
-				<td><p><label for="cal_event_update__close_date">Date de clôture :</label>
-						<input id="cal_event_update__close_date" type="date" name="close_date"
-							value="${values.get('close_date')}"
-							title="Date de clôture de la commande (optionnel)" />
-					%if 'close_date' in form_errors:
-					<span class="error">${form_errors['close_date']}</span>
-					%endif
-					</p>
-				</td>
-			</tr>
-			<tr>
-				<td class="alignRight">
-				<input type="hidden" name="_method" value="PUT" />
-				<button id="cal_event_update__update" type="submit" class="update_button"
-					title="Modifier les informations concernant la commande">Modifier</button></td>
-			</tr>
-		</table>
-	</fieldset>
+##
+## Hidden field for PUT method
+##
+	<p style="display: none; visibility: hidden;">
+	<input type="hidden" name="_method" value="PUT" />
+	</p>
+##
+## Referenced objects: order, order phase (with project_cat's css)
+##
+	<p class="colorFrame ${order_phase.order.project_cat}"><span
+	title="Pointage pour la commande : ${order_phase.order.order_ref}">${order_phase.order.order_ref}</span><span> : </span><span
+	title="Pointage pour la phase : ${order_phase.label}">${order_phase.label}</span></p>
+##
+## Calendar event fields: event_start, event_duration, comment
+##
+	<p><label for="cal_event_update__event_duration">Durée (h/100) :</label>
+		<input id="cal_event_update__event_duration" type="number" name="event_duration"
+			min="1" max="999"
+			value="${values.get('event_duration')}"
+			placeholder="100"
+			title="Durée en centième d'heure, ex. : 100 pour 1 heure (requis)" />
+	%if 'event_duration' in form_errors:
+	<span class="error">${form_errors['event_duration']}</span>
+	%endif
+	</p>
+	
+	<p><label for="cal_event_update__comment">Commentaire :</label>
+		<textarea id="cal_event_update__comment" name="comment"
+			rows="4" cols="50"
+			placeholder="Commentaire (facultatif)"
+			title="Commentaire (optionnel)">${values.get('comment')}</textarea>
+	%if 'comment' in form_errors:
+	<span class="error">${form_errors['comment']}</span>
+	%endif
+	</p>
 </form>
 
-<form id="cal_event_get_delete" class="minimal_form"
-	action="${tg.url('./{uid}/delete'.format(uid=values['uid']))}"
-	method="get">
-	<p>
-		<button id="cal_event_get_delete__delete" type="submit" class="delete_button"
-			title="Supprimer les informations concernant la commande ${values.get('title')}">Supprimer</button>
+<form id="cal_event_delete" class="minimal_form"
+	action="${tg.url('./{uid}'.format(uid=values['uid']))}"
+	method="post">
+	<p style="display: none; visibility: hidden;">
+	<input type="hidden" name="_method" value="DELETE" />
 	</p>
 </form>
 
 <script type='text/javascript'>
 	"use strict";
 	/*global $, Modernizr*/
-	var project_cat_css = $('#cal_event_update__project_cat').val();
-	$('#cal_event_update__project_cat').change(function(){
-		var new_css = $(this).find('option:selected').attr('class');
-		$(this).removeClass(project_cat_css).addClass(new_css);
-		project_cat_css = new_css;
-	});
 	if (!Modernizr.inputtypes.date) {
 		$('#calendar_content input[type=date]').datepicker();
 	}
-	$('#calendar_content .update_button').button({
-		text : true,
-		icons : {
-			primary : "ui-icon-pencil"
-		}
-	});
 	$('#cal_event_update').ajaxForm({
-		target : '#calendar_content',
+		target : '#confirm_dialog_content',
 		beforeSubmit: function(arr, $form, options) {
 			$('#flash').hide();
 		},
 		success: function(responseText, statusText, xhr) {
-			console.log("search for '<div id=\"flash\"><div class=\"ok\">' tag...");
-			var ok = $('<div/>').append(responseText).find('#flash div.ok');
-			if (ok.length) {
-				var input = $('#cal_event_get_all input[name=uid]'),
-					uid = input.val();
-				console.log("OK, update the cal_event list but don't select any cal_event...");
-				input.val("");
-				$('#cal_event_get_all').submit();
-				input.val(uid);
+			console.log("search for '<div id=\"flash\"><div class=\"error\">' tag...");
+			var error = $('<div/>').append(responseText).find('#flash div.error');
+			if (error.length) {
+				// keep '#confirm_dialog' opened
+				console.log("ERROR: don't update the cal_event list.");
 			} else {
-				console.log("ERROR: don't update the cal_events list.");
+				var updated_event = jQuery.parseJSON(responseText),
+					calendar = $('#calendar'), event_list, event;
+				$('#confirm_dialog').dialog("close");
+				event_list = calendar.fullCalendar('clientEvents', updated_event.id);
+				event = event_list[0];
+				event.end = updated_event.end;
+				event.comment = updated_event.comment;
+				calendar.fullCalendar('updateEvent', event);
 			}
 		}
 	});
-	$('#cal_event_get_delete .delete_button').button({
-		text : true,
-		icons : {
-			primary : "ui-icon-trash"
+	$('#cal_event_delete').ajaxForm({
+		target : '#confirm_dialog_content',
+		beforeSubmit: function(arr, $form, options) {
+			$('#flash').hide();
+		},
+		success: function(responseText, statusText, xhr) {
+			var deleted_event = jQuery.parseJSON(responseText);
+			$('#confirm_dialog').dialog("close");
+			$('#calendar').fullCalendar('removeEvents', deleted_event.id);
 		}
-	});
-	$('#cal_event_get_delete').ajaxForm({
-		target : '#confirm_dialog_content'
 	});
 </script>
