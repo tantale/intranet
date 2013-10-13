@@ -83,25 +83,70 @@ event_resize_url_json = json.dumps(event_resize_url)
 		$('#employee_refresh').submit();
 	});
 	
-	function open_new_event_dialog(calendar, date, allDay) {
-		if (allDay) {
-			console.debug("allDay == true => set hour to 8 O'clock...")
-			date.setHours(8, 0, 0);
-			console.debug("date: " + date.toISOString());
-		}
-		var time_zone_offset = date.getTimezoneOffset();
-
-		var url = ${new_url_json|n},
-			iso = $.fullCalendar.formatDate(date, "yyyy-MM-dd'T'HH:mm:ss"); // local date
-		url += "&event_start=" + iso;
-		url += "&time_zone_offset=" + time_zone_offset.toString();
-		
+	function on_event_render(event, element, view) {
+		var start_date = $.fullCalendar.parseDate(event.start),
+			end_date = $.fullCalendar.parseDate(event.end),
+			duration = Math.floor((end_date - start_date) / 36000.0);
+		element.attr('title', event.comment).find('.fc-event-time')
+			.text(duration).css('padding-left: .5em;');
+	}
+	
+	function on_event_drop(event, dayDelta, minuteDelta, allDay, revertFunc, jsEvent, ui, view) {
+    	if (allDay) {
+    		console.info("Please, this event ins't a all day event !");
+    		revertFunc();
+    	} else {
+    		$.ajax({
+    			type: "GET",
+    			url: ${event_drop_url_json|n},
+    			data: {
+    				// id = 'cal_event_###'
+    				uid: event.id.split('_')[2],
+    				day_delta: dayDelta,
+    				minute_delta: minuteDelta
+    			},
+    			success: function(){
+    				console.info("Event day/time succefully updated.");
+		    		console.info("gotoDate: " + event.start.toISOString());
+		    		$('#calendar').fullCalendar('gotoDate', event.start);
+    			}
+    		});
+    	}
+    }
+	
+	function on_event_resize(event, dayDelta, minuteDelta, revertFunc, jsEvent, ui, view) {
+		$.ajax({
+			type: "GET",
+			url: ${event_resize_url_json|n},
+			data: {
+				// id = 'cal_event_###'
+				uid: event.id.split('_')[2],
+				day_delta: dayDelta,
+				minute_delta: minuteDelta
+			},
+			success: function(){
+				console.info("Event duration succefully updated.");
+	    		console.info("gotoDate: " + event.start.toISOString());
+	    		$('#calendar').fullCalendar('gotoDate', event.start);
+	    		if (dayDelta) {
+	    			$('#calendar').fullCalendar('refetchEvents');
+	    		}
+			}
+		});
+    }
+	
+	function open_new_event_dialog(event_td, date, allDay) {
 		var selected = $('ul.selectable .ui-selected');
 		if (selected.length) {
-			console.debug("Selected: " + selected.attr('id'));
-			// id = 'order_phase_li_###'
-			var order_phase_uid =  selected.attr('id').split('_')[3];
+			var url = ${new_url_json|n}, // contains: employee_uid
+				tz_offset = date.getTimezoneOffset(), // UTC offset
+				order_phase_uid =  selected.attr('id').split('_')[3];
+
 			url += "&order_phase_uid=" + order_phase_uid;
+			url += "&date=" + date.toISOString();
+			url += "&allDay=" + allDay;
+			url += "&tz_offset=" + tz_offset.toString();
+
 			$('#confirm_dialog_content').load(url);
 			$('#confirm_dialog').dialog({
 				width: 	540,
@@ -116,6 +161,8 @@ event_resize_url_json = json.dumps(event_resize_url)
 				},
 				title: "Saisir un pointage",
 				close: function() {
+					console.info('gotoDate: '+ date.toISOString());
+					$('#calendar').fullCalendar('gotoDate', date);
 				}
 			}).dialog("open");
 		} else {
@@ -131,20 +178,25 @@ event_resize_url_json = json.dumps(event_resize_url)
 						$(this).dialog("close");
 					}
 				},
-				title: "Aucune phase sélectionnée"
+				title: "Aucune phase sélectionnée",
+				close: function() {
+					console.info('gotoDate: '+ date.toISOString());
+					$('#calendar').fullCalendar('gotoDate', date);
+				}
 			}).dialog("open");
 		}
 	}
 	
 	function open_edit_event_dialog(event_div, event, view) {
 		// 'this' is set to the event's <div> element.
-		// id = 'cal_event_###'
-		var uid = event.id.split('_')[2],
+		var uid = event.id.split('_')[2], // id = 'cal_event_###'
+			tz_offset = (new Date()).getTimezoneOffset(),
 			url = ${edit_url_json|n} + "?uid=" + uid;
+			url += "&tz_offset=" + tz_offset;
 		$('#confirm_dialog_content').load(url);
 		$('#confirm_dialog').dialog({
 			width: 	540,
-			height: 300,
+			height: 370,
 			buttons: {
 				"Modifier": function() {
 					$('#cal_event_update').submit();
@@ -158,16 +210,10 @@ event_resize_url_json = json.dumps(event_resize_url)
 			},
 			title: "Modifier un pointage",
 			close: function() {
+				console.info('gotoDate: '+ event.start.toISOString());
+				$('#calendar').fullCalendar('gotoDate', event.start);
 			}
 		}).dialog("open");
-	}
-	
-	function on_event_render(event, element, view) {
-		var start_date = $.fullCalendar.parseDate(event.start),
-			end_date = $.fullCalendar.parseDate(event.end),
-			duration = Math.ceil((end_date - start_date) / 36000.0);
-		element.attr('title', event.comment).find('.fc-event-time')
-			.text(duration).css('padding-left: .5em;');
 	}
 	
 	$('#calendar').fullCalendar(
@@ -223,58 +269,20 @@ event_resize_url_json = json.dumps(event_resize_url)
 					day : 'jour'
 				},
 				droppable: true,
+			    eventDrop: on_event_drop,
 				drop: function(date, allDay) {
+					// 'this' is set to the <td> of the clicked day.
 					open_new_event_dialog(this, date, allDay);
 			    },
-			    eventDrop: function(event, dayDelta, minuteDelta, allDay, revertFunc, jsEvent, ui, view) {
-			    	if (allDay) {
-			    		console.info("Please, this event ins't a all day event !");
-			    		revertFunc();
-			    	} else {
-			    		$.ajax({
-			    			type: "GET",
-			    			url: ${event_drop_url_json|n},
-			    			data: {
-			    				// id = 'cal_event_###'
-			    				uid: event.id.split('_')[2],
-			    				day_delta: dayDelta,
-			    				minute_delta: minuteDelta
-			    			},
-			    			success: function(){
-			    				console.info("Event day/time succefully updated.");
-					    		console.info("gotoDate: " + event.start.toISOString());
-					    		$('#calendar').fullCalendar('gotoDate', event.start);
-			    			}
-			    		});
-			    	}
-			    },
 				dayClick: function(date, allDay, jsEvent, view) {
+					// 'this' is set to the <td> of the clicked day.
 					open_new_event_dialog(this, date, allDay);
 			    },
 			    eventClick: function(event, jsEvent, view) {
 			    	// 'this' is set to the event's <div> element
 					open_edit_event_dialog(this, event, view);
 			    },
-			    eventResize: function(event, dayDelta, minuteDelta, revertFunc, jsEvent, ui, view) {
-		    		$.ajax({
-		    			type: "GET",
-		    			url: ${event_resize_url_json|n},
-		    			data: {
-		    				// id = 'cal_event_###'
-		    				uid: event.id.split('_')[2],
-		    				day_delta: dayDelta,
-		    				minute_delta: minuteDelta
-		    			},
-		    			success: function(){
-		    				console.info("Event duration succefully updated.");
-				    		console.info("gotoDate: " + event.start.toISOString());
-				    		$('#calendar').fullCalendar('gotoDate', event.start);
-				    		if (dayDelta) {
-				    			$('#calendar').fullCalendar('refetchEvents');
-				    		}
-		    			}
-		    		});
-			    },
+			    eventResize: on_event_resize,
 				eventSources: [{
 					url: ${events_url_json|n},
 					error: function() {

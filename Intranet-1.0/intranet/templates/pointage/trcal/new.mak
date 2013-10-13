@@ -18,7 +18,7 @@
 	<p style="display: none; visibility: hidden;">
 	<input name="employee_uid" type="hidden" value="${employee.uid}" />
 	<input name="order_phase_uid" type="hidden" value="${order_phase.uid}" />
-	<input name="time_zone_offset" type="hidden" value="${time_zone_offset}" />
+	<input name="tz_offset" type="hidden" value="${tz_offset}" />
 	</p>
 ##
 ## Referenced objects: order, order phase (with project_cat's css)
@@ -64,14 +64,14 @@
 <script type='text/javascript'>
 	"use strict";
 	/*global $, Modernizr*/
-	function time_zone_offset() {
+	function tz_offset() {
 		var date = new Date();
 		return date.getTimezoneOffset();
 	}
 	if (!Modernizr.inputtypes.date) {
 		$('#cal_event_create input[type=date]').datepicker();
 	}
-	$('#cal_event_create input[name=time_zone_offset]').val(time_zone_offset());
+	$('#cal_event_create input[name=tz_offset]').val(tz_offset());
 	$('#cal_event_create input[name=event_duration]').focus();
 	$('#cal_event_create .create_button').button({
 		text : true,

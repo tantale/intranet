@@ -174,7 +174,7 @@ class CalendarController(RestController):
         now = datetime.datetime.now()
         timegm = calendar.timegm(utcnow.utctimetuple())
         utctimegm = calendar.timegm(now.timetuple())
-        time_zone_offset = int(math.ceil((timegm - utctimegm) / 36.0))
+        tz_offset = int(math.floor((timegm - utctimegm) / 36.0))
 
         # -- date interval from the calendar's date
         cal_date = cal_date or datetime.date.today()
@@ -206,11 +206,12 @@ class CalendarController(RestController):
             LOG.info(err_msg)
         else:
             employee = None
-            err_msg = (u"Aucun employée n'est en activité à la date du {date:%d/%m/%Y}"  # @IgnorePep8
+            err_msg = ((u"Aucun employée n'est en activité "
+                        u"à la date du {date:%d/%m/%Y}")
                        .format(date=cal_date))
             LOG.warning(err_msg)
 
-        return dict(time_zone_offset=time_zone_offset,
+        return dict(tz_offset=tz_offset,
                     cal_date=cal_date,
                     start_date=start_date,
                     end_date=end_date,
@@ -263,11 +264,13 @@ class CalendarController(RestController):
         LOG.debug("- uid:          {!r}".format(uid))
         LOG.debug("- day_delta:    {!r}".format(day_delta))
         LOG.debug("- minute_delta: {!r}".format(minute_delta))
+        day_delta = int(day_delta)
+        minute_delta = int(minute_delta)
         accessor = CalEventAccessor()
         if day_delta:
-            accessor.divide_event(uid, int(day_delta))
+            accessor.divide_event(uid, day_delta)
         else:
-            delta = datetime.timedelta(minutes=int(minute_delta))
+            delta = datetime.timedelta(minutes=minute_delta)
             accessor.increase_duration(uid, delta)
 
     @expose()
@@ -276,13 +279,15 @@ class CalendarController(RestController):
         LOG.debug("- uid:          {!r}".format(uid))
         LOG.debug("- day_delta:    {!r}".format(day_delta))
         LOG.debug("- minute_delta: {!r}".format(minute_delta))
+        day_delta = int(day_delta)
+        minute_delta = int(minute_delta)
         accessor = CalEventAccessor()
-        delta = datetime.timedelta(days=int(day_delta),
-                                   minutes=int(minute_delta))
+        delta = datetime.timedelta(days=day_delta,
+                                   minutes=minute_delta)
         accessor.move_datetime(uid, delta)
 
     @expose('intranet.templates.pointage.trcal.new')
-    def new(self, employee_uid, order_phase_uid, time_zone_offset, **kw):
+    def new(self, employee_uid, order_phase_uid, tz_offset, **kw):
         """
         Display a page to prompt the User for resource creation:
 
@@ -292,32 +297,79 @@ class CalendarController(RestController):
 
         :param order_phase_uid: Current order phase uid's UID
         """
-        LOG.info("new")
-        #    # -- compute default parameters
-        #    if 'event_start' not in kw:
-        #        event_start = datetime.datetime.now().replace(second=0,
-        #                                                      microsecond=0)
-        #        kw['event_start'] = event_start.isoformat()
+        LOG.info("CalendarController.new")
+        LOG.debug("- employee_uid:     {!r}".format(employee_uid))
+        LOG.debug("- order_phase_uid:  {!r}".format(order_phase_uid))
+        LOG.debug("- tz_offset:        {!r}".format(tz_offset))
+
         accessor = CalEventAccessor()
-        employee = accessor.get_employee(employee_uid)
-        order_phase = accessor.get_order_phase(order_phase_uid)
+
+        if 'date' in kw and 'allDay' in kw:
+            # -- [A]: receive parameters from open_new_event_dialog in get_all
+            # :param date: JavaScript date in ISO 8601 format (UTC date/itme)
+            # :param allDay: JavaScript boolean value: "true" or "false"
+            LOG.debug("- date:             {!r}".format(kw.get('date')))
+            LOG.debug("- allDay:           {!r}".format(kw.get('allDay')))
+            iso_fmt = "%Y-%m-%dT%H:%M:%S.000Z"  # ignore trailing milliseconds
+            datetime_utc = datetime.datetime.strptime(kw.pop('date'), iso_fmt)
+            all_day = kw.pop('allDay') == 'true'
+            tz_delta = datetime.timedelta(minutes=int(tz_offset))
+            if all_day:
+                # -- find the best interval in available work hours
+                local_datetime = datetime_utc - tz_delta
+                local_day = local_datetime.date()
+                start_utc, end_utc = accessor.get_event_interval(employee_uid,
+                                                                 local_day,
+                                                                 tz_delta)
+                event_start = start_utc - tz_delta
+                delta = end_utc - start_utc
+                kw['event_start'] = event_start.isoformat()
+                kw['event_duration'] = int(math.floor(delta.seconds / 36.0))
+                kw['comment'] = None
+            else:
+                # -- find an optimized duration in available work hours
+                local_datetime = datetime_utc - tz_delta
+                local_day = local_datetime.date()
+                local_time = local_datetime.time()
+                delta = accessor.get_event_duration(employee_uid,
+                                                    local_day,
+                                                    tz_delta,
+                                                    local_time)
+                kw['event_start'] = local_datetime.isoformat()
+                kw['event_duration'] = int(math.floor(delta.seconds / 36.0))
+                kw['comment'] = None
+
+        elif 'event_start' in kw and 'event_duration' in kw:
+            # -- [B]: receive parameters from post() method for error handling
+            # :param event_start: date in ISO 8601 format (local date/itme)
+            # :param event_duration: 100 * duration (in hour number)
+            # :param comment: optional comment (200 characters)
+            LOG.debug("- event_start:      {!r}".format(kw.get('event_start')))
+            LOG.debug("- event_duration:   {!r}".format(kw.get('event_duration')))  # @IgnorePep8
+            LOG.debug("- comment:          {!r}".format(kw.get('comment')))
+
+        else:
+            raise NotImplementedError("Unknown arguments: {!r}".format(kw))
+
         form_errors = pylons.tmpl_context.form_errors  # @UndefinedVariable
         LOG.debug("form_errors: {}".format(form_errors))
         if form_errors:
             err_msg = (u"Le formulaire comporte des champs invalides")
             flash(err_msg, status="error")
-        return dict(time_zone_offset=time_zone_offset,
+        employee = accessor.get_employee(employee_uid)
+        order_phase = accessor.get_order_phase(order_phase_uid)
+        return dict(tz_offset=tz_offset,
                     employee=employee, order_phase=order_phase,
                     values=kw, form_errors=form_errors)
 
     @validate({'employee_uid': Int(min=0, not_empty=True),
                'order_phase_uid': Int(min=0, not_empty=True),
-               'time_zone_offset': Int(min=-1200, max=1200, not_empty=True),
+               'tz_offset': Int(min=-1200, max=1200, not_empty=True),
                'event_start': IsoDatetimeConverter(),
                'event_duration': Int(min=1, max=999, not_empty=True)},
               error_handler=new)
     @expose()
-    def post(self, employee_uid, order_phase_uid, time_zone_offset,
+    def post(self, employee_uid, order_phase_uid, tz_offset,
              event_start, event_duration, comment, **kwagrs):
         """
         Create a new record.
@@ -331,14 +383,16 @@ class CalendarController(RestController):
         LOG.info("CalendarController.post")
         LOG.debug("- employee_uid:     {!r}".format(employee_uid))
         LOG.debug("- order_phase_uid:  {!r}".format(order_phase_uid))
-        LOG.debug("- time_zone_offset: {!r}".format(time_zone_offset))
+        LOG.debug("- tz_offset:        {!r}".format(tz_offset))
         LOG.debug("- event_start:      {!r}".format(event_start))
         LOG.debug("- event_duration:   {!r}".format(event_duration))
         LOG.debug("- comment:          {!r}".format(comment))
 
         # -- convert parameters
-        event_start_utc = event_start + datetime.timedelta(minutes=time_zone_offset)  # @IgnorePep8
-        event_end_utc = event_start_utc + datetime.timedelta(hours=float(event_duration) / 100)  # @IgnorePep8
+        tz_delta = datetime.timedelta(minutes=tz_offset)
+        event_start_utc = event_start + tz_delta
+        delta = datetime.timedelta(hours=float(event_duration) / 100)
+        event_end_utc = event_start_utc + delta
         LOG.debug("- event_start_utc:  {!r}".format(event_start_utc))
         LOG.debug("- event_end_utc:    {!r}".format(event_end_utc))
 
@@ -355,7 +409,7 @@ class CalendarController(RestController):
                  event_start=event_start_utc)
 
     @expose('intranet.templates.pointage.trcal.edit')
-    def edit(self, uid, **kw):
+    def edit(self, uid, tz_offset, **kw):
         """
         Display a page to prompt the User for resource modification.
 
@@ -363,25 +417,36 @@ class CalendarController(RestController):
 
         :param uid: UID of the CalEvent to update
         """
+        LOG.info("CalendarController.edit")
+        LOG.debug("- uid:              {!r}".format(uid))
+        LOG.debug("- tz_offset:        {!r}".format(tz_offset))
+
         form_errors = pylons.tmpl_context.form_errors  # @UndefinedVariable
         accessor = CalEventAccessor()
         cal_event = accessor.get_cal_event(uid)
-        timedelta = cal_event.event_end - cal_event.event_start
-        event_duration = int(100.0 * timedelta.seconds / 3600)
+        tz_delta = datetime.timedelta(minutes=int(tz_offset))
+        event_start = cal_event.event_start - tz_delta
+        delta = cal_event.event_end - cal_event.event_start
+        event_duration = int(math.floor(delta.seconds / 36.0))
         values = dict(uid=cal_event.uid,
+                      event_start=event_start.isoformat(),
                       event_duration=event_duration,
                       comment=cal_event.comment)
         values.update(kw)
-        return dict(values=values,
+        LOG.debug("- values:           {!r}".format(values))
+        return dict(tz_offset=tz_offset,
+                    values=values,
                     employee=cal_event.employee,
                     order_phase=cal_event.order_phase,
                     form_errors=form_errors)
 
     @validate({'uid': Int(min=0, not_empty=True),
+               'tz_offset': Int(min=-1200, max=1200, not_empty=True),
+               'event_start': IsoDatetimeConverter(),
                'event_duration': Int(min=1, max=999, not_empty=True)},
               error_handler=edit)
     @expose()
-    def put(self, uid, event_duration, comment, **kw):
+    def put(self, uid, tz_offset, event_start, event_duration, comment, **kw):
         """
         Update an existing record.
 
@@ -390,10 +455,24 @@ class CalendarController(RestController):
 
         :param uid: UID of the CalEvent to update
         """
+        LOG.info("CalendarController.put")
+        LOG.debug("- uid:              {!r}".format(uid))
+        LOG.debug("- tz_offset:        {!r}".format(tz_offset))
+        LOG.debug("- event_start:      {!r}".format(event_start))
+        LOG.debug("- event_duration:   {!r}".format(event_duration))
+        LOG.debug("- comment:          {!r}".format(comment))
+
+        # -- convert parameters
+        tz_delta = datetime.timedelta(minutes=tz_offset)
+        event_start_utc = event_start + tz_delta
+        delta = datetime.timedelta(hours=float(event_duration) / 100)
+        event_end_utc = event_start_utc + delta
+        LOG.debug("- event_start_utc:  {!r}".format(event_start_utc))
+        LOG.debug("- event_end_utc:    {!r}".format(event_end_utc))
+
         # -- update the event's duration and comment
         accessor = CalEventAccessor()
-        end_timedelta = datetime.timedelta(hours=float(event_duration) / 100)  # @IgnorePep8
-        accessor.update_duration(uid, end_timedelta, comment)
+        accessor.update_cal_event(uid, event_start_utc, event_end_utc, comment)
 
         # -- return the updated event
         redirect('./get_one', uid=uid)

@@ -16,6 +16,7 @@
 ## Hidden field for PUT method
 ##
 	<p style="display: none; visibility: hidden;">
+	<input name="tz_offset" type="hidden" value="${tz_offset}" />
 	<input type="hidden" name="_method" value="PUT" />
 	</p>
 ##
@@ -27,6 +28,15 @@
 ##
 ## Calendar event fields: event_start, event_duration, comment
 ##
+	<p><label for="cal_event_update__event_start">Date / Heure :</label>
+		<input id="cal_event_update__event_start" type="datetime-local" name="event_start"
+			value="${values.get('event_start')}"
+			title="Date (et heure) du pointage (requis)" />
+	%if 'event_start' in form_errors:
+	<span class="error">${form_errors['event_start']}</span>
+	%endif
+	</p>
+
 	<p><label for="cal_event_update__event_duration">Durée (h/100) :</label>
 		<input id="cal_event_update__event_duration" type="number" name="event_duration"
 			min="1" max="999"
@@ -80,6 +90,7 @@
 				$('#confirm_dialog').dialog("close");
 				event_list = calendar.fullCalendar('clientEvents', updated_event.id);
 				event = event_list[0];
+				event.start = updated_event.start;
 				event.end = updated_event.end;
 				event.comment = updated_event.comment;
 				calendar.fullCalendar('updateEvent', event);
