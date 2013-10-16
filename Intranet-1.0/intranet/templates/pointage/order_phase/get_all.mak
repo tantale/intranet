@@ -93,7 +93,7 @@ form_post_id = 'order_phase_post_{}'.format(order_uid)
 		}
 	});
 	%elif selectable:
-	$("#${ul_list_id} li" )
+	$("#${ul_list_id} li")
 	.zIndex(1000)
 	.draggable({
 		appendTo: 'body',
@@ -102,11 +102,15 @@ form_post_id = 'order_phase_post_{}'.format(order_uid)
 		cursorAt: {left: 5},
 		delay: 300,
 		distance: 10,
-		helper: 'clone',
-		opacity: 0.7,
+		// helper: 'clone',
+		helper: function() {
+			var li = $('<li class="ui-widget-content drag-selected"></li>').text($(this).text());
+			return $('<ul class="selectable"></ul>').append(li)[0];
+		},
+		opacity: 0.9,
 		revert: 'invalid',
 		revertDuration: 300,
-		scroll: false,
+		scroll: true,
 		start: function() {
 			$(this).trigger('click');
 		}
