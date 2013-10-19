@@ -229,7 +229,7 @@ event_resize_url_json = json.dumps(event_resize_url)
 				eventDurationEditable : true,
 				firstDay : 1, // Monday
 				firstHour : 8, // 8h
-				weekends : false, // 5 days
+				weekends : true, // 7 days
 				ignoreTimezone: false,
 
 				allDayText : 'Toute la journ\u00e9e',

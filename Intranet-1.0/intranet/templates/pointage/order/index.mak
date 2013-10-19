@@ -17,6 +17,7 @@
 <link rel="stylesheet" type="text/css" href="${tg.url('/css/intranet.css')}" />
 <link rel="stylesheet" type="text/css" href="${tg.url('/css/intranet.pointage.css')}" />
 <link rel="stylesheet" type="text/css" href="${tg.url('../order_cat.css')}" />
+<script type="text/javascript" src="https://www.google.com/jsapi"></script>
 <script type='text/javascript' src="${tg.url('/javascript/jquery-1.9.1.js')}"></script>
 <script type='text/javascript' src="${tg.url('/javascript/jquery-ui-1.10.3.custom.min.js')}"></script>
 <script type='text/javascript' src="${tg.url('/javascript/modernizr.custom.32767.js')}"></script>
@@ -31,6 +32,7 @@
 	"use strict";
 	/*global $*/
 	$(function() {
+##		google.load("visualization", "1", {packages:["corechart"]});
 		$.fn.editable.defaults.mode = 'inline';
 		$('#order_get_all').ajaxForm({
 			target: '#accordion_content',

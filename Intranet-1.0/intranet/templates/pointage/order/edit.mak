@@ -92,7 +92,8 @@
 	</fieldset>
 </form>
 
-<form id="order_get_delete" class="minimal_form"
+<p>
+<form id="order_get_delete" class="inline_form"
 	action="${tg.url('./{uid}/delete'.format(uid=values['uid']))}"
 	method="get">
 	<p>
@@ -100,6 +101,15 @@
 			title="Supprimer les informations concernant la commande ${values.get('order_ref')}">Supprimer</button>
 	</p>
 </form>
+<form id="order_chart_detail" class="inline_form"
+	action="${tg.url('../chart/{uid}'.format(uid=values['uid']))}"
+	method="get">
+	<p>
+		<button id="order_chart_detail__display" type="submit" class="display_button"
+			title="Afficher les statistiques de pointages de la commande ${values.get('order_ref')}">Statistiques</button>
+	</p>
+</form>
+</p>
 
 <script type='text/javascript'>
 	"use strict";
@@ -140,12 +150,21 @@
 		}
 	});
 	$('#order_get_delete .delete_button').button({
-		text : true,
-		icons : {
+		text: true,
+		icons: {
 			primary : "ui-icon-trash"
 		}
 	});
 	$('#order_get_delete').ajaxForm({
-		target : '#confirm_dialog_content'
+		target: '#confirm_dialog_content'
+	});
+	$('#order_chart_detail .display_button').button({
+		text: true,
+		icons: {
+			primary : "ui-icon-check"
+		}
+	});
+	$('#order_chart_detail').ajaxForm({
+		target: '#order_content'
 	});
 </script>

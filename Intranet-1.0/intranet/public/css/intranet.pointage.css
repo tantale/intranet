@@ -137,3 +137,54 @@ img.picture_box_inner_min {
 	height: 42px;
 	padding-right: 3px;
 }
+
+.chart-page {
+	margin: .5cm .5cm .5cm .5cm;
+}
+
+.chart-page h2 {
+	text-align: center;
+}
+
+.chart-table {
+	margin-left: auto;
+    margin-right: auto;
+}
+
+.chart-table th, .chart-table td {
+	padding-left: .5em;
+	padding-right: .5em;
+	padding-top: .2em;
+	padding-bottom: .2em;
+}
+
+.chart-table caption {
+	text-align: center;
+	font-size: 1.2em;
+	font-weight: bold;
+	font-variant: normal;
+	margin-bottom: .6em;
+	margin-top: .6em;
+}
+
+td.chart-table-position {
+	text-align: right;
+}
+
+td.chart-table-label {
+	text-align: left;
+}
+
+td.chart-table-count, th.chart-table-count {
+	text-align: right;
+	padding-right: 2.5em;
+}
+
+td.chart-table-percent, th.chart-table-percent {
+	text-align: right;
+	padding-right: 2em;
+}
+
+th.chart-table-summary {
+	text-align: right;
+}

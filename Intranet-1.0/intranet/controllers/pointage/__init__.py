@@ -11,6 +11,7 @@ from intranet.controllers.pointage.order_phase import OrderPhaseController
 from intranet.controllers.pointage.trcal import CalendarController
 from intranet.lib.base import BaseController
 import tg
+from intranet.controllers.pointage.chart import ChartController
 
 
 main_menu = dict(title=u"Gestion des pointages",
@@ -28,3 +29,4 @@ class PointageControoler(BaseController):
     order_cat = OrderCatController()
     order_phase = OrderPhaseController()
     trcal = CalendarController(main_menu)  # Time Recording Calendar
+    chart = ChartController()

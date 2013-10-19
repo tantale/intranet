@@ -4,6 +4,7 @@
 :date: 2013-10-08
 :author: Laurent LAPORTE <sandlol2009@gmail.com>
 """
+from intranet.controllers.pointage.chart import ChartController
 from intranet.controllers.pointage.employee import EmployeeController
 from intranet.controllers.pointage.order import OrderController
 from intranet.controllers.pointage.order_cat import OrderCatController
@@ -37,3 +38,4 @@ class AdminController(BaseController):
     order_cat = OrderCatController()
     order_phase = OrderPhaseController()
     trcal = CalendarController(main_menu)  # Time Recording Calendar
+    chart = ChartController()
