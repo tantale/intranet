@@ -34,6 +34,7 @@
 		console.log('Load order content from URL: ' + url);
 		$('#order_content').load(url);
 		$('#order_get_all input[name=uid]').val(uid);
+		$('#order_get_all input[name=order_ref]').val("");
 	}
 	$('#accordion .minimal_form').ajaxForm({
 		target : '#order_content',

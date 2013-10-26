@@ -9,6 +9,7 @@ from intranet.accessors.order_cat import OrderCatAccessor
 from intranet.model.pointage.order import Order
 from intranet.model.pointage.order_phase import OrderPhase
 from sqlalchemy.exc import IntegrityError
+import datetime
 import transaction
 
 
@@ -29,6 +30,46 @@ class OrderAccessor(BasicAccessor):
     def get_order_list(self, filter_cond=None, order_by_cond=None):
         return super(OrderAccessor, self)._get_record_list(filter_cond,
                                                           order_by_cond)
+
+    def duplicate(self, uid):
+        # -- search a new order reference
+        actual_order = self.get_order(uid)
+        new_order_ref = (u"Copie de {order_ref}"
+                         .format(order_ref=actual_order.order_ref))
+        order_list = self.get_order_list(Order.order_ref == new_order_ref)
+        counter = 1
+        while order_list:
+            counter += 1
+            new_order_ref = (u"Copie de {order_ref} ({counter})"
+                             .format(order_ref=actual_order.order_ref,
+                                     counter=counter))
+            order_list = self.get_order_list(Order.order_ref == new_order_ref)
+
+        # -- create a clone
+        new_creation_date = datetime.date.today()
+        new_project_cat = actual_order.project_cat
+        new_order = Order(order_ref=new_order_ref,
+                          project_cat=new_project_cat,
+                          creation_date=new_creation_date,
+                          close_date=None)
+        new_order_phase_list = [OrderPhase(position=phase.position,
+                                           label=phase.label)
+                                for phase in actual_order.order_phase_list]
+        new_order.order_phase_list.extend(new_order_phase_list)
+        try:
+            self.session.add(new_order)
+            transaction.commit()
+        except IntegrityError:
+            transaction.abort()
+            raise DuplicateFoundError(self.class_name, order_ref=new_order_ref)
+        except:
+            transaction.abort()
+            raise
+        else:
+            return dict(order_ref=new_order_ref,
+                        project_cat=new_project_cat,
+                        creation_date=new_creation_date,
+                        close_date=None)
 
     def insert_order(self, **kwargs):
         order = self.record_class(**kwargs)
@@ -51,7 +92,7 @@ class OrderAccessor(BasicAccessor):
             transaction.abort()
             raise
         else:
-            return order
+            return kwargs
 
     def update_order(self, uid, **kwargs):
         return super(OrderAccessor, self)._update_record(uid, **kwargs)

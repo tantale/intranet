@@ -76,7 +76,7 @@ class OrderController(RestController):
     @with_trailing_slash
     @expose('json')
     @expose('intranet.templates.pointage.order.get_all')
-    def get_all(self, keyword=None, uid=None, _load=False):
+    def get_all(self, keyword=None, uid=None, order_ref=None, _load=False):
         """
         Display all records in a resource.
 
@@ -105,6 +105,11 @@ class OrderController(RestController):
             uid = int(uid)
             for index, order in enumerate(order_list):
                 if order.uid == uid:
+                    active_index = index
+                    break
+        elif order_ref:
+            for index, order in enumerate(order_list):
+                if order.order_ref == order_ref:
                     active_index = index
                     break
         return dict(order_list=order_list, keyword=keyword,
@@ -240,6 +245,21 @@ class OrderController(RestController):
             msg_fmt = (u"La commande « {order_ref} » est modifiée.")
             flash(msg_fmt.format(order_ref=order_ref), status="ok")
             redirect('./{uid}/edit'.format(uid=uid))
+
+    @expose('json')
+    def duplicate(self, uid):
+        """
+        Duplicate an existing record.
+
+        GET /pointage/order/duplicate?uid=1
+
+        :param uid: UID of the Order to delete.
+        """
+        accessor = OrderAccessor()
+        values = accessor.duplicate(uid)
+        return dict(action='duplicate',
+                    result='ok',
+                    values=values)
 
     @expose('intranet.templates.pointage.order.get_delete')
     def get_delete(self, uid):

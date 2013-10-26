@@ -4,7 +4,10 @@
 :date: 2013-08-11
 :author: Laurent LAPORTE <sandlol2009@gmail.com>
 </%doc>
-<%! import json %>
+<%!
+import json
+import datetime
+%>
 <%flash = tg.flash_obj.render('flash', use_js=False)%>
 %if flash:
 	${flash | n}
@@ -101,6 +104,15 @@
 			title="Supprimer les informations concernant la commande ${values.get('order_ref')}">Supprimer</button>
 	</p>
 </form>
+<form id="order_duplicate" class="inline_form"
+	action="${tg.url('./duplicate')}"
+	method="get">
+	<p>
+		<input type="hidden" name="uid" value="${values['uid']}" />
+		<button id="order_duplicate__copy" type="submit" class="copy_button"
+			title="Créer une nouvelle commande en copiant les informations de ${values.get('order_ref')}">Dupliquer</button>
+	</p>
+</form>
 <form id="order_chart_detail" class="inline_form"
 	action="${tg.url('../chart/{uid}'.format(uid=values['uid']))}"
 	method="get">
@@ -138,12 +150,13 @@
 			console.log("search for '<div id=\"flash\"><div class=\"ok\">' tag...");
 			var ok = $('<div/>').append(responseText).find('#flash div.ok');
 			if (ok.length) {
-				var input = $('#order_get_all input[name=uid]'),
-					uid = input.val();
-				console.log("OK, update the order list but don't select any order...");
-				input.val("");
-				$('#order_get_all').submit();
-				input.val(uid);
+				var order_get_all = $('#order_get_all'), //
+					input_uid = order_get_all.find('input[name=uid]'), //
+					input_order_ref = order_get_all.find('input[name=order_ref]');
+				input_uid.val("");
+				input_order_ref.val("");
+				order_get_all.submit();
+				input_uid.val(uid);
 			} else {
 				console.log("ERROR: don't update the orders list.");
 			}
@@ -157,6 +170,30 @@
 	});
 	$('#order_get_delete').ajaxForm({
 		target: '#confirm_dialog_content'
+	});
+	$('#order_duplicate .copy_button').button({
+		text: true,
+		icons: {
+			primary : "ui-icon-copy"
+		}
+	});
+	$('#order_duplicate').ajaxForm({
+		target : '#order_content',
+		beforeSubmit: function(arr, $form, options) {
+			$('#flash').hide();
+		},
+		success: function(responseJson, statusText, xhr) {
+			// {"action": "duplicate", "result": "ok", "values": {"order_ref": "Copie de DUJARDIN - Bain (3)"}}
+			if (responseJson.result === "ok") {
+				var order = responseJson.values, //
+					order_get_all = $('#order_get_all');
+				order_get_all.find('input[name=uid]').val("");
+				order_get_all.find('input[name=order_ref]').val(order.order_ref);
+				order_get_all.submit();
+			} else {
+				console.log("ERROR: don't update the order list.");
+			}
+		}
 	});
 	$('#order_chart_detail .display_button').button({
 		text: true,

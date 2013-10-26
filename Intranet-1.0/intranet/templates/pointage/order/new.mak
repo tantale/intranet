@@ -116,10 +116,12 @@
 			console.log("search for '<div id=\"flash\"><div class=\"ok\">' tag...");
 			var ok = $('<div/>').append(responseText).find('#flash div.ok');
 			if (ok.length) {
-				var input = $('#order_get_all input[name=uid]');
-				console.log("OK, update the order list but don't select any order...");
-				input.val("");
-				$('#order_get_all').submit();
+				var order_get_all = $('#order_get_all'), //
+					input_uid = order_get_all.find('input[name=uid]'), //
+					input_order_ref = order_get_all.find('input[name=order_ref]');
+				input_uid.val("");
+				input_order_ref.val("");
+				order_get_all.submit();
 			} else {
 				console.log("ERROR: don't update the order list.");
 			}

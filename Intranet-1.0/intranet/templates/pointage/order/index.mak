@@ -73,6 +73,7 @@
 						placeholder="Mot-clef"
 						title="Saisir un mot-clef" />
 					<input type="hidden" name="uid" value="" />
+					<input type="hidden" name="order_ref" value="" />
 					<button id="order_get_all__search" type="submit" class="search_button"
 						title="Rechercher selon le mot-clef">Rechercher</button>
 				</p>
