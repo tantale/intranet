@@ -112,15 +112,14 @@
 		beforeSubmit: function(arr, $form, options) {
 			$('#flash').hide();
 		},
-		success: function(responseText, statusText, xhr) {
-			console.log("search for '<div id=\"flash\"><div class=\"ok\">' tag...");
-			var ok = $('<div/>').append(responseText).find('#flash div.ok');
-			if (ok.length) {
-				var order_get_all = $('#order_get_all'), //
-					input_uid = order_get_all.find('input[name=uid]'), //
-					input_order_ref = order_get_all.find('input[name=order_ref]');
-				input_uid.val("");
-				input_order_ref.val("");
+		success: function(responseJson, statusText, xhr) {
+			// {"action": "post", "result": "ok", "values": {"order_ref": "Copie de DUJARDIN - Bain (3)"}}
+			console.dir(responseJson);
+			if (responseJson.result === "ok") {
+				var order = responseJson.values, //
+					order_get_all = $('#order_get_all');
+				order_get_all.find('input[name=uid]').val("");
+				order_get_all.find('input[name=order_ref]').val(order.order_ref);
 				order_get_all.submit();
 			} else {
 				console.log("ERROR: don't update the order list.");

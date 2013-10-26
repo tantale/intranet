@@ -135,7 +135,7 @@ class OrderController(RestController):
                'creation_date': IsoDateConverter(not_empty=True),
                'close_date': IsoDateConverter(not_empty=False)},
               error_handler=new)
-    @expose()
+    @expose('json')
     def post(self, order_ref, project_cat, creation_date, close_date=None):
         """
         Create a new record.
@@ -155,10 +155,10 @@ class OrderController(RestController):
         """
         try:
             accessor = OrderAccessor()
-            accessor.insert_order(order_ref=order_ref,
-                                  project_cat=project_cat,
-                                  creation_date=creation_date,
-                                  close_date=close_date)
+            values = accessor.insert_order(order_ref=order_ref,
+                                           project_cat=project_cat,
+                                           creation_date=creation_date,
+                                           close_date=close_date)
         except DuplicateFoundError:
             msg_fmt = (u"La commande « {order_ref} » existe déjà.")
             err_msg = msg_fmt.format(order_ref=order_ref)
@@ -171,7 +171,9 @@ class OrderController(RestController):
         else:
             msg_fmt = (u"La commande « {order_ref} » est créée.")
             flash(msg_fmt.format(order_ref=order_ref), status="ok")
-            redirect('./new')
+            return dict(action='post',
+                        result='ok',
+                        values=values)
 
     @expose('intranet.templates.pointage.order.edit')
     def edit(self, uid, **kw):
