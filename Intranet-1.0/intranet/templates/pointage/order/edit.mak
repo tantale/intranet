@@ -161,7 +161,7 @@
 	$('#order_chart_detail .display_button').button({
 		text: true,
 		icons: {
-			primary : "ui-icon-check"
+			primary : "ui-icon-calculator"
 		}
 	});
 	$('#order_chart_detail').ajaxForm({
