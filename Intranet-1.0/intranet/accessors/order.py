@@ -1,11 +1,15 @@
+# -*- coding: utf-8 -*-
 """
 :module: intranet.accessors.order
 :date: 2013-09-07
 :author: Laurent LAPORTE <sandlol2009@gmail.com>
 """
-from intranet.accessors import BasicAccessor
-from intranet.model.pointage.order import Order
+from intranet.accessors import BasicAccessor, DuplicateFoundError
 from intranet.accessors.order_cat import OrderCatAccessor
+from intranet.model.pointage.order import Order
+from intranet.model.pointage.order_phase import OrderPhase
+from sqlalchemy.exc import IntegrityError
+import transaction
 
 
 class OrderAccessor(BasicAccessor):
@@ -27,7 +31,27 @@ class OrderAccessor(BasicAccessor):
                                                           order_by_cond)
 
     def insert_order(self, **kwargs):
-        return super(OrderAccessor, self)._insert_record(**kwargs)
+        order = self.record_class(**kwargs)
+        phases = [u"Commercialisation / Étude",
+                  u"Fabrication",
+                  u"Finition",
+                  u"Livraison / Pose",
+                  u"Divers"]
+        order_phase_list = [OrderPhase(position=position,
+                                       label=label)
+                            for position, label in enumerate(phases, 1)]
+        order.order_phase_list.extend(order_phase_list)
+        try:
+            self.session.add(order)
+            transaction.commit()
+        except IntegrityError:
+            transaction.abort()
+            raise DuplicateFoundError(self.class_name, **kwargs)
+        except:
+            transaction.abort()
+            raise
+        else:
+            return order
 
     def update_order(self, uid, **kwargs):
         return super(OrderAccessor, self)._update_record(uid, **kwargs)

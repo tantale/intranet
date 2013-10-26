@@ -151,9 +151,9 @@ class OrderController(RestController):
         try:
             accessor = OrderAccessor()
             accessor.insert_order(order_ref=order_ref,
-                                        project_cat=project_cat,
-                                        creation_date=creation_date,
-                                        close_date=close_date)
+                                  project_cat=project_cat,
+                                  creation_date=creation_date,
+                                  close_date=close_date)
         except DuplicateFoundError:
             msg_fmt = (u"La commande « {order_ref} » existe déjà.")
             err_msg = msg_fmt.format(order_ref=order_ref)

@@ -1,5 +1,6 @@
 eclipse.preferences.version=1
 encoding//intranet/__init__.py=utf-8
+encoding//intranet/accessors/order.py=utf-8
 encoding//intranet/config/__init__.py=utf-8
 encoding//intranet/config/app_cfg.py=utf-8
 encoding//intranet/config/environment.py=utf-8

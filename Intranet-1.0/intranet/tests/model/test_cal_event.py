@@ -60,7 +60,6 @@ class TestCalEvent(unittest.TestCase):
     def test_add_event(self):
         employee_list = DBSession.query(Employee).all()
         employee_0 = employee_list[0]
-        employee_1 = employee_list[1]
         order_list = DBSession.query(Order).all()
         order_0 = order_list[0]
         order_1 = order_list[1]
