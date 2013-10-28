@@ -93,7 +93,7 @@ event_resize_url_json = json.dumps(event_resize_url)
 	
 	function on_event_drop(event, dayDelta, minuteDelta, allDay, revertFunc, jsEvent, ui, view) {
     	if (allDay) {
-    		console.info("Please, this event ins't a all day event !");
+    		console.info("Please, this event ins't a all day event!");
     		revertFunc();
     	} else {
     		$.ajax({
@@ -138,9 +138,11 @@ event_resize_url_json = json.dumps(event_resize_url)
 	function open_new_event_dialog(event_td, date, allDay) {
 		var selected = $('ul.selectable .ui-selected');
 		if (selected.length) {
+			console.debug('------- open_new_event_dialog');
 			var url = ${new_url_json|n}, // contains: employee_uid
 				tz_offset = date.getTimezoneOffset(), // UTC offset
 				order_phase_uid =  selected.attr('id').split('_')[3];
+			console.debug('------- tz_offset: ' + tz_offset.toString());
 
 			url += "&order_phase_uid=" + order_phase_uid;
 			url += "&date=" + date.toISOString();
@@ -163,6 +165,7 @@ event_resize_url_json = json.dumps(event_resize_url)
 				close: function() {
 					console.info('gotoDate: '+ date.toISOString());
 					$('#calendar').fullCalendar('gotoDate', date);
+					console.debug('------- /open_new_event_dialog');
 				}
 			}).dialog("open");
 		} else {
@@ -190,7 +193,7 @@ event_resize_url_json = json.dumps(event_resize_url)
 	function open_edit_event_dialog(event_div, event, view) {
 		// 'this' is set to the event's <div> element.
 		var uid = event.id.split('_')[2], // id = 'cal_event_###'
-			tz_offset = (new Date()).getTimezoneOffset(),
+			tz_offset = event.start.getTimezoneOffset(),
 			url = ${edit_url_json|n} + "?uid=" + uid;
 			url += "&tz_offset=" + tz_offset;
 		$('#confirm_dialog_content').load(url);

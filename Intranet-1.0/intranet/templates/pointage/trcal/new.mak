@@ -64,14 +64,9 @@
 <script type='text/javascript'>
 	"use strict";
 	/*global $, Modernizr*/
-	function tz_offset() {
-		var date = new Date();
-		return date.getTimezoneOffset();
-	}
 	if (!Modernizr.inputtypes.date) {
 		$('#cal_event_create input[type=date]').datepicker();
 	}
-	$('#cal_event_create input[name=tz_offset]').val(tz_offset());
 	$('#cal_event_create input[name=event_duration]').focus();
 	$('#cal_event_create .create_button').button({
 		text : true,
