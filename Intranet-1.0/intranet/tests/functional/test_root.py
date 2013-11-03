@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 """
+:module: intranet.tests.functional.test_root
+
 Functional test suite for the root controller.
 
 This is an example of how functional tests can be written for controllers.
@@ -10,7 +12,7 @@ functional tests exercise the whole application and its WSGI stack.
 Please read http://pythonpaste.org/webtest/ for more information.
 
 """
-from nose.tools import assert_true
+from nose.tools import assert_true  # @UnresolvedImport
 
 from intranet.tests import TestController
 
@@ -54,4 +56,3 @@ class TestRootController(TestController):
         """The data display demo works with JSON"""
         resp = self.app.get('/data.json?a=1&b=2')
         assert '"a": "1", "b": "2"' in resp, resp
-
