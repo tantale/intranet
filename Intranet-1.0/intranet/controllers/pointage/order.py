@@ -8,6 +8,7 @@ from formencode.validators import NotEmpty
 from intranet.accessors import DuplicateFoundError
 from intranet.accessors.order import OrderAccessor
 from intranet.model.pointage.order import Order
+from intranet.validators.date_interval import check_date_interval
 from intranet.validators.iso_date_converter import IsoDateConverter
 from tg.controllers.restcontroller import RestController
 from tg.controllers.util import redirect
@@ -153,6 +154,15 @@ class OrderController(RestController):
         :param close_date: close date, or None if it's status is in progress.
         :type close_date: datetime.date
         """
+        ctrl_dict = check_date_interval(creation_date, close_date)
+        if ctrl_dict['status'] != "ok":
+            flash(ctrl_dict['message'], status=ctrl_dict['status'])
+            redirect('./new',
+                     order_ref=order_ref,
+                     project_cat=project_cat,
+                     creation_date=creation_date,
+                     close_date=close_date)
+
         try:
             accessor = OrderAccessor()
             values = accessor.insert_order(order_ref=order_ref,
@@ -227,6 +237,15 @@ class OrderController(RestController):
         :param close_date: close date, or None if it's status is in progress.
         :type close_date: datetime.date
         """
+        ctrl_dict = check_date_interval(creation_date, close_date)
+        if ctrl_dict['status'] != "ok":
+            flash(ctrl_dict['message'], status=ctrl_dict['status'])
+            redirect('./{uid}/edit'.format(uid=uid),
+                     order_ref=order_ref,
+                     project_cat=project_cat,
+                     creation_date=creation_date,
+                     close_date=close_date)
+
         try:
             accessor = OrderAccessor()
             accessor.update_order(uid,

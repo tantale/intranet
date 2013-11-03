@@ -85,7 +85,12 @@
 		<div id="accordion_content"></div>
 	</div>
 	<div id="rightFrame" class="ui-layout-center">
-		<div id="employee_content"></div>
+		<div id="employee_content">
+			<br />
+			<br />
+			<br />
+			<h1>← Veuillez sélectionner un employé dans la liste ci-contre.</h1>
+		</div>
 	</div>
 	<div id="confirm_dialog" title="Confirmation">
 		<div id="confirm_dialog_content"></div>

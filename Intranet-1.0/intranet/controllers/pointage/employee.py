@@ -8,6 +8,7 @@ from formencode.validators import NotEmpty, Int
 from intranet.accessors import DuplicateFoundError
 from intranet.accessors.employee import EmployeeAccessor
 from intranet.model.pointage.employee import Employee
+from intranet.validators.date_interval import check_date_interval
 from intranet.validators.iso_date_converter import IsoDateConverter
 from tg.controllers.restcontroller import RestController
 from tg.controllers.util import redirect
@@ -107,6 +108,16 @@ class EmployeeController(RestController):
     @expose()
     def post(self, employee_name, worked_hours, entry_date,
                  exit_date=None, photo_path=None):
+        ctrl_dict = check_date_interval(entry_date, exit_date)
+        if ctrl_dict['status'] != "ok":
+            flash(ctrl_dict['message'], status=ctrl_dict['status'])
+            redirect('./new',
+                     employee_name=employee_name,
+                     worked_hours=worked_hours,
+                     entry_date=entry_date,
+                     exit_date=exit_date,
+                     photo_path=photo_path)
+
         try:
             accessor = EmployeeAccessor()
             accessor.insert_employee(employee_name=employee_name,
@@ -169,6 +180,16 @@ class EmployeeController(RestController):
         POST /pointage/employee/1?_method=PUT
         PUT /pointage/employee/1
         """
+        ctrl_dict = check_date_interval(entry_date, exit_date)
+        if ctrl_dict['status'] != "ok":
+            flash(ctrl_dict['message'], status=ctrl_dict['status'])
+            redirect('./{uid}/edit'.format(uid=uid),
+                     employee_name=employee_name,
+                     worked_hours=worked_hours,
+                     entry_date=entry_date,
+                     exit_date=exit_date,
+                     photo_path=photo_path)
+
         try:
             accessor = EmployeeAccessor()
             accessor.update_employee(uid,
