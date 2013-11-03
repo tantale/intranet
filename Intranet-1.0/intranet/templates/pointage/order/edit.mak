@@ -89,7 +89,12 @@ import datetime
 				<td class="alignRight">
 				<input type="hidden" name="_method" value="PUT" />
 				<button id="order_update__update" type="submit" class="update_button"
-					title="Modifier les informations concernant la commande">Modifier</button></td>
+					title="Modifier les informations concernant la commande">Modifier</button>
+				%if not values.get('close_date'):
+				<button id="order_update__close" type="submit" class="close_button"
+					title="Clôturer la commande à la date du jour">Clôturer</button>
+				%endif
+				</td>
 			</tr>
 		</table>
 	</fieldset>
@@ -141,6 +146,17 @@ import datetime
 			primary : "ui-icon-pencil"
 		}
 	});
+%if not values.get('close_date'):
+	$('#order_content .close_button').button({
+		text : true,
+		icons : {
+			primary : "ui-icon-circle-close"
+		}
+	}).click(function(){
+		var date = new Date();
+		$('#order_update__close_date').val(date.toISOString().split("T")[0]);
+	});
+%endif
 	$('#order_update').ajaxForm({
 		target : '#order_content',
 		beforeSubmit: function(arr, $form, options) {
@@ -152,7 +168,8 @@ import datetime
 			if (ok.length) {
 				var order_get_all = $('#order_get_all'), //
 					input_uid = order_get_all.find('input[name=uid]'), //
-					input_order_ref = order_get_all.find('input[name=order_ref]');
+					input_order_ref = order_get_all.find('input[name=order_ref]'),
+					uid = input_uid.val();
 				input_uid.val("");
 				input_order_ref.val("");
 				order_get_all.submit();

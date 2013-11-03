@@ -72,7 +72,12 @@
 				<td class="alignRight" colspan="2">
 				<input type="hidden" name="_method" value="PUT" />
 				<button id="employee_update__update" type="submit" class="update_button"
-					title="Modifier les informations concernant cet employé">Modifier</button></td>
+					title="Modifier les informations concernant cet employé">Modifier</button>
+				%if not values.get('exit_date'):
+				<button id="employee_update__close" type="submit" class="close_button"
+					title="Indiquer comme hors effectif à la date du jour">Hors effectif</button>
+				%endif
+				</td>
 			</tr>
 		</table>
 	</fieldset>
@@ -104,6 +109,17 @@
 			primary : "ui-icon-pencil"
 		}
 	});
+%if not values.get('exit_date'):
+		$('#employee_content .close_button').button({
+			text : true,
+			icons : {
+				primary : "ui-icon-circle-close"
+			}
+		}).click(function(){
+			var date = new Date();
+			$('#employee_update__exit_date').val(date.toISOString().split("T")[0]);
+		});
+%endif
 	$('#employee_update').ajaxForm({
 		target : '#employee_content',
 		beforeSubmit: function(arr, $form, options) {
