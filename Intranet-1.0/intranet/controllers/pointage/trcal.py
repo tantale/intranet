@@ -61,6 +61,35 @@ def overlap_cond(ref_start, ref_end, field_start, field_end):
                     or_(field_end == None, field_end > ref_start)))
 
 
+def get_event_duration(event):
+    delta = event.event_end - event.event_start
+    return delta.seconds / 3600.0
+
+
+def get_ctrl_status(duration_total, worked_hours):
+    if duration_total == 0:
+        message = u"Aucun pointage pour cette semaine."
+        status = "info"
+    elif duration_total > worked_hours:
+        msg_fmt = u"Le pointage de la semaine dépasse le temps "\
+        u"de travail de {hours} h/sem. "\
+        u"il y a un excédant de {exceeding} h."
+        message = msg_fmt.format(hours=worked_hours,
+                                 exceeding=duration_total - worked_hours)
+        status = "warning"
+    elif duration_total < worked_hours:
+        msg_fmt = u"Le pointage de la semaine n’atteint pas le temps "\
+        u"de travail de {hours} h/sem. "\
+        u"il y a un déficit de {missing} h."
+        message = msg_fmt.format(hours=worked_hours,
+                                 missing=worked_hours - duration_total)
+        status = "error"
+    else:
+        message = u"Le pointage de la semaine est correct."
+        status = "ok"
+    return dict(message=message, status=status)
+
+
 class CalendarController(RestController):
     """
     Calendar controller.
@@ -493,3 +522,68 @@ class CalendarController(RestController):
         accessor.delete_cal_event(uid)
         # -- return an event object with it's id only
         return json.dumps(dict(id='cal_event_{uid}'.format(uid=uid)))
+
+    @expose('json')
+    def ctrl_rec_times(self, employee_uid, week_start, week_end):
+        """
+        """
+        LOG.info("CalendarController.ctrl_rec_times")
+        LOG.debug("- employee_uid: {!r}".format(employee_uid))
+        LOG.debug("- week_start:   {!r}".format(week_start))
+        LOG.debug("- week_end:     {!r}".format(week_end))
+
+        # -- date interval from the calendar's timestamps
+        start_date = datetime.datetime.utcfromtimestamp(float(week_start))
+        end_date = datetime.datetime.utcfromtimestamp(float(week_end))
+        LOG.debug(("date interval from the calendar's timestamps: "
+                   "[{start_date} ; {end_date}]")
+                  .format(start_date=start_date,
+                          end_date=end_date))
+
+        # -- current employee
+        accessor = CalEventAccessor()
+        employee = accessor.get_employee(employee_uid)
+
+        # -- current events of the current employee
+        cal_overlap_cond = overlap_cond(start_date, end_date,
+                                        CalEvent.event_start,
+                                        CalEvent.event_end)
+        cal_filter_cond = and_(CalEvent.employee == employee,
+                               cal_overlap_cond)
+        cal_order_by_cond = CalEvent.event_start
+        cal_event_list = accessor.get_cal_event_list(cal_filter_cond,
+                                                     cal_order_by_cond)
+
+        # -- count events duration by day and week
+        delta = end_date - start_date
+        weeks = int(delta.days / 7)
+
+        week_list = []
+        for week in xrange(weeks):
+            day_list = []
+            for day in xrange(7):
+                day_start = start_date + datetime.timedelta(days=week * 7 + day)  # @IgnorePep8
+                day_end = day_start + datetime.timedelta(days=1)
+                event_day_list = [event for event in cal_event_list
+                                  if ((event.event_start >= day_start and
+                                       event.event_start < day_end) or
+                                      (event.event_start <= day_start and
+                                       event.event_end > day_start))]
+                duration_sum = sum([get_event_duration(event)
+                                    for event in event_day_list])
+                day_list.append(duration_sum)
+            week_start = start_date + datetime.timedelta(days=week * 7)
+            duration_total = sum(day_list)
+            week_dict = dict(week_number=week_start.isocalendar()[1],
+                             day_list=day_list,
+                             duration_total=duration_total)
+            week_dict.update(get_ctrl_status(duration_total,
+                                             employee.worked_hours))
+            week_list.append(week_dict)
+
+        return dict(employee_uid=employee_uid,
+                    employee_name=employee.employee_name,
+                    worked_hours=employee.worked_hours,
+                    week_start=week_start,
+                    week_end=week_end,
+                    week_list=week_list)

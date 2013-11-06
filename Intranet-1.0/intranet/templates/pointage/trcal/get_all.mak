@@ -15,6 +15,19 @@ else:
 	img_alt = "Silhouette"
 %>\
 
+## -- Display the "Control recorded times" button to the right
+%if employee:
+<form id="ctrl_rec_times" class="inline_form" style="float: right;"
+	action="${tg.url('./ctrl_rec_times')}" method="get">
+	<input type="hidden" name="employee_uid" value="${employee.uid}"/>
+	<input type="hidden" name="week_start"/>
+	<input type="hidden" name="week_end"/>
+	<button id="ctrl_rec_times__ctrl" type="submit" class="ctrl_button"
+		title="Contrôler les pointages de la semaine">Contrôler les pointages</button></td>
+</form>
+%endif
+
+## -- Display the list of employees
 <form id="employee_refresh" class="inline_form"
 	action="${tg.url('./get_all/')}" method="get">
 	<p><img class="valignMiddle picture_box_inner_min"
@@ -45,6 +58,7 @@ else:
 			title="Mettre à jour le calendrier des pointages">Mettre à jour</button></td>
 	</p>
 </form>
+<div style="ui-helper-clearfix"></div>
 </div>
 <div id='calendar'><!-- calendar placeholder --></div>
 <%
@@ -82,7 +96,37 @@ event_resize_url_json = json.dumps(event_resize_url)
 	$('#employee_refresh__select').change(function(){
 		$('#employee_refresh').submit();
 	});
-	
+##
+## -- Display the "Control recorded times" button to the right
+%if employee:
+	$('#ctrl_rec_times .ctrl_button').button({
+		text : true,
+		icons : {
+			primary : "ui-icon-check"
+		}
+	});
+	$('#ctrl_rec_times').submit(function(event){
+		// -- Compute de start/end dates of the week (or month)
+		var calendar = $('#calendar'), // fullCalendar object
+			view = calendar.fullCalendar('getView'), // viewObject
+			week_start = view.visStart,
+			week_end = view.visEnd;
+		if (view.name === "basicDay" || view.name === "agendaDay") {
+			var firstDay = calendar.fullCalendar('option', 'firstDay'), // int
+				days = (week_start.getDay() === 0) ?
+						(7 - firstDay) % 7 :
+						week_start.getDay() - firstDay;
+			week_start = view.visStart;
+			week_start.setDate(week_start.getDate() - days); // Monday
+			week_end = new Date(week_start);
+			week_end.setDate(week_end.getDate() + 7);
+		}
+		$('#ctrl_rec_times input[name=week_start]').val(week_start.getTime() / 1000);
+		$('#ctrl_rec_times input[name=week_end]').val(week_end.getTime() / 1000);
+		// event.preventDefault();
+	});
+%endif
+
 	function on_event_render(event, element, view) {
 		var start_date = $.fullCalendar.parseDate(event.start),
 			end_date = $.fullCalendar.parseDate(event.end),
