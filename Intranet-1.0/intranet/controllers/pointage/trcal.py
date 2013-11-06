@@ -70,6 +70,7 @@ def get_ctrl_status(duration_total, worked_hours):
     if duration_total == 0:
         message = u"Aucun pointage pour cette semaine."
         status = "info"
+        icon = "ui-icon-info"
     elif duration_total > worked_hours:
         msg_fmt = u"Le pointage de la semaine dépasse le temps "\
         u"de travail de {hours} h/sem. "\
@@ -77,6 +78,7 @@ def get_ctrl_status(duration_total, worked_hours):
         message = msg_fmt.format(hours=worked_hours,
                                  exceeding=duration_total - worked_hours)
         status = "warning"
+        icon = "ui-icon-alert"
     elif duration_total < worked_hours:
         msg_fmt = u"Le pointage de la semaine n’atteint pas le temps "\
         u"de travail de {hours} h/sem. "\
@@ -84,10 +86,12 @@ def get_ctrl_status(duration_total, worked_hours):
         message = msg_fmt.format(hours=worked_hours,
                                  missing=worked_hours - duration_total)
         status = "error"
+        icon = "ui-icon-alert"
     else:
         message = u"Le pointage de la semaine est correct."
         status = "ok"
-    return dict(message=message, status=status)
+        icon = "ui-icon-check"
+    return dict(message=message, status=status, icon=icon)
 
 
 class CalendarController(RestController):
@@ -524,6 +528,7 @@ class CalendarController(RestController):
         return json.dumps(dict(id='cal_event_{uid}'.format(uid=uid)))
 
     @expose('json')
+    @expose('intranet.templates.pointage.trcal.ctrl_rec_times')
     def ctrl_rec_times(self, employee_uid, week_start, week_end):
         """
         """
@@ -572,9 +577,9 @@ class CalendarController(RestController):
                 duration_sum = sum([get_event_duration(event)
                                     for event in event_day_list])
                 day_list.append(duration_sum)
-            week_start = start_date + datetime.timedelta(days=week * 7)
+            week_date = start_date + datetime.timedelta(days=week * 7)
             duration_total = sum(day_list)
-            week_dict = dict(week_number=week_start.isocalendar()[1],
+            week_dict = dict(week_number=week_date.isocalendar()[1],
                              day_list=day_list,
                              duration_total=duration_total)
             week_dict.update(get_ctrl_status(duration_total,

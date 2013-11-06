@@ -188,3 +188,32 @@ td.chart-table-percent, th.chart-table-percent {
 th.chart-table-summary {
 	text-align: right;
 }
+
+.ctrl-page {
+	margin: .5cm .5cm .5cm .5cm;
+}
+
+.ctrl-page h2 {
+	text-align: center;
+}
+
+.ctrl-table {
+	margin-left: auto;
+    margin-right: auto;
+}
+
+.ctrl-table th, .ctrl-table td {
+	padding-left: .5em;
+	padding-right: .5em;
+	padding-top: .2em;
+	padding-bottom: .2em;
+}
+
+.ctrl-table caption {
+	text-align: center;
+	font-size: 1.2em;
+	font-weight: bold;
+	font-variant: normal;
+	margin-bottom: .6em;
+	margin-top: .6em;
+}
