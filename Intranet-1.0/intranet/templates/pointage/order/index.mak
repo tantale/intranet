@@ -17,43 +17,6 @@
 <link rel="stylesheet" type="text/css" href="${tg.url('/css/intranet.css')}" />
 <link rel="stylesheet" type="text/css" href="${tg.url('/css/intranet.pointage.css')}" />
 <link rel="stylesheet" type="text/css" href="${tg.url('../order_cat.css')}" />
-<script type='text/javascript' src="${tg.url('/javascript/jquery-1.9.1.js')}"></script>
-<script type='text/javascript' src="${tg.url('/javascript/jquery-ui-1.10.3.custom.min.js')}"></script>
-<script type='text/javascript' src="${tg.url('/javascript/modernizr.custom.32767.js')}"></script>
-<script type='text/javascript' src="${tg.url('/javascript/jqueryui-editable.min.js')}"></script>
-<script type='text/javascript' src="${tg.url('/javascript/jquery.ui.datepicker-fr.js')}"></script>
-<script type='text/javascript' src="${tg.url('/javascript/jquery.layout-latest.min.js')}"></script>
-<script type='text/javascript' src="${tg.url('/javascript/jquery.form.js')}"></script>
-<script type='text/javascript' src="${tg.url('/javascript/intranet.js')}"></script>
-<script type='text/javascript' src="${tg.url('/javascript/intranet.pointage.js')}"></script>
-<script type='text/javascript' src="${tg.url('/javascript/intranet.pointage.order.js')}"></script>
-<script type='text/javascript'>
-	"use strict";
-	/*global $*/
-	$(function() {
-		$.fn.editable.defaults.mode = 'inline';
-		$('#order_get_all').ajaxForm({
-			target: '#accordion_content',
-			success: on_accordion_refresh
-		});
-		$('#order_new').ajaxForm({
-			target: '#order_content',
-			beforeSubmit: function(arr, $form, options) {
-				console.log("hide #flash...");
-				$('#flash').hide();
-				console.log("deactivate #accordion...");
-				$('#accordion').accordion("option", "active", false);
-			}
-		});
-		$('#confirm_dialog').dialog({
-			autoOpen: false,
-			width: 400,
-			height: 200,
-			modal: true
-		});
-		$('#order_get_all').submit();
-	});
-</script>
 </head>
 <body>
 	<div id="topFrame" class="ui-layout-north">
@@ -99,5 +62,46 @@
 	<div id="confirm_dialog" title="Confirmation">
 		<div id="confirm_dialog_content"></div>
 	</div>
+##
+## text/javascript
+##
+<script type='text/javascript' src="${tg.url('/javascript/jquery-1.9.1.js')}"></script>
+<script type='text/javascript' src="${tg.url('/javascript/jquery-ui-1.10.3.custom.min.js')}"></script>
+<script type='text/javascript' src="${tg.url('/javascript/modernizr.custom.32767.js')}"></script>
+<script type='text/javascript' src="https://www.google.com/jsapi"></script>
+<script type='text/javascript' src="${tg.url('/javascript/jqueryui-editable.min.js')}"></script>
+<script type='text/javascript' src="${tg.url('/javascript/jquery.ui.datepicker-fr.js')}"></script>
+<script type='text/javascript' src="${tg.url('/javascript/jquery.layout-latest.min.js')}"></script>
+<script type='text/javascript' src="${tg.url('/javascript/jquery.form.js')}"></script>
+<script type='text/javascript' src="${tg.url('/javascript/intranet.js')}"></script>
+<script type='text/javascript' src="${tg.url('/javascript/intranet.pointage.js')}"></script>
+<script type='text/javascript' src="${tg.url('/javascript/intranet.pointage.order.js')}"></script>
+<script type='text/javascript'>
+	"use strict";
+	/*global $*/
+	$(function() {
+		$.fn.editable.defaults.mode = 'inline';
+		$('#order_get_all').ajaxForm({
+			target: '#accordion_content',
+			success: on_accordion_refresh
+		});
+		$('#order_new').ajaxForm({
+			target: '#order_content',
+			beforeSubmit: function(arr, $form, options) {
+				console.log("hide #flash...");
+				$('#flash').hide();
+				console.log("deactivate #accordion...");
+				$('#accordion').accordion("option", "active", false);
+			}
+		});
+		$('#confirm_dialog').dialog({
+			autoOpen: false,
+			width: 400,
+			height: 200,
+			modal: true
+		});
+		$('#order_get_all').submit();
+	});
+</script>
 </body>
 </html>

@@ -108,14 +108,6 @@ data_table_json = json.dumps(data_table)
 		google.load("visualization", "1", {packages: ["corechart"], callback: drawChart});
 	}
 
-	function initLoader() {
-		var script = document.createElement("script");
-		script.src = "https://www.google.com/jsapi";
-		script.type = "text/javascript";
-		document.getElementsByTagName("head")[0].appendChild(script);
-	}
-	
-	initLoader();
 	loadPies();
 </script>
 %endif
