@@ -56,9 +56,11 @@
 <script type='text/javascript'>
 	"use strict";
 	/*global $*/
-	$('#ctrl_rec_times__week_start').text((new Date(${week_start} * 1000)).toLocaleDateString());
-	$('#ctrl_rec_times__week_end').text((new Date(${week_end} * 1000)).toLocaleDateString());
-	$('#ctrl_rec_times .ctrl-table').styleTable();
+	$(function() {
+		$('#ctrl_rec_times__week_start').text((new Date(${week_start} * 1000)).toLocaleDateString());
+		$('#ctrl_rec_times__week_end').text((new Date(${week_end} * 1000)).toLocaleDateString());
+		$('#ctrl_rec_times .ctrl-table').styleTable();
+	});
 </script>
 
 </div>

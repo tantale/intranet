@@ -125,6 +125,26 @@ event_resize_url_json = json.dumps(event_resize_url)
 		$('#ctrl_rec_times input[name=week_end]').val(week_end.getTime() / 1000);
 		// event.preventDefault();
 	});
+	$('#ctrl_rec_times').ajaxForm({
+		target : '#confirm_dialog_content',
+		beforeSubmit: function(arr, $form, options) {
+			$('#flash').hide();
+		},
+		success: function(responseText, statusText, xhr) {
+			$('#confirm_dialog').dialog({
+				width: 	620,
+				height: 500,
+				buttons: {
+					"OK": function() {
+						$(this).dialog("close");
+					}
+				},
+				title: "Contrôle des pointages",
+				close: function() {
+				}
+			}).dialog("open");
+		}
+	});
 %endif
 
 	function on_event_render(event, element, view) {
