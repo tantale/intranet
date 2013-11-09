@@ -1,9 +1,12 @@
 # -*- coding: utf-8 -*-
-## cal_date=cal_date,
+## tz_offset=tz_offset,
+## cal_start=cal_start,
+## cal_end=cal_end,
+## cal_curr=cal_curr,
 ## start_date=start_date,
 ## end_date=end_date,
 ## employee=employee,
-## employee_list=employee_list,
+## employee_list=employee_list
 <%! import json %>
 <div id='caltoolbar'>
 <%
@@ -53,7 +56,9 @@ else:
 			class="ui-widget ui-state-default ui-corner-all"
 			title="Aucun employée en activité"></select>
 		%endif
-		<input type="hidden" name="cal_date" value="${cal_date}" />
+		<input type="hidden" name="cal_start" value="${cal_start}" />
+		<input type="hidden" name="cal_end" value="${cal_end}" />
+		<input type="hidden" name="cal_curr" value="${cal_curr}" />
 		<button id="employee_refresh__refresh" type="submit" class="refresh_button"
 			title="Mettre à jour le calendrier des pointages">Mettre à jour</button></td>
 	</p>
@@ -77,6 +82,7 @@ event_drop_url_json = json.dumps(event_drop_url)
 event_resize_url = tg.url('./event_resize')
 event_resize_url_json = json.dumps(event_resize_url)
 
+cal_curr_json = json.dumps(cal_curr)
 %>\
 <script type='text/javascript'>
 	"use strict";
@@ -143,10 +149,61 @@ event_resize_url_json = json.dumps(event_resize_url)
 				close: function() {
 				}
 			}).dialog("open");
-		}
+		},
+		error: function() {
+			var title = "Erreur de connexion HTTP",
+				text = "Impossible contrôler les événements\u00a0!";
+			display_err_dialog(title, text);
+        }
 	});
 %endif
 
+	function load_order_list(cal_start, cal_end) {
+		if (!cal_start || !cal_end) {
+			var cal_curr = new Date(), y = cal_curr.getFullYear(), m = cal_curr.getMonth();
+			cal_start = new Date(y, m, 1);
+			cal_end = new Date(y, m + 1, 1);
+		}
+		$('#order_get_all input[name=cal_start]').val(cal_start.getTime() / 1000);
+		$('#order_get_all input[name=cal_end]').val(cal_end.getTime() / 1000);
+		$('#order_get_all').submit();
+	}
+	
+	function load_employee_list(cal_start, cal_end, cal_curr) {
+		if (!cal_start || !cal_end || !cal_curr) {
+			cal_curr = new Date(), y = cal_curr.getFullYear(), m = cal_curr.getMonth();
+			cal_start = new Date(y, m, 1);
+			cal_end = new Date(y, m + 1, 1);
+		}
+		$('#employee_refresh input[name=cal_start]').val(cal_start.getTime() / 1000);
+		$('#employee_refresh input[name=cal_end]').val(cal_end.getTime() / 1000);
+		$('#employee_refresh input[name=cal_curr]').val(cal_curr.getTime() / 1000);
+		// $('#employee_refresh').submit();
+	}
+	
+	function on_events_load(start_date, end_date, callback) {
+		var curr_date = $('#calendar').fullCalendar('getDate');
+		$.ajax({
+            url: ${events_url_json|n},
+            dataType: 'json',
+            data: {
+                start: Math.round(start_date.getTime() / 1000),
+                end: Math.round(end_date.getTime() / 1000)
+            },
+            success: function(events) {
+                callback(events);
+                load_order_list(start_date, end_date);
+                load_employee_list(start_date, end_date, curr_date);
+            },
+			error: function() {
+				callback();
+				var title = "Erreur de connexion HTTP",
+					text = "Impossible de récupérer les événements\u00a0!";
+				display_err_dialog(title, text);
+            }
+        });
+	}
+	
 	function on_event_render(event, element, view) {
 		var start_date = $.fullCalendar.parseDate(event.start),
 			end_date = $.fullCalendar.parseDate(event.end),
@@ -170,10 +227,14 @@ event_resize_url_json = json.dumps(event_resize_url)
     				minute_delta: minuteDelta
     			},
     			success: function(){
-    				console.info("Event day/time succefully updated.");
-		    		console.info("gotoDate: " + event.start.toISOString());
 		    		$('#calendar').fullCalendar('gotoDate', event.start);
-    			}
+    			},
+    			error: function() {
+    				revertFunc();
+    				var title = "Erreur de connexion HTTP",
+    					text = "Impossible de mettre à jour l\u2019événement\u00a0!";
+    				display_err_dialog(title, text);
+    	        }
     		});
     	}
     }
@@ -195,7 +256,13 @@ event_resize_url_json = json.dumps(event_resize_url)
 	    		if (dayDelta) {
 	    			$('#calendar').fullCalendar('refetchEvents');
 	    		}
-			}
+			},
+			error: function() {
+				revertFunc();
+				var title = "Erreur de connexion HTTP",
+					text = "Impossible de mettre à jour la durée de l\u2019événements\u00a0!";
+				display_err_dialog(title, text);
+	        }
 		});
     }
 	
@@ -283,8 +350,29 @@ event_resize_url_json = json.dumps(event_resize_url)
 		}).dialog("open");
 	}
 	
+	function display_err_dialog(title, text) {
+		var msg = $('<div id="flash"></div>') //
+			.append($('<div class="error"/>').text(text));
+		$('#confirm_dialog_content').empty().append(msg);
+		$('#confirm_dialog').dialog({
+			width: 	400,
+			height: 200,
+			buttons: {
+				"OK": function() {
+					$(this).dialog("close");
+				}
+			},
+			title: title
+		}).dialog("open");
+	}
+	
+	var curr_date = new Date(parseInt(${cal_curr_json|n}, 10) * 1000);
+	
 	$('#calendar').fullCalendar(
 			{
+				year : curr_date.getFullYear(),
+				month : curr_date.getMonth(),
+				day : curr_date.getDay(),
 				theme : true,
 				header : {
 					left : 'month,agendaWeek,agendaDay',
@@ -351,24 +439,9 @@ event_resize_url_json = json.dumps(event_resize_url)
 			    },
 			    eventResize: on_event_resize,
 				eventSources: [{
-					url: ${events_url_json|n},
-					error: function() {
-						var msg = $('<div id="flash"></div>')
-							.append($('<div class="error"/>')
-									.text("Impossible de récupérer les événements\u00a0!"));
-						$('#confirm_dialog_content').empty().append(msg);
-						$('#confirm_dialog').dialog({
-							width: 	400,
-							height: 200,
-							buttons: {
-								"OK": function() {
-									$(this).dialog("close");
-								}
-							},
-							title: "Erreur interne"
-						}).dialog("open");
-		            },
-				}],
+					// http://arshaw.com/fullcalendar/docs/event_data/events_function/
+					events: on_events_load
+					}],
 				eventRender : on_event_render
 			});
 

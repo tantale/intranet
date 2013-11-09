@@ -10,8 +10,7 @@ from intranet.accessors.order import OrderAccessor
 from intranet.model.pointage.cal_event import CalEvent
 from intranet.model.pointage.employee import Employee
 from intranet.model.pointage.order import Order
-from intranet.validators.iso_date_converter import IsoDateConverter, \
-    IsoDatetimeConverter
+from intranet.validators.iso_date_converter import IsoDatetimeConverter
 from sqlalchemy.sql.expression import or_, and_
 from tg.controllers.restcontroller import RestController
 from tg.controllers.util import redirect
@@ -26,10 +25,6 @@ import math
 import pylons
 
 LOG = logging.getLogger(__name__)
-
-
-def month_start(date):
-    return date.replace(day=1)
 
 
 def add_months(start_date, months):
@@ -108,12 +103,13 @@ class CalendarController(RestController):
         """
         Display the index page.
         """
+        LOG.info("CalendarController.index")
         return dict(main_menu=self.main_menu)
 
     @with_trailing_slash
     @expose('json')
     @expose('intranet.templates.pointage.trcal.order_get_all')
-    def order_get_all(self, cal_date=None, keyword=None, uid=None):
+    def order_get_all(self, cal_start, cal_end, keyword=None, uid=None):
         """
         Display all records in a resource.
 
@@ -123,13 +119,18 @@ class CalendarController(RestController):
         :param uid: Active order's UID if any
         """
         LOG.info("order_get_all")
+        LOG.debug("- cal_start: {!r}".format(cal_start))
+        LOG.debug("- cal_end:   {!r}".format(cal_end))
+        LOG.debug("- keyword:   {!r}".format(keyword))
+        LOG.debug("- uid:       {!r}".format(uid))
+
         accessor = OrderAccessor()
 
-        # -- date interval from the calendar's date
-        cal_date = cal_date or datetime.date.today()
-        start_date = month_start(cal_date)
-        end_date = add_months(start_date, 1)
-        LOG.debug("[{start_date} ; {end_date}]"
+        # -- date interval from the calendar's timestamps
+        start_date = datetime.datetime.utcfromtimestamp(float(cal_start))
+        end_date = datetime.datetime.utcfromtimestamp(float(cal_end))
+        LOG.debug(("date interval from the calendar's timestamps: "
+                   "[{start_date} ; {end_date}]")
                   .format(start_date=start_date,
                           end_date=end_date))
 
@@ -188,18 +189,22 @@ class CalendarController(RestController):
         return json.dumps(cal_event.event_obj())
 
     @with_trailing_slash
-    @validate({'cal_date': IsoDateConverter(not_empty=False)})
     @expose('json')
     @expose('intranet.templates.pointage.trcal.get_all')
-    def get_all(self, cal_date=None, employee_uid=None):
+    def get_all(self, cal_start, cal_end, cal_curr, employee_uid=None):
         """
         Display all records in a resource.
 
-        GET /pointage/trcal/?employee_uid=&cal_date=&date_end=
+        GET /pointage/trcal/?employee_uid=&cal_start=&cal_end=
 
         :param employee_uid: Current employee uid's UID
         """
         LOG.info("get_all")
+        LOG.debug("- cal_start:    {!r}".format(cal_start))
+        LOG.debug("- cal_end:      {!r}".format(cal_end))
+        LOG.debug("- cal_curr:     {!r}".format(cal_curr))
+        LOG.debug("- employee_uid: {!r}".format(employee_uid))
+
         accessor = CalEventAccessor()
 
         # -- time zone offset for UTC date/time calculation
@@ -209,11 +214,11 @@ class CalendarController(RestController):
         utctimegm = calendar.timegm(now.timetuple())
         tz_offset = int(math.floor((timegm - utctimegm) / 36.0))
 
-        # -- date interval from the calendar's date
-        cal_date = cal_date or datetime.date.today()
-        start_date = month_start(cal_date)
-        end_date = add_months(start_date, 1)
-        LOG.debug("[{start_date} ; {end_date}]"
+        # -- date interval from the calendar's timestamps
+        start_date = datetime.datetime.utcfromtimestamp(float(cal_start))
+        end_date = datetime.datetime.utcfromtimestamp(float(cal_end))
+        LOG.debug(("date interval from the calendar's timestamps: "
+                   "[{start_date} ; {end_date}]")
                   .format(start_date=start_date,
                           end_date=end_date))
 
@@ -227,25 +232,23 @@ class CalendarController(RestController):
         # -- current employee, if any
         if employee_uid:
             employee = accessor.get_employee(employee_uid)
-            err_msg = (u"Employé {name} à la date du {date:%d/%m/%Y}"
-                       .format(name=employee.employee_name,
-                               date=cal_date))
+            err_msg = (u"Employé {name} sélectionné."
+                       .format(name=employee.employee_name))
             LOG.info(err_msg)
         elif len(employee_list):
             employee = employee_list[0]
-            err_msg = (u"Employé {name} à la date du {date:%d/%m/%Y}"
-                       .format(name=employee.employee_name,
-                               date=cal_date))
+            err_msg = (u"Employé {name} trouvé."
+                       .format(name=employee.employee_name))
             LOG.info(err_msg)
         else:
             employee = None
-            err_msg = ((u"Aucun employée n'est en activité "
-                        u"à la date du {date:%d/%m/%Y}")
-                       .format(date=cal_date))
+            err_msg = (u"Aucun employée n'est en activité.")
             LOG.warning(err_msg)
 
         return dict(tz_offset=tz_offset,
-                    cal_date=cal_date,
+                    cal_start=cal_start,
+                    cal_end=cal_end,
+                    cal_curr=cal_curr,
                     start_date=start_date,
                     end_date=end_date,
                     employee=employee,
