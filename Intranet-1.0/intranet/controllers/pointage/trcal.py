@@ -190,29 +190,22 @@ class CalendarController(RestController):
 
     @with_trailing_slash
     @expose('json')
-    @expose('intranet.templates.pointage.trcal.get_all')
-    def get_all(self, cal_start, cal_end, cal_curr, employee_uid=None):
+    @expose('intranet.templates.pointage.trcal.employee_get_all')
+    def employee_get_all(self, cal_start, cal_end, cal_curr, employee_uid):
         """
         Display all records in a resource.
 
-        GET /pointage/trcal/?employee_uid=&cal_start=&cal_end=
+        GET /pointage/trcal/employee_get_all?employee_uid=&cal_start=&cal_end=
 
         :param employee_uid: Current employee uid's UID
         """
-        LOG.info("get_all")
+        LOG.info("employee_get_all")
         LOG.debug("- cal_start:    {!r}".format(cal_start))
         LOG.debug("- cal_end:      {!r}".format(cal_end))
         LOG.debug("- cal_curr:     {!r}".format(cal_curr))
         LOG.debug("- employee_uid: {!r}".format(employee_uid))
 
         accessor = CalEventAccessor()
-
-        # -- time zone offset for UTC date/time calculation
-        utcnow = datetime.datetime.utcnow()
-        now = datetime.datetime.now()
-        timegm = calendar.timegm(utcnow.utctimetuple())
-        utctimegm = calendar.timegm(now.timetuple())
-        tz_offset = int(math.floor((timegm - utctimegm) / 36.0))
 
         # -- date interval from the calendar's timestamps
         start_date = datetime.datetime.utcfromtimestamp(float(cal_start))
@@ -232,9 +225,14 @@ class CalendarController(RestController):
         # -- current employee, if any
         if employee_uid:
             employee = accessor.get_employee(employee_uid)
-            err_msg = (u"Employé {name} sélectionné."
-                       .format(name=employee.employee_name))
-            LOG.info(err_msg)
+            if employee not in employee_list:
+                employee = None
+                err_msg = (u"Aucun employée n'est en activité.")
+                LOG.warning(err_msg)
+            else:
+                err_msg = (u"Employé {name} sélectionné."
+                           .format(name=employee.employee_name))
+                LOG.info(err_msg)
         elif len(employee_list):
             employee = employee_list[0]
             err_msg = (u"Employé {name} trouvé."
@@ -245,12 +243,70 @@ class CalendarController(RestController):
             err_msg = (u"Aucun employée n'est en activité.")
             LOG.warning(err_msg)
 
-        return dict(tz_offset=tz_offset,
-                    cal_start=cal_start,
+        return dict(cal_start=cal_start,
                     cal_end=cal_end,
                     cal_curr=cal_curr,
-                    start_date=start_date,
-                    end_date=end_date,
+                    employee=employee,
+                    employee_list=employee_list)
+
+    @with_trailing_slash
+    @expose('json')
+    @expose('intranet.templates.pointage.trcal.get_all')
+    def get_all(self, cal_start, cal_end, cal_curr, employee_uid=None):
+        """
+        Display all records in a resource.
+
+        GET /pointage/trcal/?employee_uid=&cal_start=&cal_end=
+
+        :param employee_uid: Current employee uid's UID
+        """
+        LOG.info("get_all")
+        LOG.debug("- cal_start:    {!r}".format(cal_start))
+        LOG.debug("- cal_end:      {!r}".format(cal_end))
+        LOG.debug("- cal_curr:     {!r}".format(cal_curr))
+        LOG.debug("- employee_uid: {!r}".format(employee_uid))
+
+        accessor = CalEventAccessor()
+
+        # -- date interval from the calendar's timestamps
+        start_date = datetime.datetime.utcfromtimestamp(float(cal_start))
+        end_date = datetime.datetime.utcfromtimestamp(float(cal_end))
+        LOG.debug(("date interval from the calendar's timestamps: "
+                   "[{start_date} ; {end_date}]")
+                  .format(start_date=start_date,
+                          end_date=end_date))
+
+        # -- employees currently working
+        filter_cond = overlap_cond(start_date, end_date,
+                                   Employee.entry_date, Employee.exit_date)
+        order_by_cond = Employee.employee_name
+        employee_list = accessor.get_employee_list(filter_cond,
+                                                   order_by_cond)
+
+        # -- current employee, if any
+        if employee_uid:
+            employee = accessor.get_employee(employee_uid)
+            if employee not in employee_list:
+                employee = None
+                err_msg = (u"Aucun employée n'est en activité.")
+                LOG.warning(err_msg)
+            else:
+                err_msg = (u"Employé {name} sélectionné."
+                           .format(name=employee.employee_name))
+                LOG.info(err_msg)
+        elif len(employee_list):
+            employee = employee_list[0]
+            err_msg = (u"Employé {name} trouvé."
+                       .format(name=employee.employee_name))
+            LOG.info(err_msg)
+        else:
+            employee = None
+            err_msg = (u"Aucun employée n'est en activité.")
+            LOG.warning(err_msg)
+
+        return dict(cal_start=cal_start,
+                    cal_end=cal_end,
+                    cal_curr=cal_curr,
                     employee=employee,
                     employee_list=employee_list)
 
