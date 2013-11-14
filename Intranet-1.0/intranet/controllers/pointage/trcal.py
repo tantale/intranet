@@ -488,8 +488,31 @@ class CalendarController(RestController):
         LOG.debug("- event_start_utc:  {!r}".format(event_start_utc))
         LOG.debug("- event_end_utc:    {!r}".format(event_end_utc))
 
-        # -- insert event in database
         accessor = CalEventAccessor()
+
+        # -- check overlapping dates in other events of the current employee
+        employee = accessor.get_employee(employee_uid)
+        cal_overlap_cond = overlap_cond(event_start_utc, event_end_utc,
+                                        CalEvent.event_start,
+                                        CalEvent.event_end)
+        cal_filter_cond = and_(CalEvent.employee == employee,
+                               cal_overlap_cond)
+        cal_order_by_cond = CalEvent.event_start
+        cal_event_list = accessor.get_cal_event_list(cal_filter_cond,
+                                                     cal_order_by_cond)
+        if cal_event_list:
+            err_msg = (u"Ce pointage intercepte un pointage existant. "
+                       u"Veuillez changer la date/heure ou ajuster la durée.")
+            flash(err_msg, status="error")
+            redirect('./new',
+                     employee_uid=employee_uid,
+                     order_phase_uid=order_phase_uid,
+                     tz_offset=tz_offset,
+                     event_start=event_start.isoformat(),
+                     event_duration=event_duration,
+                     comment=comment)
+
+        # -- insert event in database
         accessor.insert_cal_event(employee_uid, order_phase_uid,
                                   event_start_utc,
                                   event_end_utc, comment)
