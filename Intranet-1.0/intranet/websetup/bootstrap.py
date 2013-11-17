@@ -79,10 +79,10 @@ def bootstrap(command, conf, vars):  # @ReservedAssignment
                    'they may have already been added:'), exc_info=True)
 
     # -- initialize the order list
-    order_list = get_order_list()
-    try:
-        model.DBSession.add_all(order_list)
-        transaction.commit()
-    except IntegrityError:
-        LOG.warning(('There was a problem adding your orders data, '
-                   'they may have already been added:'), exc_info=True)
+    # order_list = get_order_list()
+    # try:
+    #    model.DBSession.add_all(order_list)
+    #    transaction.commit()
+    # except IntegrityError:
+    #    LOG.warning(('There was a problem adding your orders data, '
+    #               'they may have already been added:'), exc_info=True)

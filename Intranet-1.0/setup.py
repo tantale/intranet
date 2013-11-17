@@ -25,18 +25,18 @@ except ImportError:
     from setuptools import setup, find_packages
 
 testpkgs = ['WebTest >= 1.2.3',
-            'nose',
+            'nose == 1.1.2',
             'coverage',
             'wsgiref']
 
 install_requires = ["TurboGears2 == 2.2.2",
-                    "Genshi",
-                    "Mako",
+                    "Genshi == 0.7",
+                    "Mako == 0.7.3",
                     "zope.sqlalchemy >= 0.4",
                     "repoze.tm2 >= 1.0a5",
-                    "sqlalchemy<0.8b1",
-                    "sqlalchemy-migrate",
-                    "tw2.forms"]
+                    "sqlalchemy < 0.8b1",
+                    "sqlalchemy-migrate == 0.7.2",
+                    "tw2.forms == 2.2.0.3"]
 
 setup(
     name='Intranet-1.0',
