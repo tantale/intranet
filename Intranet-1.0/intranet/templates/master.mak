@@ -1,73 +1,102 @@
 <!DOCTYPE html>
-<html>
+<html lang="fr">
 <head>
-    ${self.meta()}
-    <title>${self.title()}</title>
-    <link rel="stylesheet" type="text/css" media="screen" href="${tg.url('/css/bootstrap.min.css')}" />
-    <link rel="stylesheet" type="text/css" media="screen" href="${tg.url('/css/bootstrap-responsive.min.css')}" />
-    <link rel="stylesheet" type="text/css" media="screen" href="${tg.url('/css/style.css')}" />
+<meta charset="${response.charset}" />
+<title>${self.title()}</title>
+<meta name="description" content="Intranet de pointage" />
+<link rel="icon" type="image/ico" href="${tg.url('/favicon.ico')}" />
+<link rel="stylesheet" type="text/css" href="${tg.url('/css/blitzer/jquery-ui-1.10.3.custom.min.css')}" />
+<link rel="stylesheet" type="text/css" href="${tg.url('/css/intranet.css')}" />
+<style>
+article {
+	margin: .5cm .5cm .5cm .5cm;
+	padding-top: 48px;
+	padding-bottom: 48px;
+	padding-right: 60px;
+	padding-left: 60px;
+	border-radius: 6px;
+	font-size: 1.8em;
+	font-weight: 200;
+	line-height: 1.8em;
+	background-color: #eee;
+}
+
+header>h1 {
+	display: block;
+	text-align: center;
+	font-size: 2em;
+	line-height: normal;
+	margin-bottom: 1.5cm;
+	font-family: Helvetica, Arial, sans-serif;
+}
+
+footer {
+	margin-top: 1.5cm;
+	font-family: "courrier New";
+	font-size: .8em;
+	line-height: normal;
+}
+
+.ui-menu {
+	width: 400px;
+}
+</style>
 </head>
-<body class="${self.body_class()}">
-  <div class="container">
-    ${self.main_menu()}
-    ${self.content_wrapper()}
-    ${self.footer()}
-  </div>
+<body>
+<body>
+	<article>
+		<header>
+			<h1>${self.title()}</h1>
+		</header>
+		<section>${self.content_wrapper()}</section>
+		<nav>${self.main_menu()}</nav>
+		<footer>${self.footer()}</footer>
+	</article>
+	<script type='text/javascript' src="${tg.url('/javascript/jquery-1.9.1.js')}"></script>
+	<script type='text/javascript' src="${tg.url('/javascript/jquery-ui-1.10.3.custom.min.js')}"></script>
+	<script type='text/javascript'>
+		$(function() {
+			$(".menu").menu();
+		});
+	</script>
 </body>
+</html>
+
+<%def name="title()">Intranet de pointage</%def>
+
+<%def name="main_menu()">
+	<h1>Pour commencer</h1>
+	<ul class="menu">
+		<li><a>Administration</a>
+			<ul>
+			  <li><a href="${tg.url('/admin/employee/index.html')}"><span class="ui-icon ui-icon-person"></span>Gestion des employés</a></li>
+			  <li><a href="${tg.url('/admin/order/index.html')}"><span class="ui-icon ui-icon-document"></span>Gestion des commandes</a></li>
+			  <li><a href="${tg.url('/admin/trcal/index.html')}"><span class="ui-icon ui-icon-calendar"></span>Calendrier de pointage</a></li>
+			</ul>
+		</li>
+		<li><a>Pointage</a>
+			<ul>
+			  <li><a href="${tg.url('/pointage/trcal/index.html')}"><span class="ui-icon ui-icon-calendar"></span>Calendrier de pointage</a></li>
+			</ul>
+		</li>
+	</ul>
+</%def>
 
 <%def name="content_wrapper()">
-  <%
-    flash=tg.flash_obj.render('flash', use_js=False)
-  %>
-  % if flash:
+  <% flash = tg.flash_obj.render('flash', use_js=False) %>
+  %if flash:
     <div class="row"><div class="span8 offset2">
       ${flash | n}
     </div></div>
-  % endif
+  %endif
   ${self.body()}
 </%def>
 
-<%def name="body_class()"></%def>
-
-<%def name="meta()">
-  <meta charset="${response.charset}" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-</%def>
-
-<%def name="title()">  </%def>
-
 <%def name="footer()">
-  <footer class="footer hidden-tablet hidden-phone">
-    <a class="pull-right" href="http://www.turbogears.org/2.2/"><img style="vertical-align:middle;" src="${tg.url('/images/under_the_hood_blue.png')}" alt="TurboGears 2" /></a>
-    <p>Copyright &copy; ${getattr(tmpl_context, 'project_name', 'TurboGears2')} ${h.current_year()}</p>
-  </footer>
+<hr>
+<p>
+	Intranet de pointage <small> réalisé par <a href="mailto:laurentlaporte@yahoo.com?Subject=Intranet%20de%20pointage">Laurent
+			LAPORTE</a> pour le compte des <em>Meubles CLERET</em>, &copy; 2013-2014 Laurent LAPORTE tous droits réservés.
+	</small>
+</p>
 </%def>
-
-<%def name="main_menu()">
-  <div class="navbar">
-    <div class="navbar-inner">
-      <div class="container">
-        <a class="brand" href="#"><img src="${tg.url('/images/turbogears_logo.png')}" alt="TurboGears 2"/> ${getattr(tmpl_context, 'project_name', 'turbogears2')}</a>
-        <ul class="nav nav-pills">
-          <li class="${('', 'active')[page=='index']}"><a href="${tg.url('/')}">Welcome</a></li>
-          <li class="${('', 'active')[page=='about']}"><a href="${tg.url('/about')}">About</a></li>
-          <li class="${('', 'active')[page=='data']}"><a href="${tg.url('/data')}">Serving Data</a></li>
-          <li class="${('', 'active')[page=='environ']}"><a href="${tg.url('/environ')}">WSGI Environment</a></li>
-        </ul>
-
-        % if tg.auth_stack_enabled:
-          <ul class="nav nav-pills pull-right">
-            % if not request.identity:
-              <li><a href="${tg.url('/login')}">Login</a></li>
-            % else:
-              <li><a href="${tg.url('/logout_handler')}">Logout</a></li>
-              <li><a href="${tg.url('/admin')}">Admin</a></li>
-            % endif
-          </ul>
-        % endif
-      </div>
-    </div>
-  </div>
-</%def>
-
-</html>
