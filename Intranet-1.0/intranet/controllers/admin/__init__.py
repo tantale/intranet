@@ -11,19 +11,21 @@ from intranet.controllers.pointage.order_cat import OrderCatController
 from intranet.controllers.pointage.order_phase import OrderPhaseController
 from intranet.controllers.pointage.trcal import CalendarController
 from intranet.lib.base import BaseController
+
 import tg
+
 
 main_menu = dict(title=u"Administration",
                  item_list=[dict(id='toolbar_employee',
-                                 href=tg.url('/admin/employee/index'),
+                                 href=tg.url('/admin/employee/index.html'),
                                  title=u"Gestion des employés",
                                  content=u"Employés"),
                             dict(id='toolbar_order',
-                                 href=tg.url('/admin/order/index'),
+                                 href=tg.url('/admin/order/index.html'),
                                  title=u"Gestion des commandes et des phases",
                                  content=u"Commandes"),
                             dict(id='toolbar_calendar',
-                                 href=tg.url('/admin/trcal/index'),
+                                 href=tg.url('/admin/trcal/index.html'),
                                  title=u"Gestion des pointages des opérations",
                                  content=u"Calendrier")])
 

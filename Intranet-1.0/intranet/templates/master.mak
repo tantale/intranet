@@ -37,6 +37,17 @@ footer {
 	line-height: normal;
 }
 
+address {
+	margin-bottom: 20px;
+	font-style: normal;
+	line-height: 1.2;
+}
+
+abbr[title] {
+	cursor: help;
+	border-bottom: 1px dotted #999;
+}
+
 .ui-menu {
 	width: 400px;
 }
@@ -65,8 +76,9 @@ footer {
 <%def name="title()">Intranet de pointage</%def>
 
 <%def name="main_menu()">
-	<h1>Pour commencer</h1>
+	<h1>Menu d’accès rapide</h1>
 	<ul class="menu">
+		<li><a href="${tg.url('/index.html')}">Accueil</a></li>
 		<li><a>Administration</a>
 			<ul>
 			  <li><a href="${tg.url('/admin/employee/index.html')}"><span class="ui-icon ui-icon-person"></span>Gestion des employés</a></li>
@@ -94,9 +106,5 @@ footer {
 
 <%def name="footer()">
 <hr>
-<p>
-	Intranet de pointage <small> réalisé par <a href="mailto:laurentlaporte@yahoo.com?Subject=Intranet%20de%20pointage">Laurent
-			LAPORTE</a> pour le compte des <em>Meubles CLERET</em>, &copy; 2013-2014 Laurent LAPORTE tous droits réservés.
-	</small>
-</p>
+<p>&copy; 2013-2014 Laurent LAPORTE – tous droits réservés – <small><a href="${tg.url('about.html')}">À propos de l’Intranet de pointage</a></small>.</p>
 </%def>

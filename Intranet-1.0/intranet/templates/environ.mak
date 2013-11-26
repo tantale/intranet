@@ -1,23 +1,20 @@
 <%inherit file="local:templates.master"/>
+<%def name="title()">Intranet de pointage – Variables d’environnement</%def>
 
-<%def name="title()">
-  Learning TurboGears 2.1: Information about TG and WSGI
-</%def>
+<p>
+	Sur cette page, vous pouvez voir toutes les variables WSGI que votre objet
+	<tt>request</tt>
+	possède : celles en majuscules qui sont requises par la spécification, celles fournies par le composent
+	<tt>Components</tt>
+	(triées par composent), et enfin, celles avec l’espace de nom « <tt>wsgi.</tt> » qui sont des informations très utiles pour votre serveur WSGI.
+</p>
 
-<h2>The WSGI nature of the framework</h2>
-  <p>In this page you can see all the WSGI variables your request object has, 
-     the ones in capital letters are required by the spec, then a sorted by
-     component list of variables provided by the Components, and at last
-     the "wsgi." namespace with very useful information about your WSGI Server</p>
-  <p>The keys in the environment are: 
-  <table class="table">
-      %for key in sorted(environment):
-      <tr>
-          <td>${key}</td>
-          <td>${environment[key]}</td>
-      </tr>
-      %endfor
-  </table>
-
-  </p>
-
+<p>Les variables sont :</p>
+<table class="table">
+	%for key in sorted(environment):
+	<tr>
+		<td>${key}</td>
+		<td>${environment[key]}</td>
+	</tr>
+	%endfor
+</table>
