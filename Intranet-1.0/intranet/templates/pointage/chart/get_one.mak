@@ -9,6 +9,10 @@ def format_date(date):
 
 curr_date = format_date(datetime.date.today())
 
+def format_number(number):
+	value = "{:0.2f}".format(number)
+	return value.replace(".", ",")
+
 %>
 <div class="chart-page">
 	<h2 class="colorFrame ${order.project_cat}">Bilan des pointages de « ${order.order_ref} »</h2>
@@ -36,7 +40,7 @@ curr_date = format_date(datetime.date.today())
 	<tr>
 	<th>N°</th>
 	<th>Phase<br />de production</th>
-	<th>Heures pointées<br />(h/100)</th>
+	<th>Heures pointées<br />(h)</th>
 	<th>Pourcentage</th>
 	</tr>
 	</thead>
@@ -49,7 +53,7 @@ curr_date = format_date(datetime.date.today())
 	<tr>
 	<td class="chart-table-position">${order_phase.position}</td>
 	<td class="chart-table-label">${order_phase.label}</td>
-	<td class="chart-table-count">${count}</td>
+	<td class="chart-table-count">${format_number(count)}</td>
 	<td class="chart-table-percent">${"{percent:.1%}".format(percent=float(count) / total_count)}</td>
 	</tr>
 %endfor
@@ -57,7 +61,7 @@ curr_date = format_date(datetime.date.today())
 	<tfoot>
 	<tr>
 	<th class="chart-table-summary" colspan="2">Total de la commande :</th>
-	<th class="chart-table-count">${total_count}</th>
+	<th class="chart-table-count">${format_number(total_count)}</th>
 	<th class="chart-table-percent">${"{percent:.1%}".format(percent=1.0)}</th>
 	</tr>
 	</tfoot>

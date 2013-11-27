@@ -78,7 +78,8 @@ cal_curr_json = json.dumps(cal_curr)
 	function on_event_render(event, element, view) {
 		var start_date = $.fullCalendar.parseDate(event.start),
 			end_date = $.fullCalendar.parseDate(event.end),
-			duration = Math.floor((end_date - start_date) / 36000.0);
+			event_duration = (end_date - start_date) / 3600.0 / 1000,
+			duration = event_duration.toString().replace('.', ',')
 		element.attr('title', event.comment).find('.fc-event-time')
 			.text(duration).css('padding-left: .5em;');
 	}

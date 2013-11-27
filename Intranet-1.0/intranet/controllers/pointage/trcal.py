@@ -4,25 +4,26 @@
 :date: 2013-08-29
 :author: Laurent LAPORTE <sandlol2009@gmail.com>
 """
-from formencode.validators import Int
+import calendar
+import datetime
 from intranet.accessors.cal_event import CalEventAccessor
 from intranet.accessors.order import OrderAccessor
 from intranet.model.pointage.cal_event import CalEvent
 from intranet.model.pointage.employee import Employee
 from intranet.model.pointage.order import Order
 from intranet.validators.iso_date_converter import IsoDatetimeConverter
+import json
+import logging
+
+from formencode.validators import Int, Number
+import pylons
 from sqlalchemy.sql.expression import or_, and_
 from tg.controllers.restcontroller import RestController
 from tg.controllers.util import redirect
 from tg.decorators import with_trailing_slash, expose, validate, \
     without_trailing_slash
 from tg.flash import flash
-import calendar
-import datetime
-import json
-import logging
-import math
-import pylons
+
 
 LOG = logging.getLogger(__name__)
 
@@ -416,7 +417,7 @@ class CalendarController(RestController):
                 event_start = start_utc - tz_delta
                 delta = end_utc - start_utc
                 kw['event_start'] = event_start.isoformat()
-                kw['event_duration'] = int(math.floor(delta.seconds / 36.0))
+                kw['event_duration'] = delta.seconds / 3600.0
                 kw['comment'] = None
             else:
                 # -- find an optimized duration in available work hours
@@ -428,13 +429,13 @@ class CalendarController(RestController):
                                                     tz_delta,
                                                     local_time)
                 kw['event_start'] = local_datetime.isoformat()
-                kw['event_duration'] = int(math.floor(delta.seconds / 36.0))
+                kw['event_duration'] = delta.seconds / 3600.0
                 kw['comment'] = None
 
         elif 'event_start' in kw and 'event_duration' in kw:
             # -- [B]: receive parameters from post() method for error handling
             # :param event_start: date in ISO 8601 format (local date/itme)
-            # :param event_duration: 100 * duration (in hour number)
+            # :param event_duration: duration (in hour number)
             # :param comment: optional comment (200 characters)
             LOG.debug("- event_start:      {!r}".format(kw.get('event_start')))
             LOG.debug("- event_duration:   {!r}".format(kw.get('event_duration')))  # @IgnorePep8
@@ -458,7 +459,7 @@ class CalendarController(RestController):
                'order_phase_uid': Int(min=0, not_empty=True),
                'tz_offset': Int(min=-1200, max=1200, not_empty=True),
                'event_start': IsoDatetimeConverter(),
-               'event_duration': Int(min=1, max=999, not_empty=True)},
+               'event_duration': Number(min=0.25, max=12, not_empty=True)},
               error_handler=new)
     @expose()
     def post(self, employee_uid, order_phase_uid, tz_offset,
@@ -483,7 +484,7 @@ class CalendarController(RestController):
         # -- convert parameters
         tz_delta = datetime.timedelta(minutes=tz_offset)
         event_start_utc = event_start + tz_delta
-        delta = datetime.timedelta(hours=float(event_duration) / 100)
+        delta = datetime.timedelta(hours=float(event_duration))
         event_end_utc = event_start_utc + delta
         LOG.debug("- event_start_utc:  {!r}".format(event_start_utc))
         LOG.debug("- event_end_utc:    {!r}".format(event_end_utc))
@@ -542,7 +543,7 @@ class CalendarController(RestController):
         tz_delta = datetime.timedelta(minutes=int(tz_offset))
         event_start = cal_event.event_start - tz_delta
         delta = cal_event.event_end - cal_event.event_start
-        event_duration = int(math.floor(delta.seconds / 36.0))
+        event_duration = delta.seconds / 3600.0
         values = dict(uid=cal_event.uid,
                       event_start=event_start.isoformat(),
                       event_duration=event_duration,
@@ -558,7 +559,7 @@ class CalendarController(RestController):
     @validate({'uid': Int(min=0, not_empty=True),
                'tz_offset': Int(min=-1200, max=1200, not_empty=True),
                'event_start': IsoDatetimeConverter(),
-               'event_duration': Int(min=1, max=999, not_empty=True)},
+               'event_duration': Number(min=0.25, max=12, not_empty=True)},
               error_handler=edit)
     @expose()
     def put(self, uid, tz_offset, event_start, event_duration, comment, **kw):
@@ -580,7 +581,7 @@ class CalendarController(RestController):
         # -- convert parameters
         tz_delta = datetime.timedelta(minutes=tz_offset)
         event_start_utc = event_start + tz_delta
-        delta = datetime.timedelta(hours=float(event_duration) / 100)
+        delta = datetime.timedelta(hours=float(event_duration))
         event_end_utc = event_start_utc + delta
         LOG.debug("- event_start_utc:  {!r}".format(event_start_utc))
         LOG.debug("- event_end_utc:    {!r}".format(event_end_utc))

@@ -39,12 +39,12 @@
 	%endif
 	</p>
 
-	<p><label for="cal_event_create__event_duration">Durée (h/100) :</label>
+	<p><label for="cal_event_create__event_duration">Durée (h) :</label>
 		<input id="cal_event_create__event_duration" type="number" name="event_duration"
-			min="1" max="999"
+			min="0.25" max="12" step="0.25"
 			value="${values.get('event_duration')}"
-			placeholder="100"
-			title="Durée en centième d'heure, ex. : 100 pour 1 heure (requis)" />
+			placeholder="1"
+			title="Durée en heure, ex. : 1,50 pour 1h30 (requis)" />
 	%if 'event_duration' in form_errors:
 	<span class="error">${form_errors['event_duration']}</span>
 	%endif
@@ -67,7 +67,14 @@
 	if (!Modernizr.inputtypes.date) {
 		$('#cal_event_create input[type=date]').datepicker();
 	}
-	$('#cal_event_create input[name=event_duration]').focus();
+	$('#cal_event_create input[name=event_duration]').focus()
+		.change(function(event) {
+			if (event.target.validity.valid) {
+				$(this).removeClass('error');
+			} else {
+				$(this).addClass('error');
+			}
+		});
 	$('#cal_event_create .create_button').button({
 		text : true,
 		icons : {

@@ -5,6 +5,12 @@
 ##                    week_start=week_start,
 ##                    week_end=week_end,
 ##                    week_list=week_list)
+<%
+def format_number(number):
+	value = "{:0.2f}".format(number)
+	return value.replace(".", ",")
+
+%>
 <div id='ctrl_rec_times' class="ctrl-page">
 	<h2>Contrôle du pointage de ${employee_name}</h2>
 	
@@ -44,9 +50,9 @@
 	<tr class="${status}" title="${message}">
 	<th>Sem. ${week_number}</th>
 %for day in day_list:
-	<td class="alignRight">${day}</td>
+	<td class="alignRight">${format_number(day)}</td>
 %endfor
-	<td class="alignRight"><strong>${duration_total}</strong></td>
+	<td class="alignRight"><strong>${format_number(duration_total)}</strong></td>
 	<td><span class="ui-icon ${icon}"></span></td>
 	</tr>
 %endfor

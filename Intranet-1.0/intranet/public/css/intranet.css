@@ -157,3 +157,9 @@ form span.error {
 	border-color: #bce8f1;
 	color: #3a87ad;
 }
+
+input.error {
+	background-color: #f2dede;
+	border-color: #eed3d7;
+	color: #b94a48;
+}

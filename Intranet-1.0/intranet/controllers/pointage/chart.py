@@ -45,7 +45,7 @@ class ChartController(RestController):
             key = (order_phase.position, order_phase.label)
             for cal_event in order_phase.cal_event_list:
                 delta = cal_event.event_end - cal_event.event_start
-                event_duration = int(math.floor(delta.seconds / 36.0))
+                event_duration = delta.seconds / 3600.0
                 statistics[key] += event_duration
 
         return dict(order=order,
