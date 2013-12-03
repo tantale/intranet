@@ -1,6 +1,6 @@
 "use strict";
 /*jslint browser: true, devel: true, es5: false, plusplus: true, unparam: true, white: true */
-/*global $, Modernizr*/
+/*global $*/
 
 $(function() {
 
@@ -56,11 +56,6 @@ $(function() {
 			primary : "ui-icon-search"
 		}
 	});
-
-	if (!Modernizr.inputtypes.date) {
-		$.datepicker.setDefaults($.datepicker.regional["fr"]);
-		$('input[type=date]').datepicker();
-	}
 });
 
 (function ($) {

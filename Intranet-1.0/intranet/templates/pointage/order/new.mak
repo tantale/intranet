@@ -91,16 +91,13 @@
 </form>
 <script type='text/javascript'>
 	"use strict";
-	/*global $, Modernizr*/
+	/*global $*/
 	var project_cat_css = $('#order_create__project_cat').val();
 	$('#order_create__project_cat').change(function(){
 		var new_css = $(this).find('option:selected').attr('class');
 		$(this).removeClass(project_cat_css).addClass(new_css);
 		project_cat_css = new_css;
 	});
-	if (!Modernizr.inputtypes.date) {
-		$('#order_content input[type=date]').datepicker();
-	}
 	$('#order_content .create_button').button({
 		text : true,
 		icons : {

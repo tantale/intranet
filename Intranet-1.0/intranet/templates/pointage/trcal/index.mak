@@ -57,7 +57,6 @@
 ##
 <script type='text/javascript' src="${tg.url('/javascript/jquery-1.9.1.js')}"></script>
 <script type='text/javascript' src="${tg.url('/javascript/jquery-ui-1.10.3.custom.min.js')}"></script>
-<script type='text/javascript' src="${tg.url('/javascript/modernizr.custom.32767.js')}"></script>
 <script type='text/javascript' src="${tg.url('/javascript/jquery.layout-latest.min.js')}"></script>
 <script type='text/javascript' src="${tg.url('/javascript/jquery.form.js')}"></script>
 <script type='text/javascript' src="${tg.url('/javascript/fullcalendar.js')}"></script>

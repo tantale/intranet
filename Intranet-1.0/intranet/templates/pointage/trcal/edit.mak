@@ -69,10 +69,7 @@
 
 <script type='text/javascript'>
 	"use strict";
-	/*global $, Modernizr*/
-	if (!Modernizr.inputtypes.date) {
-		$('#calendar_content input[type=date]').datepicker();
-	}
+	/*global $*/
 	$('#cal_event_update').ajaxForm({
 		target : '#confirm_dialog_content',
 		beforeSubmit: function(arr, form, options) {

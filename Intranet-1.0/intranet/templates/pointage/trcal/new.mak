@@ -63,10 +63,7 @@
 </form>
 <script type='text/javascript'>
 	"use strict";
-	/*global $, Modernizr*/
-	if (!Modernizr.inputtypes.date) {
-		$('#cal_event_create input[type=date]').datepicker();
-	}
+	/*global $*/
 	$('#cal_event_create input[name=event_duration]').focus()
 		.change(function(event) {
 			if (event.target.validity.valid) {

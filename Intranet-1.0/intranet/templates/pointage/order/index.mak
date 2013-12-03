@@ -67,7 +67,6 @@
 ##
 <script type='text/javascript' src="${tg.url('/javascript/jquery-1.9.1.js')}"></script>
 <script type='text/javascript' src="${tg.url('/javascript/jquery-ui-1.10.3.custom.min.js')}"></script>
-<script type='text/javascript' src="${tg.url('/javascript/modernizr.custom.32767.js')}"></script>
 <script type='text/javascript' src="https://www.google.com/jsapi"></script>
 <script type='text/javascript' src="${tg.url('/javascript/jqueryui-editable.min.js')}"></script>
 <script type='text/javascript' src="${tg.url('/javascript/jquery.ui.datepicker-fr.js')}"></script>

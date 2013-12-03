@@ -93,10 +93,7 @@
 
 <script type='text/javascript'>
 "use strict";
-/* global $, Modernizr */
-if (!Modernizr.inputtypes.date) {
-	$('#employee_content input[type=date]').datepicker();
-}
+/*global $*/
 $('#employee_content .imgLiquid').imgLiquid({
 	fill : true,
 	horizontalAlign : "center",
