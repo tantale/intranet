@@ -109,7 +109,7 @@
 	});
 	$('#order_create').ajaxForm({
 		target : '#order_content',
-		beforeSubmit: function(arr, $form, options) {
+		beforeSubmit: function(arr, form, options) {
 			$('#flash').hide();
 		},
 		success: function(responseJson, statusText, xhr) {

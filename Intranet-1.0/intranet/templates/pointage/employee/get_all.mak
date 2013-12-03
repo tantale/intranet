@@ -32,7 +32,7 @@
 	/*global $*/
 	$('#accordion .minimal_form').ajaxForm({
 		target: '#employee_content',
-		beforeSubmit: function(arr, $form, options) {
+		beforeSubmit: function(arr, form, options) {
 			$('#flash').hide();
 		}
 	});

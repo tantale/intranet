@@ -38,7 +38,7 @@
 	}
 	$('#accordion .minimal_form').ajaxForm({
 		target : '#order_content',
-		beforeSubmit: function(arr, $form, options) {
+		beforeSubmit: function(arr, form, options) {
 			$('#flash').hide();
 		}
 	});

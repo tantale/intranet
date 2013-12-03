@@ -36,7 +36,7 @@
 					<p><label for="employee_update__worked_hours">h/sem. travaillées :</label>
 						<input id="employee_update__worked_hours" type="number" name="worked_hours"
 							value="${values.get('worked_hours')}"
-							placeholder="39" size="2" min="1" max="39"
+							placeholder="39" min="1" max="39"
 							title="Nombre d’heures travaillées par semaine (requis)" />
 							%if 'worked_hours' in form_errors:
 							<span class="error">${form_errors['worked_hours']}</span>
@@ -60,7 +60,6 @@
 							</p>
 					<p><label for="employee_update__photo_path">Photo :</label>
 						<input id="employee_update__photo_path" type="file" name="photo_path"
-							value="${values.get('photo_path')}"
 							accept="image/*"
 							title="Photo d’identité (optionnelle)" />
 							%if 'photo_path' in form_errors:
@@ -93,60 +92,56 @@
 </form>
 
 <script type='text/javascript'>
-	"use strict";
-	/*global $, Modernizr*/
-	if (!Modernizr.inputtypes.date) {
-		$('#employee_content input[type=date]').datepicker();
+"use strict";
+/* global $, Modernizr */
+if (!Modernizr.inputtypes.date) {
+	$('#employee_content input[type=date]').datepicker();
+}
+$('#employee_content .imgLiquid').imgLiquid({
+	fill : true,
+	horizontalAlign : "center",
+	verticalAlign : "center"
+});
+$('#employee_content .update_button').button({
+	text : true,
+	icons : {
+		primary : "ui-icon-pencil"
 	}
-	$('#employee_content .imgLiquid').imgLiquid({
-		fill : true,
-		horizontalAlign : "center",
-		verticalAlign : "center"
-	});
-	$('#employee_content .update_button').button({
-		text : true,
-		icons : {
-			primary : "ui-icon-pencil"
-		}
-	});
+});
 %if not values.get('exit_date'):
-		$('#employee_content .close_button').button({
-			text : true,
-			icons : {
-				primary : "ui-icon-circle-close"
-			}
-		}).click(function(){
-			var date = new Date();
-			$('#employee_update__exit_date').val(date.toISOString().split("T")[0]);
-		});
+$('#employee_content .close_button').button({
+	text : true,
+	icons : {
+		primary : "ui-icon-circle-close"
+	}
+}).click(function() {
+	var date = new Date();
+	$('#employee_update__exit_date').val(date.toISOString().split("T")[0]);
+});
 %endif
-	$('#employee_update').ajaxForm({
-		target : '#employee_content',
-		beforeSubmit: function(arr, $form, options) {
-			$('#flash').hide();
-		},
-		success: function(responseText, statusText, xhr) {
-			console.log("search for '<div id=\"flash\"><div class=\"ok\">' tag...");
-			var ok = $('<div/>').append(responseText).find('#flash div.ok');
-			if (ok.length) {
-				var input = $('#employee_get_all input[name=uid]'),
-					uid = input.val();
-				console.log("OK, update the employees list but don't select any employee...");
-				input.val("");
-				$('#employee_get_all').submit();
-				input.val(uid);
-			} else {
-				console.log("ERROR: don't update the employees list.");
-			}
+$('#employee_update').ajaxForm({
+	target : '#employee_content',
+	beforeSubmit : function(arr, form, options) {
+		$('#flash').hide();
+	},
+	success : function(responseText, statusText, xhr) {
+		var ok = $('<div/>').append(responseText).find('#flash div.ok');
+		if (ok.length) {
+			var input = $('#employee_get_all input[name=uid]'), //
+				uid = input.val();
+			input.val("");
+			$('#employee_get_all').submit();
+			input.val(uid);
 		}
-	});
-	$('#employee_get_delete .delete_button').button({
-		text : true,
-		icons : {
-			primary : "ui-icon-trash"
-		}
-	});
-	$('#employee_get_delete').ajaxForm({
-		target : '#confirm_dialog_content'
-	});
+	}
+});
+$('#employee_get_delete .delete_button').button({
+	text : true,
+	icons : {
+		primary : "ui-icon-trash"
+	}
+});
+$('#employee_get_delete').ajaxForm({
+	target : '#confirm_dialog_content'
+});
 </script>

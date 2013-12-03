@@ -87,7 +87,7 @@
 		});
 		$('#order_new').ajaxForm({
 			target: '#order_content',
-			beforeSubmit: function(arr, $form, options) {
+			beforeSubmit: function(arr, form, options) {
 				console.log("hide #flash...");
 				$('#flash').hide();
 				console.log("deactivate #accordion...");

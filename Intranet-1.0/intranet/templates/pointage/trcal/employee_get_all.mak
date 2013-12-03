@@ -66,7 +66,7 @@ else:
 	/*global $*/
 	$('#employee_refresh').ajaxForm({
 		target : '#calendar_content',
-		beforeSubmit: function(arr, $form, options) {
+		beforeSubmit: function(arr, form, options) {
 			$('#flash').hide();
 		}
 	});
@@ -110,7 +110,7 @@ else:
 	});
 	$('#ctrl_rec_times').ajaxForm({
 		target : '#confirm_dialog_content',
-		beforeSubmit: function(arr, $form, options) {
+		beforeSubmit: function(arr, form, options) {
 			$('#flash').hide();
 		},
 		success: function(responseText, statusText, xhr) {

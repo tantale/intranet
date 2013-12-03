@@ -159,11 +159,10 @@ import datetime
 %endif
 	$('#order_update').ajaxForm({
 		target : '#order_content',
-		beforeSubmit: function(arr, $form, options) {
+		beforeSubmit: function(arr, form, options) {
 			$('#flash').hide();
 		},
 		success: function(responseText, statusText, xhr) {
-			console.log("search for '<div id=\"flash\"><div class=\"ok\">' tag...");
 			var ok = $('<div/>').append(responseText).find('#flash div.ok');
 			if (ok.length) {
 				var order_get_all = $('#order_get_all'), //
@@ -174,8 +173,6 @@ import datetime
 				input_order_ref.val("");
 				order_get_all.submit();
 				input_uid.val(uid);
-			} else {
-				console.log("ERROR: don't update the orders list.");
 			}
 		}
 	});
@@ -196,7 +193,7 @@ import datetime
 	});
 	$('#order_duplicate').ajaxForm({
 		target : '#order_content',
-		beforeSubmit: function(arr, $form, options) {
+		beforeSubmit: function(arr, form, options) {
 			$('#flash').hide();
 		},
 		success: function(responseJson, statusText, xhr) {
@@ -207,8 +204,6 @@ import datetime
 				order_get_all.find('input[name=uid]').val("");
 				order_get_all.find('input[name=order_ref]').val(order.order_ref);
 				order_get_all.submit();
-			} else {
-				console.log("ERROR: don't update the order list.");
 			}
 		}
 	});

@@ -83,7 +83,7 @@
 	});
 	$('#cal_event_create').ajaxForm({
 		target : '#confirm_dialog_content',
-		beforeSubmit: function(arr, $form, options) {
+		beforeSubmit: function(arr, form, options) {
 			$('#flash').hide();
 		},
 		success: function(responseText, statusText, xhr) {
