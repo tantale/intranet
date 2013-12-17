@@ -17,7 +17,7 @@ __all__ = ['RootController']
 
 class RootController(BaseController):
     """
-    The root controller for the Intranet-1.0 application.
+    The root controller for the Intranet application.
 
     All the other controllers and WSGI applications should be mounted on this
     controller. For example::

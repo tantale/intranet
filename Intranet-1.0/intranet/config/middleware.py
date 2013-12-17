@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""WSGI middleware initialization for the Intranet-1.0 application."""
+"""WSGI middleware initialization for the Intranet application."""
 
 from intranet.config.app_cfg import base_config
 from intranet.config.environment import load_environment
@@ -14,18 +14,18 @@ make_base_app = base_config.setup_tg_wsgi_app(load_environment)
 
 def make_app(global_conf, full_stack=True, **app_conf):
     """
-    Set Intranet-1.0 up with the settings found in the PasteDeploy
+    Set Intranet up with the settings found in the PasteDeploy
     configuration file used.
 
-    :param global_conf: The global settings for Intranet-1.0 (those
+    :param global_conf: The global settings for Intranet (those
         defined under the ``[DEFAULT]`` section).
     :type global_conf: dict
     :param full_stack: Should the whole TG2 stack be set up?
     :type full_stack: str or bool
-    :return: The Intranet-1.0 application with all the relevant middleware
+    :return: The Intranet application with all the relevant middleware
         loaded.
 
-    This is the PasteDeploy factory for the Intranet-1.0 application.
+    This is the PasteDeploy factory for the Intranet application.
 
     ``app_conf`` contains all the application-specific settings (those defined
     under ``[app:main]``.

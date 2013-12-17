@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""WebHelpers used in Intranet-1.0."""
+"""WebHelpers used in Intranet."""
 #import datetime
 #from webhelpers import date, feedgenerator, html, number, misc, text
 #

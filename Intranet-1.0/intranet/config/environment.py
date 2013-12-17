@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""WSGI environment setup for Intranet-1.0."""
+"""WSGI environment setup for Intranet."""
 
 from intranet.config.app_cfg import base_config
 

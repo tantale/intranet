@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Setup the Intranet-1.0 application"""
+"""Setup the Intranet application"""
 
 import logging
 from tg import config

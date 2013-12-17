@@ -66,14 +66,6 @@ setup(
     [paste.app_install]
     main = pylons.util:PylonsInstaller
     """,
-    # entry_points={
-    # 	'paste.app_factory': [
-    # 		'main = intranet.config.middleware:make_app'
-    # 	],
-    # 	'gearbox.plugins': [
-    # 		'turbogears-devtools = tg.devtools'
-    # 	]
-    # },
     dependency_links=["http://tg.gy/222"],
     zip_safe=False
 )

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Global configuration file for TG2-specific settings in Intranet-1.0.
+Global configuration file for TG2-specific settings in Intranet.
 
 This file complements development/deployment.ini.
 

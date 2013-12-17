@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Setup the Intranet-1.0 application"""
+"""Setup the Intranet application"""
 from intranet import model
 from intranet.accessors.employee import EmployeeAccessor
 from intranet.accessors.order import OrderAccessor

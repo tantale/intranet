@@ -1,12 +1,12 @@
-This file is for you to describe the Intranet-1.0 application. Typically
+This file is for you to describe the Intranet application. Typically
 you would include information such as the information below:
 
 Installation and Setup
 ======================
 
-Install ``Intranet-1.0`` using the setup.py script::
+Install ``Intranet`` using the setup.py script::
 
-    $ cd Intranet-1.0
+    $ cd Intranet
     $ python setup.py install
 
 Create the project database for any model classes defined::

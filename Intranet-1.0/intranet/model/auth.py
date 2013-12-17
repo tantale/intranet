@@ -4,7 +4,7 @@ Auth* related model.
 
 This is where the models used by the authentication stack are defined.
 
-It's perfectly fine to re-use this definition in the Intranet-1.0 application,
+It's perfectly fine to re-use this definition in the Intranet application,
 though.
 
 """

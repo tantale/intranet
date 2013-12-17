@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Unit and functional test suite for Intranet-1.0."""
+"""Unit and functional test suite for Intranet."""
 
 from intranet.model import *
 from nose.tools import eq_
@@ -32,7 +32,7 @@ class TestController(object):
     """
     Base functional test case for the controllers.
 
-    The Intranet-1.0 application instance (``self.app``) set up in this test
+    The Intranet application instance (``self.app``) set up in this test
     case (and descendants) has authentication disabled, so that developers can
     test the protected areas independently of the :mod:`repoze.who` plugins
     used initially. This way, authentication can be tested once and separately.

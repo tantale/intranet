@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Setup the Intranet-1.0 application"""
+"""Setup the Intranet application"""
 from intranet.config.environment import load_environment
 from schema import setup_schema
 import bootstrap
