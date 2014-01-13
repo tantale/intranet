@@ -3,13 +3,14 @@
 :date: 2013-10-19
 :author: Laurent LAPORTE <sandlol2009@gmail.com>
 """
+import collections
 from intranet.accessors.order import OrderAccessor
 from intranet.model.pointage.order import Order
+import logging
+
 from tg.controllers.restcontroller import RestController
 from tg.decorators import with_trailing_slash, expose, without_trailing_slash
-import collections
-import logging
-import math
+
 
 LOG = logging.getLogger(__name__)
 
