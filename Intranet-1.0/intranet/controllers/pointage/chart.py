@@ -5,11 +5,10 @@
 """
 import collections
 from intranet.accessors.order import OrderAccessor
-from intranet.model.pointage.order import Order
 import logging
 
 from tg.controllers.restcontroller import RestController
-from tg.decorators import with_trailing_slash, expose, without_trailing_slash
+from tg.decorators import expose, without_trailing_slash
 
 
 LOG = logging.getLogger(__name__)
@@ -52,35 +51,3 @@ class ChartController(RestController):
         return dict(order=order,
                     order_cat_label=cat_label_dict[order.project_cat],
                     statistics=statistics)
-
-    @with_trailing_slash
-    @expose('json')
-    @expose('intranet.templates.pointage.chart.get_all')
-    def get_all(self, keyword=None, uid=None):
-        """
-        Display a chart for a order list: a time recording sum.
-
-        GET /pointage/chart/
-        GET /pointage/chart.json
-        GET /pointage/chart/get_all
-        GET /pointage/chart/get_all.json
-
-        :param uid: Active order's UID if any
-        """
-        # -- filter the order list/keyword
-        accessor = OrderAccessor()
-        order_by_cond = Order.order_ref
-        filter_cond = (Order.order_ref.like('%' + keyword + '%')
-                       if keyword else None)
-        order_list = accessor.get_order_list(filter_cond, order_by_cond)
-
-        # -- active_index of the order by uid
-        active_index = False
-        if uid:
-            uid = int(uid)
-            for index, order in enumerate(order_list):
-                if order.uid == uid:
-                    active_index = index
-                    break
-        return dict(order_list=order_list, keyword=keyword,
-                    active_index=active_index)
