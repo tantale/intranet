@@ -80,7 +80,8 @@ class OrderController(RestController):
     @with_trailing_slash
     @expose('json')
     @expose('intranet.templates.pointage.order.get_all')
-    def get_all(self, keyword=None, uid=None, order_ref=None, _load=False):
+    def get_all(self, keyword=None, uid=None, order_ref=None,
+                _heavy_loading=False):
         """
         Display all records in a resource.
 
@@ -99,7 +100,7 @@ class OrderController(RestController):
         order_list = accessor.get_order_list(filter_cond, order_by_cond)
 
         # -- heavy loading for debug
-        if _load:
+        if _heavy_loading:
             for order in order_list:
                 order.order_phase_list
 
