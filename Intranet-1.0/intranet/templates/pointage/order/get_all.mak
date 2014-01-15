@@ -8,7 +8,7 @@
 %if order_list:
 <div id="accordion">
 %for order in order_list:
-<% div_phases_id = 'order_phase_frame_{}'.format(order.uid) %>
+<% div_phases_id = 'order_phase_frame_{0}'.format(order.uid) %>
 <h2 id="order_${order.uid}" class="searchable"><a
 	href="../order_phase/?order_uid=${order.uid}">${order.order_ref}</a></h2>
 <div id="${div_phases_id}"><em class="loading">Chargement en cours...</em></div>

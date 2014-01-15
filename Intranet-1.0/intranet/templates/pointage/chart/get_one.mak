@@ -20,7 +20,8 @@ def format_number(number):
 ## header
 ##
 	<p><strong>Bilan des pointages à la date du :</strong> ${curr_date}
-	<p><strong>Référence de la commande :</strong> ${order.order_ref}</p>
+	<p><strong>N° commande :</strong> ${order.uid}</p>
+	<p><strong>Ref. commande :</strong> ${order.order_ref}</p>
 	<p><strong>Date de création :</strong> ${format_date(order.creation_date)}</p>
 %if order.close_date is None:
 	<p><strong>Date de clôture :</strong> <em>(aucune)</em></p>

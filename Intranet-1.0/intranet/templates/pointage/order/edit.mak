@@ -19,6 +19,13 @@ import datetime
 		<legend class="ui-widget-header">Modifier les informations concernant la commande ${values.get('order_ref')}</legend>
 		<table>
 			<tr>
+				<td><p><label for="order_update__uid">N° commande :</label>
+						<input id="order_update__uid" type="number" name="uid"
+							value="${values['uid']}"
+							disabled="disabled"
+							title="Numéro de la commande (non modifiable)" /></p></td>
+			</tr>
+			<tr>
 				<td><p><label for="order_update__order_ref">Ref. commande :</label>
 						<input id="order_update__order_ref" type="text" name="order_ref"
 							value="${values.get('order_ref')}"

@@ -52,8 +52,8 @@
 
 <%
 uid_json = json.dumps(order.uid)
-confirm_dialog_title_fmt = u"Voulez-vous supprimer la commande {order_ref} ?"
-confirm_dialog_title = confirm_dialog_title_fmt.format(order_ref=order.order_ref)
+confirm_dialog_title_fmt = u"Voulez-vous supprimer la commande N° {uid} : {order_ref} ?"
+confirm_dialog_title = confirm_dialog_title_fmt.format(uid=order.uid, order_ref=order.order_ref)
 confirm_dialog_title_json = json.dumps(confirm_dialog_title)
 %>
 
@@ -61,7 +61,7 @@ confirm_dialog_title_json = json.dumps(confirm_dialog_title)
 	"use strict";
 	/*global $*/
 	$('#confirm_dialog').dialog({
-		width: 500,
+		width: 550,
 		height: 200,
 		buttons: {
 			"Supprimer": function() {

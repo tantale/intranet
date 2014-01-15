@@ -32,10 +32,13 @@
 			<form id="order_get_all" class="minimal_form"
 				action="${tg.url('./get_all/')}" method="get">
 				<p>
+					<input id="order_get_all__uid" type="number" name="uid"
+							value=""
+							placeholder="N° commande"
+							title="Numéro de la commande recherchée" /><br>
 					<input id="order_get_all__keyword" type="search" name="keyword"
 						placeholder="Mot-clef"
 						title="Saisir un mot-clef" />
-					<input type="hidden" name="uid" value="" />
 					<input type="hidden" name="order_ref" value="" />
 					<button id="order_get_all__search" type="submit" class="search_button"
 						title="Rechercher selon le mot-clef">Rechercher</button>

@@ -24,7 +24,7 @@
 ## Referenced objects: order, order phase (with project_cat's css)
 ##
 	<p class="colorFrame ${order_phase.order.project_cat}"><span
-	title="Pointage pour la commande : ${order_phase.order.order_ref}">${order_phase.order.order_ref}</span><span> : </span><span
+	title="Pointage pour la commande : ${order_phase.order.order_ref}">Commande N° ${order_phase.order.uid} - ${order_phase.order.order_ref}</span><span> : </span><span
 	title="Pointage pour la phase : ${order_phase.label}">${order_phase.label}</span></p>
 	
 ##
