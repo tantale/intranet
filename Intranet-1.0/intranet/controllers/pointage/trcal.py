@@ -17,7 +17,7 @@ import logging
 
 from formencode.validators import Int, Number
 import pylons
-from sqlalchemy.sql.expression import or_, and_
+from sqlalchemy.sql.expression import or_, and_, desc
 from tg.controllers.restcontroller import RestController
 from tg.controllers.util import redirect
 from tg.decorators import with_trailing_slash, expose, validate, \
@@ -141,7 +141,7 @@ class CalendarController(RestController):
         if keyword:
             filter_cond = and_(filter_cond,
                                Order.order_ref.like('%' + keyword + '%'))
-        order_by_cond = Order.order_ref
+        order_by_cond = desc(Order.creation_date)
         order_list = accessor.get_order_list(filter_cond, order_by_cond)
 
         # -- active_index of the order by uid

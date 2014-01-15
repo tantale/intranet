@@ -4,20 +4,23 @@
 :date: 2013-08-10
 :author: Laurent LAPORTE <sandlol2009@gmail.com>
 """
-from formencode.validators import NotEmpty
+import collections
 from intranet.accessors import DuplicateFoundError
 from intranet.accessors.order import OrderAccessor
 from intranet.model.pointage.order import Order
 from intranet.validators.date_interval import check_date_interval
 from intranet.validators.iso_date_converter import IsoDateConverter
+import logging
+
+from formencode.validators import NotEmpty
+import pylons
+from sqlalchemy.sql.expression import desc
 from tg.controllers.restcontroller import RestController
 from tg.controllers.util import redirect
 from tg.decorators import with_trailing_slash, expose, validate, \
     without_trailing_slash
 from tg.flash import flash
-import collections
-import logging
-import pylons
+
 
 LOG = logging.getLogger(__name__)
 
@@ -90,7 +93,7 @@ class OrderController(RestController):
         """
         # -- filter the order list/keyword
         accessor = OrderAccessor()
-        order_by_cond = Order.order_ref
+        order_by_cond = desc(Order.creation_date)
         filter_cond = (Order.order_ref.like('%' + keyword + '%')
                        if keyword else None)
         order_list = accessor.get_order_list(filter_cond, order_by_cond)
