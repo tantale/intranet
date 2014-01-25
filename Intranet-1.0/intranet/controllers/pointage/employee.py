@@ -108,6 +108,12 @@ class EmployeeController(RestController):
     @expose()
     def post(self, employee_name, worked_hours, entry_date,
                  exit_date=None, photo_path=None):
+        LOG.info("EmployeeController.post")
+        LOG.debug("- employee_name: {!r}".format(employee_name))
+        LOG.debug("- worked_hours:  {!r}".format(worked_hours))
+        LOG.debug("- entry_date:    {!r}".format(entry_date))
+        LOG.debug("- exit_date:     {!r}".format(exit_date))
+
         ctrl_dict = check_date_interval(entry_date, exit_date)
         if ctrl_dict['status'] != "ok":
             flash(ctrl_dict['message'], status=ctrl_dict['status'])
@@ -154,9 +160,9 @@ class EmployeeController(RestController):
         form_errors = pylons.tmpl_context.form_errors  # @UndefinedVariable
         accessor = EmployeeAccessor()
         employee = accessor.get_employee(uid)
-        entry_date = employee.entry_date.strftime("%Y-%m-%d")
+        entry_date = employee.entry_date.isoformat()
         exit_date = (None if employee.exit_date is None
-                     else employee.exit_date.strftime("%Y-%m-%d"))
+                     else employee.exit_date.isoformat())
         values = dict(uid=employee.uid,
                       employee_name=employee.employee_name,
                       worked_hours=str(employee.worked_hours),
@@ -180,6 +186,13 @@ class EmployeeController(RestController):
         POST /pointage/employee/1?_method=PUT
         PUT /pointage/employee/1
         """
+        LOG.info("EmployeeController.post")
+        LOG.debug("- uid:           {!r}".format(uid))
+        LOG.debug("- employee_name: {!r}".format(employee_name))
+        LOG.debug("- worked_hours:  {!r}".format(worked_hours))
+        LOG.debug("- entry_date:    {!r}".format(entry_date))
+        LOG.debug("- exit_date:     {!r}".format(exit_date))
+
         ctrl_dict = check_date_interval(entry_date, exit_date)
         if ctrl_dict['status'] != "ok":
             flash(ctrl_dict['message'], status=ctrl_dict['status'])

@@ -201,9 +201,9 @@ class OrderController(RestController):
         form_errors = pylons.tmpl_context.form_errors  # @UndefinedVariable
         accessor = OrderAccessor()
         order = accessor.get_order(uid)
-        creation_date = order.creation_date.strftime("%Y-%m-%d")
+        creation_date = order.creation_date.isoformat()
         close_date = (None if order.close_date is None
-                      else order.close_date.strftime("%Y-%m-%d"))
+                      else order.close_date.isoformat())
         values = dict(uid=order.uid,
                       order_ref=order.order_ref,
                       project_cat=order.project_cat,
