@@ -112,10 +112,22 @@ class CalendarController(RestController):
     @expose('intranet.templates.pointage.trcal.order_get_all')
     def order_get_all(self, cal_start, cal_end, keyword=None, uid=None):
         """
-        Display all records in a resource.
+        Display all orders for the given time interval.
 
         GET /pointage/trcal/order_get_all
         GET /pointage/trcal/order_get_all.json
+        GET /admin/trcal/order_get_all.json?uid=&
+                                            keyword=&
+                                            cal_start=1388358000&
+                                            cal_end=1391986800
+
+        :param cal_start: start date/time of the calendar interval (timestamps)
+
+        :param cal_end: end date/time of the calendar interval (timestamps)
+
+        :param cal_curr: current date/time of the calendar (timestamps)
+
+        :param: keyword: current keyword from the search form.
 
         :param uid: Active order's UID if any
         """
@@ -194,9 +206,17 @@ class CalendarController(RestController):
     @expose('intranet.templates.pointage.trcal.employee_get_all')
     def employee_get_all(self, cal_start, cal_end, cal_curr, employee_uid):
         """
-        Display all records in a resource.
+        Display all employees for the given time interval.
 
-        GET /pointage/trcal/employee_get_all?employee_uid=&cal_start=&cal_end=
+        GET /admin/trcal/employee_get_all.json?cal_start=1388530800&
+                                               cal_end=1391209200&
+                                               cal_curr=1390655265
+
+        :param cal_start: start date/time of the calendar interval (timestamps)
+
+        :param cal_end: end date/time of the calendar interval (timestamps)
+
+        :param cal_curr: current date/time of the calendar (timestamps)
 
         :param employee_uid: Current employee uid's UID
         """
@@ -255,9 +275,17 @@ class CalendarController(RestController):
     @expose('intranet.templates.pointage.trcal.get_all')
     def get_all(self, cal_start, cal_end, cal_curr, employee_uid=None):
         """
-        Display all records in a resource.
+        Display all employees for the given time interval.
 
-        GET /pointage/trcal/?employee_uid=&cal_start=&cal_end=
+        GET /admin/trcal/get_all.json?cal_start=1388530800&
+                                      cal_end=1391209200&
+                                      cal_curr=1390655265
+
+        :param cal_start: start date/time of the calendar interval (timestamps)
+
+        :param cal_end: end date/time of the calendar interval (timestamps)
+
+        :param cal_curr: current date/time of the calendar (timestamps)
 
         :param employee_uid: Current employee uid's UID
         """
