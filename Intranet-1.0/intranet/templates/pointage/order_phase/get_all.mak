@@ -55,6 +55,9 @@ form_post_id = 'order_phase_post_{}'.format(order_uid)
 </div>
 <script type='text/javascript'>
 	"use strict";
+##
+## -- editable
+##
 	%if editable:
 	$('#${ul_list_id}').sortable({
 		update: function(event, ui) {
@@ -92,6 +95,19 @@ form_post_id = 'order_phase_post_{}'.format(order_uid)
 			}
 		}
 	});
+	$('#${form_post_id} .post_button').button({
+		text: false,
+		icons: {
+			primary: "ui-icon-plus"
+		}
+	});
+	$('#${form_post_id} input[name=label]').focus();
+	$('#${form_post_id}').ajaxForm({
+		target : '#${div_phases_id}'
+	});
+##
+## -- selectable
+##
 	%elif selectable:
 	$("#${ul_list_id} li")
 	.zIndex(1000)
@@ -133,14 +149,4 @@ form_post_id = 'order_phase_post_{}'.format(order_uid)
 		$(this).addClass('ui-selected');
 	});
 	%endif
-	$('#${form_post_id} .post_button').button({
-		text: false,
-		icons: {
-			primary: "ui-icon-plus"
-		}
-	});
-	$('#${form_post_id} input[name=label]').focus();
-	$('#${form_post_id}').ajaxForm({
-		target : '#${div_phases_id}'
-	});
 </script>

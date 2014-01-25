@@ -28,6 +28,14 @@
 			console.log('Phases list is already loaded.');
 		}
 	}
+	
+	function scroll_phase_list(header) {
+		var scrollable = header.offsetParent(), //
+			scrollable_offset = scrollable.offset(), //
+			offset = header.offset();
+		scrollable.scrollTop(offset.top - scrollable_offset.top);
+	}
+	
 	$('#accordion form button').button();
 	$('#accordion').accordion({
 		active: ${active_index_json|n},
@@ -46,6 +54,7 @@
 		},
 		create: function(event, ui) {
 			if (ui.header.attr('id')) {
+				scroll_phase_list(ui.header);
 				load_phase_list(ui.header);
 			}
 		}
