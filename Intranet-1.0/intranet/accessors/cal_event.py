@@ -176,11 +176,8 @@ class CalEventAccessor(BasicAccessor):
         else:
             return cal_event
 
-    def update_cal_event(self, uid, event_start, event_end, comment):
-        return self._update_record(uid,
-                                   event_start=event_start,
-                                   event_end=event_end,
-                                   comment=comment)
+    def update_cal_event(self, uid, **kwargs):
+        return super(CalEventAccessor, self)._update_record(uid, **kwargs)
 
     # @deprecated: replace by update_cal_event
     def update_duration(self, uid, end_timedelta, comment):

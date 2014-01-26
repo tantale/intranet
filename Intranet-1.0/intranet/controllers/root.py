@@ -8,10 +8,12 @@ from intranet.lib.base import BaseController
 
 from tg import expose, request, tmpl_context
 
+from intranet.controllers.tools import ToolsController
+
+
 # from intranet.model import DBSession, metadata
 # from tg import flash, require, url, lurl, redirect
 # from tg.i18n import ugettext as _, lazy_ugettext as l_
-
 __all__ = ['RootController']
 
 
@@ -33,6 +35,7 @@ class RootController(BaseController):
     error = ErrorController()
     admin = AdminController()
     pointage = PointageControoler()
+    tools = ToolsController()
 
     def _before(self, *args, **kw):
         tmpl_context.project_name = "intranet"

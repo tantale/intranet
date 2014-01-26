@@ -163,3 +163,57 @@ input.error {
 	border-color: #eed3d7;
 	color: #b94a48;
 }
+
+.record-table {
+	xxmargin-left: auto;
+    xxmargin-right: auto;
+}
+
+.record-table th, .record-table td {
+	padding-left: .5em;
+	padding-right: .5em;
+	padding-top: .2em;
+	padding-bottom: .2em;
+}
+
+.record-table caption {
+	text-align: center;
+	font-size: 1.2em;
+	font-weight: bold;
+	font-variant: normal;
+	margin-bottom: .6em;
+	margin-top: .6em;
+}
+
+th.record-table-uid, td.record-table-uid {
+	width: 3em;
+}
+
+td.record-table-uid {
+	text-align: right;
+}
+
+th.record-table-date, td.record-table-date {
+	width: 7em;
+}
+
+td.record-table-date {
+	text-align: center;
+}
+
+th.record-table-datetime, td.record-table-datetime {
+	width: 10em;
+}
+
+td.record-table-datetime {
+	text-align: center;
+}
+
+th.record-table-label, td.record-table-label {
+	width: 15em;
+}
+
+td.record-table-datetime {
+	text-align: left;
+}
+
