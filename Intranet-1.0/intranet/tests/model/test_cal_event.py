@@ -64,38 +64,33 @@ class TestCalEvent(unittest.TestCase):
         order_0 = order_list[0]
         order_1 = order_list[1]
         try:
-            event_0 = CalEvent(title=u"Preparation [100]",
-                              event_start=datetime.datetime(2010, 5, 2, 8, 0),
-                              event_end=datetime.datetime(2010, 5, 2, 9, 0),
-                              comment=u"Préparation commande #1")
+            event_0 = CalEvent(event_start=datetime.datetime(2010, 5, 2, 8, 0),
+                               event_end=datetime.datetime(2010, 5, 2, 9, 0),
+                               comment=u"Préparation commande #1")
             employee_0.cal_event_list.append(event_0)
             order_0.order_phase_list[0].cal_event_list.append(event_0)
 
-            event_1 = CalEvent(title=u"Usinage [200]",
-                              event_start=datetime.datetime(2010, 5, 2, 9, 0),
-                              event_end=datetime.datetime(2010, 5, 2, 11, 0),
-                              comment=u"Usinage commande #1")
+            event_1 = CalEvent(event_start=datetime.datetime(2010, 5, 2, 9, 0),
+                               event_end=datetime.datetime(2010, 5, 2, 11, 0),
+                               comment=u"Usinage commande #1")
             employee_0.cal_event_list.append(event_1)
             order_0.order_phase_list[1].cal_event_list.append(event_1)
 
-            event_2 = CalEvent(title=u"Assemblage [100]",
-                              event_start=datetime.datetime(2010, 5, 2, 11, 0),
-                              event_end=datetime.datetime(2010, 5, 2, 12, 0),
-                              comment=u"Assemblage commande #1")
+            event_2 = CalEvent(event_start=datetime.datetime(2010, 5, 2, 11, 0),  # @IgnorePep8
+                               event_end=datetime.datetime(2010, 5, 2, 12, 0),
+                               comment=u"Assemblage commande #1")
             employee_0.cal_event_list.append(event_2)
             order_0.order_phase_list[2].cal_event_list.append(event_2)
 
-            event_3 = CalEvent(title=u"Preparation [200]",
-                              event_start=datetime.datetime(2010, 5, 2, 14, 0),
-                              event_end=datetime.datetime(2010, 5, 2, 16, 0),
-                              comment=u"Préparation command #2")
+            event_3 = CalEvent(event_start=datetime.datetime(2010, 5, 2, 14, 0),  # @IgnorePep8
+                               event_end=datetime.datetime(2010, 5, 2, 16, 0),
+                               comment=u"Préparation command #2")
             employee_0.cal_event_list.append(event_3)
             order_1.order_phase_list[0].cal_event_list.append(event_3)
 
-            event_3 = CalEvent(title=u"Finition [100]",
-                              event_start=datetime.datetime(2010, 5, 2, 17, 0),
-                              event_end=datetime.datetime(2010, 5, 2, 18, 0),
-                              comment=u"Finition commande #1")
+            event_3 = CalEvent(event_start=datetime.datetime(2010, 5, 2, 17, 0),  # @IgnorePep8
+                               event_end=datetime.datetime(2010, 5, 2, 18, 0),
+                               comment=u"Finition commande #1")
             employee_0.cal_event_list.append(event_3)
             order_0.order_phase_list[2].cal_event_list.append(event_3)
 
@@ -112,10 +107,10 @@ class TestCalEvent(unittest.TestCase):
         for employee in employee_list:
             print(employee.employee_name)
             for cal_event in employee.cal_event_list:
-                print("- " + cal_event.title)
+                print("- " + cal_event.comment)
 
         # TODO: to be continued...
-        self.assertEqual(event.title, u"Preparation [100]")
+        self.assertEqual(event.comment, u"Finition commande #1")
 
 
 if __name__ == "__main__":

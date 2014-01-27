@@ -67,16 +67,17 @@ class CalEventAccessor(BasicAccessor):
         """
         # TODO: Query the database for work hours
         wh_dict = {1: [(datetime.time(13, 30), datetime.time(17, 45))],
-            2: [(datetime.time(8, 0), datetime.time(12, 30)), (
-                    datetime.time(13, 30), datetime.time(17, 45))],
-            3: [(datetime.time(8, 0), datetime.time(12, 30)),
-                (datetime.time(13, 30), datetime.time(17, 45))],
-            4: [(datetime.time(8, 0), datetime.time(12, 30)),
-                (datetime.time(13, 30), datetime.time(17, 45))],
-            5: [(datetime.time(8, 0), datetime.time(12, 30)),
-                (datetime.time(13, 30), datetime.time(17, 30))],
-            6: [],
-            7: []}
+                   2: [(datetime.time(8, 0), datetime.time(12, 30)),
+                       (datetime.time(13, 30), datetime.time(17, 45))],
+                   3: [(datetime.time(8, 0), datetime.time(12, 30)),
+                       (datetime.time(13, 30), datetime.time(17, 45))],
+                   4: [(datetime.time(8, 0), datetime.time(12, 30)),
+                       (datetime.time(13, 30), datetime.time(17, 45))],
+                   5: [(datetime.time(8, 0), datetime.time(12, 30)),
+                       (datetime.time(13, 30), datetime.time(17, 30))],
+                   6: [(datetime.time(8, 0), datetime.time(12, 30)),
+                       (datetime.time(13, 30), datetime.time(17, 45))],
+                   7: []}
         return wh_dict
 
     def get_day_events(self, employee_uid, day, tz_delta):

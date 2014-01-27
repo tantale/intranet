@@ -100,8 +100,8 @@ class TestDemo(unittest.TestCase):
         event_interval = find_first_event_interval(day, first_hour, event_list,
                                                    open_hours_dict, tzd)
         pprint.pprint(format_hours(event_interval, tzo))
-        expected = (datetime.datetime(2013, 10, 9, 12, 0),
-                    datetime.datetime(2013, 10, 9, 13, 35))
+        expected = (datetime.datetime(2013, 10, 9, 13, 0),
+                    datetime.datetime(2013, 10, 9, 14, 35))
         self.assertEqual(event_interval, expected)
 
         # -- another case => first_hour
@@ -110,8 +110,8 @@ class TestDemo(unittest.TestCase):
         event_interval = find_first_event_interval(day, first_hour, event_list,
                                                    open_hours_dict, tzd)
         pprint.pprint(format_hours(event_interval, tzo))
-        expected = (datetime.datetime(2013, 10, 9, 6, 0),
-                    datetime.datetime(2013, 10, 9, 7, 0))
+        expected = (datetime.datetime(2013, 10, 9, 7, 0),
+                    datetime.datetime(2013, 10, 9, 8, 0))
         self.assertEqual(event_interval, expected)
 
 
