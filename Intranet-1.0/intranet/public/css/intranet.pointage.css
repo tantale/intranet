@@ -173,6 +173,7 @@ td.chart-table-position {
 
 td.chart-table-label {
 	text-align: left;
+	width: 13em;
 }
 
 td.chart-table-count, th.chart-table-count {
