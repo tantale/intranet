@@ -23,6 +23,7 @@ else:
 	<input type="hidden" name="employee_uid" value="${employee.uid}"/>
 	<input type="hidden" name="week_start"/>
 	<input type="hidden" name="week_end"/>
+	<input type="hidden" name="tz_offset"/>
 	<button id="ctrl_rec_times__ctrl" type="submit" class="ctrl_button"
 		title="Contrôler les pointages de la semaine">Contrôler les pointages</button></td>
 </form>
@@ -106,6 +107,7 @@ else:
 		}
 		$('#ctrl_rec_times input[name=week_start]').val(week_start.getTime() / 1000);
 		$('#ctrl_rec_times input[name=week_end]').val(week_end.getTime() / 1000);
+		$('#ctrl_rec_times input[name=tz_offset]').val(week_start.getTimezoneOffset());
 		// event.preventDefault();
 	});
 	$('#ctrl_rec_times').ajaxForm({

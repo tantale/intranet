@@ -640,15 +640,20 @@ class CalendarController(RestController):
 
     @expose('json')
     @expose('intranet.templates.pointage.trcal.ctrl_rec_times')
-    def ctrl_rec_times(self, employee_uid, week_start, week_end):
+    def ctrl_rec_times(self, employee_uid, week_start, week_end, tz_offset):
         """
         """
         LOG.info("CalendarController.ctrl_rec_times")
         LOG.debug("- employee_uid: {!r}".format(employee_uid))
         LOG.debug("- week_start:   {!r}".format(week_start))
         LOG.debug("- week_end:     {!r}".format(week_end))
+        LOG.debug("- tz_offset:    {!r}".format(tz_offset))
 
-        # -- date interval from the calendar's timestamps
+        # -- convert tz_offset parameter
+        tz_offset = int(tz_offset)
+        tz_delta = datetime.timedelta(minutes=tz_offset)
+
+        # -- date interval from the calendar's timestamps (UTC dates)
         start_date = datetime.datetime.utcfromtimestamp(float(week_start))
         end_date = datetime.datetime.utcfromtimestamp(float(week_end))
         LOG.debug(("date interval from the calendar's timestamps: "
@@ -688,7 +693,10 @@ class CalendarController(RestController):
                 duration_sum = sum([get_event_duration(event)
                                     for event in event_day_list])
                 day_list.append(duration_sum)
-            week_date = start_date + datetime.timedelta(days=week * 7)
+            
+            # -- week_date converted in local time
+            week_date = start_date + datetime.timedelta(days=week * 7) - tz_delta
+            LOG.debug("- week_date:    {!r}".format(week_date))
             duration_total = sum(day_list)
             week_dict = dict(week_number=week_date.isocalendar()[1],
                              day_list=day_list,
