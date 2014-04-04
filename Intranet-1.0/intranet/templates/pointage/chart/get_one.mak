@@ -112,7 +112,18 @@ data_table_json = json.dumps(data_table)
 	function loadPies() {
 		google.load("visualization", "1", {packages: ["corechart"], callback: drawChart});
 	}
+	
+	function createErrMsg(exc) {
+		var errMsg = "Graphique indisponible : votre connexion à Internet n’est peut-être pas active.";
+		var tags = "<br/><br/><div id='flash'><div class='warning'><p>{errMsg}</p><p>{message}</p></div></div>";
+		return tags.replace('{errMsg}', errMsg).replace('{message}', exc.message);
+	}
 
-	loadPies();
+	try {
+		loadPies();
+	} catch (exc) {
+		$('#chart-pie').append($(createErrMsg(exc)));
+	}
+
 </script>
 %endif

@@ -643,7 +643,7 @@ class CalendarController(RestController):
 
     @expose('json')
     @expose('intranet.templates.pointage.trcal.ctrl_rec_times')
-    def ctrl_rec_times(self, employee_uid, week_start, week_end, tz_offset):
+    def ctrl_rec_times(self, employee_uid, week_start, week_end, tz_offset, display_messages=False):
         """
         """
         LOG.info("CalendarController.ctrl_rec_times")
@@ -712,4 +712,10 @@ class CalendarController(RestController):
                     worked_hours=employee.worked_hours,
                     week_start=week_start,
                     week_end=week_end,
+                    tz_offset=tz_offset,
+                    display_messages=display_messages,
                     week_list=week_list)
+
+    @expose('intranet.templates.pointage.trcal.print_rec_times')
+    def print_rec_times(self, employee_uid, week_start, week_end, tz_offset):
+        return self.ctrl_rec_times(employee_uid, week_start, week_end, tz_offset, display_messages=True)

@@ -5,6 +5,7 @@
 :author: Laurent LAPORTE <sandlol2009@gmail.com>
 """
 import collections
+import datetime
 from intranet.accessors import DuplicateFoundError
 from intranet.accessors.order import OrderAccessor
 from intranet.model.pointage.order import Order
@@ -132,7 +133,10 @@ class OrderController(RestController):
             err_msg = (u"Le formulaire comporte des champs invalides")
             flash(err_msg, status="error")
         cat_dict = self._get_cat_dict()
-        return dict(values=kw, cat_dict=cat_dict,
+        values = dict(creation_date=datetime.date.today())
+        values.update(kw)
+        return dict(values=values,
+                    cat_dict=cat_dict,
                     form_errors=form_errors)
 
     @validate({'order_ref': NotEmpty,

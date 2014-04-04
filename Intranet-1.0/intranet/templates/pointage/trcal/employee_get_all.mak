@@ -27,6 +27,15 @@ else:
 	<button id="ctrl_rec_times__ctrl" type="submit" class="ctrl_button"
 		title="Contrôler les pointages de la semaine">Contrôler les pointages</button></td>
 </form>
+<form id="print_rec_times" class="ui-helper-hidden" target='_blank'
+	action="${tg.url('./print_rec_times')}" method="get">
+	<input type="hidden" name="employee_uid" value="${employee.uid}"/>
+	<input type="hidden" name="week_start"/>
+	<input type="hidden" name="week_end"/>
+	<input type="hidden" name="tz_offset"/>
+	<button id="print_rec_times__print" type="submit" class="print_button"
+		title="Imprimer les pointages de la semaine">Imprimer les pointages</button></td>
+</form>
 %endif
 
 ## -- Display the list of employees
@@ -89,8 +98,8 @@ else:
 			primary : "ui-icon-check"
 		}
 	});
-	$('#ctrl_rec_times').submit(function(event){
-		// -- Compute de start/end dates of the week (or month)
+	$('#ctrl_rec_times, #print_rec_times').submit(function(event){
+		// -- Compute the start/end dates of the week (or month)
 		var calendar = $('#calendar'), // fullCalendar object
 			view = calendar.fullCalendar('getView'), // viewObject
 			week_start = view.visStart,
@@ -105,10 +114,9 @@ else:
 			week_end = new Date(week_start);
 			week_end.setDate(week_end.getDate() + 7);
 		}
-		$('#ctrl_rec_times input[name=week_start]').val(week_start.getTime() / 1000);
-		$('#ctrl_rec_times input[name=week_end]').val(week_end.getTime() / 1000);
-		$('#ctrl_rec_times input[name=tz_offset]').val(week_start.getTimezoneOffset());
-		// event.preventDefault();
+		$(event.target).find('input[name=week_start]').val(week_start.getTime() / 1000);
+		$(event.target).find('input[name=week_end]').val(week_end.getTime() / 1000);
+		$(event.target).find('input[name=tz_offset]').val(week_start.getTimezoneOffset());
 	});
 	$('#ctrl_rec_times').ajaxForm({
 		target : '#confirm_dialog_content',
@@ -122,6 +130,9 @@ else:
 				buttons: {
 					"OK": function() {
 						$(this).dialog("close");
+					},
+					"Imprimer": function() {
+						$('#print_rec_times').submit();
 					}
 				},
 				title: "Contrôle des pointages",
@@ -134,6 +145,12 @@ else:
 				text = "Impossible contrôler les événements\u00a0!";
 			display_err_dialog(title, text);
         }
+	});
+	$('#print_rec_times .print_button').button({
+		text : true,
+		icons : {
+			primary : "ui-icon-print"
+		}
 	});
 %endif
 </script>

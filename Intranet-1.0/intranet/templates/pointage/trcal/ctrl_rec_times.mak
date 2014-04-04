@@ -25,7 +25,7 @@ def format_number(number):
 	<caption>Nombre d’heures par semaine</caption>
 	<thead>
 	<tr>
-	<th>Sem.</th>
+	<th>Semaine</th>
 	<th>Lun.</th>
 	<th>Mar.</th>
 	<th>Mer.</th>
@@ -34,7 +34,11 @@ def format_number(number):
 	<th>Sam.</th>
 	<th>Dim.</th>
 	<th>Total</th>
+%if display_messages:
+	<th>Statut</th>
+%else:
 	<th></th>
+%endif
 	</tr>
 	</thead>
 	<tbody>
@@ -53,7 +57,11 @@ def format_number(number):
 	<td class="alignRight">${format_number(day)}</td>
 %endfor
 	<td class="alignRight"><strong>${format_number(duration_total)}</strong></td>
+%if display_messages:
+	<td>${message}</td>
+%else:
 	<td><span class="ui-icon ${icon}"></span></td>
+%endif
 	</tr>
 %endfor
 	</tbody>
