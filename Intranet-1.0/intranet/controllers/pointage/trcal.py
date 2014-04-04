@@ -616,7 +616,10 @@ class CalendarController(RestController):
 
         # -- update the event's duration and comment
         accessor = CalEventAccessor()
-        accessor.update_cal_event(uid, event_start_utc, event_end_utc, comment)
+        accessor.update_cal_event(uid,
+                                  event_start=event_start_utc,
+                                  event_end=event_end_utc,
+                                  comment=comment)
 
         # -- return the updated event
         redirect('./get_one', uid=uid)
