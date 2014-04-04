@@ -696,7 +696,6 @@ class CalendarController(RestController):
             
             # -- week_date converted in local time
             week_date = start_date + datetime.timedelta(days=week * 7) - tz_delta
-            LOG.debug("- week_date:    {!r}".format(week_date))
             duration_total = sum(day_list)
             week_dict = dict(week_number=week_date.isocalendar()[1],
                              day_list=day_list,
