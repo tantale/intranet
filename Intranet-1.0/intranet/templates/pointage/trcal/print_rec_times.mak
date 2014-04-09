@@ -22,6 +22,12 @@
 <div class="page">
 <%include file="local:templates.pointage.trcal.ctrl_rec_times"/>
 </div>
-<script type="text/javascript">window.print();</script>
+<script type='text/javascript'>
+	"use strict";
+	/*global $*/
+	$(function() {
+		window.print();
+	});
+</script>
 </body>
 </html>
