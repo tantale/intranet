@@ -1,37 +1,29 @@
 """
-:module: intranet.model.pointage.order
-:date: 2013-08-09
-:author: Laurent LAPORTE <sandlol2009@gmail.com>
+:Module: intranet.maintenance.versions.v01_01.pointage.order
+:Created on: 2014-05-02
+:Author: Tantale Solutions <tantale.solutions@gmail.com>
 """
-from intranet.model import DeclarativeBase
 from sqlalchemy.schema import Column
 from sqlalchemy.types import Integer, String, Date
 
+from intranet.maintenance.versions.v01_01.model import DeclarativeBase
+
 
 class Order(DeclarativeBase):
-    """
-    Order Management.
-
-    :since: 1.2.0
-
-    - The UID is the order ID.
-
-    - The order reference isn't anymore unique: it can't a client's name so
-      we tolerate duplicates.
-    """
+    """Order Management."""
     __tablename__ = 'Order'
 
     uid = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
-    order_ref = Column(String(length=50), unique=False, nullable=False, index=True)  # @IgnorePep8
+    order_ref = Column(String(length=50), unique=True, nullable=False, index=True)  # @IgnorePep8
     project_cat = Column(String(length=50), unique=False, nullable=False)
     creation_date = Column(Date, nullable=False, index=True)
     close_date = Column(Date, nullable=True, index=True)
 
     # generated backref: order_phase_list
-    # order_phase_list = relationship('OrderPhase,
-    #                                 backref='order',
-    #                                 order_by='OrderPhase.position,
-    #                                 cascade='all,delete-orphan')
+    #order_phase_list = relationship('OrderPhase,
+    #                                backref='order',
+    #                                order_by='OrderPhase.position,
+    #                                cascade='all,delete-orphan')
 
     def __init__(self, order_ref, project_cat, creation_date, close_date=None):
         """

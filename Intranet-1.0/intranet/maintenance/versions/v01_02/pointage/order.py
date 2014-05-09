@@ -3,9 +3,10 @@
 :date: 2013-08-09
 :author: Laurent LAPORTE <sandlol2009@gmail.com>
 """
-from intranet.model import DeclarativeBase
 from sqlalchemy.schema import Column
 from sqlalchemy.types import Integer, String, Date
+
+from intranet.maintenance.versions.v01_02.model import DeclarativeBase
 
 
 class Order(DeclarativeBase):

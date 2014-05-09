@@ -4,7 +4,7 @@
 :date: 2013-07-28
 :author: Laurent LAPORTE <sandlol2009@gmail.com>
 """
-from formencode.validators import NotEmpty, Int
+from formencode.validators import NotEmpty, Number
 from intranet.accessors import DuplicateFoundError
 from intranet.accessors.employee import EmployeeAccessor
 from intranet.model.pointage.employee import Employee
@@ -101,7 +101,7 @@ class EmployeeController(RestController):
         return dict(values=kw, form_errors=form_errors)
 
     @validate({'employee_name': NotEmpty,
-               'worked_hours': Int(min=1, max=39, not_empty=True),
+               'worked_hours': Number(min=1, max=39, not_empty=True),
                'entry_date': IsoDateConverter(not_empty=True),
                'exit_date': IsoDateConverter(not_empty=False)},
               error_handler=new)
@@ -173,7 +173,7 @@ class EmployeeController(RestController):
         return dict(values=values, form_errors=form_errors)
 
     @validate({'employee_name': NotEmpty,
-               'worked_hours': Int(min=1, max=39, not_empty=True),
+               'worked_hours': Number(min=1, max=39, not_empty=True),
                'entry_date': IsoDateConverter(not_empty=True),
                'exit_date': IsoDateConverter(not_empty=False)},
               error_handler=edit)

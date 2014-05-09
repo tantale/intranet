@@ -3,10 +3,11 @@
 :date: 2013-09-16
 :author: Laurent LAPORTE <sandlol2009@gmail.com>
 """
-from intranet.model import DeclarativeBase
 from sqlalchemy.orm import relationship, backref
 from sqlalchemy.schema import Column, ForeignKey
 from sqlalchemy.types import Integer, String, DateTime, Boolean
+
+from intranet.maintenance.versions.v01_02.model import DeclarativeBase
 
 
 class CalEvent(DeclarativeBase):

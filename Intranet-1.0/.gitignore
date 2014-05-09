@@ -34,3 +34,4 @@ nbproject/
 .coverage
 /testdata.db
 /build
+/__backup

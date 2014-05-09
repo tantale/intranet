@@ -43,8 +43,8 @@ setup(
     version='1.1.2',
     description='Intranet for time recording',
     author='Laurent LAPORTE',
-    author_email='sandlol2009@gmail.com',
-    url='',
+    author_email='tantale-solutions@gmail.com',
+    url='http://tantalesolutions.wordpress.com/',
     setup_requires=["PasteScript >= 1.7"],
     paster_plugins=['PasteScript', 'Pylons', 'TurboGears2', 'tg.devtools'],
     packages=find_packages(exclude=['ez_setup']),
@@ -58,14 +58,11 @@ setup(
     message_extractors={'intranet': [('**.py', 'python', None),
                                      ('templates/**.mak', 'mako', None),
                                      ('public/**', 'ignore', None)]},
+      
+    entry_points = {'paste.app_factory': ['main = intranet.config.middleware:make_app'],
+                    'paste.app_install': ['main = pylons.util:PylonsInstaller'],
+                    'console_scripts': ['intranet_upgrade = intranet.maintenance.versions.v01_02.upgrade:main']},
 
-    entry_points="""
-    [paste.app_factory]
-    main = intranet.config.middleware:make_app
-
-    [paste.app_install]
-    main = pylons.util:PylonsInstaller
-    """,
     dependency_links=["http://tg.gy/222"],
     zip_safe=False
 )

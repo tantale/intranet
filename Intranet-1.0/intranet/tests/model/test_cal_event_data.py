@@ -56,7 +56,7 @@ EMPLOYEE_LIST = [{u'employee_name': u'Bernard',
 
 def make_employee(record):
     return Employee(employee_name=record['employee_name'],
-                    worked_hours=int(record['worked_hours']),
+                    worked_hours=float(record['worked_hours']),
                     entry_date=parse_date(record['entry_date']),
                     exit_date=parse_date(record['exit_date']),
                     photo_path=record['photo_path'])

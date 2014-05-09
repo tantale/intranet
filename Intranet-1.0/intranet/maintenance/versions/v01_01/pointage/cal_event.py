@@ -1,12 +1,13 @@
 """
-:module: intranet.model.pointage.cal_event
-:date: 2013-09-16
-:author: Laurent LAPORTE <sandlol2009@gmail.com>
+:Module: intranet.maintenance.versions.v01_01.pointage.cal_event
+:Created on: 2014-05-02
+:Author: Tantale Solutions <tantale.solutions@gmail.com>
 """
-from intranet.model import DeclarativeBase
 from sqlalchemy.orm import relationship, backref
 from sqlalchemy.schema import Column, ForeignKey
-from sqlalchemy.types import Integer, String, DateTime, Boolean
+from sqlalchemy.types import Integer, String, DateTime
+
+from intranet.maintenance.versions.v01_01.model import DeclarativeBase
 
 
 class CalEvent(DeclarativeBase):
@@ -14,10 +15,6 @@ class CalEvent(DeclarativeBase):
     Calendar event.
 
     :see: http://arshaw.com/fullcalendar/docs/event_data/Event_Object/
-    
-    :since: 1.2.0
-
-    - Add `editable` field: an event can be editable or not (read only).
     """
     __tablename__ = 'CalEvent'
 
@@ -45,9 +42,6 @@ class CalEvent(DeclarativeBase):
     # comment -- non-standard field: employee's comment
     comment = Column(String(length=200), nullable=True)
 
-    # editable -- Determine if the events can be dragged and resized.
-    editable = Column(Boolean(), nullable=True, default=True)
-
     # -- relationships
     employee = relationship('Employee',
                             backref=backref('cal_event_list',
@@ -58,7 +52,7 @@ class CalEvent(DeclarativeBase):
                                                order_by='CalEvent.event_start',
                                                cascade='all,delete-orphan'))  # @IgnorePep8
 
-    def __init__(self, event_start, event_end, comment, editable=True):
+    def __init__(self, event_start, event_end, comment):
         """
         Initialize an calendar's event.
 
@@ -69,14 +63,10 @@ class CalEvent(DeclarativeBase):
         :type event_end: datetime.datetime
 
         :param comment: The employee's comment
-        
-        :param editable: Determine if the events can be dragged and resized.
-        :type editable: bool
         """
         self.event_start = event_start
         self.event_end = event_end
         self.comment = comment
-        self.editable = editable
 
     def __repr__(self):
         repr_fmt = ("{self.__class__.__name__}("
@@ -84,8 +74,7 @@ class CalEvent(DeclarativeBase):
                     "order_phase.uid={self.order_phase_uid!r}, "
                     "event_start={self.event_start!r}, "
                     "event_end={self.event_end!r}, "
-                    "comment={self.comment!r}, "
-                    "editable={self.editable!r})")
+                    "comment={self.comment!r})")
         return repr_fmt.format(self=self)
 
     def event_obj(self):
@@ -107,5 +96,4 @@ class CalEvent(DeclarativeBase):
         dict_['order_ref'] = self.order_phase.order.order_ref
         dict_['order_phase_label'] = self.order_phase.label
         dict_['comment'] = self.comment
-        dict_['editable'] = self.editable
         return dict_

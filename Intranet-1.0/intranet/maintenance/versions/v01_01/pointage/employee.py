@@ -1,32 +1,22 @@
 """
-:module: intranet.model.pointage.employee
-:date: 2013-07-28
-:author: Laurent LAPORTE <sandlol2009@gmail.com>
+:Module: intranet.maintenance.versions.v01_01.pointage.employee
+:Created on: 2014-05-02
+:Author: Tantale Solutions <tantale.solutions@gmail.com>
 """
-from intranet.model import DeclarativeBase
 from sqlalchemy.schema import Column
-from sqlalchemy.types import Integer, String, Date, Float
+from sqlalchemy.types import Integer, String, Date
+
+from intranet.maintenance.versions.v01_01.model import DeclarativeBase
 
 
 class Employee(DeclarativeBase):
-    """
-    Employee management.
-    
-    :since: 1.2.0
-
-    - The UID is the personal ID.
-    
-    - The name 'employee_name' isn't anymore unique: we tolerate duplicated
-      names.
-    
-    - The worked hours field can be a decimal value, eg.: 31.2 hours.
-    """
+    """Employee management."""
     __tablename__ = 'Employee'
 
     uid = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
-    employee_name = Column(String(length=50), unique=False, nullable=False,
+    employee_name = Column(String(length=50), unique=True, nullable=False,
                            index=True)
-    worked_hours = Column(Float, nullable=False)
+    worked_hours = Column(Integer, nullable=False)
     entry_date = Column(Date, nullable=False, index=True)
     exit_date = Column(Date, nullable=True, index=True)
     photo_path = Column(String(length=200), nullable=True)
@@ -39,7 +29,7 @@ class Employee(DeclarativeBase):
         :param employee_name: employee's name (unique and not null)
 
         :param worked_hours: weekly worked hours (required), eg.: 39 h/week
-        :type worked_hours: float
+        :type worked_hours: int
 
         :param entry_date: entry date in the company (required)
         :type entry_date: datetime.date

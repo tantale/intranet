@@ -36,7 +36,7 @@
 					<p><label for="employee_update__worked_hours">h/sem. travaillées :</label>
 						<input id="employee_update__worked_hours" type="number" name="worked_hours"
 							value="${values.get('worked_hours')}"
-							placeholder="39" min="1" max="39"
+							placeholder="39" min="1" max="39" step="0.1"
 							title="Nombre d’heures travaillées par semaine (requis)" />
 							%if 'worked_hours' in form_errors:
 							<span class="error">${form_errors['worked_hours']}</span>
