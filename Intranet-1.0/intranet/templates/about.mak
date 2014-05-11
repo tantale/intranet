@@ -2,14 +2,14 @@
 <%def name="title()">À propos de l’Intranet de pointage</%def>
 
 <p>Intranet de pointage
-<small>réalisé par Laurent LAPORTE pour le compte des <em>Meubles CLERET</em>.</small></p>
+<small>réalisé par Laurent LAPORTE.</small></p>
 
 <address>
 	<strong>Laurent LAPORTE</strong><br>
 	3 rue des Lilas<br>
 	53440 LA BAZOGE-MONTPINÇON<br>
 	<abbr title="téléphone">tél.</abbr> : 06 18 99 30 01<br>
-	<abbr title="adresse électronique">E-Mail</abbr> : <a href="mailto:laurentlaporte@yahoo.com?Subject=Intranet%20de%20pointage">laurentlaporte@yahoo.com</a>
+	<abbr title="adresse électronique">E-Mail</abbr> : <a href="mailto:tantale.solutions@gmail.com?Subject=Intranet%20de%20pointage">tantale.solutions@gmail.com</a>
 </address>
 
 <address>

@@ -43,7 +43,7 @@ setup(
     version='1.2.0',
     description='Intranet for time recording',
     author='Laurent LAPORTE',
-    author_email='tantale-solutions@gmail.com',
+    author_email='tantale.solutions@gmail.com',
     url='http://tantalesolutions.wordpress.com/',
     setup_requires=["PasteScript >= 1.7"],
     paster_plugins=['PasteScript', 'Pylons', 'TurboGears2', 'tg.devtools'],
