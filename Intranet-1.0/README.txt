@@ -7,7 +7,7 @@ Installation and Setup
 Install ``Intranet`` using the setup.py script::
 
     $ cd Intranet
-    $ python setup.py install
+    $ pip install -r requirements.txt -f dist/ --download-cache $HOME/pip/download-cache/
 
 Create the project database for any model classes defined::
 
