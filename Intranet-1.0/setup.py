@@ -40,7 +40,7 @@ install_requires = ["TurboGears2 == 2.2.2",
 
 setup(
     name='Intranet',
-    version='1.2.0',
+    version='1.3.0',
     description='Intranet for time recording',
     author='Laurent LAPORTE',
     author_email='tantale.solutions@gmail.com',
@@ -58,7 +58,7 @@ setup(
     message_extractors={'intranet': [('**.py', 'python', None),
                                      ('templates/**.mak', 'mako', None),
                                      ('public/**', 'ignore', None)]},
-      
+
     entry_points = {'paste.app_factory': ['main = intranet.config.middleware:make_app'],
                     'paste.app_install': ['main = pylons.util:PylonsInstaller'],
                     'console_scripts': ['intranet_upgrade = intranet.maintenance.versions.v01_02.upgrade:main']},
