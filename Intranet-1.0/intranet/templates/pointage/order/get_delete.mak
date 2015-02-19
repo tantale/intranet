@@ -1,19 +1,21 @@
 ﻿# -*- coding: utf-8 -*-
-<%doc>
+<div>
+<!--<%doc>
 :template: intranet.templates.pointage.order.get_delete
 :date: 2013-08-28
 :author: Laurent LAPORTE <sandlol2009@gmail.com>
 </%doc>
 <%! import json %>
-<%flash = tg.flash_obj.render('flash', use_js=False)%>
+-->
+<!--<%flash = tg.flash_obj.render('flash', use_js=False)%>-->
 %if order is None:
 %if flash:
 	${flash | n}
 %endif
 
-<% confirm_dialog_title_json = json.dumps(u"Commande supprimée") %>
+<!--<% confirm_dialog_title_json = json.dumps(u"Commande supprimée") %>-->
 
-<script type='text/javascript'>
+<script type='text/javascript'><!--
 	"use strict";
 	/*global $*/
 	$('#confirm_dialog').dialog({
@@ -30,14 +32,14 @@
 			$('#order_content').empty();
 		}
 	}).dialog("open");
-</script>
+--></script>
 
 %else:
 
 <form id="order_post_delete" class="ui-widget"
 	action="${tg.url('./{uid}'.format(uid=order.uid))}"
 	method="post">
-	<% order_phase_count = len(order.order_phase_list) %>
+	<!--<% order_phase_count = len(order.order_phase_list) %>-->
 	%if order_phase_count == 0:
 		<p>Cette commande ne comporte aucune phase (ni aucun pointage).</p>
 	%elif order_phase_count == 1:
@@ -50,14 +52,14 @@
 	<input type="hidden" name="_method" value="DELETE" />
 </form>
 
-<%
+<!--<%
 uid_json = json.dumps(order.uid)
 confirm_dialog_title_fmt = u"Voulez-vous supprimer la commande N° {uid} : {order_ref} ?"
 confirm_dialog_title = confirm_dialog_title_fmt.format(uid=order.uid, order_ref=order.order_ref)
 confirm_dialog_title_json = json.dumps(confirm_dialog_title)
-%>
+%>-->
 
-<script type='text/javascript'>
+<script type='text/javascript'><!--
 	"use strict";
 	/*global $*/
 	$('#confirm_dialog').dialog({
@@ -93,5 +95,6 @@ confirm_dialog_title_json = json.dumps(confirm_dialog_title)
 			}
 		}
 	});
-</script>
+--></script>
 %endif
+</div>

@@ -22,7 +22,7 @@ def make_order(record):
                   project_cat=record['project_cat'],
                   creation_date=parse_date(record['creation_date']),
                   close_date=parse_date(record['close_date']))
-    record['order_phase_list'].sort(key=lambda record: record['uid'])
+    record['order_phase_list'].sort(key=lambda rec: rec['uid'])
     order_phase_list = [OrderPhase(position=record_phase['position'],
                                    label=record_phase['label'])
                         for record_phase in record['order_phase_list']]

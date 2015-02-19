@@ -125,8 +125,6 @@ class CalendarController(RestController):
 
         :param cal_end: end date/time of the calendar interval (timestamps)
 
-        :param cal_curr: current date/time of the calendar (timestamps)
-
         :param: keyword: current keyword from the search form.
 
         :param uid: Active order's UID if any

@@ -9,6 +9,7 @@ from intranet.controllers.pointage.employee import EmployeeController
 from intranet.controllers.pointage.order import OrderController
 from intranet.controllers.pointage.order_cat import OrderCatController
 from intranet.controllers.pointage.order_phase import OrderPhaseController
+from intranet.controllers.pointage.prefs import PrefsController
 from intranet.controllers.pointage.trcal import CalendarController
 from intranet.lib.base import BaseController
 
@@ -27,7 +28,11 @@ main_menu = dict(title=u"Administration",
                             dict(id='toolbar_calendar',
                                  href=tg.url('/admin/trcal/index.html'),
                                  title=u"Gestion des pointages des opérations",
-                                 content=u"Calendrier")])
+                                 content=u"Calendrier"),
+                            dict(id='toolbar_prefs',
+                                 href=tg.url('/admin/prefs/index.html'),
+                                 title=u"Paramétrage des préférences utilisateur",  # @IgnorePep8
+                                 content=u"Préférences")])
 
 
 class AdminController(BaseController):
@@ -41,3 +46,4 @@ class AdminController(BaseController):
     order_phase = OrderPhaseController()
     trcal = CalendarController(main_menu)  # Time Recording Calendar
     chart = ChartController()
+    prefs = PrefsController(main_menu)

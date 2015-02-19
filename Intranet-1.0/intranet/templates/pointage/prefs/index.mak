@@ -1,16 +1,27 @@
+# -*- coding: utf-8 -*-
+<%doc>
+:module: intranet.templates.pointage.prefs.index
+:date: 2014-01-16
+:author: Laurent LAPORTE <sandlol2009@gmail.com>
+</%doc>
 <!DOCTYPE html>
 <html lang="fr">
 <head>
 <meta charset="${response.charset}" />
-<title>Gestion des commandes</title>
+<title>${_(u"Préférences utilisateur")}</title>
 <meta name="description" content="Gestion des commandes pour l'intranet de pointage" />
 <link rel="icon" type="image/ico" href="${tg.url('/favicon.ico')}" />
-<link rel="stylesheet" type="text/css" href="${tg.url('/css/blitzer/jquery-ui-1.10.3.custom.min.css')}" />
+<link rel="stylesheet" type="text/css" href="${tg.url('/css/blitzer/jquery-ui-1.10.3.custom.css')}" />
 <link rel="stylesheet" type="text/css" href="${tg.url('/css/layout-default-latest.css')}" />
 <link rel="stylesheet" type="text/css" href="${tg.url('/css/jqueryui-editable.css')}" />
 <link rel="stylesheet" type="text/css" href="${tg.url('/css/intranet.css')}" />
 <link rel="stylesheet" type="text/css" href="${tg.url('/css/intranet.pointage.css')}" />
 <link rel="stylesheet" type="text/css" href="${tg.url('../order_cat.css')}" />
+<style>
+.ui-menu {
+	xxwidth: 200px;
+}
+</style>
 </head>
 <body>
 	<div id="topFrame" class="ui-layout-north">
@@ -22,40 +33,30 @@
 		</div>\
 	</div>
 	<div id="leftFrame" class="ui-layout-west">
-		<div id="searchFrame">
-			<form id="order_get_all" class="minimal_form"
-				action="${tg.url('./get_all/')}" method="get">
-				<p>
-					<input id="order_get_all__uid" type="number" name="uid"
-							value="${uid}"
-							placeholder="N° commande"
-							title="Numéro de la commande recherchée" /><br/>
-					<input id="order_get_all__keyword" type="search" name="keyword"
-							value="${keyword}"
-                            placeholder="Mot-clef"
-                            title="Saisir un mot-clef" />
-					<input type="hidden" name="order_ref" value="" />
-					<button id="order_get_all__search" type="submit" class="search_button"
-						title="Rechercher selon le mot-clef">Rechercher</button>
-				</p>
-			</form>
-		</div>\
-		<form id="order_new" class="minimal_form alignCenter"
-			action="${tg.url('./new')}" method="get">
-			<p>
-				<button id="order_new__new" type="submit" class="new_button"
-					title="Ajouter une commande">Nouvelle commande</button>
-			</p>
-		</form>
-		<div id="accordion_content"></div>
+		<div id="accordion_content">
+		<div id="accordion">
+			<h2>${_(u"Catégories de commandes")}</h2>
+            <div>
+                <ul class="menu">
+                    <li><a href="${tg.url('/admin/order_cat/index.html?display=detail')}"
+                           title="${_(u'Liste complète des catégories de commandes')}"><span
+                            class="ui-button-icon-primary ui-icon ui-icon-document-b"></span>${_(u"Tableau des catégories")}</a>
+                    </li>
+                    <li><a href="${tg.url('/admin/order_cat.css?display=html')}"
+                           title="${_(u'Affichage de la feuille de styles CSS des catégories de commandes')}"><span
+                            class="ui-button-icon-primary ui-icon ui-icon-script"></span>${_(u"Feuille de styles CSS")}</a>
+                    </li>
+                    <li><a href="${tg.url('/admin/order_cat/get_orphans?display=detail')}"
+                           title="${_(u'Affiche la liste des commandes sans catégorie')}"><span
+                            class="ui-button-icon-primary ui-icon ui-icon-help"></span>${_(u"Commandes sans catégorie")}</a>
+                    </li>
+                </ul>
+            </div>
+			</div><!-- /#accordion -->
+		</div>
 	</div>
 	<div id="rightFrame" class="ui-layout-center">
-		<div id="order_content">
-			<br />
-			<br />
-			<br />
-			<h1>← Veuillez sélectionner une commande dans la liste ci-contre.</h1>
-		</div>
+		<div id="prefs_content"></div>
 	</div>
 	<div id="confirm_dialog" title="Confirmation">
 		<div id="confirm_dialog_content"></div>
@@ -72,25 +73,22 @@
 <script type='text/javascript' src="${tg.url('/javascript/jquery.form.js')}"></script>
 <script type='text/javascript' src="${tg.url('/javascript/intranet.js')}"></script>
 <script type='text/javascript' src="${tg.url('/javascript/intranet.pointage.js')}"></script>
-<script type='text/javascript' src="${tg.url('/javascript/intranet.pointage.order.js')}"></script>
+<script type='text/javascript' src="${tg.url('/javascript/intranet.pointage.prefs.js')}"></script>
 <script type='text/javascript'>
 	"use strict";
 	/*global $*/
 	$(document).tooltip();
 	$(function() {
 		$.fn.editable.defaults.mode = 'inline';
-		$('#order_get_all').ajaxForm({
-			target: '#accordion_content',
-			success: on_accordion_refresh
+		$(".menu").menu();
+		$(".menu a").click(function(event){
+			event.preventDefault();
+		    $("#prefs_content").load($(this).attr("href"));
+		    return false;
 		});
-		$('#order_new').ajaxForm({
-			target: '#order_content',
-			beforeSubmit: function(arr, form, options) {
-				console.log("hide #flash...");
-				$('#flash').hide();
-				console.log("deactivate #accordion...");
-				$('#accordion').accordion("option", "active", false);
-			}
+		$('#accordion').accordion({
+			collapsible: false,
+			heightStyle: "content"
 		});
 		$('#confirm_dialog').dialog({
 			autoOpen: false,
@@ -98,7 +96,6 @@
 			height: 200,
 			modal: true
 		});
-		$('#order_get_all').submit();
 	});
 </script>
 </body>

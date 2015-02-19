@@ -11,14 +11,14 @@ from sqlalchemy.types import Integer, String, Date, Float
 class Employee(DeclarativeBase):
     """
     Employee management.
-    
+
     :since: 1.2.0
 
     - The UID is the personal ID.
-    
+
     - The name 'employee_name' isn't anymore unique: we tolerate duplicated
       names.
-    
+
     - The worked hours field can be a decimal value, eg.: 31.2 hours.
     """
     __tablename__ = 'Employee'

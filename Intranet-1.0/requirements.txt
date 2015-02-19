@@ -2,7 +2,7 @@ Babel==0.9.6
 Beaker==1.6.3
 FormEncode==1.2.4
 Genshi==0.7
-Intranet==1.2.0dev
+Intranet==1.3.0
 Mako==0.7.3
 MarkupSafe==0.15
 Paste==1.7.5.1

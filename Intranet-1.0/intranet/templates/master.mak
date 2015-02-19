@@ -94,6 +94,8 @@ ${self.footer()}\
             class="ui-icon ui-icon-document"></span>Gestion des commandes</a></li>
           <li><a href="${tg.url('/admin/trcal/index.html')}"><span
             class="ui-icon ui-icon-calendar"></span>Calendrier de pointage</a></li>
+          <li><a href="${tg.url('/admin/prefs/index.html')}"><span
+            class="ui-icon ui-icon-gear"></span>Préférences utilisateur</a></li>
         </ul></li>
       <li><a>Pointage</a>
         <ul>

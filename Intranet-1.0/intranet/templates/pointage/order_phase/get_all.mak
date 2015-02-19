@@ -113,7 +113,7 @@ form_post_id = 'order_phase_post_{}'.format(order_uid)
 	.zIndex(1000)
 	.draggable({
 		appendTo: 'body',
-		containment: false,
+		containment: '#rightFrame',
 		cursor: 'move',
 		cursorAt: {left: 5},
 		delay: 300,

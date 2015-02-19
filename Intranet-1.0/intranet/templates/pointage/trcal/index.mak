@@ -69,7 +69,8 @@
 <script type='text/javascript'>
 	"use strict";
 	/*global $*/
-	
+	$(document).tooltip();
+
 	function load_calendar_content(cal_start, cal_end) {
 		if (!cal_start || !cal_end) {
 			var cal_curr = new Date(), y = cal_curr.getFullYear(), m = cal_curr.getMonth();

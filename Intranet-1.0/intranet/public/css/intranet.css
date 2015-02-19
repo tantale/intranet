@@ -197,6 +197,11 @@ input.error {
 	background-color: #f2dede;
 	border-color: #eed3d7;
 	color: #b94a48;
+    margin-bottom: 4px;
+}
+
+span.error {
+	color: #b94a48;
 }
 
 .record-table {
@@ -228,6 +233,14 @@ td.record-table-uid {
 	text-align: right;
 }
 
+th.record-table-name, td.record-table-name {
+	width: 10em;
+}
+
+td.record-table-name {
+	text-align: left;
+}
+
 th.record-table-date, td.record-table-date {
 	width: 7em;
 }
@@ -248,7 +261,18 @@ th.record-table-label, td.record-table-label {
 	width: 15em;
 }
 
-td.record-table-datetime {
+td.record-table-label {
 	text-align: left;
 }
 
+/**
+ * x-editable
+ */
+.editable-click:hover {
+    background-color: #bbeeff;
+    -webkit-transition: all 0.3s ease-in-out;
+    -moz-transition: all 0.3s ease-in-out;
+    -o-transition: all 0.3s ease-in-out;
+    -ms-transition: all 0.3s ease-in-out;
+    transition: all 0.3s ease-in-out;
+}

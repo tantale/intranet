@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
-<%doc>
+<div>
+<!--<%doc>
 :template: intranet.templates.pointage.order.new
 :date: 2013-08-11
 :author: Laurent LAPORTE <sandlol2009@gmail.com>
 </%doc>
 <%flash = tg.flash_obj.render('flash', use_js=False)%>
+-->
 %if flash:
 	${flash | n}
 %endif
@@ -28,30 +30,35 @@
 			</tr>
 			<tr>
 				<td><p><label for="order_create__project_cat">Catégorie :</label>
-					<%
+					<!--<%
 						project_cat_list = [cat for cat_list in cat_dict.itervalues()
 											for cat in cat_list]
 						default_cat = project_cat_list[0].cat_name if project_cat_list else None
 						curr_project_cat = values.get('project_cat', default_cat)
-					%>
+					%>-->
 						<select id="order_create__project_cat" name="project_cat"
 							class="${curr_project_cat}"
 							title="Catégorie de projet">
-							%for cat_group, order_cat_list in cat_dict.iteritems():
-							<optgroup label="${cat_group}" class="noColor">
-								%for order_cat in order_cat_list:
-								%if order_cat.cat_name == curr_project_cat:
-								<option selected="selected"
-									class="${order_cat.cat_name}"
-									value="${order_cat.cat_name}">${order_cat.label}</option>
-								%else:
-								<option
-									class="${order_cat.cat_name}"
-									value="${order_cat.cat_name}">${order_cat.label}</option>
-								%endif
-								%endfor
-							</optgroup>
-							%endfor
+                            %if cat_dict:
+                                %for cat_group, order_cat_list in cat_dict.iteritems():
+                                <optgroup label="${cat_group}" class="noColor">
+                                    %for order_cat in order_cat_list:
+                                    %if order_cat.cat_name == curr_project_cat:
+                                    <option selected="selected"
+                                        class="${order_cat.cat_name}"
+                                        value="${order_cat.cat_name}">${order_cat.label}</option>
+                                    %else:
+                                    <option
+                                        class="${order_cat.cat_name}"
+                                        value="${order_cat.cat_name}">${order_cat.label}</option>
+                                    %endif
+                                    %endfor
+                                </optgroup>
+                                %endfor
+                            %else:
+                                <!-- not cat_dict ==> use missing_order_cat_label -->
+                                <option selected="selected">${missing_order_cat_label}</option>
+                            %endif
 						</select>
 					%if 'project_cat' in form_errors:
 					<span class="error">${form_errors['project_cat']}</span>
@@ -89,7 +96,7 @@
 		</table>
 	</fieldset>
 </form>
-<script type='text/javascript'>
+<script type='text/javascript'><!--
 	"use strict";
 	/*global $*/
 	var project_cat_css = $('#order_create__project_cat').val();
@@ -123,4 +130,5 @@
 			}
 		}
 	});
-</script>
+--></script>
+</div>

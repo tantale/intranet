@@ -14,7 +14,6 @@ import transaction
 
 
 class OrderAccessor(BasicAccessor):
-
     def __init__(self, session=None):
         super(OrderAccessor, self).__init__(record_class=Order,
                                             session=session)
@@ -29,7 +28,7 @@ class OrderAccessor(BasicAccessor):
 
     def get_order_list(self, filter_cond=None, order_by_cond=None):
         return super(OrderAccessor, self)._get_record_list(filter_cond,
-                                                          order_by_cond)
+                                                           order_by_cond)
 
     def duplicate(self, uid):
         # -- search a new order reference
@@ -50,8 +49,7 @@ class OrderAccessor(BasicAccessor):
         new_project_cat = actual_order.project_cat
         new_order = Order(order_ref=new_order_ref,
                           project_cat=new_project_cat,
-                          creation_date=new_creation_date,
-                          close_date=None)
+                          creation_date=new_creation_date)
         new_order_phase_list = [OrderPhase(position=phase.position,
                                            label=phase.label)
                                 for phase in actual_order.order_phase_list]

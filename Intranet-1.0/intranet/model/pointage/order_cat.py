@@ -3,9 +3,20 @@
 :date: 2013-08-10
 :author: Laurent LAPORTE <sandlol2009@gmail.com>
 """
+import re
 from intranet.model import DeclarativeBase
 from sqlalchemy.schema import Column
 from sqlalchemy.types import Integer, String
+
+
+def format_css_def(css):
+    entry_list = ("{key}: {value}".format(key=key, value=value) for key, value in css.iteritems())
+    css_def = "; ".join(entry_list)
+    return css_def
+
+
+def format_code(code):
+    return "color{code}".format(code=code)
 
 
 class OrderCat(DeclarativeBase):
@@ -20,7 +31,7 @@ class OrderCat(DeclarativeBase):
     label = Column(String(length=50), nullable=False)
     css_def = Column(String(length=200), nullable=False)
 
-    def __init__(self, cat_name, cat_group, label, css_def):
+    def __init__(self, cat_name, cat_group, label, css_def, code=None, css=None):
         """
         Initialize an order category.
 
@@ -32,10 +43,10 @@ class OrderCat(DeclarativeBase):
 
         :param css_def: CSS definition
         """
-        self.cat_name = cat_name
+        self.cat_name = cat_name or format_code(code)
         self.cat_group = cat_group
         self.label = label
-        self.css_def = css_def
+        self.css_def = css_def or format_css_def(css)
 
     def __repr__(self):
         repr_fmt = ("{self.__class__.__name__}("
@@ -44,3 +55,26 @@ class OrderCat(DeclarativeBase):
                     "{self.label!r}, "
                     "{self.css_def!r})")
         return repr_fmt.format(self=self)
+
+    @property
+    def code(self):
+        return self.cat_name[5:]  # drop "color" prefix
+
+    @code.setter
+    def code(self, code):
+        self.cat_name = format_code(code)
+
+    @property
+    def css(self):
+        entry_list = filter(None, re.split(r";\s*", self.css_def))
+        try:
+            css = dict(re.split(r":\s+", entry) for entry in entry_list)
+        except ValueError:
+            css = dict()
+        css.setdefault("color", "#000000")
+        css.setdefault("background-color", "#ffffff")
+        return css
+
+    @css.setter
+    def css(self, css):
+        self.css_def = format_css_def(css)

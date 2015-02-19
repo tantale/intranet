@@ -1,21 +1,23 @@
 # -*- coding: utf-8 -*-
-<%doc>
+<div>
+<!--<%doc>
 :template: intranet.templates.pointage.order.get_all
 :date: 2013-08-11
 :author: Laurent LAPORTE <sandlol2009@gmail.com>
 </%doc>
 <%! import json %>
+-->
 %if order_list:
 <div id="accordion">
 %for order in order_list:
-<% div_phases_id = 'order_phase_frame_{0}'.format(order.uid) %>
+<!--<% div_phases_id = 'order_phase_frame_{0}'.format(order.uid) %>-->
 <h2 id="order_${order.uid}" class="searchable"><a
 	href="../order_phase/?order_uid=${order.uid}">${order.order_ref}</a></h2>
 <div id="${div_phases_id}"><em class="loading">Chargement en cours...</em></div>
 %endfor
 </div>
-<% active_index_json = json.dumps(active_index) %>
-<script type='text/javascript'>
+<!--<% active_index_json = json.dumps(active_index) %>-->
+<script type='text/javascript'><!--
 	"use strict";
 	/*global $*/
 	function load_phase_list(header) {
@@ -72,7 +74,8 @@
 			}
 		}
 	});
-</script>
+--></script>
 %else:
 <p>Aucune commande</p>
 %endif
+</div>

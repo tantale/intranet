@@ -1,14 +1,12 @@
 # -*- coding: utf-8 -*-
 """Main Controller"""
-
 from intranet.controllers.admin import AdminController
 from intranet.controllers.error import ErrorController
 from intranet.controllers.pointage import PointageControoler
+from intranet.controllers.tools import ToolsController
 from intranet.lib.base import BaseController
 
 from tg import expose, request, tmpl_context
-
-from intranet.controllers.tools import ToolsController
 
 
 # from intranet.model import DBSession, metadata

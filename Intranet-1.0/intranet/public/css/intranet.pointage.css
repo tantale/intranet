@@ -50,6 +50,22 @@
 	vertical-align: top;
 }
 
+#order_cat_update label {
+	width: 10em;
+	display: inline-block;
+	text-align: left;
+	font-size: .9em;
+	font-weight: bold;
+}
+
+#order_cat_create label {
+	width: 10em;
+	display: inline-block;
+	text-align: left;
+	font-size: .9em;
+	font-weight: bold;
+}
+
 .noColor {
 	color: black;
 	background-color: white;
@@ -217,4 +233,28 @@ th.chart-table-summary {
 	font-variant: normal;
 	margin-bottom: .6em;
 	margin-top: .6em;
+}
+
+/**
+ * x-editable
+ */
+input.input-medium.cat_group {
+    font-family: arial;
+    font-size: 1em;
+    font-weight: bold;
+    width: 14em;
+}
+
+input.input-medium.code {
+    font-family: arial;
+    font-size: 1em;
+    font-weight: bold;
+    width: 7.5em;
+}
+
+input.input-medium.label {
+    font-family: arial;
+    font-size: 1em;
+    font-weight: bold;
+    width: 12.5em;
 }

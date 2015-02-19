@@ -76,7 +76,7 @@ class OrderPhaseController(RestController):
             flash(err_msg, status="error")
         return dict(order_uid=order_uid, values=kw, errors=form_errors)
 
-    @validate({'label': NotEmpty}, error_handler=get_all)
+    @validate({'label': NotEmpty()}, error_handler=get_all)
     @expose()
     def post(self, order_uid, label):
         """
@@ -142,7 +142,7 @@ class OrderPhaseController(RestController):
             old_order_phase = accessor.delete_order_phase(uid)
             return dict(status='deleted', label=old_order_phase.label)
 
-    @validate({'label': NotEmpty}, error_handler=edit)
+    @validate({'label': NotEmpty()}, error_handler=edit)
     @expose()
     def put(self, order_uid, uid, label, **kw):
         """

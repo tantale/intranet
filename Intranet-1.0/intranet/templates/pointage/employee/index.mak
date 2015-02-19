@@ -1,9 +1,3 @@
-# -*- coding: utf-8 -*-
-<%doc>
-:template: intranet.templates.pointage.employee.index
-:date: 2013-08-10
-:author: Laurent LAPORTE <sandlol2009@gmail.com>
-</%doc>
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -29,15 +23,17 @@
 		<div id="searchFrame">
 			<form id="employee_get_all" class="minimal_form"
 				action="${tg.url('./get_all/')}" method="get">
-				<p>
-					<input id="employee_get_all__keyword" type="search" name="keyword"
-						placeholder="Mot-clef"
-						title="Saisir un mot-clef" />
-					<input type="hidden" name="uid" value="" />
-					<button id="employee_get_all__search" type="submit" class="search_button"
-						title="Rechercher selon le mot-clef">Rechercher</button>
-				</p>
-			</form>
+                <p>
+                    <input id="employee_get_all__keyword" type="search" name="keyword"
+                           value="${keyword}"
+                           placeholder="Mot-clef"
+                           title="Saisir un mot-clef"/>
+                    <input type="hidden" name="uid" value="${uid}"/>
+                    <button id="employee_get_all__search" type="submit" class="search_button"
+                            title="Rechercher selon le mot-clef">Rechercher
+                    </button>
+                </p>
+            </form>
 		</div>\
 		<form id="employee_new" class="minimal_form alignCenter"
 			action="${tg.url('./new')}" method="get">
@@ -74,6 +70,7 @@
 <script type='text/javascript'>
 	"use strict";
 	/*global $*/
+	$(document).tooltip();
 	$(function() {
 		$('#employee_get_all').ajaxForm({
 			target: '#accordion_content',

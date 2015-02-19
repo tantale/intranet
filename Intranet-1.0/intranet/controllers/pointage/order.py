@@ -6,21 +6,22 @@
 """
 import collections
 import datetime
-from intranet.accessors import DuplicateFoundError
-from intranet.accessors.order import OrderAccessor
-from intranet.model.pointage.order import Order
-from intranet.validators.date_interval import check_date_interval
-from intranet.validators.iso_date_converter import IsoDateConverter
 import logging
 
+from tg.i18n import ugettext as _
 from formencode.validators import NotEmpty
 import pylons
 from sqlalchemy.sql.expression import desc
 from tg.controllers.restcontroller import RestController
 from tg.controllers.util import redirect
-from tg.decorators import with_trailing_slash, expose, validate, \
-    without_trailing_slash
+from tg.decorators import with_trailing_slash, expose, validate, without_trailing_slash
 from tg.flash import flash
+
+from intranet.accessors import DuplicateFoundError
+from intranet.accessors.order import OrderAccessor
+from intranet.model.pointage.order import Order
+from intranet.validators.date_interval import check_date_interval
+from intranet.validators.iso_date_converter import IsoDateConverter
 
 
 LOG = logging.getLogger(__name__)
@@ -30,6 +31,7 @@ class OrderController(RestController):
     """
     The 'order' controller
     """
+    MISSING_ORDER_CAT_LABEL = _(u"(sans catégorie)")
 
     def __init__(self, main_menu):
         self.main_menu = main_menu
@@ -49,11 +51,11 @@ class OrderController(RestController):
 
     @without_trailing_slash
     @expose('intranet.templates.pointage.order.index')
-    def index(self):
+    def index(self, uid=None, keyword=None):
         """
         Display the index page.
         """
-        return dict(main_menu=self.main_menu)
+        return dict(main_menu=self.main_menu, uid=uid, keyword=keyword)
 
     @without_trailing_slash
     @expose('json')
@@ -75,8 +77,9 @@ class OrderController(RestController):
                           for order_cat in order_cat_list}
         # populate the lazy loaded order_phase_list for json result:
         __ = order.order_phase_list
+
         return dict(order=order,
-                    order_cat_label=cat_label_dict[order.project_cat])
+                    order_cat_label=cat_label_dict.get(order.project_cat, self.MISSING_ORDER_CAT_LABEL))
 
     @with_trailing_slash
     @expose('json')
@@ -137,10 +140,11 @@ class OrderController(RestController):
         values.update(kw)
         return dict(values=values,
                     cat_dict=cat_dict,
+                    missing_order_cat_label=self.MISSING_ORDER_CAT_LABEL,
                     form_errors=form_errors)
 
-    @validate({'order_ref': NotEmpty,
-               'project_cat': NotEmpty,
+    @validate({'order_ref': NotEmpty(),
+               'project_cat': NotEmpty(),
                'creation_date': IsoDateConverter(not_empty=True),
                'close_date': IsoDateConverter(not_empty=False)},
               error_handler=new)
@@ -216,10 +220,11 @@ class OrderController(RestController):
         values.update(kw)
         cat_dict = self._get_cat_dict()
         return dict(values=values, cat_dict=cat_dict,
+                    missing_order_cat_label=self.MISSING_ORDER_CAT_LABEL,
                     form_errors=form_errors)
 
-    @validate({'order_ref': NotEmpty,
-               'project_cat': NotEmpty,
+    @validate({'order_ref': NotEmpty(),
+               'project_cat': NotEmpty(),
                'creation_date': IsoDateConverter(not_empty=True),
                'close_date': IsoDateConverter(not_empty=False)},
               error_handler=edit)

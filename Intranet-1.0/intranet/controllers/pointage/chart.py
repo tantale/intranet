@@ -1,14 +1,17 @@
+# -*- coding: utf-8 -*-
 """
 :module: intranet.controllers.pointage.chart
 :date: 2013-10-19
 :author: Laurent LAPORTE <sandlol2009@gmail.com>
 """
 import collections
-from intranet.accessors.order import OrderAccessor
 import logging
 
+from tg.i18n import ugettext as _
 from tg.controllers.restcontroller import RestController
 from tg.decorators import expose, without_trailing_slash
+
+from intranet.accessors.order import OrderAccessor
 
 
 LOG = logging.getLogger(__name__)
@@ -18,6 +21,7 @@ class ChartController(RestController):
     """
     The 'chart' controller
     """
+    MISSING_ORDER_CAT_LABEL = _(u"(sans catégorie)")
 
     @without_trailing_slash
     @expose('json')
@@ -49,5 +53,5 @@ class ChartController(RestController):
                 statistics[key] += event_duration
 
         return dict(order=order,
-                    order_cat_label=cat_label_dict[order.project_cat],
+                    order_cat_label=cat_label_dict.get(order.project_cat, self.MISSING_ORDER_CAT_LABEL),
                     statistics=statistics)

@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-<%!
+<div>
+<!--<%!
 import datetime
 import json
 %>
@@ -13,13 +14,13 @@ def format_number(number):
 	value = "{:0.2f}".format(number)
 	return value.replace(".", ",")
 
-%>
+%>-->
 <div class="chart-page">
 	<h2 class="colorFrame ${order.project_cat}">Bilan des pointages de « ${order.order_ref} »</h2>
 ##
 ## header
 ##
-	<p><strong>Bilan des pointages à la date du :</strong> ${curr_date}
+	<p><strong>Bilan des pointages à la date du :</strong> ${curr_date}</p>
 	<p><strong>N° commande :</strong> ${order.uid}</p>
 	<p><strong>Ref. commande :</strong> ${order.order_ref}</p>
 	<p><strong>Date de création :</strong> ${format_date(order.creation_date)}</p>
@@ -30,7 +31,7 @@ def format_number(number):
 	<p><strong>Date de clôture :</strong> ${format_date(order.close_date)}</p>
 %endif
 
-<% total_count = sum(statistics.values()) %>
+<!--<% total_count = sum(statistics.values()) %>-->
 %if order.order_phase_list and total_count:
 ##
 ## chart-table
@@ -47,10 +48,10 @@ def format_number(number):
 	</thead>
 	<tbody>
 %for order_phase in order.order_phase_list:
-	<%
+	<!--<%
 	key = (order_phase.position, order_phase.label)
 	count = statistics[key]
-	%>
+	%>-->
 	<tr>
 	<td class="chart-table-position">${order_phase.position}</td>
 	<td class="chart-table-label">${order_phase.label}</td>
@@ -86,7 +87,7 @@ def format_number(number):
 ##
 ## json data for chart-pie
 ##
-<%
+<!--<%
 title = u"Taux de pointage de « {order_ref} » par phase".format(order_ref=order.order_ref)
 title_json = json.dumps(title)
 data_table = [[u"Phase de production", u"Heures pointées"]]
@@ -96,8 +97,8 @@ for order_phase in order.order_phase_list:
 	data_table.append([u"{position} - {label}".format(position=order_phase.position, label=order_phase.label),
 	                   count])
 data_table_json = json.dumps(data_table)
-%>
-<script type='text/javascript'>
+%>-->
+<script type='text/javascript'><!--
 	"use strict";
 
 	function drawChart() {
@@ -112,7 +113,7 @@ data_table_json = json.dumps(data_table)
 	function loadPies() {
 		google.load("visualization", "1", {packages: ["corechart"], callback: drawChart});
 	}
-	
+
 	function createErrMsg(exc) {
 		var errMsg = "Graphique indisponible : votre connexion à Internet n’est peut-être pas active.";
 		var tags = "<br/><br/><div id='flash'><div class='warning'><p>{errMsg}</p><p>{message}</p></div></div>";
@@ -125,5 +126,6 @@ data_table_json = json.dumps(data_table)
 		$('#chart-pie').append($(createErrMsg(exc)));
 	}
 
-</script>
+--></script>
 %endif
+</div>

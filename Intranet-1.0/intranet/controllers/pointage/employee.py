@@ -32,11 +32,11 @@ class EmployeeController(RestController):
 
     @without_trailing_slash
     @expose('intranet.templates.pointage.employee.index')
-    def index(self):
+    def index(self, uid=None, keyword=None):
         """
         Display the index page.
         """
-        return dict(main_menu=self.main_menu)
+        return dict(main_menu=self.main_menu, uid=uid, keyword=keyword)
 
     @without_trailing_slash
     @expose('json')
@@ -100,7 +100,7 @@ class EmployeeController(RestController):
             flash(err_msg, status="error")
         return dict(values=kw, form_errors=form_errors)
 
-    @validate({'employee_name': NotEmpty,
+    @validate({'employee_name': NotEmpty(),
                'worked_hours': Number(min=1, max=39, not_empty=True),
                'entry_date': IsoDateConverter(not_empty=True),
                'exit_date': IsoDateConverter(not_empty=False)},
@@ -172,7 +172,7 @@ class EmployeeController(RestController):
         values.update(kw)
         return dict(values=values, form_errors=form_errors)
 
-    @validate({'employee_name': NotEmpty,
+    @validate({'employee_name': NotEmpty(),
                'worked_hours': Number(min=1, max=39, not_empty=True),
                'entry_date': IsoDateConverter(not_empty=True),
                'exit_date': IsoDateConverter(not_empty=False)},

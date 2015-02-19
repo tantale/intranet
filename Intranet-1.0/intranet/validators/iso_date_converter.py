@@ -18,7 +18,7 @@ def update_century(datetime_value, years=1):
     :type datetime_value: datetime.datetime
 
     :param years: number of years to add for the boundary year.
-    :type year: int
+    :type years: int
 
     :return: datetime value fixed
     :rtype: datetime.datetime

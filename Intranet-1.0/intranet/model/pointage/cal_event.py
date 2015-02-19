@@ -14,7 +14,7 @@ class CalEvent(DeclarativeBase):
     Calendar event.
 
     :see: http://arshaw.com/fullcalendar/docs/event_data/Event_Object/
-    
+
     :since: 1.2.0
 
     - Add `editable` field: an event can be editable or not (read only).
@@ -69,7 +69,7 @@ class CalEvent(DeclarativeBase):
         :type event_end: datetime.datetime
 
         :param comment: The employee's comment
-        
+
         :param editable: Determine if the events can be dragged and resized.
         :type editable: bool
         """

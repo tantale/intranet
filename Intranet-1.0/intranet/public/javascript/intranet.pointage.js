@@ -24,4 +24,11 @@ $(function() {
 			primary : "ui-icon-calendar"
 		}
 	});
+
+	$("#toolbar_prefs").button({
+		text : true,
+		icons : {
+			primary : "ui-icon-gear"
+		}
+	});
 });

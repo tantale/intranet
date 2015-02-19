@@ -86,9 +86,6 @@ def find_event_intervals(day, event_list, work_hours_dict, tz_delta):
     :param day: day's date
     :type day: datetime.date
 
-    :param first_hour: 1st hour if no available interval is found (local time)
-    :type first_hour: datetime.time
-
     :param event_list: events list with event's start and end date/time (UTC).
     :type event_list: list<Event>
 
@@ -162,7 +159,7 @@ def find_first_event_interval(day, first_hour, event_list, work_hours_dict,
     :rtype: tuple(start, end)
     """
     interval_list = find_event_intervals(day, event_list, work_hours_dict,
-                                             tz_delta)
+                                         tz_delta)
     if interval_list:
         # -- return the 1st interval...
         interval_list.sort()
@@ -175,7 +172,7 @@ def find_first_event_interval(day, first_hour, event_list, work_hours_dict,
 
 
 def guess_event_duration(day, hour_start, event_list, work_hours_dict,
-                              tz_delta):
+                         tz_delta):
     """
     Guess the event duration by finding available time intervals
     in the current day.
@@ -202,7 +199,7 @@ def guess_event_duration(day, hour_start, event_list, work_hours_dict,
     """
     event_start = datetime.datetime.combine(day, hour_start) + tz_delta
     interval_list = find_event_intervals(day, event_list, work_hours_dict,
-                                             tz_delta)
+                                         tz_delta)
     for interval in interval_list:
         if interval[0] <= event_start < interval[1]:
             return interval[1] - event_start  # timedelta
