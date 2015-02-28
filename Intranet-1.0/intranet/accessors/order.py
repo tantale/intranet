@@ -71,6 +71,7 @@ class OrderAccessor(BasicAccessor):
 
     def insert_order(self, **kwargs):
         order = self.record_class(**kwargs)
+        # todo: Put default phases in OrderCatPhases (parameter)
         phases = [u"Commercialisation / Étude",
                   u"Fabrication",
                   u"Finition",
