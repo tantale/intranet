@@ -76,7 +76,6 @@
 <script type='text/javascript'>
 	"use strict";
 	/*global $*/
-	$(document).tooltip();
 	$(function() {
 		$.fn.editable.defaults.mode = 'inline';
 		$('#order_get_all').ajaxForm({

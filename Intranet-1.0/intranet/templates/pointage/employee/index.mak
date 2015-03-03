@@ -70,7 +70,6 @@
 <script type='text/javascript'>
 	"use strict";
 	/*global $*/
-	$(document).tooltip();
 	$(function() {
 		$('#employee_get_all').ajaxForm({
 			target: '#accordion_content',
