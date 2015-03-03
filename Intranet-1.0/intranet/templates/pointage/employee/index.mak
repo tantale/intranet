@@ -21,7 +21,7 @@
 	</div>
 	<div id="leftFrame" class="ui-layout-west">
 		<div id="searchFrame">
-			<form id="employee_get_all" class="minimal_form"
+			<form id="employee_get_all" class="minimal_form employee_get_all"
 				action="${tg.url('./get_all/')}" method="get">
                 <p>
                     <input id="employee_get_all__keyword" type="search" name="keyword"
@@ -35,7 +35,7 @@
                 </p>
             </form>
 		</div>\
-		<form id="employee_new" class="minimal_form alignCenter"
+		<form id="employee_new" class="minimal_form alignCenter employee_new"
 			action="${tg.url('./new')}" method="get">
 			<p>
 				<button id="employee_new__new" type="submit" class="new_button"
@@ -46,10 +46,7 @@
 	</div>
 	<div id="rightFrame" class="ui-layout-center">
 		<div id="employee_content">
-			<br />
-			<br />
-			<br />
-			<h1>← Veuillez sélectionner un employé dans la liste ci-contre.</h1>
+            <%include file="local:templates.pointage.employee.employee_help"/>
 		</div>
 	</div>
 	<div id="confirm_dialog" title="Confirmation">
@@ -71,11 +68,11 @@
 	"use strict";
 	/*global $*/
 	$(function() {
-		$('#employee_get_all').ajaxForm({
+		$('.employee_get_all').ajaxForm({
 			target: '#accordion_content',
 			success: on_accordion_refresh
 		});
-		$('#employee_new').ajaxForm({
+		$('.employee_new').ajaxForm({
 			target: '#employee_content',
 			beforeSubmit: function(arr, form, options) {
 				console.log("hide #flash...");

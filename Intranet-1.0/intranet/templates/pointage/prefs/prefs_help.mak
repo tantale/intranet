@@ -1,4 +1,4 @@
-<article id="help-article" lang="fr-FR" dir="ltr" style="font-size: .9em;">
+<article id="help-article" style="font-size: .9em;">
     <header>
         <h2>${_(u"Paramétrage des préférences utilisateur")}</h2>
     </header>
@@ -13,8 +13,8 @@
                 <p>${_(u"Ajouter ou supprimer une catégorie\u00a0;")}</p>
             </li>
             <li>
-                <p>
-                    ${_(u"Modifier le code, le libellé, la couleur de fond et la couleur du texte d’une catégorie\u00a0;")}</p>
+                <p>${_(u"Modifier le code, le libellé, la couleur de fond et "
+                       u"la couleur du texte d’une catégorie\u00a0;")}</p>
             </li>
             <li>
                 <p>${_(u"Ajouter ou supprimer un groupe de catégories\u00a0;")}</p>
@@ -28,7 +28,8 @@
         <p>${_(u"Le bouton ")}<a class="button"
                                  href="${tg.url('/admin/order_cat/get_orphans?display=detail')}"
                                  title="${_(u'Affiche la liste des commandes sans catégorie')}">${_(u"Commandes sans catégorie")}</a>
-            ${_(u"vous permettra de rechercher les commandes qui n’ont plus de catégorie et leur en attribuer une nouvelle\u00a0:")}
+            ${_(u"vous permettra de rechercher les commandes qui n’ont plus de catégorie "
+                u"et leur en attribuer une nouvelle\u00a0:")}
         </p>
         <ul>
             <li>
