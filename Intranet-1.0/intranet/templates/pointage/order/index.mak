@@ -23,41 +23,38 @@
 	</div>
 	<div id="leftFrame" class="ui-layout-west">
 		<div id="searchFrame">
-			<form id="order_get_all" class="minimal_form"
+			<form id="order_get_all" class="minimal_form order_get_all"
 				action="${tg.url('./get_all/')}" method="get">
 				<p>
 					<input id="order_get_all__uid" type="number" name="uid"
 							value="${uid}"
 							placeholder="N° commande"
-							title="Numéro de la commande recherchée" /><br/>
+                            title="${_(u'Numéro de la commande recherchée')}"/><br/>
 					<input id="order_get_all__keyword" type="search" name="keyword"
 							value="${keyword}"
                             placeholder="Mot-clef"
-                            title="Saisir un mot-clef" />
+                            title="${_(u'Saisir un mot-clef')}"/>
 					<input type="hidden" name="order_ref" value="" />
 					<button id="order_get_all__search" type="submit" class="search_button"
-						title="Rechercher selon le mot-clef">Rechercher</button>
+						title="${_(u'Rechercher selon le mot-clef')}">${_(u"Rechercher")}</button>
 				</p>
 			</form>
 		</div>\
-		<form id="order_new" class="minimal_form alignCenter"
+		<form id="order_new" class="minimal_form alignCenter order_new"
 			action="${tg.url('./new')}" method="get">
 			<p>
 				<button id="order_new__new" type="submit" class="new_button"
-					title="Ajouter une commande">Nouvelle commande</button>
+					title="${_(u'Ajouter une nouvelle commande.')}">${_(u"Nouvelle commande")}</button>
 			</p>
 		</form>
 		<div id="accordion_content"></div>
 	</div>
 	<div id="rightFrame" class="ui-layout-center">
 		<div id="order_content">
-			<br />
-			<br />
-			<br />
-			<h1>← Veuillez sélectionner une commande dans la liste ci-contre.</h1>
+			<%include file="local:templates.pointage.order.order_help"/>
 		</div>
 	</div>
-	<div id="confirm_dialog" title="Confirmation">
+	<div id="confirm_dialog" title="${_(u'Confirmation')}">
 		<div id="confirm_dialog_content"></div>
 	</div>
 ##
@@ -78,11 +75,11 @@
 	/*global $*/
 	$(function() {
 		$.fn.editable.defaults.mode = 'inline';
-		$('#order_get_all').ajaxForm({
+		$('.order_get_all').ajaxForm({
 			target: '#accordion_content',
 			success: on_accordion_refresh
 		});
-		$('#order_new').ajaxForm({
+		$('.order_new').ajaxForm({
 			target: '#order_content',
 			beforeSubmit: function(arr, form, options) {
 				console.log("hide #flash...");
