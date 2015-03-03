@@ -27,11 +27,10 @@
                     <input id="employee_get_all__keyword" type="search" name="keyword"
                            value="${keyword}"
                            placeholder="Mot-clef"
-                           title="Saisir un mot-clef"/>
+                           title="${_(u'Saisir un mot-clef')}"/>
                     <input type="hidden" name="uid" value="${uid}"/>
                     <button id="employee_get_all__search" type="submit" class="search_button"
-                            title="Rechercher selon le mot-clef">Rechercher
-                    </button>
+                            title="${_(u'Rechercher selon le mot-clef')}">${_(u"Rechercher")}</button>
                 </p>
             </form>
 		</div>\
@@ -39,7 +38,7 @@
 			action="${tg.url('./new')}" method="get">
 			<p>
 				<button id="employee_new__new" type="submit" class="new_button"
-					title="Ajouter un employé">Nouvel employé</button>
+					title="${_(u'Ajouter un nouvel employé.')}">${_(u"Nouvel employé")}</button>
 			</p>
 		</form>
 		<div id="accordion_content"></div>
@@ -49,7 +48,7 @@
             <%include file="local:templates.pointage.employee.employee_help"/>
 		</div>
 	</div>
-	<div id="confirm_dialog" title="Confirmation">
+	<div id="confirm_dialog" title="${_(u'Confirmation')}">
 		<div id="confirm_dialog_content"></div>
 	</div>
 ##

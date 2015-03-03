@@ -3,7 +3,7 @@
         <h2>${_(u"Paramétrage des préférences utilisateur")}</h2>
     </header>
     <p>${_(u"Vous pouvez paramétrer les catégories de commandes comme suit\u00a0:")}</p>
-    <section id="help-section-01">
+    <section id="help-section-01" style="margin-top: 2em;">
         <p>${_(u"Le bouton ")}<a class="button"
                                  href="${tg.url('/admin/order_cat/index.html?display=detail')}"
                                  title="${_(u'Liste complète des catégories de commandes')}">${_(u"Tableau des catégories")}</a>
@@ -24,7 +24,7 @@
             </li>
         </ul>
     </section>
-    <section id="help-section-02">
+    <section id="help-section-02" style="margin-top: 2em;">
         <p>${_(u"Le bouton ")}<a class="button"
                                  href="${tg.url('/admin/order_cat/get_orphans?display=detail')}"
                                  title="${_(u'Affiche la liste des commandes sans catégorie')}">${_(u"Commandes sans catégorie")}</a>
@@ -40,7 +40,7 @@
             </li>
         </ul>
     </section>
-    <section id="help-section-03">
+    <section id="help-section-03" style="margin-top: 2em;">
         <p>${_(u"Le bouton ")}<a class="button"
                                  href="${tg.url('/admin/order_cat.css?display=html')}"
                                  title="${_(u'Affichage de la feuille de styles CSS des catégories de commandes')}">${_(u"Feuille de styles CSS")}</a>
