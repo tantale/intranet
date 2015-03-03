@@ -37,13 +37,13 @@
                            title="${_(u'Liste complète des catégories de commandes')}"><span
                             class="ui-button-icon-primary ui-icon ui-icon-document-b"></span>${_(u"Tableau des catégories")}</a>
                     </li>
-                    <li><a href="${tg.url('/admin/order_cat.css?display=html')}"
-                           title="${_(u'Affichage de la feuille de styles CSS des catégories de commandes')}"><span
-                            class="ui-button-icon-primary ui-icon ui-icon-script"></span>${_(u"Feuille de styles CSS")}</a>
-                    </li>
                     <li><a href="${tg.url('/admin/order_cat/get_orphans?display=detail')}"
                            title="${_(u'Affiche la liste des commandes sans catégorie')}"><span
                             class="ui-button-icon-primary ui-icon ui-icon-alert"></span>${_(u"Commandes sans catégorie")}</a>
+                    </li>
+                    <li><a href="${tg.url('/admin/order_cat.css?display=html')}"
+                           title="${_(u'Affichage de la feuille de styles CSS des catégories de commandes')}"><span
+                            class="ui-button-icon-primary ui-icon ui-icon-script"></span>${_(u"Feuille de styles CSS")}</a>
                     </li>
                 </ul>
             </div>
@@ -52,7 +52,7 @@
 	</div>
 	<div id="rightFrame" class="ui-layout-center">
 		<div id="prefs_content">
-            <%include file="local:templates.pointage.prefs.prefs_help_fr"/>
+            <%include file="local:templates.pointage.prefs.prefs_help"/>
         </div>
     </div>
 	<div id="confirm_dialog" title="Confirmation">
@@ -93,8 +93,8 @@
 			modal: true
 		});
         $("#help-section-01 a.button").button({icons: {primary: "ui-icon-document-b"}});
-        $("#help-section-02 a.button").button({icons: {primary: "ui-icon-script"}});
-        $("#help-section-03 a.button").button({icons: {primary: "ui-icon-alert"}});
+        $("#help-section-02 a.button").button({icons: {primary: "ui-icon-alert"}});
+        $("#help-section-03 a.button").button({icons: {primary: "ui-icon-script"}});
 		$("#help-article a.button").click(function(event){
 			event.preventDefault();
 		    $("#prefs_content").load($(this).attr("href"));
