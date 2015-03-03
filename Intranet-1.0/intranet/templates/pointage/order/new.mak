@@ -35,6 +35,7 @@
 											for cat in cat_list]
 						default_cat = project_cat_list[0].cat_name if project_cat_list else None
 						curr_project_cat = values.get('project_cat', default_cat)
+						found_list = filter(lambda cat: cat.cat_name == curr_project_cat, project_cat_list)
 					%>-->
 						<select id="order_create__project_cat" name="project_cat"
 							class="${curr_project_cat}"
@@ -55,6 +56,13 @@
                                     %endfor
                                 </optgroup>
                                 %endfor
+                                %if not found_list:
+                                <optgroup label="${_(u'Sans catégorie')}" class="noColor">
+                                    <option selected="selected"
+                                        class="${curr_project_cat}"
+                                        value="${curr_project_cat}">${curr_project_cat[5:]}</option>
+                                </optgroup>
+                                %endif
                             %else:
                                 <!-- not cat_dict ==> use missing_order_cat_label -->
                                 <option selected="selected">${missing_order_cat_label}</option>
