@@ -1,9 +1,4 @@
 # -*- coding: utf-8 -*-
-<%doc>
-:module: intranet.templates.pointage.prefs.index
-:date: 2014-01-16
-:author: Laurent LAPORTE <sandlol2009@gmail.com>
-</%doc>
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -48,7 +43,7 @@
                     </li>
                     <li><a href="${tg.url('/admin/order_cat/get_orphans?display=detail')}"
                            title="${_(u'Affiche la liste des commandes sans catégorie')}"><span
-                            class="ui-button-icon-primary ui-icon ui-icon-help"></span>${_(u"Commandes sans catégorie")}</a>
+                            class="ui-button-icon-primary ui-icon ui-icon-alert"></span>${_(u"Commandes sans catégorie")}</a>
                     </li>
                 </ul>
             </div>
@@ -56,8 +51,10 @@
 		</div>
 	</div>
 	<div id="rightFrame" class="ui-layout-center">
-		<div id="prefs_content"></div>
-	</div>
+		<div id="prefs_content">
+            <%include file="local:templates.pointage.prefs.prefs_help_fr"/>
+        </div>
+    </div>
 	<div id="confirm_dialog" title="Confirmation">
 		<div id="confirm_dialog_content"></div>
 	</div>
@@ -77,7 +74,6 @@
 <script type='text/javascript'>
 	"use strict";
 	/*global $*/
-	$(document).tooltip();
 	$(function() {
 		$.fn.editable.defaults.mode = 'inline';
 		$(".menu").menu();
@@ -95,6 +91,14 @@
 			width: 400,
 			height: 200,
 			modal: true
+		});
+        $("#help-section-01 a.button").button({icons: {primary: "ui-icon-document-b"}});
+        $("#help-section-02 a.button").button({icons: {primary: "ui-icon-script"}});
+        $("#help-section-03 a.button").button({icons: {primary: "ui-icon-alert"}});
+		$("#help-article a.button").click(function(event){
+			event.preventDefault();
+		    $("#prefs_content").load($(this).attr("href"));
+		    return false;
 		});
 	});
 </script>
