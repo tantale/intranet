@@ -29,14 +29,14 @@ testpkgs = ['WebTest >= 1.2.3',
             'coverage',
             'wsgiref']
 
-install_requires = ["TurboGears2 == 2.2.2",
-                    "Genshi == 0.7",
+install_requires = ["Genshi == 0.7",
                     "Mako == 0.7.3",
                     "zope.sqlalchemy >= 0.4",
                     "repoze.tm2 >= 1.0a5",
-                    "sqlalchemy < 0.8b1",
                     "sqlalchemy-migrate == 0.7.2",
-                    "tw2.forms == 2.2.0.3"]
+                    "sqlalchemy < 0.8b1",
+                    "tw2.forms == 2.2.0.3",
+                    "TurboGears2 == 2.2.2"]
 
 setup(
     name='Intranet',
