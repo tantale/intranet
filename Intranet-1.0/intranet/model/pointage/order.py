@@ -3,9 +3,12 @@
 :date: 2013-08-09
 :author: Laurent LAPORTE <sandlol2009@gmail.com>
 """
-from intranet.model import DeclarativeBase
+import collections
+
 from sqlalchemy.schema import Column
 from sqlalchemy.types import Integer, String, Date
+
+from intranet.model import DeclarativeBase
 
 
 class Order(DeclarativeBase):
@@ -29,7 +32,7 @@ class Order(DeclarativeBase):
 
     # generated backref: order_phase_list
     # order_phase_list = relationship('OrderPhase,
-    #                                 backref='order',
+    # backref='order',
     #                                 order_by='OrderPhase.position,
     #                                 cascade='all,delete-orphan')
 
@@ -60,3 +63,18 @@ class Order(DeclarativeBase):
                     "{self.creation_date!r}, "
                     "close_date={self.close_date!r})")
         return repr_fmt.format(self=self)
+
+    @property
+    def statistics(self):
+        """
+        Compute the time tracking statistics.
+
+        :rtype: collections.Counter
+        :return: Time tracking statistics for each order phase.
+        """
+        statistics = collections.Counter()
+        for order_phase in self.order_phase_list:
+            key = (order_phase.position, order_phase.label)
+            for cal_event in order_phase.cal_event_list:
+                statistics[key] += cal_event.event_duration
+        return statistics

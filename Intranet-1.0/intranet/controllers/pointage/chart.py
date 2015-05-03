@@ -4,14 +4,15 @@
 :date: 2013-10-19
 :author: Laurent LAPORTE <sandlol2009@gmail.com>
 """
-import collections
 import logging
+import collections
 
 from tg.i18n import ugettext as _
 from tg.controllers.restcontroller import RestController
-from tg.decorators import expose, without_trailing_slash
+from tg.decorators import expose, without_trailing_slash, with_trailing_slash
 
 from intranet.accessors.order import OrderAccessor
+from intranet.model.pointage.order import Order
 
 
 LOG = logging.getLogger(__name__)
@@ -22,6 +23,17 @@ class ChartController(RestController):
     The 'chart' controller
     """
     MISSING_ORDER_CAT_LABEL = _(u"(sans catégorie)")
+
+    def __init__(self, main_menu):
+        self.main_menu = main_menu
+
+    @without_trailing_slash
+    @expose('intranet.templates.pointage.chart.index')
+    def index(self):
+        """
+        Display the index page.
+        """
+        return dict(main_menu=self.main_menu)
 
     @without_trailing_slash
     @expose('json')
@@ -43,15 +55,31 @@ class ChartController(RestController):
         cat_label_dict = {order_cat.cat_name: order_cat.label
                           for order_cat in order_cat_list}
 
-        # -- compute statistics
-        statistics = collections.Counter()
-        for order_phase in order.order_phase_list:
-            key = (order_phase.position, order_phase.label)
-            for cal_event in order_phase.cal_event_list:
-                delta = cal_event.event_end - cal_event.event_start
-                event_duration = delta.seconds / 3600.0
-                statistics[key] += event_duration
-
         return dict(order=order,
                     order_cat_label=cat_label_dict.get(order.project_cat, self.MISSING_ORDER_CAT_LABEL),
-                    statistics=statistics)
+                    statistics=order.statistics)
+
+    @with_trailing_slash
+    @expose('json')
+    @expose('intranet.templates.pointage.chart.get_all')
+    def get_all(self, **kwargs):
+        """
+        Display a chart for one order.
+
+        GET /pointage/chart/
+        GET /pointage/chart.json
+        GET /pointage/chart/get_all
+        GET /pointage/chart/get_all.json
+        """
+        # ADD: New feature: "time tracking statistics"
+        # TODO: handle form parameters => filters
+        # Prendre en charge les paramètres du formulaire pour filtrer l'affichage
+        accessor = OrderAccessor()
+        rows = []
+        statistics = collections.Counter()
+        for order in accessor.get_order_list(Order.project_cat == "colorMeuble", Order.creation_date):
+            statistics.update(order.statistics)
+            rows.append(order)
+
+        headers = list(sorted(statistics.keys()))
+        return dict(headers=headers, rows=rows, statistics=statistics)

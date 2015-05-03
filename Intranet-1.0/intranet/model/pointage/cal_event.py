@@ -109,3 +109,14 @@ class CalEvent(DeclarativeBase):
         dict_['comment'] = self.comment
         dict_['editable'] = self.editable
         return dict_
+
+    @property
+    def event_duration(self):
+        """
+        Compute the event duration in hours for statistics.
+
+        :rtype: float
+        :return: Event duration in hours.
+        """
+        delta = self.event_end - self.event_start
+        return delta.seconds / 3600.0

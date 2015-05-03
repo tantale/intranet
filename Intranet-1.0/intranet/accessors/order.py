@@ -4,13 +4,15 @@
 :date: 2013-09-07
 :author: Laurent LAPORTE <sandlol2009@gmail.com>
 """
+import datetime
+
+from sqlalchemy.exc import IntegrityError
+import transaction
+
 from intranet.accessors import BasicAccessor, DuplicateFoundError
 from intranet.accessors.order_cat import OrderCatAccessor
 from intranet.model.pointage.order import Order
 from intranet.model.pointage.order_phase import OrderPhase
-from sqlalchemy.exc import IntegrityError
-import datetime
-import transaction
 
 
 class OrderAccessor(BasicAccessor):

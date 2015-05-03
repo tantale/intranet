@@ -25,6 +25,13 @@ $(function() {
 		}
 	});
 
+	$("#toolbar_chart").button({
+		text : true,
+		icons : {
+			primary : "ui-icon-calculator"
+		}
+	});
+
 	$("#toolbar_prefs").button({
 		text : true,
 		icons : {

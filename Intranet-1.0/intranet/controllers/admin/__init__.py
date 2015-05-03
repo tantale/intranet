@@ -4,6 +4,7 @@
 :date: 2013-10-08
 :author: Laurent LAPORTE <sandlol2009@gmail.com>
 """
+from intranet.accessors.menu_item import MenuItemAccessor
 from intranet.controllers.pointage.chart import ChartController
 from intranet.controllers.pointage.employee import EmployeeController
 from intranet.controllers.pointage.order import OrderController
@@ -13,37 +14,18 @@ from intranet.controllers.pointage.prefs import PrefsController
 from intranet.controllers.pointage.trcal import CalendarController
 from intranet.lib.base import BaseController
 
-import tg
-
-
-main_menu = dict(title=u"Administration",
-                 item_list=[dict(id='toolbar_employee',
-                                 href=tg.url('/admin/employee/index.html'),
-                                 title=u"Gestion des employés",
-                                 content=u"Employés"),
-                            dict(id='toolbar_order',
-                                 href=tg.url('/admin/order/index.html'),
-                                 title=u"Gestion des commandes et des phases",
-                                 content=u"Commandes"),
-                            dict(id='toolbar_calendar',
-                                 href=tg.url('/admin/trcal/index.html'),
-                                 title=u"Gestion des pointages des opérations",
-                                 content=u"Calendrier"),
-                            dict(id='toolbar_prefs',
-                                 href=tg.url('/admin/prefs/index.html'),
-                                 title=u"Paramétrage des préférences utilisateur",  # @IgnorePep8
-                                 content=u"Préférences")])
-
 
 class AdminController(BaseController):
     """
     Root controller for Pointage
     """
+    menu_accessor = MenuItemAccessor()
+    main_menu = menu_accessor.get_main_menu(u"Administration")
 
     employee = EmployeeController(main_menu)
     order = OrderController(main_menu)
     order_cat = OrderCatController()
     order_phase = OrderPhaseController()
     trcal = CalendarController(main_menu)  # Time Recording Calendar
-    chart = ChartController()
+    chart = ChartController(main_menu)
     prefs = PrefsController(main_menu)

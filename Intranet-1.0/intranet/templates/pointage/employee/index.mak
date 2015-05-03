@@ -1,67 +1,42 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-<meta charset="${response.charset}" />
-<title>Gestion des employés</title>
-<meta name="description" content="Gestion des employés pour l'intranet de pointage" />
-<link rel="icon" type="image/ico" href="${tg.url('/favicon.ico')}" />
-<link rel="stylesheet" type="text/css" href="${tg.url('/css/blitzer/jquery-ui-1.10.3.custom.min.css')}" />
-<link rel="stylesheet" type="text/css" href="${tg.url('/css/layout-default-latest.css')}" />
-<link rel="stylesheet" type="text/css" href="${tg.url('/css/intranet.css')}" />
-<link rel="stylesheet" type="text/css" href="${tg.url('/css/intranet.pointage.css')}" />
-</head>
-<body>
-	<div id="topFrame" class="ui-layout-north">
-		<div id="toolbar" class="ui-widget-header">
-			<h1>${main_menu['title']}</h1>
-			%for item in main_menu['item_list']:
-			<a id="${item['id']}" href="${item['href']}" title="${item['title']}">${item['content']}</a>
-			%endfor
-		</div>\
-	</div>
-	<div id="leftFrame" class="ui-layout-west">
-		<div id="searchFrame">
-			<form id="employee_get_all" class="minimal_form employee_get_all"
-				action="${tg.url('./get_all/')}" method="get">
-                <p>
-                    <input id="employee_get_all__keyword" type="search" name="keyword"
-                           value="${keyword}"
-                           placeholder="Mot-clef"
-                           title="${_(u'Saisir un mot-clef')}"/>
-                    <input type="hidden" name="uid" value="${uid}"/>
-                    <button id="employee_get_all__search" type="submit" class="search_button"
-                            title="${_(u'Rechercher selon le mot-clef')}">${_(u"Rechercher")}</button>
-                </p>
-            </form>
-		</div>\
-		<form id="employee_new" class="minimal_form alignCenter employee_new"
-			action="${tg.url('./new')}" method="get">
-			<p>
-				<button id="employee_new__new" type="submit" class="new_button"
-					title="${_(u'Ajouter un nouvel employé.')}">${_(u"Nouvel employé")}</button>
-			</p>
-		</form>
-		<div id="accordion_content"></div>
-	</div>
-	<div id="rightFrame" class="ui-layout-center">
-		<div id="employee_content">
-            <%include file="local:templates.pointage.employee.employee_help"/>
-		</div>
-	</div>
-	<div id="confirm_dialog" title="${_(u'Confirmation')}">
-		<div id="confirm_dialog_content"></div>
-	</div>
-##
-## text/javascript
-##
-<script type='text/javascript' src="${tg.url('/javascript/jquery-1.9.1.js')}"></script>
-<script type='text/javascript' src="${tg.url('/javascript/jquery-ui-1.10.3.custom.min.js')}"></script>
-<script type='text/javascript' src="${tg.url('/javascript/jquery.ui.datepicker-fr.js')}"></script>
-<script type='text/javascript' src="${tg.url('/javascript/imgLiquid-min.js')}"></script>
-<script type='text/javascript' src="${tg.url('/javascript/jquery.layout-latest.min.js')}"></script>
-<script type='text/javascript' src="${tg.url('/javascript/jquery.form.js')}"></script>
-<script type='text/javascript' src="${tg.url('/javascript/intranet.js')}"></script>
-<script type='text/javascript' src="${tg.url('/javascript/intranet.pointage.js')}"></script>
+<%inherit file="local:templates.pointage.master"/>
+
+<%def name="title()">${_(u"Gestion des employés")}</%def>
+
+<%def name="search_frame()">
+<form id="employee_get_all" class="minimal_form employee_get_all"
+    action="${tg.url('./get_all/')}" method="get">
+    <p>
+        <input id="employee_get_all__keyword" type="search" name="keyword"
+               value="${keyword}"
+               placeholder="Mot-clef"
+               title="${_(u'Saisir un mot-clef')}"/>
+        <input type="hidden" name="uid" value="${uid}"/>
+        <button id="employee_get_all__search" type="submit" class="search_button"
+                title="${_(u'Rechercher selon le mot-clef')}">${_(u"Rechercher")}</button>
+    </p>
+</form>
+</%def>
+
+<%def name="new_frame()">
+<form id="employee_new" class="minimal_form alignCenter employee_new"
+    action="${tg.url('./new')}" method="get">
+    <p>
+        <button id="employee_new__new" type="submit" class="new_button"
+            title="${_(u'Ajouter un nouvel employé.')}">${_(u"Nouvel employé")}</button>
+    </p>
+</form>
+</%def>
+
+<%def name="accordion_content()">
+</%def>
+
+<%def name="content_frame()">
+<div id="employee_content">
+    <%include file="local:templates.pointage.employee.employee_help"/>
+</div>
+</%def>
+
+<%def name="extra_scripts()">
 <script type='text/javascript' src="${tg.url('/javascript/intranet.pointage.employee.js')}"></script>
 <script type='text/javascript'>
 	"use strict";
@@ -89,5 +64,4 @@
 		$('#employee_get_all').submit();
 	});
 </script>
-</body>
-</html>
+</%def>
