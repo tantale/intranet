@@ -56,11 +56,11 @@ class FileStorage(collections.Mapping):
     def _get_fullpath(self, relpath):
         relpath = os.path.normpath(relpath)
         relpath_list = filter(None, relpath.split(os.path.sep))
-        for forbiden in self.IGNORE_LIST:
-            if forbiden in relpath_list:
-                msg_fmt = ('Forbiden directory "{forbiden}" '
+        for forbidden in self.IGNORE_LIST:
+            if forbidden in relpath_list:
+                msg_fmt = ('Forbidden directory "{forbidden}" '
                            'found in relative path: "{relpath}"')
-                raise msg_fmt.format(forbiden=forbiden, path=relpath)
+                raise KeyError(msg_fmt.format(forbiden=forbidden, relpath=relpath))
         return os.path.join(self.file_storage_dir, *relpath_list)
 
     def __contains__(self, relpath):

@@ -17,6 +17,7 @@ class TestFileStorage(unittest.TestCase):
     Test case of 'FileStorage' class.
     """
 
+    # noinspection PyPep8Naming
     def __init__(self, methodName='runTest'):
         super(TestFileStorage, self).__init__(methodName=methodName)
         self.tempdir = None
@@ -69,6 +70,9 @@ class TestFileStorage(unittest.TestCase):
         self.assertTrue(file_storage)
         self.assertFalse(not file_storage)
 
+        with self.assertRaises(KeyError):
+            '.git' in file_storage
+
     def test_len(self):
         file_storage = FileStorage(self.tempdir)
 
@@ -100,17 +104,18 @@ class TestFileStorage(unittest.TestCase):
         actual = len(file_storage)
         self.assertEqual(actual, 2, "two files expected")
 
+    # noinspection PyUnusedLocal
     def test_getitem(self):
         file_storage = FileStorage(self.tempdir)
 
         # -- empty file_storage
         with self.assertRaises(KeyError):
-            file_storage['my_path.txt']
+            unused = file_storage['my_path.txt']
         with self.assertRaises(KeyError):
-            file_storage['subdir/my_path.txt']
+            unused = file_storage['subdir/my_path.txt']
         if os.name == "nt":
             with self.assertRaises(EnvironmentError):
-                file_storage['?']
+                unused = file_storage['?']
 
         # -- one file in file_storage
         my_path = os.path.join(self.tempdir, 'my_path.txt')
