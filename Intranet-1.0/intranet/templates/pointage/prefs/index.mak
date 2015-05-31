@@ -37,11 +37,16 @@
 </%def>
 
 <%def name="extra_scripts()">
-<script type='text/javascript' src="${tg.url('/javascript/intranet.pointage.prefs.js')}"></script>
 <script type='text/javascript'>
 	"use strict";
 	/*global $*/
 	$(function() {
+        jQuery.get("./layout.json", function(data){
+            $('body').layout($.extend(data, {
+                west__onresize : function(name, element, state, options, layout_name) {
+                    jQuery.ajax("./layout", {method: "put", data: {west__size: state.size}});
+                }}));
+        });
 		$(".menu").menu();
 		$(".menu a").click(function(event){
 			event.preventDefault();

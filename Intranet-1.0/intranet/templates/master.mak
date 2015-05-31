@@ -54,7 +54,6 @@ abbr[title] {
 </style>
 </head>
 <body>
-<body>
   <article>
     <header>
       <h1>${self.title()}</h1>

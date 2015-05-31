@@ -3,6 +3,7 @@
 :date: 2014-01-16
 :author: Laurent LAPORTE <sandlol2009@gmail.com>
 """
+from intranet.controllers.pointage.layout import LayoutController
 from intranet.lib.base import BaseController
 import logging
 
@@ -13,6 +14,8 @@ LOG = logging.getLogger(__name__)
 
 
 class PrefsController(BaseController):
+    layout = LayoutController(__name__)
+
     def __init__(self, main_menu):
         self.main_menu = main_menu
 

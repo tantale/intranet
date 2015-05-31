@@ -42,6 +42,12 @@
 	"use strict";
 	/*global $*/
 	$(function() {
+        jQuery.get("./layout.json", function(data){
+            $('body').layout($.extend(data, {
+                west__onresize : function(name, element, state, options, layout_name) {
+                    jQuery.ajax("./layout", {method: "put", data: {west__size: state.size}});
+                }}));
+        });
 		$('.employee_get_all').ajaxForm({
 			target: '#accordion_content',
 			success: on_accordion_refresh

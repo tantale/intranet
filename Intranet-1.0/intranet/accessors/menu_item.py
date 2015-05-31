@@ -26,8 +26,10 @@ class MenuItemAccessor(BasicAccessor):
                  target_page=tg.url('/admin/employee/index.html')),
         MenuItem("Commandes", "Gestion des commandes et des phases", "ui-icon-document",
                  target_page=tg.url('/admin/order/index.html')),
-        MenuItem("Calendrier", "Gestion des pointages des opérations", "ui-icon-calendar",
+        MenuItem("Pointage", "Gestion des pointages des opérations", "ui-icon-clock",
                  target_page=tg.url('/admin/trcal/index.html')),
+        MenuItem("Planning", "Planning des événements", "ui-icon-calendar",
+                 target_page=tg.url('/admin/planning/index.html')),
         # ADD: New feature: "time tracking statistics"
         # MenuItem("Statistiques", "Statistiques de pointages", "ui-icon-calculator",
         #          target_page=tg.url('/admin/chart/index.html')),

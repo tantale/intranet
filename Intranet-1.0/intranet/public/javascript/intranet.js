@@ -22,6 +22,13 @@ $(function() {
 		}
 	});
 
+	$(".update_button_icon").button({
+		text : false,
+		icons : {
+			primary : "ui-icon-pencil"
+		}
+	});
+
 	$(".refresh_button").button({
 		text : false,
 		icons : {
@@ -36,8 +43,22 @@ $(function() {
 		}
 	});
 
+	$(".new_button_icon").button({
+		text : false,
+		icons : {
+			primary : "ui-icon-plus"
+		}
+	});
+
 	$(".delete_button").button({
 		text : true,
+		icons : {
+			primary : "ui-icon-trash"
+		}
+	});
+
+	$(".delete_button_icon").button({
+		text : false,
 		icons : {
 			primary : "ui-icon-trash"
 		}
@@ -50,12 +71,48 @@ $(function() {
 		}
 	});
 
+	$(".cancel_button_icon").button({
+		text : false,
+		icons : {
+			primary : "ui-icon-cancel"
+		}
+	});
+
 	$(".search_button").button({
 		text : false,
 		icons : {
 			primary : "ui-icon-search"
 		}
 	});
+
+	$(".refresh_button").button({
+		text : true,
+		icons : {
+			primary : "ui-icon-refresh"
+		}
+	});
+
+	$(".refresh_button_icon").button({
+		text : false,
+		icons : {
+			primary : "ui-icon-refresh"
+		}
+	});
+
+	$(".calendar_button").button({
+		text : true,
+		icons : {
+			primary : "ui-icon-calendar"
+		}
+	});
+
+	$(".calendar_button_icon").button({
+		text : false,
+		icons : {
+			primary : "ui-icon-calendar"
+		}
+	});
+
 });
 
 (function ($) {

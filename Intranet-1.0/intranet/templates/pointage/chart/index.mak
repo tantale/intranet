@@ -73,7 +73,6 @@
 </%def>
 
 <%def name="extra_scripts()">
-<script type='text/javascript' src="${tg.url('/javascript/intranet.pointage.chart.js')}"></script>
 <script type='text/javascript'>
 	"use strict";
 	/*global $*/

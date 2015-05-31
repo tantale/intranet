@@ -7,6 +7,7 @@
 from formencode.validators import NotEmpty, Number
 from intranet.accessors import DuplicateFoundError
 from intranet.accessors.employee import EmployeeAccessor
+from intranet.controllers.pointage.layout import LayoutController
 from intranet.model.pointage.employee import Employee
 from intranet.validators.date_interval import check_date_interval
 from intranet.validators.iso_date_converter import IsoDateConverter
@@ -26,6 +27,7 @@ class EmployeeController(RestController):
     """
     Create / Modify / Remove Employees
     """
+    layout = LayoutController(__name__)
 
     def __init__(self, main_menu):
         self.main_menu = main_menu

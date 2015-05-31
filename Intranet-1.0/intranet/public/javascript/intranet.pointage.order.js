@@ -14,21 +14,6 @@ function on_accordion_refresh(responseText, statusText, xhr) {
 	$('#order_get_all__keyword').autocomplete('close');
 }
 
-$(function() {
-	$('body').layout({
-		north__size : "auto",
-		north__closable : false,
-		north__resizable : false,
-		north__slidable : false,
-		north__spacing_open : 0,
-		north__spacing_closed : 0,
-
-		west__size : 260,
-		west__minSize : 230,
-		west__maxSize : 500
-	});
-});
-
 $('#order_new').ajaxForm({
     target: '#order_content',
     success: function(responseText, statusText, xhr) {
