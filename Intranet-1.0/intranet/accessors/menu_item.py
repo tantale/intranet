@@ -39,8 +39,8 @@ class MenuItemAccessor(BasicAccessor):
 
     TIME_TRACKING_MENU = MenuHeader("Gestion des pointages", "Gestion des pointages")
     TIME_TRACKING_MENU.extend([
-        MenuItem("Calendrier", "Gestion des pointages des opérations", "ui-icon-calendar",
-                 target_page=tg.url('/admin/trcal/index.html'))])
+        MenuItem("Pointage", "Gestion des pointages des opérations", "ui-icon-calendar",
+                 target_page=tg.url('/pointage/trcal/index.html'))])
 
     MENU_DICT = dict((x.display_name, x) for x in [ADMIN_MENU, TIME_TRACKING_MENU])
 

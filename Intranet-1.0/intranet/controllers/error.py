@@ -2,6 +2,7 @@
 """Error controller"""
 
 from tg import request, expose
+from intranet.accessors.menu_item import MenuItemAccessor
 
 __all__ = ['ErrorController']
 
@@ -16,6 +17,9 @@ class ErrorController(object):
     This behaviour can be altered by changing the parameters to the
     ErrorDocuments middleware in your config/middleware.py file.
     """
+    _menu_accessor = MenuItemAccessor()
+    admin_menu = _menu_accessor.get_main_menu(u"Administration")
+    time_tracking_menu = _menu_accessor.get_main_menu(u"Gestion des pointages")
 
     @expose('intranet.templates.error')
     def document(self, *args, **kwargs):
@@ -25,5 +29,6 @@ class ErrorController(object):
                            " this request.</p>")
         values = dict(prefix=request.environ.get('SCRIPT_NAME', ''),
                       code=request.params.get('code', resp.status_int),
-                      message=request.params.get('message', default_message))
+                      message=request.params.get('message', default_message),
+                      menus=[self.admin_menu, self.time_tracking_menu])
         return values

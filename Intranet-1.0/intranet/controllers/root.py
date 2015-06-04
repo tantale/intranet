@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 """Main Controller"""
+from intranet.accessors.menu_item import MenuItemAccessor
 from intranet.controllers.admin import AdminController
 from intranet.controllers.error import ErrorController
 from intranet.controllers.pointage import PointageControoler
@@ -29,27 +30,31 @@ class RootController(BaseController):
     must be wrapped around with :class:`tg.controllers.WSGIAppController`.
 
     """
+    _menu_accessor = MenuItemAccessor()
+    admin_menu = _menu_accessor.get_main_menu(u"Administration")
+    time_tracking_menu = _menu_accessor.get_main_menu(u"Gestion des pointages")
 
     error = ErrorController()
     admin = AdminController()
     pointage = PointageControoler()
     tools = ToolsController()
 
+    # noinspection PyMethodMayBeStatic
     def _before(self, *args, **kw):
         tmpl_context.project_name = "intranet"
 
     @expose('intranet.templates.index')
     def index(self):
         """Handle the front-page."""
-        return dict(page='index')
+        return dict(page='index', menus=[self.admin_menu, self.time_tracking_menu])
 
     @expose('intranet.templates.about')
     def about(self):
         """Handle the 'about' page."""
-        return dict(page='about')
+        return dict(page='about', menus=[self.admin_menu, self.time_tracking_menu])
 
     @expose('intranet.templates.environ')
     def environ(self):
         """This method showcases TG's access to the wsgi environment."""
-        return dict(page='environ',
+        return dict(page='environ', menus=[self.admin_menu, self.time_tracking_menu],
                     environment=request.environ)  # @UndefinedVariable environ
