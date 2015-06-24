@@ -22,7 +22,6 @@ from intranet.accessors.order import OrderAccessor
 from intranet.accessors.order_cat import OrderCatAccessor
 from intranet.model.pointage.order import Order
 
-
 LOG = logging.getLogger(__name__)
 
 
@@ -32,7 +31,7 @@ class OrderCatController(RestController):
     """
     DISPLAY_NORMAL, DISPLAY_DETAIL = 'normal', 'detail'
 
-    def __before__(self, **kw):
+    def _prepare(self, **kw):
         accessor = OrderCatAccessor()
         order_cat_list = accessor.get_order_cat_list()
         self.cat_group_index = collections.defaultdict(list)
@@ -42,12 +41,14 @@ class OrderCatController(RestController):
         self.order_cat_list = self.cat_group_index.get(self.cat_group, order_cat_list)
         self.display = kw.get('display', self.DISPLAY_NORMAL)
 
+    # noinspection PyArgumentList
     @with_trailing_slash
     @expose("intranet.templates.pointage.order_cat.index")
     def index(self, **kw):
         LOG.info("OrderCatController.index, kw = " + pformat(kw))
         return dict(values=kw)
 
+    # noinspection PyArgumentList
     @with_trailing_slash
     @expose('json')
     @expose('intranet.templates.pointage.order_cat.get_all')
@@ -60,7 +61,7 @@ class OrderCatController(RestController):
         GET /pointage/order_cat/
         """
         LOG.info("OrderCatController.get_all, kw = " + pformat(kw))
-        self.__before__(**kw)
+        self._prepare(**kw)
         form_errors = pylons.tmpl_context.form_errors  # @UndefinedVariable
         if form_errors:
             err_msg = _(u"Le formulaire comporte des champs invalides")
@@ -68,6 +69,7 @@ class OrderCatController(RestController):
         return dict(display=self.display, cat_group=self.cat_group, order_cat_list=self.order_cat_list,
                     cat_group_index=self.cat_group_index, form_errors=form_errors, values=kw)
 
+    # noinspection PyArgumentList
     @without_trailing_slash
     @expose('intranet.templates.pointage.order_cat.new')
     def new(self, **kw):
@@ -103,6 +105,7 @@ class OrderCatController(RestController):
         else:
             redirect('./new', cat_group=cat_group)
 
+    # noinspection PyMethodMayBeStatic
     def insert_order_cat(self, cat_group, code, label, kw):
         try:
             accessor = OrderCatAccessor()
@@ -132,9 +135,10 @@ class OrderCatController(RestController):
     @expose('json')
     def create_in_place(self, cat_group, code, label, **kw):
         LOG.info("OrderCatController.create_in_place")
+        # noinspection PyBroadException
         try:
             self.insert_order_cat(cat_group, code, label, kw)
-        except:
+        except Exception:
             redirect('./', cat_group=cat_group, code=code, label=label, **kw)
         else:
             redirect('./', cat_group=cat_group)
@@ -213,6 +217,7 @@ class OrderCatController(RestController):
                 return dict(status='error', msg=msg_fmt.format(value=value, exc=exc))
         return dict(status='updated', label=value)
 
+    # noinspection PyUnusedLocal
     @validate({'name': Regex(r"order_cat__code__\d+", not_empty=True),
                'value': Regex(r'^\w+$', not_empty=True),
                'pk': NotEmpty()},
@@ -242,6 +247,7 @@ class OrderCatController(RestController):
             transaction.commit()
         return result
 
+    # noinspection PyUnusedLocal
     @validate({'name': Regex(r"order_cat__label__\d+", not_empty=True),
                'value': NotEmpty(),
                'pk': NotEmpty()},
@@ -315,6 +321,7 @@ class OrderCatController(RestController):
               status="ok")
         return dict()
 
+    # noinspection PyArgumentList
     @with_trailing_slash
     @expose('json')
     @expose('intranet.templates.pointage.order_cat.get_orphans')
@@ -359,7 +366,7 @@ class OrderCatController(RestController):
             }
         """
         LOG.info("OrderCatController.get_orphans, kw = " + pformat(kw))
-        self.__before__(**kw)
+        self._prepare(**kw)
 
         # -- Find all orphans
         accessor = OrderAccessor()
@@ -401,4 +408,3 @@ class OrderCatController(RestController):
                      cat_group=cat_group, code=code, label=label, kw=kw)
         else:
             redirect('./get_orphans')
-
