@@ -15,12 +15,10 @@ class Order(DeclarativeBase):
     """
     Order Management.
 
-    :since: 1.2.0
-
-    - The UID is the order ID.
-
-    - The order reference isn't anymore unique: it can't a client's name so
-      we tolerate duplicates.
+    .. versionadded:: 1.2.0
+        - The UID is the order ID.
+        - The order reference isn't anymore unique: it can't a client's name so
+          we tolerate duplicates.
     """
     __tablename__ = 'Order'
 
@@ -74,7 +72,7 @@ class Order(DeclarativeBase):
         """
         statistics = collections.Counter()
         for order_phase in self.order_phase_list:
-            key = (order_phase.position, order_phase.label)
+            key = order_phase.label
             for cal_event in order_phase.cal_event_list:
                 statistics[key] += cal_event.event_duration
         return statistics

@@ -15,9 +15,8 @@ class CalEvent(DeclarativeBase):
 
     :see: http://arshaw.com/fullcalendar/docs/event_data/Event_Object/
 
-    :since: 1.2.0
-
-    - Add `editable` field: an event can be editable or not (read only).
+    .. versionadded:: 1.2.0
+       - Add `editable` field: an event can be editable or not (read only).
     """
     __tablename__ = 'CalEvent'
 
