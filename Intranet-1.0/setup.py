@@ -40,7 +40,7 @@ install_requires = ["Genshi == 0.7",
 
 setup(
     name='Intranet',
-    version='1.3.0',
+    version='1.4.0',
     description='Intranet for time recording',
     author='Laurent LAPORTE',
     author_email='tantale.solutions@gmail.com',
