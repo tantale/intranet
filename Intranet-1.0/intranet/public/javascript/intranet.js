@@ -79,6 +79,13 @@ $(function() {
 	});
 
 	$(".search_button").button({
+		text : true,
+		icons : {
+			primary : "ui-icon-search"
+		}
+	});
+
+	$(".search_button_icon").button({
 		text : false,
 		icons : {
 			primary : "ui-icon-search"

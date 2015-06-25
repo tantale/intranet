@@ -1,0 +1,25 @@
+New in version 1.4.0
+====================
+
+News
+
+- New "Statistics" topic: review of tracked time carried out on orders. Total per phase and per order.
+
+
+Enhancements
+
+- Save the position of the left pane,
+- Time tracking: storing the current user selection,
+- Calendar: storing the view (month, week, day) and the current date,
+- Updated third-party JavaScript libraries: "fullcalendar" and "jquery-layout".
+
+
+Modifications
+
+- Replacing the "Calendar" icon by the "Clock" icon, under "Time tracking". The "Calendar" icon will be dedicated to planning.
+
+
+Fixed bugs
+
+- Fixed an issue caused by the left pane overlapping the calendar;
+- Fixed the Quick menu: the "Administration" menu and "Time tracking" is displayed correctly (dynamically).

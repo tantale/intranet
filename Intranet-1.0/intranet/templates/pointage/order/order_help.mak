@@ -25,7 +25,7 @@
                        placeholder="Mot-clef"
                        title="${_(u'Saisir un mot-clef')}"/>
                 <input type="hidden" name="order_ref" value=""/>
-                <button type="submit" class="search_button"
+                <button type="submit" class="search_button_icon"
                         title="${_(u'Rechercher selon le mot-clef')}">${_(u"Rechercher")}
                 </button>
                 ${_(u"pour filtrer la liste des commandes par leurs références ou une partie de leurs références.")}

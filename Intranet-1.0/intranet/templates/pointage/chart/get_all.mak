@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-## ADD: New feature: "time tracking statistics"
 <section>
 <!-- <%!
 import datetime
@@ -10,7 +9,7 @@ format_duration = lambda x: u"{0:>7s}".format(u"–.––") if x is None else u
 format_date = lambda x: u"––/––/––––" if x is None else x.strftime(u"%d/%m/%Y")
 curr_date = format_date(datetime.date.today())
 %> -->
-<style type="text/css">
+<style type="text/css" scoped="scoped">
     .duration {
         text-align: right;
     }
@@ -47,7 +46,7 @@ curr_date = format_date(datetime.date.today())
             <th>${_(u"Date de création")}</th>
             <th>${_(u"Date de clôture")}</th>
             %for header in headers:
-            <th>${header[1]}</th>
+            <th>${header}</th>
             %endfor
             <th><strong>${_(u"Total")}</strong></th>
         </tr>

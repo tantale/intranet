@@ -20,6 +20,13 @@ LOG = logging.getLogger(__name__)
 
 
 class MenuItemAccessor(BasicAccessor):
+    """
+    Main menu accessor.
+
+    .. versionadded:: 1.4.0
+        Creation of the menu items
+        Add entries for "planning" (not yet enabled) and "Statistiques".
+    """
     ADMIN_MENU = MenuHeader("Administration", "Administration de l‘application")
     ADMIN_MENU.extend([
         MenuItem("Employés", "Gestion des employés", "ui-icon-person",
@@ -28,11 +35,11 @@ class MenuItemAccessor(BasicAccessor):
                  target_page=tg.url('/admin/order/index.html')),
         MenuItem("Pointage", "Gestion des pointages des opérations", "ui-icon-clock",
                  target_page=tg.url('/admin/trcal/index.html')),
-        MenuItem("Planning", "Planning des événements", "ui-icon-calendar",
-                 target_page=tg.url('/admin/planning/index.html')),
-        # ADD: New feature: "time tracking statistics"
-        # MenuItem("Statistiques", "Statistiques de pointages", "ui-icon-calculator",
-        #          target_page=tg.url('/admin/chart/index.html')),
+        # ADD: New feature: "planning"
+        # MenuItem("Planning", "Planning des événements", "ui-icon-calendar",
+        #          target_page=tg.url('/admin/planning/index.html')),
+        MenuItem("Statistiques", "Statistiques de pointages", "ui-icon-calculator",
+                 target_page=tg.url('/admin/chart/index.html')),
         MenuSeparator(),
         MenuItem("Préférences", "Paramétrage des préférences utilisateur", "ui-icon-gear",
                  target_page=tg.url('/admin/prefs/index.html'))])
@@ -57,6 +64,3 @@ class MenuItemAccessor(BasicAccessor):
         :return: the menu item
         """
         return self.MENU_DICT[menu_name]
-
-
-print(MenuItemAccessor().get_main_menu("Administration"))

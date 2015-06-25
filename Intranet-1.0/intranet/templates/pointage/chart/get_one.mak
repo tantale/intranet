@@ -49,7 +49,7 @@ def format_duration(number):
 	<tbody>
 %for order_phase in order.order_phase_list:
 	<!--<%
-	key = (order_phase.position, order_phase.label)
+	key = order_phase.label
 	count = statistics[key]
 	%>-->
 	<tr>
@@ -92,7 +92,8 @@ title = u"Taux de pointage de « {order_ref} » par phase".format(order_ref=orde
 title_json = json.dumps(title)
 data_table = [[u"Phase de production", u"Heures pointées"]]
 for order_phase in order.order_phase_list:
-	key = (order_phase.position, order_phase.label)
+	## key = (order_phase.position, order_phase.label)
+	key = order_phase.label
 	count = statistics[key]
 	data_table.append([u"{position} - {label}".format(position=order_phase.position, label=order_phase.label),
 	                   count])

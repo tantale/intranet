@@ -5,24 +5,26 @@ layout
 
 Date: 2015-05-30
 
-Author: Laurent LAPORTE <sandlol2009@gmail.com>
+Author: Laurent LAPORTE <tantale.solutions@gmail.com>
 """
 from __future__ import unicode_literals
 import logging
+
 from tg import session
 from tg.controllers.restcontroller import RestController
 from tg.decorators import expose
 
+from intranet.controllers.session_obj.casting import as_int, as_dict
+
 LOG = logging.getLogger(__name__)
 
 
-as_bool = lambda x : unicode(x).lower() in ("true", "yes", "on", "1")
-as_int = lambda x: int(x)
-as_unicode = lambda x: x
-as_dict = lambda cast_mapping, kwargs: {k: cast_mapping[k](v) for k, v in kwargs.iteritems()}
-
-
 class LayoutController(RestController):
+    """
+    Memorize the position of the left frame.
+
+    .. versionadded:: 1.4.0
+    """
     CONFIG = dict(
         north__size="auto",
         north__closable=False,

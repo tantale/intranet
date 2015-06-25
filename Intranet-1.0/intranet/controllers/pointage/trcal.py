@@ -6,12 +6,6 @@
 """
 import calendar
 import datetime
-from intranet.accessors.cal_event import CalEventAccessor
-from intranet.accessors.order import OrderAccessor
-from intranet.model.pointage.cal_event import CalEvent
-from intranet.model.pointage.employee import Employee
-from intranet.model.pointage.order import Order
-from intranet.validators.iso_date_converter import IsoDatetimeConverter
 import json
 import logging
 
@@ -20,10 +14,19 @@ import pylons
 from sqlalchemy.sql.expression import or_, and_, desc
 from tg.controllers.restcontroller import RestController
 from tg.controllers.util import redirect
-from tg.decorators import with_trailing_slash, expose, validate, \
-    without_trailing_slash
-from tg.flash import flash
+from tg.decorators import with_trailing_slash, expose, validate, without_trailing_slash
 
+from tg.flash import flash
+from intranet.controllers.session_obj.curr_user import CurrUserController
+
+from intranet.controllers.session_obj.full_calendar import FullCalendarController
+from intranet.controllers.session_obj.layout import LayoutController
+from intranet.accessors.cal_event import CalEventAccessor
+from intranet.accessors.order import OrderAccessor
+from intranet.model.pointage.cal_event import CalEvent
+from intranet.model.pointage.employee import Employee
+from intranet.model.pointage.order import Order
+from intranet.validators.iso_date_converter import IsoDatetimeConverter
 
 LOG = logging.getLogger(__name__)
 
@@ -93,7 +96,15 @@ def get_ctrl_status(duration_total, worked_hours):
 class CalendarController(RestController):
     """
     Calendar controller.
+
+    .. versionchanged:: 1.4.0
+        Add layout controller to memorize the position of the left frame.
+        Add full_calendar controller to memorize the date and selected view.
+        Add curr_user controller to memorize the current user.
     """
+    layout = LayoutController("trcal")
+    full_calendar = FullCalendarController("trcal")
+    curr_user = CurrUserController("pointage")
 
     def __init__(self, main_menu):
         self.main_menu = main_menu
@@ -242,18 +253,27 @@ class CalendarController(RestController):
                                                    order_by_cond)
 
         # -- current employee, if any
+        employee_uid = int(employee_uid) if employee_uid else 0
         if employee_uid:
             employee = accessor.get_employee(employee_uid)
             if employee not in employee_list:
                 employee = None
                 err_msg = (u"Aucun employée n'est en activité.")
                 LOG.warning(err_msg)
+                self.curr_user.put(uid=0)
             else:
                 err_msg = (u"Employé {name} sélectionné."
                            .format(name=employee.employee_name))
                 LOG.info(err_msg)
+                self.curr_user.put(uid=employee.uid)
         elif len(employee_list):
-            employee = employee_list[0]
+            curr_uid = self.curr_user.get_all()["uid"]
+            for employee in employee_list:
+                if employee.uid == curr_uid:
+                    break
+            else:
+                employee = employee_list[0]
+                self.curr_user.put(uid=employee.uid)
             err_msg = (u"Employé {name} trouvé."
                        .format(name=employee.employee_name))
             LOG.info(err_msg)
@@ -261,6 +281,7 @@ class CalendarController(RestController):
             employee = None
             err_msg = (u"Aucun employée n'est en activité.")
             LOG.warning(err_msg)
+            self.curr_user.put(uid=0)
 
         return dict(cal_start=cal_start,
                     cal_end=cal_end,
@@ -268,16 +289,16 @@ class CalendarController(RestController):
                     employee=employee,
                     employee_list=employee_list)
 
+    # noinspection PyArgumentList
     @with_trailing_slash
     @expose('json')
     @expose('intranet.templates.pointage.trcal.get_all')
-    def get_all(self, cal_start, cal_end, cal_curr, employee_uid=None):
+    def get_all(self, cal_start, cal_end, employee_uid=None):
         """
         Display all employees for the given time interval.
 
         GET /admin/trcal/get_all.json?cal_start=1388530800&
                                       cal_end=1391209200&
-                                      cal_curr=1390655265
 
         :param cal_start: start date/time of the calendar interval (timestamps)
 
@@ -290,7 +311,6 @@ class CalendarController(RestController):
         LOG.info("get_all")
         LOG.debug("- cal_start:    {!r}".format(cal_start))
         LOG.debug("- cal_end:      {!r}".format(cal_end))
-        LOG.debug("- cal_curr:     {!r}".format(cal_curr))
         LOG.debug("- employee_uid: {!r}".format(employee_uid))
 
         accessor = CalEventAccessor()
@@ -311,18 +331,27 @@ class CalendarController(RestController):
                                                    order_by_cond)
 
         # -- current employee, if any
+        employee_uid = int(employee_uid) if employee_uid else 0
         if employee_uid:
             employee = accessor.get_employee(employee_uid)
             if employee not in employee_list:
                 employee = None
                 err_msg = (u"Aucun employée n'est en activité.")
                 LOG.warning(err_msg)
+                self.curr_user.put(uid=0)
             else:
                 err_msg = (u"Employé {name} sélectionné."
                            .format(name=employee.employee_name))
                 LOG.info(err_msg)
+                self.curr_user.put(uid=employee.uid)
         elif len(employee_list):
-            employee = employee_list[0]
+            curr_uid = self.curr_user.get_all()["uid"]
+            for employee in employee_list:
+                if employee.uid == curr_uid:
+                    break
+            else:
+                employee = employee_list[0]
+                self.curr_user.put(uid=employee.uid)
             err_msg = (u"Employé {name} trouvé."
                        .format(name=employee.employee_name))
             LOG.info(err_msg)
@@ -330,10 +359,10 @@ class CalendarController(RestController):
             employee = None
             err_msg = (u"Aucun employée n'est en activité.")
             LOG.warning(err_msg)
+            self.curr_user.put(uid=0)
 
         return dict(cal_start=cal_start,
                     cal_end=cal_end,
-                    cal_curr=cal_curr,
                     employee=employee,
                     employee_list=employee_list)
 

@@ -4,21 +4,22 @@
 :date: 2013-07-28
 :author: Laurent LAPORTE <sandlol2009@gmail.com>
 """
+import logging
+
 from formencode.validators import NotEmpty, Number
-from intranet.accessors import DuplicateFoundError
-from intranet.accessors.employee import EmployeeAccessor
-from intranet.controllers.pointage.layout import LayoutController
-from intranet.model.pointage.employee import Employee
-from intranet.validators.date_interval import check_date_interval
-from intranet.validators.iso_date_converter import IsoDateConverter
 from tg.controllers.restcontroller import RestController
 from tg.controllers.util import redirect
 from tg.decorators import with_trailing_slash, expose, validate, \
     without_trailing_slash
 from tg.flash import flash
-import logging
 import pylons
 
+from intranet.accessors import DuplicateFoundError
+from intranet.accessors.employee import EmployeeAccessor
+from intranet.controllers.session_obj.layout import LayoutController
+from intranet.model.pointage.employee import Employee
+from intranet.validators.date_interval import check_date_interval
+from intranet.validators.iso_date_converter import IsoDateConverter
 
 LOG = logging.getLogger(__name__)
 
@@ -26,8 +27,11 @@ LOG = logging.getLogger(__name__)
 class EmployeeController(RestController):
     """
     Create / Modify / Remove Employees
+
+    .. versionchanged:: 1.4.0
+        Add layout controller to memorize the position of the left frame.
     """
-    layout = LayoutController(__name__)
+    layout = LayoutController("employee")
 
     def __init__(self, main_menu):
         self.main_menu = main_menu

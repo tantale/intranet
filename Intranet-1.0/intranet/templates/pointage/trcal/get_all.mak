@@ -22,7 +22,7 @@ event_drop_url_json = json.dumps(event_drop_url)
 event_resize_url = tg.url('./event_resize')
 event_resize_url_json = json.dumps(event_resize_url)
 
-cal_curr_json = json.dumps(cal_curr)
+## cal_curr_json = json.dumps(cal_curr)
 %>\
 <script type='text/javascript'>
 	"use strict";
@@ -237,102 +237,42 @@ cal_curr_json = json.dumps(cal_curr)
 			title: title
 		}).dialog("open");
 	}
-	
-	var curr_date = new Date(parseInt(${cal_curr_json|n}, 10) * 1000);
-	
-	$('#calendar').fullCalendar(
-			{
-				year : curr_date.getFullYear(),
-				month : curr_date.getMonth(),
-				day : curr_date.getDay(),
-				theme : true,
-				header : {
-					left : 'month,agendaWeek,agendaDay',
-					center : 'title',
-					right : 'today prev,next'
-				},
-				editable : true,
-				eventStartEditable : true,
-				eventDurationEditable : true,
-				firstDay : 1, // Monday
-				firstHour : 8, // 8h
-				weekends : true, // 7 days
-				ignoreTimezone: false,
 
-				allDayText : 'Toute la journ\u00e9e',
-				axisFormat : 'H:mm',
-				timeFormat : {
-					agenda : 'H:mm{ - H:mm}',
-					'' : 'H(:mm)'
-				},
-				columnFormat : {
-					month : 'ddd',
-					week : 'ddd d/M',
-					day : 'dddd d/M'
-				},
-				titleFormat : {
-					month : 'MMMM yyyy',
-					week : "d[ MMM][ yyyy]{ '&#8212;' d MMM yyyy}",
-					day : 'dddd d MMM yyyy'
-				},
-				monthNames : [ 'Janvier', 'F\u00e9vrier', 'Mars', 'Avril',
-						'Mai', 'Juin', 'Juillet', 'Ao\u00fbt', 'Septembre',
-						'Octobre', 'Novembre', 'D\u00e9cembre' ],
-				monthNamesShort : [ 'Jan.', 'F\u00e9v.', 'Mar.', 'Avr.', 'Mai',
-						'Juin', 'Juil.', 'Ao\u00fbt', 'Sept.', 'Oct.', 'Nov.',
-						'D\u00e9c.' ],
-				dayNames : [ 'Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi',
-						'Vendredi', 'Samedi' ],
-				dayNamesShort : [ 'Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven',
-						'Sam' ],
-				buttonText : {
-					prev : "<span class='fc-text-arrow'>&lsaquo;</span>",
-					next : "<span class='fc-text-arrow'>&rsaquo;</span>",
-					prevYear : "<span class='fc-text-arrow'>&laquo;</span>",
-					nextYear : "<span class='fc-text-arrow'>&raquo;</span>",
-					today : 'Aujoud\u2019hui',
-					month : 'mois',
-					week : 'semaine',
-					day : 'jour'
-				},
-				droppable: true,
-			    eventDrop: on_event_drop,
-				drop: function(date, allDay) {
-					// 'this' is set to the <td> of the clicked day.
-					open_new_event_dialog(this, date, allDay);
-			    },
-				dayClick: function(date, allDay, jsEvent, view) {
-					// 'this' is set to the <td> of the clicked day.
-					open_new_event_dialog(this, date, allDay);
-			    },
-			    eventClick: function(event, jsEvent, view) {
-			    	// 'this' is set to the event's <div> element
-					open_edit_event_dialog(this, event, view);
-			    },
-			    eventResize: on_event_resize,
-				eventSources: [{
-					// http://arshaw.com/fullcalendar/docs/event_data/events_function/
-					events: on_events_load
-					}],
-				eventRender : on_event_render
-			});
+    jQuery.get("./full_calendar.json", function(data){
 
-	$('body').layout({
-		north__size : "auto",
-		north__closable : false,
-		north__resizable : false,
-		north__slidable : false,
-		north__spacing_open : 0,
-		north__spacing_closed : 0,
+        var prop = {
+            viewRender: function( view, element ) {
+                var currDate = $("#calendar").fullCalendar('getDate');
+                var ajaxData = {
+                    defaultView : view.name,
+                    date : currDate.getDate(),
+                    month : currDate.getMonth(),
+                    year : currDate.getFullYear()
+                };
+                console.debug("trcal.full_calendar put:", ajaxData);
+                jQuery.ajax("./full_calendar", { method : "put", data : ajaxData });
+            },
+            // Only accept <li/> elements
+            droppable: true,
+            dropAccept: "li",
+            drop: function(date, allDay) {
+                open_new_event_dialog(this, date, allDay);
+            },
+            eventDrop: on_event_drop,
+            dayClick: function(date, allDay, jsEvent, view) {
+                open_new_event_dialog(this, date, allDay);
+            },
+            eventClick: function(event, jsEvent, view) {
+                open_edit_event_dialog(this, event, view);
+            },
+            eventResize: on_event_resize,
+            eventSources: [{
+                // http://arshaw.com/fullcalendar/docs/event_data/events_function/
+                events: on_events_load
+                }],
+            eventRender : on_event_render
+        };
 
-		west__size : 260,
-		west__minSize : 230,
-		west__maxSize : 500,
-
-		center__onresize : function() {
-			$('#calendar').fullCalendar('render');
-		}
-	});
-	
-	$('#calendar').fullCalendar('render');
+        $('#calendar').fullCalendar($.extend(data, prop));
+    });
 </script>

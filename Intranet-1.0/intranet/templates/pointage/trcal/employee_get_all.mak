@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 ## cal_start=cal_start,
 ## cal_end=cal_end,
-## cal_curr=cal_curr,
+## cal_curr=cal_curr,  # @deprecated
 ## employee=employee,
 ## employee_list=employee_list
 <%
@@ -64,9 +64,8 @@ else:
 		</select>
 		<input type="hidden" name="cal_start" value="${cal_start}" />
 		<input type="hidden" name="cal_end" value="${cal_end}" />
-		<input type="hidden" name="cal_curr" value="${cal_curr}" />
 		<button id="employee_refresh__refresh" type="submit" class="refresh_button"
-			title="Mettre à jour le calendrier des pointages">Mettre à jour</button></td>
+			title="Mettre à jour le calendrier des pointages">Mettre à jour</button>
 	</p>
 </form>
 <div style="ui-helper-clearfix"></div>

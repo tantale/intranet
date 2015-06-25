@@ -15,7 +15,7 @@
                        placeholder="Mot-clef"
                        title="Saisir un mot-clef"/>
                 <input type="hidden" name="uid" value="${uid}"/>
-                <button type="submit" class="search_button"
+                <button type="submit" class="search_button_icon"
                         title="${_(u'Rechercher selon le mot-clef')}">${_(u"Rechercher")}
                 </button>
                 ${_(u"pour filtrer la liste des employés par leurs noms ou une partie de leurs noms.")}
