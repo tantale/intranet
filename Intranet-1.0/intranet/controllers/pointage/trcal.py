@@ -39,6 +39,7 @@ def add_months(start_date, months):
     return datetime.date(year, month, day)
 
 
+# noinspection PyComparisonWithNone
 def overlap_cond(ref_start, ref_end, field_start, field_end):
     """
     Construct a sqlalchemy's predicate to check if two date intervals overlap.
@@ -71,17 +72,17 @@ def get_ctrl_status(duration_total, worked_hours):
         status = "info"
         icon = "ui-icon-info"
     elif duration_total > worked_hours:
-        msg_fmt = u"Le pointage de la semaine dépasse le temps "\
-        u"de travail de {hours} h/sem. "\
-        u"il y a un excédant de {exceeding} h."
+        msg_fmt = u"Le pointage de la semaine dépasse le temps " \
+                  u"de travail de {hours} h/sem. " \
+                  u"il y a un excédant de {exceeding} h."
         message = msg_fmt.format(hours=worked_hours,
                                  exceeding=duration_total - worked_hours)
         status = "warning"
         icon = "ui-icon-alert"
     elif duration_total < worked_hours:
-        msg_fmt = u"Le pointage de la semaine n’atteint pas le temps "\
-        u"de travail de {hours} h/sem. "\
-        u"il y a un déficit de {missing} h."
+        msg_fmt = u"Le pointage de la semaine n’atteint pas le temps " \
+                  u"de travail de {hours} h/sem. " \
+                  u"il y a un déficit de {missing} h."
         message = msg_fmt.format(hours=worked_hours,
                                  missing=worked_hours - duration_total)
         status = "error"
@@ -109,6 +110,7 @@ class CalendarController(RestController):
     def __init__(self, main_menu):
         self.main_menu = main_menu
 
+    # noinspection PyArgumentList
     @without_trailing_slash
     @expose('intranet.templates.pointage.trcal.index')
     def index(self):
@@ -118,6 +120,7 @@ class CalendarController(RestController):
         LOG.info("CalendarController.index")
         return dict(main_menu=self.main_menu)
 
+    # noinspection PyArgumentList
     @with_trailing_slash
     @expose('json')
     @expose('intranet.templates.pointage.trcal.order_get_all')
@@ -176,6 +179,7 @@ class CalendarController(RestController):
         return dict(order_list=order_list, keyword=keyword,
                     active_index=active_index)
 
+    # noinspection PyArgumentList
     @with_trailing_slash
     @expose()
     def get_one(self,
@@ -210,6 +214,7 @@ class CalendarController(RestController):
             cal_event = cal_event_list[0]
         return json.dumps(cal_event.event_obj())
 
+    # noinspection PyArgumentList
     @with_trailing_slash
     @expose('json')
     @expose('intranet.templates.pointage.trcal.employee_get_all')
@@ -258,7 +263,7 @@ class CalendarController(RestController):
             employee = accessor.get_employee(employee_uid)
             if employee not in employee_list:
                 employee = None
-                err_msg = (u"Aucun employée n'est en activité.")
+                err_msg = u"Aucun employée n'est en activité."
                 LOG.warning(err_msg)
                 self.curr_user.put(uid=0)
             else:
@@ -279,7 +284,7 @@ class CalendarController(RestController):
             LOG.info(err_msg)
         else:
             employee = None
-            err_msg = (u"Aucun employée n'est en activité.")
+            err_msg = u"Aucun employée n'est en activité."
             LOG.warning(err_msg)
             self.curr_user.put(uid=0)
 
@@ -303,8 +308,6 @@ class CalendarController(RestController):
         :param cal_start: start date/time of the calendar interval (timestamps)
 
         :param cal_end: end date/time of the calendar interval (timestamps)
-
-        :param cal_curr: current date/time of the calendar (timestamps)
 
         :param employee_uid: Current employee uid's UID
         """
@@ -336,7 +339,7 @@ class CalendarController(RestController):
             employee = accessor.get_employee(employee_uid)
             if employee not in employee_list:
                 employee = None
-                err_msg = (u"Aucun employée n'est en activité.")
+                err_msg = u"Aucun employée n'est en activité."
                 LOG.warning(err_msg)
                 self.curr_user.put(uid=0)
             else:
@@ -357,7 +360,7 @@ class CalendarController(RestController):
             LOG.info(err_msg)
         else:
             employee = None
-            err_msg = (u"Aucun employée n'est en activité.")
+            err_msg = u"Aucun employée n'est en activité."
             LOG.warning(err_msg)
             self.curr_user.put(uid=0)
 
@@ -502,7 +505,7 @@ class CalendarController(RestController):
         form_errors = pylons.tmpl_context.form_errors  # @UndefinedVariable
         LOG.debug("form_errors: {}".format(form_errors))
         if form_errors:
-            err_msg = (u"Le formulaire comporte des champs invalides")
+            err_msg = u"Le formulaire comporte des champs invalides"
             flash(err_msg, status="error")
         employee = accessor.get_employee(employee_uid)
         order_phase = accessor.get_order_phase(order_phase_uid)
@@ -716,14 +719,12 @@ class CalendarController(RestController):
                 day_start = start_date + datetime.timedelta(days=week * 7 + day)  # @IgnorePep8
                 day_end = day_start + datetime.timedelta(days=1)
                 event_day_list = [event for event in cal_event_list
-                                  if ((event.event_start >= day_start and
-                                       event.event_start < day_end) or
-                                      (event.event_start <= day_start and
-                                       event.event_end > day_start))]
+                                  if ((day_start <= event.event_start < day_end) or
+                                      (event.event_start <= day_start < event.event_end))]
                 duration_sum = sum([get_event_duration(event)
                                     for event in event_day_list])
                 day_list.append(duration_sum)
-            
+
             # -- week_date converted in local time
             week_date = start_date + datetime.timedelta(days=week * 7) - tz_delta
             duration_total = sum(day_list)

@@ -144,17 +144,16 @@ import datetime
 	</p>
 </form>
 
-## <form id="order_plan" class="inline_form"
-## 	action="${tg.url('./{uid}/tasks'.format(uid=values['uid']))}"
-## 	method="get">
-## 	<p>
-## 		<button id="order_plan__display" type="submit" class="display_button"
-## 			title="${_(u'Planifier la commande {ref}').format(ref=values.get('order_ref'))}">${_(u"Planifier")}</button>
-## 	</p>
-## </form>
-## </div>
-##
-## <div id="order_tasks"></div>
+<form id="order_plan" class="inline_form"
+	action="${tg.url('./{uid}/tasks'.format(uid=values['uid']))}"
+	method="get">
+	<p>
+		<button id="order_plan__display" type="submit" class="display_button"
+			title="${_(u'Planifier la commande {ref}').format(ref=values.get('order_ref'))}">${_(u"Planifier")}</button>
+	</p>
+</form>
+</div>
+<div id="order_tasks"></div>
 
 <script type='text/javascript'><!--
 	"use strict";
@@ -241,14 +240,14 @@ import datetime
 	$('#order_chart_detail').ajaxForm({
 		target: '#order_content'
 	});
-##	$('#order_plan .display_button').button({
-##		text: true,
-##		icons: {
-##			primary : "ui-icon-calendar"
-##		}
-##	});
-##	$('#order_plan').ajaxForm({
-##		target: '#order_tasks'
-##	});
+	$('#order_plan .display_button').button({
+		text: true,
+		icons: {
+			primary : "ui-icon-calendar"
+		}
+	});
+	$('#order_plan').ajaxForm({
+		target: '#order_tasks'
+	});
 --></script>
 </div>

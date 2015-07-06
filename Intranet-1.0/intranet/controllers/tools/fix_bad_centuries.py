@@ -27,6 +27,7 @@ from intranet.validators.iso_date_converter import update_century
 LOG = logging.getLogger(__name__)
 
 
+# noinspection PyComparisonWithNone
 def century_cond(field_start, field_end):
     """
     Construct a sqlalchemy's predicate to check if a date interval contains
@@ -86,6 +87,7 @@ class FixBadCenturiesController(BaseController):
                                                      order_by_cond=order_by_cond)  # @IgnorePep8
         return cal_event_list
 
+    # noinspection PyArgumentList
     @with_trailing_slash
     @expose('intranet.templates.tools.find_bad_centuries')
     @expose('json')

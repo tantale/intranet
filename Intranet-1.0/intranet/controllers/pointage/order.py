@@ -15,9 +15,10 @@ from sqlalchemy.sql.expression import desc, and_
 from tg.controllers.restcontroller import RestController
 from tg.controllers.util import redirect
 from tg.decorators import with_trailing_slash, expose, validate, without_trailing_slash, request
-from tg.flash import flash
 
-from intranet.accessors import DuplicateFoundError
+from tg.flash import flash
+import sqlalchemy.exc
+
 from intranet.accessors.order import OrderAccessor
 from intranet.controllers.session_obj.layout import LayoutController
 from intranet.model.pointage.order import Order
@@ -70,6 +71,7 @@ class TasksController(RestController):
         # -- Prepare a list of tasks
         task_list = []
 
+        # noinspection PyPep8Naming
         Task = collections.namedtuple("Task", "display_name description position "
                                               "done_duration remain_duration total_duration min_duration max_duration")
 
@@ -93,15 +95,15 @@ class TasksController(RestController):
                 min_duration = None
                 max_duration = None
 
-            round = lambda x: None if x is None else int(x * 4) / 4.0
+            round4 = lambda x: None if x is None else int(x * 4) / 4.0
             task = Task(display_name=order_phase.label,
                         description=u"",
                         position=order_phase.position,
-                        done_duration=round(done_duration),
-                        remain_duration=round(remain_duration),
-                        total_duration=round(total_duration),
-                        min_duration=round(min_duration),
-                        max_duration=round(max_duration))
+                        done_duration=round4(done_duration),
+                        remain_duration=round4(remain_duration),
+                        total_duration=round4(total_duration),
+                        min_duration=round4(min_duration),
+                        max_duration=round4(max_duration))
             task_list.append(task)
         task_list.sort(key=lambda x: x.position)
         return dict(order=order, task_list=task_list, sample_count=len(sample_list))
@@ -137,6 +139,7 @@ class OrderController(RestController):
             cat_dict[order_cat.cat_group].append(order_cat)
         return cat_dict
 
+    # noinspection PyArgumentList
     @without_trailing_slash
     @expose('intranet.templates.pointage.order.index')
     def index(self, uid=None, keyword=None):
@@ -145,6 +148,7 @@ class OrderController(RestController):
         """
         return dict(main_menu=self.main_menu, uid=uid, keyword=keyword)
 
+    # noinspection PyArgumentList
     @without_trailing_slash
     @expose('json')
     def get_one(self, uid):
@@ -169,6 +173,7 @@ class OrderController(RestController):
         return dict(order=order,
                     order_cat_label=cat_label_dict.get(order.project_cat, self.MISSING_ORDER_CAT_LABEL))
 
+    # noinspection PyArgumentList
     @with_trailing_slash
     @expose('json')
     @expose('intranet.templates.pointage.order.get_all')
@@ -222,7 +227,7 @@ class OrderController(RestController):
         """
         form_errors = pylons.tmpl_context.form_errors  # @UndefinedVariable
         if form_errors:
-            err_msg = (u"Le formulaire comporte des champs invalides")
+            err_msg = u"Le formulaire comporte des champs invalides"
             flash(err_msg, status="error")
         cat_dict = self._get_cat_dict()
         values = dict(creation_date=datetime.date.today())
@@ -270,8 +275,8 @@ class OrderController(RestController):
                                            project_cat=project_cat,
                                            creation_date=creation_date,
                                            close_date=close_date)
-        except DuplicateFoundError:
-            msg_fmt = (u"La commande « {order_ref} » existe déjà.")
+        except sqlalchemy.exc.IntegrityError:
+            msg_fmt = u"La commande « {order_ref} » existe déjà."
             err_msg = msg_fmt.format(order_ref=order_ref)
             flash(err_msg, status="error")
             redirect('./new',
@@ -280,7 +285,7 @@ class OrderController(RestController):
                      creation_date=creation_date,
                      close_date=close_date)
         else:
-            msg_fmt = (u"La commande « {order_ref} » est créée.")
+            msg_fmt = u"La commande « {order_ref} » est créée."
             flash(msg_fmt.format(order_ref=order_ref), status="ok")
             return dict(action='post',
                         result='ok',
@@ -355,8 +360,8 @@ class OrderController(RestController):
                                   project_cat=project_cat,
                                   creation_date=creation_date,
                                   close_date=close_date)
-        except DuplicateFoundError:
-            msg_fmt = (u"La commande « {order_ref} » existe déjà.")
+        except sqlalchemy.exc.IntegrityError:
+            msg_fmt = u"La commande « {order_ref} » existe déjà."
             err_msg = msg_fmt.format(order_ref=order_ref)
             flash(err_msg, status="error")
             redirect('./{uid}/edit'.format(uid=uid),
@@ -365,7 +370,7 @@ class OrderController(RestController):
                      creation_date=creation_date,
                      close_date=close_date)
         else:
-            msg_fmt = (u"La commande « {order_ref} » est modifiée.")
+            msg_fmt = u"La commande « {order_ref} » est modifiée."
             flash(msg_fmt.format(order_ref=order_ref), status="ok")
             redirect('./{uid}/edit'.format(uid=uid))
 
@@ -409,6 +414,6 @@ class OrderController(RestController):
         """
         accessor = OrderAccessor()
         old_order = accessor.delete_order(uid)
-        msg_fmt = (u"La commande « {order_ref} » est supprimée.")
+        msg_fmt = u"La commande « {order_ref} » est supprimée."
         flash(msg_fmt.format(order_ref=old_order.order_ref), status="ok")
         return dict(order=None)

@@ -16,8 +16,9 @@ from tg.controllers.restcontroller import RestController
 from tg.controllers.util import redirect
 from tg.decorators import expose, with_trailing_slash, validate, without_trailing_slash
 from tg.flash import flash
+import sqlalchemy.exc
+from intranet.accessors import RecordNotFoundError
 
-from intranet.accessors import DuplicateFoundError, RecordNotFoundError
 from intranet.accessors.order import OrderAccessor
 from intranet.accessors.order_cat import OrderCatAccessor
 from intranet.model.pointage.order import Order
@@ -115,7 +116,7 @@ class OrderCatController(RestController):
                                       label=label,
                                       css_def=None,  # use 'css' instead
                                       css=kw)
-        except DuplicateFoundError:
+        except sqlalchemy.exc.IntegrityError:
             msg_fmt = _(u"Nom de la catégorie de commande en doublon ! "
                         u"Le nom « {code} » existe déjà.")
             err_msg = msg_fmt.format(code=code)
@@ -168,7 +169,7 @@ class OrderCatController(RestController):
             LOG.info(msg_fmt.format(uid=uid, field=field, value=value))
         try:
             accessor.update_order_cat(uid, **kwargs)
-        except DuplicateFoundError:
+        except sqlalchemy.exc.IntegrityError:
             assert field == "code"
             msg_fmt = _(u"Nom de catégorie en doublon ! "
                         u"Le nom « {code} » existe déjà.")

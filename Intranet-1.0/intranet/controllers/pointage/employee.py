@@ -13,8 +13,8 @@ from tg.decorators import with_trailing_slash, expose, validate, \
     without_trailing_slash
 from tg.flash import flash
 import pylons
+import sqlalchemy.exc
 
-from intranet.accessors import DuplicateFoundError
 from intranet.accessors.employee import EmployeeAccessor
 from intranet.controllers.session_obj.layout import LayoutController
 from intranet.model.pointage.employee import Employee
@@ -36,6 +36,7 @@ class EmployeeController(RestController):
     def __init__(self, main_menu):
         self.main_menu = main_menu
 
+    # noinspection PyArgumentList
     @without_trailing_slash
     @expose('intranet.templates.pointage.employee.index')
     def index(self, uid=None, keyword=None):
@@ -44,6 +45,7 @@ class EmployeeController(RestController):
         """
         return dict(main_menu=self.main_menu, uid=uid, keyword=keyword)
 
+    # noinspection PyArgumentList
     @without_trailing_slash
     @expose('json')
     def get_one(self, uid):
@@ -61,6 +63,7 @@ class EmployeeController(RestController):
         employee = accessor.get_employee(uid)
         return dict(employee=employee)
 
+    # noinspection PyArgumentList
     @with_trailing_slash
     @expose('json')
     @expose('intranet.templates.pointage.employee.get_all')
@@ -102,7 +105,7 @@ class EmployeeController(RestController):
         """
         form_errors = pylons.tmpl_context.form_errors  # @UndefinedVariable
         if form_errors:
-            err_msg = (u"Le formulaire comporte des champs invalides")
+            err_msg = u"Le formulaire comporte des champs invalides"
             flash(err_msg, status="error")
         return dict(values=kw, form_errors=form_errors)
 
@@ -113,7 +116,7 @@ class EmployeeController(RestController):
               error_handler=new)
     @expose()
     def post(self, employee_name, worked_hours, entry_date,
-                 exit_date=None, photo_path=None):
+             exit_date=None, photo_path=None):
         LOG.info("EmployeeController.post")
         LOG.debug("- employee_name: {!r}".format(employee_name))
         LOG.debug("- worked_hours:  {!r}".format(worked_hours))
@@ -133,11 +136,11 @@ class EmployeeController(RestController):
         try:
             accessor = EmployeeAccessor()
             accessor.insert_employee(employee_name=employee_name,
-                                              worked_hours=worked_hours,
-                                              entry_date=entry_date,
-                                              exit_date=exit_date,
-                                              photo_path=photo_path)
-        except DuplicateFoundError:
+                                     worked_hours=worked_hours,
+                                     entry_date=entry_date,
+                                     exit_date=exit_date,
+                                     photo_path=photo_path)
+        except sqlalchemy.exc.IntegrityError:
             msg_fmt = (u"Nom de l’employé en doublon ! "
                        u"Le nom « {employee_name} » existe déjà.")
             err_msg = msg_fmt.format(employee_name=employee_name)
@@ -217,8 +220,8 @@ class EmployeeController(RestController):
                                      entry_date=entry_date,
                                      exit_date=exit_date,
                                      photo_path=photo_path)
-        except DuplicateFoundError:
-            msg_fmt = (u"L'employé « {employee_name} » existe déjà.")
+        except sqlalchemy.exc.IntegrityError:
+            msg_fmt = u"L'employé « {employee_name} » existe déjà."
             err_msg = msg_fmt.format(employee_name=employee_name)
             flash(err_msg, status="error")
             redirect('./{uid}/edit'.format(uid=uid),
@@ -228,7 +231,7 @@ class EmployeeController(RestController):
                      exit_date=exit_date,
                      photo_path=photo_path)
         else:
-            msg_fmt = (u"L'employé « {employee_name} » est modifiée.")
+            msg_fmt = u"L'employé « {employee_name} » est modifiée."
             flash(msg_fmt.format(employee_name=employee_name), status="ok")
             redirect('./{uid}/edit'.format(uid=uid))
 

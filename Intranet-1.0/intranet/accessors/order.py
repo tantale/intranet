@@ -9,7 +9,7 @@ import datetime
 from sqlalchemy.exc import IntegrityError
 import transaction
 
-from intranet.accessors import BasicAccessor, DuplicateFoundError
+from intranet.accessors import BasicAccessor
 from intranet.accessors.order_cat import OrderCatAccessor
 from intranet.model.pointage.order import Order
 from intranet.model.pointage.order_phase import OrderPhase
@@ -56,20 +56,12 @@ class OrderAccessor(BasicAccessor):
                                            label=phase.label)
                                 for phase in actual_order.order_phase_list]
         new_order.order_phase_list.extend(new_order_phase_list)
-        try:
+        with transaction.manager:
             self.session.add(new_order)
-            transaction.commit()
-        except IntegrityError:
-            transaction.abort()
-            raise DuplicateFoundError(self.class_name, order_ref=new_order_ref)
-        except:
-            transaction.abort()
-            raise
-        else:
-            return dict(order_ref=new_order_ref,
-                        project_cat=new_project_cat,
-                        creation_date=new_creation_date,
-                        close_date=None)
+        return dict(order_ref=new_order_ref,
+                    project_cat=new_project_cat,
+                    creation_date=new_creation_date,
+                    close_date=None)
 
     def insert_order(self, **kwargs):
         order = self.record_class(**kwargs)
@@ -83,17 +75,9 @@ class OrderAccessor(BasicAccessor):
                                        label=label)
                             for position, label in enumerate(phases, 1)]
         order.order_phase_list.extend(order_phase_list)
-        try:
+        with transaction.manager:
             self.session.add(order)
-            transaction.commit()
-        except IntegrityError:
-            transaction.abort()
-            raise DuplicateFoundError(self.class_name, **kwargs)
-        except:
-            transaction.abort()
-            raise
-        else:
-            return kwargs
+        return kwargs
 
     def update_order(self, uid, **kwargs):
         return super(OrderAccessor, self)._update_record(uid, **kwargs)

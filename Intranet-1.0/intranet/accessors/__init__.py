@@ -6,10 +6,9 @@
 Database accessors
 """
 from intranet.model import DBSession
-from sqlalchemy.exc import IntegrityError
+import sqlalchemy.exc
 import transaction
 import logging
-
 
 LOG = logging.getLogger(__name__)
 
@@ -18,6 +17,7 @@ class RecordNotFoundError(StandardError):
     """
     Exception raised when a record is missing in the database. Wrong uid?...
     """
+
     def __init__(self, class_name, uid):
         msg_fmt = "Record #{uid} not found in {class_name} table!"
         err_msg = msg_fmt.format(class_name=class_name,
@@ -26,20 +26,7 @@ class RecordNotFoundError(StandardError):
         self.uid = uid
 
 
-class DuplicateFoundError(StandardError):
-    """
-    Exception raised when a attempt was made to create (or update)
-    a duplicate record.
-    """
-    def __init__(self, class_name, **attrs):
-        msg_fmt = "Can't create/update a {class_name} record: duplicate found!"
-        err_msg = msg_fmt.format(class_name=class_name)
-        super(DuplicateFoundError, self).__init__(err_msg)
-        self.attrs = attrs
-
-
 class BasicAccessor(object):
-
     def __init__(self, record_class, session=None):
         self.record_class = record_class
         self.class_name = self.record_class.__name__
@@ -56,60 +43,34 @@ class BasicAccessor(object):
         return record
 
     def _get_record_list(self, filter_cond=None, order_by_cond=None):
-        if filter_cond is None:
-            if order_by_cond is None:
-                return (self.session.query(self.record_class)
-                        .all())
+        query = self.session.query(self.record_class)
+        if filter_cond is not None:
+            if isinstance(filter_cond, (tuple, list)):
+                query = query.filter(*filter_cond)
             else:
-                return (self.session.query(self.record_class)
-                        .order_by(order_by_cond)
-                        .all())
-        else:
-            if order_by_cond is None:
-                return (self.session.query(self.record_class)
-                        .filter(filter_cond)
-                        .all())
+                query = query.filter(filter_cond)
+        if order_by_cond is not None:
+            if isinstance(order_by_cond, (tuple, list)):
+                query = query.order_by(*order_by_cond)
             else:
-                return (self.session.query(self.record_class)
-                        .filter(filter_cond)
-                        .order_by(order_by_cond)
-                        .all())
+                query = query.order_by(order_by_cond)
+        return query.all()
 
     def _insert_record(self, **kwargs):
         record = self.record_class(**kwargs)
-        try:
+        with transaction.manager:
             self.session.add(record)
-            transaction.commit()
-        except IntegrityError:
-            transaction.abort()
-            raise DuplicateFoundError(self.class_name, **kwargs)
-        except:
-            transaction.abort()
-            raise
-        else:
-            return record
+        return record
 
     def _update_record(self, uid, **kwargs):
-        record = self._get_record(uid)
-        try:
+        with transaction.manager:
+            record = self._get_record(uid)
             for key, value in kwargs.iteritems():
                 setattr(record, key, value)
-            transaction.commit()
-        except IntegrityError:
-            transaction.abort()
-            raise DuplicateFoundError(self.class_name, **kwargs)
-        except:
-            transaction.abort()
-            raise
-        else:
-            return record
+        return record
 
     def _delete_record(self, uid):
-        try:
-            old_record = self._get_record(uid)
+        old_record = self._get_record(uid)
+        with transaction.manager:
             self.session.delete(old_record)
-            transaction.commit()
-        except:
-            transaction.abort()
-            raise
         return old_record

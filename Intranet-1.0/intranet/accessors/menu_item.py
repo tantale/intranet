@@ -36,8 +36,8 @@ class MenuItemAccessor(BasicAccessor):
         MenuItem("Pointage", "Gestion des pointages des opérations", "ui-icon-clock",
                  target_page=tg.url('/admin/trcal/index.html')),
         # ADD: New feature: "planning"
-        # MenuItem("Planning", "Planning des événements", "ui-icon-calendar",
-        #          target_page=tg.url('/admin/planning/index.html')),
+        MenuItem("Planning", "Planning des événements", "ui-icon-calendar",
+                  target_page=tg.url('/admin/planning/index.html')),
         MenuItem("Statistiques", "Statistiques de pointages", "ui-icon-calculator",
                  target_page=tg.url('/admin/chart/index.html')),
         MenuSeparator(),

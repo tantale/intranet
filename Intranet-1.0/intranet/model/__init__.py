@@ -65,3 +65,6 @@ from intranet.model.pointage.order import Order
 from intranet.model.pointage.order_phase import OrderPhase
 from intranet.model.pointage.order_cat import OrderCat
 from intranet.model.pointage.cal_event import CalEvent
+
+from intranet.model.worked_hours.frequency import Frequency
+from intranet.model.worked_hours.week_day import WeekDay

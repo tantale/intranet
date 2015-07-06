@@ -115,13 +115,16 @@ class ChartController(RestController):
             criteria.append(Order.creation_date >= start_date)
         end_date = kwargs.get("end_date")
         if end_date:
+            # noinspection PyPep8
             criteria.append(or_(and_(Order.close_date != None, Order.close_date <= end_date),
                                 and_(Order.close_date == None, Order.creation_date <= end_date)))
         closed = kwargs.get("closed")
         if closed:
             if closed == "true":
+                # noinspection PyPep8
                 criteria.append(Order.close_date != None)
             else:
+                # noinspection PyPep8
                 criteria.append(Order.close_date == None)
 
         accessor = OrderAccessor()

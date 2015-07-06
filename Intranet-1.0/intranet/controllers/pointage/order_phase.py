@@ -21,6 +21,7 @@ class OrderPhaseController(RestController):
     Order phase controller.
     """
 
+    # noinspection PyArgumentList
     @with_trailing_slash
     @expose('json')
     def get_one(self, uid):
@@ -35,6 +36,7 @@ class OrderPhaseController(RestController):
         order_phase = accessor.get_order_phase(uid)
         return dict(order_phase=order_phase)
 
+    # noinspection PyArgumentList
     @with_trailing_slash
     @expose('json')
     @expose('intranet.templates.pointage.order_phase.get_all')
@@ -72,7 +74,7 @@ class OrderPhaseController(RestController):
         LOG.info("new")
         form_errors = pylons.tmpl_context.form_errors  # @UndefinedVariable
         if form_errors:
-            err_msg = (u"Le formulaire comporte des champs invalides")
+            err_msg = u"Le formulaire comporte des champs invalides"
             flash(err_msg, status="error")
         return dict(order_uid=order_uid, values=kw, errors=form_errors)
 
@@ -91,7 +93,7 @@ class OrderPhaseController(RestController):
         LOG.info("post")
         accessor = OrderPhaseAccessor()
         accessor.insert_order_phase(order_uid, label=label)
-        msg_fmt = (u"La phase de commande « {label} » est créée.")
+        msg_fmt = u"La phase de commande « {label} » est créée."
         flash(msg_fmt.format(label=label), status="ok")
         redirect('./get_all', order_uid=order_uid)
 
@@ -125,20 +127,20 @@ class OrderPhaseController(RestController):
               'value': u'Salut'}
         """
         if LOG.isEnabledFor(logging.INFO):
-            LOG.info((u"edit_in_place: {args!r}").format(args=kw))
+            LOG.info(u"edit_in_place: {args!r}".format(args=kw))
         label = kw['value']
         uid = int(kw['name'].rsplit('_', 1)[1])
         accessor = OrderPhaseAccessor()
         if label:
             if LOG.isEnabledFor(logging.INFO):
                 msf_fmt = u"Update OrderPhase #{uid}: label={label!r}..."
-                LOG.info((msf_fmt).format(uid=uid, label=label))
+                LOG.info(msf_fmt.format(uid=uid, label=label))
             accessor.update_order_phase(uid, label=label)
             return dict(status='updated', label=label)
         else:
             if LOG.isEnabledFor(logging.INFO):
                 msf_fmt = u"Delete OrderPhase #{uid}"
-                LOG.info((msf_fmt).format(uid=uid))
+                LOG.info(msf_fmt.format(uid=uid))
             old_order_phase = accessor.delete_order_phase(uid)
             return dict(status='deleted', label=old_order_phase.label)
 
@@ -159,7 +161,7 @@ class OrderPhaseController(RestController):
         """
         accessor = OrderPhaseAccessor()
         accessor.update_order_phase(uid, label=label)
-        msg_fmt = (u"La phase de commande « {label} » est modifiée.")
+        msg_fmt = u"La phase de commande « {label} » est modifiée."
         flash(msg_fmt.format(label=label), status="ok")
         redirect('./{uid}/edit'.format(uid=uid))
 
@@ -188,7 +190,7 @@ class OrderPhaseController(RestController):
         """
         accessor = OrderPhaseAccessor()
         old_order_phase = accessor.delete_order_phase(uid)
-        msg_fmt = (u"La phase de commande « {label} » est supprimée.")
+        msg_fmt = u"La phase de commande « {label} » est supprimée."
         flash(msg_fmt.format(label=old_order_phase.label), status="ok")
         return dict(order_phase=None)
 
@@ -198,7 +200,7 @@ class OrderPhaseController(RestController):
         Re-order a list of phases.
         """
         uid_list = map(int, uids.split(delim))
-        msg_fmt = (u"reorder: uids='{uids}', delim='{delim}'")
+        msg_fmt = u"reorder: uids='{uids}', delim='{delim}'"
         LOG.info(msg_fmt.format(uids=uids, delim=delim))
         accessor = OrderPhaseAccessor()
         accessor.reorder(uid_list)
