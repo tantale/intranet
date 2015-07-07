@@ -9,7 +9,7 @@ from intranet.model import DeclarativeBase
 
 class WeekHours(DeclarativeBase):
     """
-    WeekHour management.
+    WeekHours management.
     """
     __tablename__ = 'WeekHours'
     __table_args__ = (CheckConstraint("position > 0", name="position_check"),)  # tuple
