@@ -18,7 +18,7 @@ LOG = logging.getLogger(__name__)
 
 
 class TestWeekHoursAccessor(unittest.TestCase):
-    DEBUG = True
+    DEBUG = False
 
     @classmethod
     def setUpClass(cls):
