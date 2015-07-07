@@ -1,24 +1,25 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from sqlalchemy.schema import Column
+from sqlalchemy.schema import Column, CheckConstraint
 from sqlalchemy.types import Integer, SmallInteger, String
 
 from intranet.model import DeclarativeBase
 
 
-class WeekHour(DeclarativeBase):
+class WeekHours(DeclarativeBase):
     """
     WeekHour management.
     """
-    __tablename__ = 'WeekHour'
+    __tablename__ = 'WeekHours'
+    __table_args__ = (CheckConstraint("position > 0", name="position_check"),)  # tuple
 
     uid = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
-    label = Column(String(length=32), unique=True, nullable=False, index=True)
+    position = Column(SmallInteger, unique=True, index=True, nullable=False)  # no duplicates
+    label = Column(String(length=32), unique=True, nullable=False, index=True)  # no duplicates
     description = Column(String(length=200))
-    position = Column(SmallInteger, nullable=False)
 
-    def __init__(self, label, description, position):
+    def __init__(self, position, label, description):
         """
         Hours of the week.
 
@@ -26,27 +27,25 @@ class WeekHour(DeclarativeBase):
 
         .. code-block::
 
-            WeekHour(u"Open hours", u"Open hours of the company", 1)
+            WeekHour(1, u"Open hours", u"Open hours of the company")
+            WeekHour(2, u"Open hours (summer)", u"Open hours of the company in summer")
 
+        :type position: int
+        :param position: Relative position.
         :type label: unicode
         :param label: Display name of the day => used in selection.
         :type description: unicode
         :param description: Description of the day => used in tooltip.
-        :type position: int
-        :param position: Relative position: quotient > 0
         """
-        if position <= 0:
-            msg_fmt = "Invalid position value {position}: required position > 0"
-            raise ValueError(msg_fmt.format(position=position))
+        self.position = position
         self.label = label
         self.description = description
-        self.position = position
 
     def __repr__(self):
         repr_fmt = ("{self.__class__.__name__}("
+                    "{self.position!r}), "
                     "{self.label!r}, "
-                    "{self.description!r}, "
-                    "{self.position!r})")
+                    "{self.description!r}")
         return repr_fmt.format(self=self)
 
     def __lt__(self, other):
