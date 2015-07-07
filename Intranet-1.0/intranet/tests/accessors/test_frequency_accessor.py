@@ -11,7 +11,7 @@ from sqlalchemy.sql.expression import desc, asc
 from zope.sqlalchemy.datamanager import ZopeTransactionExtension
 
 from intranet.accessors import RecordNotFoundError
-from intranet.accessors.frequency import FrequencyAccessor
+from intranet.accessors.worked_hours.frequency import FrequencyAccessor
 from intranet.model import DeclarativeBase
 from intranet.model.worked_hours.frequency import Frequency
 
@@ -19,7 +19,7 @@ LOG = logging.getLogger(__name__)
 
 
 class TestFrequencyAccessor(unittest.TestCase):
-    DEBUG = True
+    DEBUG = False
 
     @classmethod
     def setUpClass(cls):
@@ -155,4 +155,3 @@ class TestFrequencyAccessor(unittest.TestCase):
         with self.assertRaises(sqlalchemy.exc.IntegrityError) as context:
             accessor.update_frequency(uid, modulo=5, quotient=2)
         LOG.debug(context.exception)
-

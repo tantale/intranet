@@ -1,17 +1,13 @@
 # -*- coding: utf-8 -*-
 """Setup the Intranet application"""
-from intranet import model
-from intranet.accessors.employee import EmployeeAccessor
-from intranet.accessors.order import OrderAccessor
-from intranet.accessors.order_phase import OrderPhaseAccessor
-from intranet.model.pointage.order_phase import OrderPhase
-from intranet.websetup.employee_list import get_employee_list
-from intranet.websetup.order_list import get_order_list
-from sqlalchemy.exc import IntegrityError
 import collections
 import logging
-import traceback
+
+from sqlalchemy.exc import IntegrityError
 import transaction
+
+from intranet import model
+from intranet.websetup.employee_list import get_employee_list
 
 LOG = logging.getLogger(__name__)
 

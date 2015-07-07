@@ -6,12 +6,14 @@
 Test case of 'intranet.accessors.event_interval' module.
 """
 from __future__ import print_function
-from intranet.accessors.event_interval import datetime_interval, \
-    find_first_event_interval, find_excluding_intervals, intersect_intervals
 import collections
 import datetime
 import pprint
 import unittest
+
+from intranet.accessors.pointage.event_interval import datetime_interval, \
+    find_first_event_interval, find_excluding_intervals, intersect_intervals
+
 
 
 #==============================================================================

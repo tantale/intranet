@@ -2,7 +2,8 @@
 """Error controller"""
 
 from tg import request, expose
-from intranet.accessors.menu_item import MenuItemAccessor
+
+from intranet.accessors.pointage.menu_item import MenuItemAccessor
 
 __all__ = ['ErrorController']
 

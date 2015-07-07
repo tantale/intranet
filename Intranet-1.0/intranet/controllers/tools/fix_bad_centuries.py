@@ -5,21 +5,27 @@
 :author: Laurent LAPORTE <sandlol2009@gmail.com>
 """
 import datetime
-from intranet.accessors.cal_event import CalEventAccessor
-from intranet.accessors.employee import EmployeeAccessor
-from intranet.accessors.order import OrderAccessor
-from intranet.lib.base import BaseController
-from intranet.model.pointage.cal_event import CalEvent
-from intranet.model.pointage.employee import Employee
-from intranet.model.pointage.order import Order
 import logging
 
 from pylons import url
 from pylons.controllers.util import redirect
 from sqlalchemy.sql.expression import or_, and_
+
 from tg.decorators import expose, with_trailing_slash
+
 from tg.i18n import ugettext as _
+
+from intranet.accessors.pointage.cal_event import CalEventAccessor
+from intranet.accessors.pointage.employee import EmployeeAccessor
+from intranet.accessors.pointage.order import OrderAccessor
+from intranet.lib.base import BaseController
+from intranet.model.pointage.cal_event import CalEvent
+from intranet.model.pointage.employee import Employee
+from intranet.model.pointage.order import Order
 from intranet.validators.iso_date_converter import update_century
+
+
+
 
 
 # from pylons import request, response, session, tmpl_context as c, url

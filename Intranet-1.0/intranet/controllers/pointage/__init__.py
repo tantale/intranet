@@ -4,7 +4,7 @@
 :date: 2013-07-28
 :author: Laurent LAPORTE <sandlol2009@gmail.com>
 """
-from intranet.accessors.menu_item import MenuItemAccessor
+from intranet.accessors.pointage.menu_item import MenuItemAccessor
 from intranet.controllers.pointage.chart import ChartController
 from intranet.controllers.pointage.employee import EmployeeController
 from intranet.controllers.pointage.order import OrderController

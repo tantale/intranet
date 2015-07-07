@@ -4,19 +4,18 @@
 :date: 2013-09-30
 :author: Laurent LAPORTE <sandlol2009@gmail.com>
 """
-from intranet.accessors.cal_event import CalEventAccessor
-from intranet.model import DeclarativeBase
-from intranet.model.pointage.employee import Employee
-from intranet.model.pointage.order import Order
-from intranet.tests.model.test_cal_event_data import EMPLOYEE_LIST, ORDER_LIST
+import datetime
+import logging
+
 from sqlalchemy import create_engine
 from sqlalchemy.orm.session import sessionmaker
 from zope.sqlalchemy import ZopeTransactionExtension  # @UnresolvedImport
-import datetime
-import logging
 import sqlalchemy
 import transaction
 
+from intranet.accessors.pointage.cal_event import CalEventAccessor
+from intranet.model import DeclarativeBase
+from intranet.tests.model.test_cal_event_data import EMPLOYEE_LIST, ORDER_LIST
 
 LOG = logging.getLogger(__name__)
 

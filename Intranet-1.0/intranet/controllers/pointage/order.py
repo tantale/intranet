@@ -15,11 +15,10 @@ from sqlalchemy.sql.expression import desc, and_
 from tg.controllers.restcontroller import RestController
 from tg.controllers.util import redirect
 from tg.decorators import with_trailing_slash, expose, validate, without_trailing_slash, request
-
 from tg.flash import flash
 import sqlalchemy.exc
 
-from intranet.accessors.order import OrderAccessor
+from intranet.accessors.pointage.order import OrderAccessor
 from intranet.controllers.session_obj.layout import LayoutController
 from intranet.model.pointage.order import Order
 from intranet.model.pointage.order_phase import OrderPhase

@@ -14,7 +14,7 @@ from tg import session
 from tg.controllers.restcontroller import RestController
 from tg.decorators import expose
 
-from intranet.accessors.employee import EmployeeAccessor
+from intranet.accessors.pointage.employee import EmployeeAccessor
 from intranet.controllers.session_obj.casting import as_int, as_bool
 
 LOG = logging.getLogger(__name__)

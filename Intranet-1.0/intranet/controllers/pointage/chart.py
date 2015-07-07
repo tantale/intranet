@@ -10,10 +10,9 @@ import collections
 from sqlalchemy.sql.expression import and_, or_
 from tg.i18n import ugettext as _
 from tg.controllers.restcontroller import RestController
-
 from tg.decorators import expose, without_trailing_slash, with_trailing_slash
 
-from intranet.accessors.order import OrderAccessor
+from intranet.accessors.pointage.order import OrderAccessor
 from intranet.controllers.session_obj.layout import LayoutController
 from intranet.model.pointage.order import Order
 

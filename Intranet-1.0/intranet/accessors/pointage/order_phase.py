@@ -3,10 +3,11 @@
 :date: 2013-09-07
 :author: Laurent LAPORTE <sandlol2009@gmail.com>
 """
-from intranet.accessors import BasicAccessor, LOG
-from intranet.accessors.order import OrderAccessor
-from intranet.model.pointage.order_phase import OrderPhase
 import transaction
+
+from intranet.accessors import BasicAccessor, LOG
+from intranet.accessors.pointage.order import OrderAccessor
+from intranet.model.pointage.order_phase import OrderPhase
 
 
 class OrderPhaseAccessor(BasicAccessor):

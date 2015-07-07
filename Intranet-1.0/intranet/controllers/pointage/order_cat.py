@@ -15,12 +15,13 @@ import pylons
 from tg.controllers.restcontroller import RestController
 from tg.controllers.util import redirect
 from tg.decorators import expose, with_trailing_slash, validate, without_trailing_slash
+
 from tg.flash import flash
 import sqlalchemy.exc
-from intranet.accessors import RecordNotFoundError
 
-from intranet.accessors.order import OrderAccessor
-from intranet.accessors.order_cat import OrderCatAccessor
+from intranet.accessors import RecordNotFoundError
+from intranet.accessors.pointage.order import OrderAccessor
+from intranet.accessors.pointage.order_cat import OrderCatAccessor
 from intranet.model.pointage.order import Order
 
 LOG = logging.getLogger(__name__)

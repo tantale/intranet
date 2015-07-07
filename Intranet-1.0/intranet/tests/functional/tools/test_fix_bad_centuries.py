@@ -6,14 +6,15 @@
 Test case of 'intranet.controllers.tools.fix_bad_centuries' module.
 """
 import datetime
-from intranet.accessors.employee import EmployeeAccessor
-from intranet.model.pointage.employee import Employee
-from intranet.tests import *  # @UnusedWildImport
 import json
 import unittest
 
 from nose.tools import ok_, eq_
 
+from intranet.accessors.pointage.employee import EmployeeAccessor
+
+from intranet.model.pointage.employee import Employee
+from intranet.tests import *  # @UnusedWildImport
 from intranet.controllers.tools.fix_bad_centuries import fix_century
 
 

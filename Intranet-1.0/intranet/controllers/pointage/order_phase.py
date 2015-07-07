@@ -4,14 +4,16 @@
 :date: 2013-08-29
 :author: Laurent LAPORTE <sandlol2009@gmail.com>
 """
+import logging
+
 from formencode.validators import NotEmpty
-from intranet.accessors.order_phase import OrderPhaseAccessor
 from tg.controllers.restcontroller import RestController
 from tg.controllers.util import redirect
 from tg.decorators import with_trailing_slash, expose, validate
 from tg.flash import flash
-import logging
 import pylons
+
+from intranet.accessors.pointage.order_phase import OrderPhaseAccessor
 
 LOG = logging.getLogger(__name__)
 

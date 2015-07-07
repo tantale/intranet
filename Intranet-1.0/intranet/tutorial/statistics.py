@@ -14,9 +14,8 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 import sqlalchemy
 
-from intranet.accessors.order import OrderAccessor
+from intranet.accessors.pointage.order import OrderAccessor
 from intranet.model.pointage.order import Order
-
 
 LOG = logging.getLogger(__name__)
 

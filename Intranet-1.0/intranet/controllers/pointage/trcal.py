@@ -14,15 +14,16 @@ import pylons
 from sqlalchemy.sql.expression import or_, and_, desc
 from tg.controllers.restcontroller import RestController
 from tg.controllers.util import redirect
+
 from tg.decorators import with_trailing_slash, expose, validate, without_trailing_slash
 
 from tg.flash import flash
-from intranet.controllers.session_obj.curr_user import CurrUserController
 
+from intranet.controllers.session_obj.curr_user import CurrUserController
 from intranet.controllers.session_obj.full_calendar import FullCalendarController
 from intranet.controllers.session_obj.layout import LayoutController
-from intranet.accessors.cal_event import CalEventAccessor
-from intranet.accessors.order import OrderAccessor
+from intranet.accessors.pointage.cal_event import CalEventAccessor
+from intranet.accessors.pointage.order import OrderAccessor
 from intranet.model.pointage.cal_event import CalEvent
 from intranet.model.pointage.employee import Employee
 from intranet.model.pointage.order import Order

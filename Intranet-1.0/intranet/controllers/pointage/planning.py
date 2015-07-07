@@ -14,14 +14,13 @@ import json
 import logging
 import collections
 import datetime
+import time
 
 from tg.i18n import ugettext as _
 from tg.controllers.restcontroller import RestController
-
 from tg.decorators import expose, without_trailing_slash, with_trailing_slash, request
-import time
 
-from intranet.accessors.employee import EmployeeAccessor
+from intranet.accessors.pointage.employee import EmployeeAccessor
 from intranet.controllers.session_obj.full_calendar import FullCalendarController
 from intranet.controllers.session_obj.layout import LayoutController
 from intranet.controllers.session_obj.users_selection import UsersSelectionController

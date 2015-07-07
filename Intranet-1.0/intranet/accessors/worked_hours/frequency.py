@@ -77,7 +77,7 @@ class FrequencyAccessor(BasicAccessor):
         Search the records matching the given *filter* and sorted according to the given *order-by* condition.
 
         :param filter_cond: Matching predicate, can be a list of predicates.
-        :param order_by_cond: Order-by condition, canbe a list of conditions.
+        :param order_by_cond: Order-by condition, can be a list of conditions.
         :rtype: list[Frequency]
         :return: Ordered list of Frequency instances.
         """

@@ -15,7 +15,7 @@ from tg.flash import flash
 import pylons
 import sqlalchemy.exc
 
-from intranet.accessors.employee import EmployeeAccessor
+from intranet.accessors.pointage.employee import EmployeeAccessor
 from intranet.controllers.session_obj.layout import LayoutController
 from intranet.model.pointage.employee import Employee
 from intranet.validators.date_interval import check_date_interval

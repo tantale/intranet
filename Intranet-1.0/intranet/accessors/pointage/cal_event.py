@@ -3,18 +3,19 @@
 :date: 2013-09-19
 :author: Laurent LAPORTE <sandlol2009@gmail.com>
 """
-from intranet.accessors import BasicAccessor
-from intranet.accessors.employee import EmployeeAccessor
-from intranet.accessors.event_interval import find_first_event_interval,\
-    guess_event_duration
-from intranet.accessors.order import OrderAccessor
-from intranet.accessors.order_phase import OrderPhaseAccessor
-from intranet.model.pointage.cal_event import CalEvent
-from sqlalchemy.sql.expression import and_
 import datetime
 import logging
+
+from sqlalchemy.sql.expression import and_
 import transaction
 
+from intranet.accessors import BasicAccessor
+from intranet.accessors.pointage.employee import EmployeeAccessor
+from intranet.accessors.pointage.event_interval import find_first_event_interval,\
+    guess_event_duration
+from intranet.accessors.pointage.order import OrderAccessor
+from intranet.accessors.pointage.order_phase import OrderPhaseAccessor
+from intranet.model.pointage.cal_event import CalEvent
 
 LOG = logging.getLogger(__name__)
 

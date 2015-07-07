@@ -6,11 +6,10 @@
 """
 import datetime
 
-from sqlalchemy.exc import IntegrityError
 import transaction
 
 from intranet.accessors import BasicAccessor
-from intranet.accessors.order_cat import OrderCatAccessor
+from intranet.accessors.pointage.order_cat import OrderCatAccessor
 from intranet.model.pointage.order import Order
 from intranet.model.pointage.order_phase import OrderPhase
 
