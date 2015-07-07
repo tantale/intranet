@@ -1,24 +1,13 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-
-from sqlalchemy.schema import Column
-from sqlalchemy.types import Integer, SmallInteger, String
-
-from intranet.model import DeclarativeBase
+import datetime
 
 
-class WeekDay(DeclarativeBase):
+class WeekDay(object):
     """
     WeekDay management.
     """
-    __tablename__ = 'WeekDay'
-
-    uid = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
-    label = Column(String(length=32), unique=True, nullable=False, index=True)
-    description = Column(String(length=200))
-    position = Column(SmallInteger, nullable=False)
-
-    def __init__(self, label, description, position):
+    def __init__(self, weekday, label):
         """
         The day of the week, from monday to sunday.
 
@@ -26,43 +15,46 @@ class WeekDay(DeclarativeBase):
 
         .. code-block::
 
-            WeekDay(u"Monday", u"First day of the week", 1)
-            WeekDay(u"Tuesday", u"Second day of the week", 2)
-            WeekDay(u"Wednesday", u"Third day of the week", 3)
-            WeekDay(u"Thursday", u"Fourth day of the week", 4)
-            WeekDay(u"Friday", u"Fifth day of the week", 5)
-            WeekDay(u"Saturday", u"Sixth day of the week", 6)
-            WeekDay(u"Sunday", u"Last day of the week", 7)
+            WeekDay(0, u"Monday")
+            WeekDay(1, u"Tuesday")
+            WeekDay(2, u"Wednesday")
+            WeekDay(3, u"Thursday")
+            WeekDay(4, u"Friday")
+            WeekDay(5, u"Saturday")
+            WeekDay(6, u"Sunday")
 
+        :type weekday: int
+        :param weekday: Day in the week: 0 <= weekday <= 6
         :type label: unicode
         :param label: Display name of the day => used in selection.
-        :type description: unicode
-        :param description: Description of the day => used in tooltip.
-        :type position: int
-        :param position: Day position in the week: quotient > 0
         """
-        if position <= 0:
-            msg_fmt = "Invalid position value {position}: required position > 0"
-            raise ValueError(msg_fmt.format(position=position))
+        self.uid = weekday + 1  # > 0
+        self.weekday = weekday
         self.label = label
-        self.description = description
-        self.position = position
 
     def __repr__(self):
         repr_fmt = ("{self.__class__.__name__}("
-                    "{self.label!r}, "
-                    "{self.description!r}, "
-                    "{self.position!r})")
+                    "{self.weekday!r}, "
+                    "{self.label!r})")
         return repr_fmt.format(self=self)
 
+    def __hash__(self):
+        return hash(self.weekday)
+
+    def __eq__(self, other):
+        return self.weekday == other.weekday
+
+    def __ne__(self, other):
+        return self.weekday != other.weekday
+
     def __lt__(self, other):
-        return self.position < other.position
+        return self.weekday < other.weekday
 
     def __le__(self, other):
-        return self.position <= other.position
+        return self.weekday <= other.weekday
 
     def __gt__(self, other):
-        return self.position > other.position
+        return self.weekday > other.weekday
 
     def __ge__(self, other):
-        return self.position >= other.position
+        return self.weekday >= other.weekday
