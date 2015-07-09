@@ -8,15 +8,12 @@ Date: 2015-07-07
 Author: Laurent LAPORTE <tantale.solutions@gmail.com>
 """
 from __future__ import unicode_literals
-import sqlalchemy.exc
 
-import transaction
 from tg.i18n import ugettext as _
 
 from intranet.accessors import BasicAccessor
 from intranet.accessors.worked_hours.week_hours import WeekHoursAccessor
 from intranet.model.worked_hours.day_period import DayPeriod
-from intranet.model.worked_hours.week_hours import WeekHours
 
 try:
     _("")
