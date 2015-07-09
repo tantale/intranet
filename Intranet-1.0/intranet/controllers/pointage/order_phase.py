@@ -133,18 +133,7 @@ class OrderPhaseController(RestController):
         label = kw['value']
         uid = int(kw['name'].rsplit('_', 1)[1])
         accessor = OrderPhaseAccessor()
-        if label:
-            if LOG.isEnabledFor(logging.INFO):
-                msf_fmt = u"Update OrderPhase #{uid}: label={label!r}..."
-                LOG.info(msf_fmt.format(uid=uid, label=label))
-            accessor.update_order_phase(uid, label=label)
-            return dict(status='updated', label=label)
-        else:
-            if LOG.isEnabledFor(logging.INFO):
-                msf_fmt = u"Delete OrderPhase #{uid}"
-                LOG.info(msf_fmt.format(uid=uid))
-            old_order_phase = accessor.delete_order_phase(uid)
-            return dict(status='deleted', label=old_order_phase.label)
+        return accessor.edit_label_in_place(uid, label)
 
     @validate({'label': NotEmpty()}, error_handler=edit)
     @expose()
@@ -197,13 +186,12 @@ class OrderPhaseController(RestController):
         return dict(order_phase=None)
 
     @expose('json')
-    def reorder(self, uids, delim='|'):
+    def reorder(self, uids, delim=u'|'):
         """
         Re-order a list of phases.
         """
-        uid_list = map(int, uids.split(delim))
         msg_fmt = u"reorder: uids='{uids}', delim='{delim}'"
         LOG.info(msg_fmt.format(uids=uids, delim=delim))
         accessor = OrderPhaseAccessor()
-        accessor.reorder(uid_list)
+        accessor.reorder_position(uids, delim)
         return dict(status='success')
