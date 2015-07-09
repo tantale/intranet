@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from __future__ import unicode_literals
 import sqlalchemy.exc
 
 import transaction
@@ -21,9 +22,9 @@ class FrequencyAccessor(BasicAccessor):
         try:
             with transaction.manager:
                 self.session.add_all([
-                    Frequency(_(u"Apériodique"), _(u"Horaires valables toute l'année"), 0, 1),
-                    Frequency(_(u"Semaines impaires"), _(u"Horaires valables les semaines impaires"), 1, 2),
-                    Frequency(_(u"Semaines paires"), _(u"Horaires valables les semaines paires"), 0, 2)
+                    Frequency(_("Apériodique"), _("Horaires valables toute l'année"), 0, 1),
+                    Frequency(_("Semaines impaires"), _("Horaires valables les semaines impaires"), 1, 2),
+                    Frequency(_("Semaines paires"), _("Horaires valables les semaines paires"), 0, 2)
                 ])
         except sqlalchemy.exc.IntegrityError:
             pass  # setup already done.
