@@ -86,8 +86,16 @@ class BasicAccessor(object):
         """
         assert hasattr(self.record_class, "position")
         uid_list = map(int, uid_list.split(delim)) if isinstance(uid_list, unicode) else uid_list
+        filter_cond = self.record_class.uid.in_(uid_list)
+        # First avoid duplicate position => move all after last_position
         with transaction.manager:
-            filter_cond = self.record_class.uid.in_(uid_list)
+            record_list = self._get_record_list(filter_cond)
+            record_dict = {record.uid: record for record in record_list}
+            last_position = max(record.position for record in record_list) if record_list else 0
+            for position, uid in enumerate(uid_list, last_position + 1):
+                record_dict[uid].position = position
+        # Then move all in the right place
+        with transaction.manager:
             record_list = self._get_record_list(filter_cond)
             record_dict = {record.uid: record for record in record_list}
             for position, uid in enumerate(uid_list, 1):

@@ -9,6 +9,7 @@ Author: Laurent LAPORTE <tantale.solutions@gmail.com>
 """
 from __future__ import unicode_literals
 
+import transaction
 from tg.i18n import ugettext as _
 
 from intranet.accessors import BasicAccessor
@@ -64,14 +65,15 @@ class DayPeriodAccessor(BasicAccessor):
         :rtype: DayPeriod
         :return: The new DayPeriod.
         """
-        week_hours = self.week_hours_accessor.get_week_hours(week_hours_uid)
-        day_period_list = week_hours.day_period_list
-        last_position = max(record.position for record in day_period_list) if day_period_list else 0
         description = description or _("Période de la journée : {label}").format(label=label)
-        return super(DayPeriodAccessor, self)._insert_record(week_hours=week_hours,
-                                                             position=last_position + 1,
-                                                             label=label,
-                                                             description=description)
+        with transaction.manager:
+            week_hours = self.get_week_hours(week_hours_uid)
+            day_period_list = week_hours.day_period_list
+            last_position = max(record.position for record in day_period_list) if day_period_list else 0
+            day_period = DayPeriod(position=last_position + 1,
+                                   label=label,
+                                   description=description)
+            week_hours.day_period_list.append(day_period)
 
     def update_day_period(self, uid, **kwargs):
         """
