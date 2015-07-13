@@ -67,6 +67,6 @@ from intranet.model.pointage.order_cat import OrderCat
 from intranet.model.pointage.cal_event import CalEvent
 
 from intranet.model.worked_hours.frequency import Frequency
-from intranet.model.worked_hours.week_day import WeekDay  # not persisting in a table
+from intranet.model.worked_hours.week_day import WeekDay
 from intranet.model.worked_hours.week_hours import WeekHours
 from intranet.model.worked_hours.day_period import DayPeriod

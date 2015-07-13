@@ -1,12 +1,24 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+from sqlalchemy.schema import Column, CheckConstraint
+from sqlalchemy.types import Integer, SmallInteger, String
+from intranet.model import DeclarativeBase
 
-class WeekDay(object):
+
+class WeekDay(DeclarativeBase):
     """
     WeekDay management.
     """
-    def __init__(self, weekday, label):
+    __tablename__ = 'WeekDay'
+    __table_args__ = (CheckConstraint("0 <= weekday AND weekday <= 6", name="weekday_check"),)
+
+    uid = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
+    weekday = Column(SmallInteger, unique=True, index=True, nullable=False)  # without duplicates
+    label = Column(String(length=32), unique=True, nullable=False, index=True)  # without duplicates
+    description = Column(String(length=200))
+
+    def __init__(self, weekday, label, description=None):
         """
         The day of the week, from monday to sunday.
 
@@ -26,34 +38,16 @@ class WeekDay(object):
         :param weekday: Day in the week: 0 <= weekday <= 6
         :type label: unicode
         :param label: Display name of the day => used in selection.
+        :type description: unicode
+        :param description: Description of the day => used in tooltip.
         """
-        self.uid = weekday + 1  # > 0
         self.weekday = weekday
         self.label = label
+        self.description = description
 
     def __repr__(self):
         repr_fmt = ("{self.__class__.__name__}("
                     "{self.weekday!r}, "
-                    "{self.label!r})")
+                    "{self.label!r}, "
+                    "{self.description!r})")
         return repr_fmt.format(self=self)
-
-    def __hash__(self):
-        return hash(self.weekday)
-
-    def __eq__(self, other):
-        return self.weekday == other.weekday
-
-    def __ne__(self, other):
-        return self.weekday != other.weekday
-
-    def __lt__(self, other):
-        return self.weekday < other.weekday
-
-    def __le__(self, other):
-        return self.weekday <= other.weekday
-
-    def __gt__(self, other):
-        return self.weekday > other.weekday
-
-    def __ge__(self, other):
-        return self.weekday >= other.weekday
