@@ -129,3 +129,17 @@ class TestDayPeriodAccessor(unittest.TestCase):
         accessor.reorder_position(expected)
         curr = [record.uid for record in accessor.get_day_period_list(order_by_cond=DayPeriod.position)]
         self.assertEqual(curr, expected)
+
+    def test_cascade_delete(self):
+        accessor = DayPeriodAccessor(self.session)
+        accessor.insert_day_period(self.week_hours1.uid, "Morning")
+        accessor.insert_day_period(self.week_hours1.uid, "Afternoon")
+        accessor.insert_day_period(self.week_hours2.uid, "Morning")
+        accessor.insert_day_period(self.week_hours2.uid, "Afternoon")
+        accessor.insert_day_period(self.week_hours2.uid, "Night")
+
+        week_hours_accessor = WeekHoursAccessor(self.session)
+        week_hours_accessor.delete_week_hours(self.week_hours1.uid)
+
+        day_period_list = accessor.get_day_period_list()
+        self.assertEqual(day_period_list, week_hours_accessor.get_week_hours(2).day_period_list)
