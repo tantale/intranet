@@ -50,11 +50,11 @@ class CalEvent(DeclarativeBase):
     # -- relationships
     employee = relationship('Employee',
                             backref=backref('cal_event_list',
-                                            order_by='CalEvent.event_start',
+                                            order_by=event_start,
                                             cascade='all,delete-orphan'))
     order_phase = relationship('OrderPhase',
                                backref=backref('cal_event_list',
-                                               order_by='CalEvent.event_start',
+                                               order_by=event_start,
                                                cascade='all,delete-orphan'))  # @IgnorePep8
 
     def __init__(self, event_start, event_end, comment, editable=True):

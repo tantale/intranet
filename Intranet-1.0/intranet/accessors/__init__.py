@@ -5,10 +5,11 @@
 
 Database accessors
 """
-from intranet.model import DBSession
-import sqlalchemy.exc
-import transaction
 import logging
+
+import transaction
+
+from intranet.model import DBSession
 
 LOG = logging.getLogger(__name__)
 

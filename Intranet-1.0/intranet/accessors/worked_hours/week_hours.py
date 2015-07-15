@@ -24,7 +24,8 @@ class WeekHoursAccessor(BasicAccessor):
                     WeekHours(1, _(u"Horaires d’ouverture"), _(u"Horaires d’ouverture de l’entreprise"))
                 ])
         except sqlalchemy.exc.IntegrityError:
-            pass  # setup already done.
+            # setup already done.
+            transaction.abort()
 
     def delete_week_hours(self, uid):
         """

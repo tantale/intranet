@@ -11,8 +11,9 @@ from __future__ import unicode_literals
 
 import transaction
 from tg.i18n import ugettext as _
+import sqlalchemy.exc
 
-from intranet.accessors import BasicAccessor
+from intranet.accessors import BasicAccessor, LOG
 from intranet.accessors.worked_hours.week_hours import WeekHoursAccessor
 from intranet.model.worked_hours.day_period import DayPeriod
 
@@ -26,6 +27,18 @@ class DayPeriodAccessor(BasicAccessor):
     def __init__(self, session=None):
         super(DayPeriodAccessor, self).__init__(DayPeriod, session=session)
         self.week_hours_accessor = WeekHoursAccessor(session)
+
+    def setup(self):
+        try:
+            with transaction.manager:
+                open_hours = self.week_hours_accessor.get_week_hours(1)
+                open_hours.day_period_list.extend([
+                    DayPeriod(1, _(u"Matin"), _(u"Horaires du matin")),
+                    DayPeriod(2, _(u"Après-midi"), _(u"Horaires de l’après-midi")),
+                ])
+        except sqlalchemy.exc.IntegrityError:
+            # setup already done.
+            transaction.abort()  # abort() is required here, why?...
 
     def get_week_hours(self, week_hours_uid):
         return self.week_hours_accessor.get_week_hours(week_hours_uid)

@@ -31,7 +31,7 @@ class DayPeriod(DeclarativeBase):
 
     week_hours = relationship('WeekHours',
                               backref=backref('day_period_list',
-                                              order_by='DayPeriod.position',
+                                              order_by=position,
                                               cascade='all,delete-orphan'))
 
     def __init__(self, position, label, description):

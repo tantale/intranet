@@ -27,7 +27,8 @@ class FrequencyAccessor(BasicAccessor):
                     Frequency(_("Semaines paires"), _("Horaires valables les semaines paires"), 0, 2)
                 ])
         except sqlalchemy.exc.IntegrityError:
-            pass  # setup already done.
+            # setup already done.
+            transaction.abort()
 
     def delete_frequency(self, uid):
         """

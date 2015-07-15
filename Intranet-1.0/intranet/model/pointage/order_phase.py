@@ -23,7 +23,7 @@ class OrderPhase(DeclarativeBase):
     label = Column(String(length=50), nullable=False)
     order = relationship('Order',
                          backref=backref('order_phase_list',
-                                         order_by='OrderPhase.position',
+                                         order_by=position,
                                          cascade='all,delete-orphan'))
 
     def __init__(self, position, label):

@@ -31,7 +31,8 @@ class WeekDayAccessor(BasicAccessor):
                     WeekDay(6, _(u"Dimanche"), _(u"Le Dimanche"))
                 ])
         except sqlalchemy.exc.IntegrityError:
-            pass  # setup already done.
+            # setup already done.
+            transaction.abort()
 
     def delete_week_day(self, uid):
         """

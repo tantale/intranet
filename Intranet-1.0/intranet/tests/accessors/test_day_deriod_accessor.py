@@ -44,6 +44,20 @@ class TestDayPeriodAccessor(unittest.TestCase):
         self.week_hours1 = week_hours_list[0]
         self.week_hours2 = week_hours_list[1]
 
+    def test_setup(self):
+        accessor = DayPeriodAccessor(self.session)
+
+        # -- first setup
+        accessor.setup()
+        week_hours_accessor = WeekHoursAccessor(self.session)
+        open_hours = week_hours_accessor.get_week_hours(1)
+        self.assertEqual(len(open_hours.day_period_list), 2)
+
+        # -- next setup...
+        accessor.setup()  # must not raise
+        open_hours = week_hours_accessor.get_week_hours(1)
+        self.assertEqual(len(open_hours.day_period_list), 2)
+
     def test_get_day_period(self):
         accessor = DayPeriodAccessor(self.session)
         accessor.insert_day_period(self.week_hours1.uid, "Morning")
