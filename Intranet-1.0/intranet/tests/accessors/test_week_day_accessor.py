@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals, print_function
+from __future__ import unicode_literals
 import unittest
 import logging
+import datetime
 
 from sqlalchemy import create_engine
 import sqlalchemy.exc
@@ -39,6 +40,12 @@ class TestWeekDayAccessor(unittest.TestCase):
     def test_setup(self):
         accessor = WeekDayAccessor(self.session)
         accessor.setup()
+        week_days = {wd.weekday: wd for wd in accessor.get_week_day_list()}
+        for days in xrange(7):
+            date = datetime.date.today() + datetime.timedelta(days=days)
+            weekday = date.isoweekday()
+            LOG.debug("{weekday}: {label}".format(weekday=weekday, label=week_days[weekday].label))
+
         accessor.setup()  # on second setup, do nothing
 
     def test_delete_week_day(self):
@@ -82,7 +89,7 @@ class TestWeekDayAccessor(unittest.TestCase):
 
         # weekday <= 6
         with self.assertRaises(sqlalchemy.exc.IntegrityError) as context:
-            accessor.insert_week_day(7, "Tuesday", "On Tuesday")
+            accessor.insert_week_day(8, "Tuesday", "On Tuesday")
         LOG.debug(context.exception)
 
     def test_get_week_day_list(self):
@@ -142,5 +149,5 @@ class TestWeekDayAccessor(unittest.TestCase):
 
         # weekday <= 6
         with self.assertRaises(sqlalchemy.exc.IntegrityError) as context:
-            accessor.update_week_day(uid, weekday=7)
+            accessor.update_week_day(uid, weekday=8)
         LOG.debug(context.exception)

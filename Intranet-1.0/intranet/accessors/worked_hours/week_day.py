@@ -21,14 +21,15 @@ class WeekDayAccessor(BasicAccessor):
     def setup(self):
         try:
             with transaction.manager:
+                # ISO weekday: Monday is 1 and Sunday is 7
                 self.session.add_all([
-                    WeekDay(0, _(u"Lundi"), _(u"Le Lundi")),
-                    WeekDay(1, _(u"Mardi"), _(u"Le Mardi")),
-                    WeekDay(2, _(u"Mercredi"), _(u"Le Mercredi")),
-                    WeekDay(3, _(u"Jeudi"), _(u"Le Jeudi")),
-                    WeekDay(4, _(u"Vendredi"), _(u"Le Vendredi")),
-                    WeekDay(5, _(u"Samedi"), _(u"Le Samedi")),
-                    WeekDay(6, _(u"Dimanche"), _(u"Le Dimanche"))
+                    WeekDay(1, _(u"Lundi"), _(u"Le Lundi")),
+                    WeekDay(2, _(u"Mardi"), _(u"Le Mardi")),
+                    WeekDay(3, _(u"Mercredi"), _(u"Le Mercredi")),
+                    WeekDay(4, _(u"Jeudi"), _(u"Le Jeudi")),
+                    WeekDay(5, _(u"Vendredi"), _(u"Le Vendredi")),
+                    WeekDay(6, _(u"Samedi"), _(u"Le Samedi")),
+                    WeekDay(7, _(u"Dimanche"), _(u"Le Dimanche"))
                 ])
         except sqlalchemy.exc.IntegrityError:
             # setup already done.

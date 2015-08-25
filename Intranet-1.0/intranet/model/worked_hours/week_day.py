@@ -11,7 +11,8 @@ class WeekDay(DeclarativeBase):
     WeekDay management.
     """
     __tablename__ = 'WeekDay'
-    __table_args__ = (CheckConstraint("0 <= weekday AND weekday <= 6", name="weekday_check"),)
+    # ISO weekday: Monday is 1 and Sunday is 7
+    __table_args__ = (CheckConstraint("1 <= weekday AND weekday <= 7", name="weekday_check"),)
 
     uid = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
     weekday = Column(SmallInteger, unique=True, index=True, nullable=False)  # without duplicates
@@ -26,13 +27,13 @@ class WeekDay(DeclarativeBase):
 
         .. code-block::
 
-            WeekDay(0, u"Monday")
-            WeekDay(1, u"Tuesday")
-            WeekDay(2, u"Wednesday")
-            WeekDay(3, u"Thursday")
-            WeekDay(4, u"Friday")
-            WeekDay(5, u"Saturday")
-            WeekDay(6, u"Sunday")
+            WeekDay(1, u"Monday")
+            WeekDay(2, u"Tuesday")
+            WeekDay(3, u"Wednesday")
+            WeekDay(4, u"Thursday")
+            WeekDay(5, u"Friday")
+            WeekDay(6, u"Saturday")
+            WeekDay(7, u"Sunday")
 
         :type weekday: int
         :param weekday: Day in the week: 0 <= weekday <= 6
