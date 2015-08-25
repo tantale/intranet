@@ -65,12 +65,12 @@ class DayPeriodAccessor(BasicAccessor):
         """
         return self._get_record_list(filter_cond=filter_cond, order_by_cond=order_by_cond)
 
-    def insert_day_period(self, week_hours_uid, label, description=None):
+    def insert_day_period(self, week_hours, label, description=None):
         """
         Append a period of the day to the week hours' list of periods.
 
-        :type week_hours_uid: int
-        :param week_hours_uid: Week hour UID
+        :type week_hours: WeekHours
+        :param week_hours: Week hours
         :type label: unicode
         :param label: Display name of the day => used in selection.
         :type description: unicode
@@ -80,7 +80,8 @@ class DayPeriodAccessor(BasicAccessor):
         """
         description = description or _("Période de la journée : {label}").format(label=label)
         with transaction.manager:
-            week_hours = self.get_week_hours(week_hours_uid)
+            # -- re-attach the week_hours to the session
+            week_hours = self.get_week_hours(week_hours.uid)
             day_period_list = week_hours.day_period_list
             last_position = max(record.position for record in day_period_list) if day_period_list else 0
             day_period = DayPeriod(position=last_position + 1,

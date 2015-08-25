@@ -60,7 +60,7 @@ class TestDayPeriodAccessor(unittest.TestCase):
 
     def test_get_day_period(self):
         accessor = DayPeriodAccessor(self.session)
-        accessor.insert_day_period(self.week_hours1.uid, "Morning")
+        accessor.insert_day_period(self.week_hours1, "Morning")
 
         curr = accessor.get_day_period(1)
         self.assertEqual(curr.label, "Morning")
@@ -73,8 +73,8 @@ class TestDayPeriodAccessor(unittest.TestCase):
         accessor = DayPeriodAccessor(self.session)
         self.assertFalse(accessor.get_day_period_list())
 
-        accessor.insert_day_period(self.week_hours1.uid, "Morning")
-        accessor.insert_day_period(self.week_hours1.uid, "Afternoon")
+        accessor.insert_day_period(self.week_hours1, "Morning")
+        accessor.insert_day_period(self.week_hours1, "Afternoon")
         curr = accessor.get_day_period_list()
         self.assertEqual(curr[0].label, "Morning")
         self.assertEqual(curr[1].label, "Afternoon")
@@ -83,7 +83,7 @@ class TestDayPeriodAccessor(unittest.TestCase):
         self.assertEqual(len(curr), 1)
         self.assertEqual(curr[0].label, "Morning")
 
-        accessor.insert_day_period(self.week_hours1.uid, "Night")
+        accessor.insert_day_period(self.week_hours1, "Night")
         curr = accessor.get_day_period_list(order_by_cond=desc(DayPeriod.label))
         self.assertEqual(len(curr), 3)
         self.assertEqual(curr[0].label, "Night")
@@ -98,26 +98,26 @@ class TestDayPeriodAccessor(unittest.TestCase):
 
     def test_insert_day_period(self):
         accessor = DayPeriodAccessor(self.session)
-        accessor.insert_day_period(self.week_hours1.uid, "Morning")
-        accessor.insert_day_period(self.week_hours1.uid, "Afternoon")
-        accessor.insert_day_period(self.week_hours2.uid, "Morning")
-        accessor.insert_day_period(self.week_hours2.uid, "Afternoon")
-        accessor.insert_day_period(self.week_hours2.uid, "Night")
+        accessor.insert_day_period(self.week_hours1, "Morning")
+        accessor.insert_day_period(self.week_hours1, "Afternoon")
+        accessor.insert_day_period(self.week_hours2, "Morning")
+        accessor.insert_day_period(self.week_hours2, "Afternoon")
+        accessor.insert_day_period(self.week_hours2, "Night")
 
         # label is unique for this week_hours
         with self.assertRaises(sqlalchemy.exc.IntegrityError) as context:
-            accessor.insert_day_period(self.week_hours1.uid, "Morning")
+            accessor.insert_day_period(self.week_hours1, "Morning")
         LOG.debug(context.exception)
 
     def test_update_day_period(self):
         accessor = DayPeriodAccessor(self.session)
 
-        accessor.insert_day_period(self.week_hours1.uid, "Morning")
+        accessor.insert_day_period(self.week_hours1, "Morning")
         accessor.update_day_period(1, label="Afternoon")
         curr = accessor.get_day_period(1)
         self.assertEqual(curr.label, "Afternoon")
 
-        accessor.insert_day_period(self.week_hours1.uid, "Morning")
+        accessor.insert_day_period(self.week_hours1, "Morning")
         # label is unique for this week_hours
         with self.assertRaises(sqlalchemy.exc.IntegrityError) as context:
             accessor.update_day_period(1, label="Morning")
@@ -125,7 +125,7 @@ class TestDayPeriodAccessor(unittest.TestCase):
 
     def test_delete_day_period(self):
         accessor = DayPeriodAccessor(self.session)
-        accessor.insert_day_period(self.week_hours1.uid, "Morning")
+        accessor.insert_day_period(self.week_hours1, "Morning")
 
         accessor.delete_day_period(1)
         self.assertFalse(accessor.get_day_period_list())
@@ -136,9 +136,9 @@ class TestDayPeriodAccessor(unittest.TestCase):
 
     def test_reorder_position(self):
         accessor = DayPeriodAccessor(self.session)
-        accessor.insert_day_period(self.week_hours2.uid, "Night")
-        accessor.insert_day_period(self.week_hours2.uid, "Morning")
-        accessor.insert_day_period(self.week_hours2.uid, "Afternoon")
+        accessor.insert_day_period(self.week_hours2, "Night")
+        accessor.insert_day_period(self.week_hours2, "Morning")
+        accessor.insert_day_period(self.week_hours2, "Afternoon")
         expected = [2, 3, 1]
         accessor.reorder_position(expected)
         curr = [record.uid for record in accessor.get_day_period_list(order_by_cond=DayPeriod.position)]
@@ -146,11 +146,11 @@ class TestDayPeriodAccessor(unittest.TestCase):
 
     def test_cascade_delete(self):
         accessor = DayPeriodAccessor(self.session)
-        accessor.insert_day_period(self.week_hours1.uid, "Morning")
-        accessor.insert_day_period(self.week_hours1.uid, "Afternoon")
-        accessor.insert_day_period(self.week_hours2.uid, "Morning")
-        accessor.insert_day_period(self.week_hours2.uid, "Afternoon")
-        accessor.insert_day_period(self.week_hours2.uid, "Night")
+        accessor.insert_day_period(self.week_hours1, "Morning")
+        accessor.insert_day_period(self.week_hours1, "Afternoon")
+        accessor.insert_day_period(self.week_hours2, "Morning")
+        accessor.insert_day_period(self.week_hours2, "Afternoon")
+        accessor.insert_day_period(self.week_hours2, "Night")
 
         week_hours_accessor = WeekHoursAccessor(self.session)
         week_hours_accessor.delete_week_hours(self.week_hours1.uid)
