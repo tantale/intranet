@@ -6,6 +6,7 @@ import logging
 import datetime
 
 from sqlalchemy import create_engine
+
 from sqlalchemy.exc import IntegrityError
 
 from sqlalchemy.orm import sessionmaker
@@ -69,7 +70,7 @@ class TestHoursIntervalAccessor(unittest.TestCase):
         # -- first setup
         accessor.setup()
         week_hours = accessor.get_week_hours_list()[0]
-        table = accessor.get_hours_interval_table(week_hours)
+        table = accessor.get_hours_interval_table(week_hours.uid)
         display = lambda hi: unicode(hi) if hi else "--:-- / --:--"
         for row in table:
             LOG.debug("| " + " | ".join(map(display, row)) + " |")
@@ -81,15 +82,14 @@ class TestHoursIntervalAccessor(unittest.TestCase):
         accessor = HoursIntervalAccessor(self.session)
         accessor.setup()  # populate the DB
         hours_interval = random.choice(accessor.get_hours_interval_list())
-        week_hours_uid = hours_interval.week_hours_uid
         week_day_uid = hours_interval.week_day_uid
         day_period_uid = hours_interval.day_period_uid
 
-        current = accessor.get_hours_interval(week_hours_uid, week_day_uid, day_period_uid)
+        current = accessor.get_hours_interval(week_day_uid, day_period_uid)
         self.assertEqual(current, hours_interval)
 
         with self.assertRaises(RecordNotFoundError):
-            accessor.get_hours_interval(456, 788, 4564)
+            accessor.get_hours_interval(456, 788)
 
     def test_get_hours_interval_list(self):
         accessor = HoursIntervalAccessor(self.session)
@@ -101,7 +101,7 @@ class TestHoursIntervalAccessor(unittest.TestCase):
 
         start_hour = datetime.time(8, 0)
         end_hour = datetime.time(12, 30)
-        accessor.insert_hours_interval(week_hours, week_day, day_period, start_hour, end_hour)
+        accessor.insert_hours_interval(week_day.uid, day_period.uid, start_hour, end_hour)
 
         current_list = accessor.get_hours_interval_list()
         self.assertEqual(len(current_list), 1)
@@ -113,20 +113,19 @@ class TestHoursIntervalAccessor(unittest.TestCase):
         day_period = random.choice(week_hours.day_period_list)
         week_day = random.choice(accessor.get_week_day_list())
 
-        week_hours_uid = week_hours.uid
         week_day_uid = week_day.uid
         day_period_uid = day_period.uid
 
         start_hour = datetime.time(8, 0)
         end_hour = datetime.time(12, 30)
-        accessor.insert_hours_interval(week_hours, week_day, day_period, start_hour, end_hour)
+        accessor.insert_hours_interval(week_day_uid, day_period_uid, start_hour, end_hour)
 
-        current = accessor.get_hours_interval(week_hours_uid, week_day_uid, day_period_uid)
+        current = accessor.get_hours_interval(week_day_uid, day_period_uid)
         self.assertEqual(current.start_hour, start_hour)
         self.assertEqual(current.end_hour, end_hour)
 
         with self.assertRaises(IntegrityError):
-            accessor.insert_hours_interval(week_hours, week_day, day_period, start_hour, end_hour)
+            accessor.insert_hours_interval(week_day_uid, day_period_uid, start_hour, end_hour)
 
     def test_update_hours_interval(self):
         accessor = HoursIntervalAccessor(self.session)
@@ -135,20 +134,19 @@ class TestHoursIntervalAccessor(unittest.TestCase):
         day_period = random.choice(week_hours.day_period_list)
         week_day = random.choice(accessor.get_week_day_list())
 
-        week_hours_uid = week_hours.uid
         week_day_uid = week_day.uid
         day_period_uid = day_period.uid
 
         start_hour = datetime.time(8, 0)
         end_hour = datetime.time(12, 30)
-        accessor.insert_hours_interval(week_hours, week_day, day_period, start_hour, end_hour)
+        accessor.insert_hours_interval(week_day_uid, day_period_uid, start_hour, end_hour)
 
         start_hour = datetime.time(14, 0)
         end_hour = datetime.time(17, 45)
-        accessor.update_hours_interval(week_hours_uid, week_day_uid, day_period_uid,
+        accessor.update_hours_interval(week_day_uid, day_period_uid,
                                        start_hour=start_hour, end_hour=end_hour)
 
-        current = accessor.get_hours_interval(week_hours_uid, week_day_uid, day_period_uid)
+        current = accessor.get_hours_interval(week_day_uid, day_period_uid)
         self.assertEqual(current.start_hour, start_hour)
         self.assertEqual(current.end_hour, end_hour)
 
@@ -159,12 +157,11 @@ class TestHoursIntervalAccessor(unittest.TestCase):
         day_period = random.choice(week_hours.day_period_list)
         week_day = random.choice(accessor.get_week_day_list())
 
-        week_hours_uid = week_hours.uid
         week_day_uid = week_day.uid
         day_period_uid = day_period.uid
 
         start_hour = datetime.time(8, 0)
         end_hour = datetime.time(12, 30)
-        accessor.insert_hours_interval(week_hours, week_day, day_period, start_hour, end_hour)
+        accessor.insert_hours_interval(week_day_uid, day_period_uid, start_hour, end_hour)
 
-        accessor.delete_hours_interval(week_hours_uid, week_day_uid, day_period_uid)
+        accessor.delete_hours_interval(week_day_uid, day_period_uid)
