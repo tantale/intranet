@@ -52,6 +52,9 @@ class FrequencyAccessor(BasicAccessor):
         """
         return super(FrequencyAccessor, self)._get_record(uid)
 
+    def get_by_label(self, label):
+        self.session.query(Frequency).filter(Frequency.label == label).one()
+
     def insert_frequency(self, label, description, modulo, quotient, **kwargs):
         """
         Create and insert a new Frequency.

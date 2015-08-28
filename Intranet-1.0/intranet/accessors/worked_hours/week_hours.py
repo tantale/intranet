@@ -49,6 +49,9 @@ class WeekHoursAccessor(BasicAccessor):
         """
         return super(WeekHoursAccessor, self)._get_record(uid)
 
+    def get_by_label(self, label):
+        self.session.query(WeekHours).filter(WeekHours.label == label).one()
+
     def insert_week_hours(self, position, label, description, **kwargs):
         """
         Create and insert a new WeekHours.

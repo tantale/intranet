@@ -57,6 +57,9 @@ class WeekDayAccessor(BasicAccessor):
         """
         return super(WeekDayAccessor, self)._get_record(uid)
 
+    def get_by_label(self, label):
+        self.session.query(WeekDay).filter(WeekDay.label == label).one()
+
     def insert_week_day(self, weekday, label, description=None, **kwargs):
         """
         Create and insert a new WeekDay.
