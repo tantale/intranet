@@ -13,7 +13,7 @@ import transaction
 from tg.i18n import ugettext as _
 import sqlalchemy.exc
 
-from intranet.accessors import BasicAccessor, LOG
+from intranet.accessors import BasicAccessor
 from intranet.accessors.worked_hours.week_hours import WeekHoursAccessor
 from intranet.model.worked_hours.day_period import DayPeriod
 
@@ -28,11 +28,11 @@ class DayPeriodAccessor(BasicAccessor):
         super(DayPeriodAccessor, self).__init__(DayPeriod, session=session)
         self.week_hours_accessor = WeekHoursAccessor(session)
 
-    def setup(self):
+    def setup(self, week_hours_uid):
         try:
             with transaction.manager:
-                open_hours = self.week_hours_accessor.get_week_hours(1)
-                open_hours.day_period_list.extend([
+                week_hours = self.week_hours_accessor.get_week_hours(week_hours_uid)
+                week_hours.day_period_list.extend([
                     DayPeriod(1, _(u"Matin"), _(u"Horaires du matin")),
                     DayPeriod(2, _(u"Après-midi"), _(u"Horaires de l’après-midi")),
                 ])
@@ -65,12 +65,12 @@ class DayPeriodAccessor(BasicAccessor):
         """
         return self._get_record_list(filter_cond=filter_cond, order_by_cond=order_by_cond)
 
-    def insert_day_period(self, week_hours, label, description=None):
+    def insert_day_period(self, week_hours_uid, label, description=None):
         """
         Append a period of the day to the week hours' list of periods.
 
-        :type week_hours: WeekHours
-        :param week_hours: Week hours
+        :type week_hours_uid: int
+        :param week_hours_uid: Week hours UID
         :type label: unicode
         :param label: Display name of the day => used in selection.
         :type description: unicode
@@ -80,8 +80,7 @@ class DayPeriodAccessor(BasicAccessor):
         """
         description = description or _("Période de la journée : {label}").format(label=label)
         with transaction.manager:
-            # -- re-attach the week_hours to the session
-            week_hours = self.get_week_hours(week_hours.uid)
+            week_hours = self.get_week_hours(week_hours_uid)
             day_period_list = week_hours.day_period_list
             last_position = max(record.position for record in day_period_list) if day_period_list else 0
             day_period = DayPeriod(position=last_position + 1,

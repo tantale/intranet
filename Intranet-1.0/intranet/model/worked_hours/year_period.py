@@ -26,12 +26,12 @@ class YearPeriod(DeclarativeBase):
     start_date = Column(Date, unique=False, index=False, nullable=True)
     end_date = Column(Date, unique=False, index=False, nullable=True)
 
-    open_hours_uid = Column(Integer, ForeignKey('OpenHours.uid',
+    worked_hours_uid = Column(Integer, ForeignKey('WorkedHours.uid',
                                                 ondelete='CASCADE',
                                                 onupdate='CASCADE'),
                             nullable=False, index=True)
 
-    open_hours = relationship('OpenHours',
+    worked_hours = relationship('WorkedHours',
                               backref=backref('year_period_list',
                                               cascade='all,delete-orphan'))
 

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-import sqlalchemy.exc
 
+import sqlalchemy.exc
 import transaction
 from tg.i18n import ugettext as _
 
@@ -53,7 +53,7 @@ class FrequencyAccessor(BasicAccessor):
         return super(FrequencyAccessor, self)._get_record(uid)
 
     def get_by_label(self, label):
-        self.session.query(Frequency).filter(Frequency.label == label).one()
+        return self.session.query(Frequency).filter(Frequency.label == label).one()
 
     def insert_frequency(self, label, description, modulo, quotient, **kwargs):
         """

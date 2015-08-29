@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
-open_hours_accessor
-===================
+worked_hours_accessor
+=====================
 
 Date: 2015-08-28
 
@@ -14,7 +14,7 @@ from tg.i18n import ugettext as _
 
 from intranet.accessors import BasicAccessor
 from intranet.accessors.worked_hours.week_hours import WeekHoursAccessor
-from intranet.model.worked_hours.open_hours import OpenHours
+from intranet.model.worked_hours.worked_hours import WorkedHours
 
 try:
     _("")
@@ -22,9 +22,9 @@ except TypeError:
     _ = lambda x: x
 
 
-class OpenHoursAccessor(BasicAccessor):
+class WorkedHoursAccessor(BasicAccessor):
     def __init__(self, session=None):
-        super(OpenHoursAccessor, self).__init__(OpenHours, session=session)
+        super(WorkedHoursAccessor, self).__init__(WorkedHours, session=session)
         self.week_hours_accessor = WeekHoursAccessor(session)
 
     def setup(self):
@@ -33,32 +33,32 @@ class OpenHoursAccessor(BasicAccessor):
     def get_week_hours(self, week_hours_uid):
         return self.week_hours_accessor.get_week_hours(week_hours_uid)
 
-    def get_open_hours(self, uid):
+    def get_worked_hours(self, uid):
         """
-        Get a open_hours given its UID.
+        Get a worked_hours given its UID.
 
         :type uid: int or str or unicode
         :param uid: UID of the record.
-        :rtype: OpenHours
+        :rtype: WorkedHours
         :return: The OpenHours.
         """
-        return super(OpenHoursAccessor, self)._get_record(uid)
+        return super(WorkedHoursAccessor, self)._get_record(uid)
 
     def get_by_label(self, label):
-        self.session.query(OpenHours).filter(OpenHours.label == label).one()
+        return self.session.query(WorkedHours).filter(WorkedHours.label == label).one()
 
-    def get_open_hours_list(self, filter_cond=None, order_by_cond=None):
+    def get_worked_hours_list(self, filter_cond=None, order_by_cond=None):
         """
         Get a filtered the list of open hourss.
 
         :param filter_cond: SQL Alchemy filter predicate.
         :param order_by_cond: SQL Alchemy Order-by condition.
-        :rtype: list[OpenHours]
+        :rtype: list[WorkedHours]
         :return: list of open hourss.
         """
         return self._get_record_list(filter_cond=filter_cond, order_by_cond=order_by_cond)
 
-    def insert_open_hours(self, week_hours_uid, label, description):
+    def insert_worked_hours(self, week_hours_uid, label, description):
         """
         Append a hours of the open.
 
@@ -70,27 +70,27 @@ class OpenHoursAccessor(BasicAccessor):
         """
         with transaction.manager:
             week_hours = self.get_week_hours(week_hours_uid)
-            open_hours = OpenHours(label, description)
-            open_hours.week_hours = week_hours
-            self.session.add(open_hours)
+            worked_hours = WorkedHours(label, description)
+            worked_hours.week_hours = week_hours
+            self.session.add(worked_hours)
 
-    def update_open_hours(self, uid, **kwargs):
+    def update_worked_hours(self, uid, **kwargs):
         """
         Update the fields of a given record.
 
         :param kwargs: keywords arguments: "position", "label", "description".
-        :rtype: OpenHours
+        :rtype: WorkedHours
         :return: The updated OpenHours.
         """
-        return super(OpenHoursAccessor, self)._update_record(uid, **kwargs)
+        return super(WorkedHoursAccessor, self)._update_record(uid, **kwargs)
 
-    def delete_open_hours(self, uid):
+    def delete_worked_hours(self, uid):
         """
-        Delete the open_hours.
+        Delete the worked_hours.
 
         :type uid: int or str or unicode
         :param uid: UID of the record.
-        :rtype: OpenHours
+        :rtype: WorkedHours
         :return: The old OpenHours.
         """
-        return super(OpenHoursAccessor, self)._delete_record(uid)
+        return super(WorkedHoursAccessor, self)._delete_record(uid)

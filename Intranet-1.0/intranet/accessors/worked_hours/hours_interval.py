@@ -11,7 +11,6 @@ from __future__ import unicode_literals
 import datetime
 
 import transaction
-
 from tg.i18n import ugettext as _
 import sqlalchemy.exc
 
@@ -44,7 +43,7 @@ class HoursIntervalAccessor(BasicAccessor):
     def get_week_day_list(self, filter_cond=None, order_by_cond=None):
         return self.week_day_accessor.get_week_day_list(filter_cond, order_by_cond)
 
-    def setup(self):
+    def setup(self, week_hours_uid):
         # -- default hours intervals of the week (in local time)
         wh_dict = {1: [None,
                        (datetime.time(13, 30), datetime.time(17, 45))],
@@ -61,7 +60,7 @@ class HoursIntervalAccessor(BasicAccessor):
                    7: []}
         try:
             with transaction.manager:
-                week_hours = self.get_week_hours_list()[0]
+                week_hours = self.week_hours_accessor.get_week_hours(week_hours_uid)
                 week_days = {wd.weekday: wd for wd in self.get_week_day_list()}
                 day_periods = {dp.position: dp for dp in week_hours.day_period_list}
                 for weekday, periods in wh_dict.iteritems():

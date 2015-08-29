@@ -58,17 +58,19 @@ class TestHoursIntervalAccessor(unittest.TestCase):
 
         week_hours1, week_hours2 = wh_accessor.get_week_hours_list(order_by_cond=WeekHours.position)
         dp_accessor = DayPeriodAccessor(self.session)
-        dp_accessor.insert_day_period(week_hours1, "Night", "from 10pm to 6am")
-        dp_accessor.insert_day_period(week_hours1, "Morning", "from 6am to 2pm")
-        dp_accessor.insert_day_period(week_hours1, "Afternoon" "from 2pm to 10pm")
-        dp_accessor.insert_day_period(week_hours2, "Morning", "from 8am to 12am")
-        dp_accessor.insert_day_period(week_hours2, "Afternoon" "from 2pm to 6pm")
+        dp_accessor.insert_day_period(week_hours1.uid, "Night", "from 10pm to 6am")
+        dp_accessor.insert_day_period(week_hours1.uid, "Morning", "from 6am to 2pm")
+        dp_accessor.insert_day_period(week_hours1.uid, "Afternoon" "from 2pm to 10pm")
+        dp_accessor.insert_day_period(week_hours2.uid, "Morning", "from 8am to 12am")
+        dp_accessor.insert_day_period(week_hours2.uid, "Afternoon" "from 2pm to 6pm")
 
     def test_setup(self):
         accessor = HoursIntervalAccessor(self.session)
+        wh_accessor = WeekHoursAccessor(self.session)
+        week_hours = wh_accessor.get_by_label("Open hours")
 
         # -- first setup
-        accessor.setup()
+        accessor.setup(week_hours.uid)
         week_hours = accessor.get_week_hours_list()[0]
         table = accessor.get_hours_interval_table(week_hours.uid)
         display = lambda hi: unicode(hi) if hi else "--:-- / --:--"
@@ -76,11 +78,13 @@ class TestHoursIntervalAccessor(unittest.TestCase):
             LOG.debug("| " + " | ".join(map(display, row)) + " |")
 
         # -- next setup...
-        accessor.setup()  # must not raise
+        accessor.setup(week_hours.uid)  # must not raise
 
     def test_get_hours_interval(self):
         accessor = HoursIntervalAccessor(self.session)
-        accessor.setup()  # populate the DB
+        wh_accessor = WeekHoursAccessor(self.session)
+        week_hours = wh_accessor.get_by_label("Open hours")
+        accessor.setup(week_hours.uid)  # populate the DB
         hours_interval = random.choice(accessor.get_hours_interval_list())
         week_day_uid = hours_interval.week_day_uid
         day_period_uid = hours_interval.day_period_uid

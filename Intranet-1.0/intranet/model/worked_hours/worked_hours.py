@@ -3,7 +3,7 @@
 Open hours
 ===========
 
-Module: intranet.model.worked_hours.open_hours
+Module: intranet.model.worked_hours.worked_hours
 
 Created on: 2015-08-28
 """
@@ -16,7 +16,7 @@ from sqlalchemy.orm import relationship, backref
 from intranet.model import DeclarativeBase
 
 
-class OpenHours(DeclarativeBase):
+class WorkedHours(DeclarativeBase):
     """
     OpenHours management.
     """
@@ -32,7 +32,7 @@ class OpenHours(DeclarativeBase):
                             nullable=False, index=True)
 
     week_hours = relationship('WeekHours',
-                              backref=backref('open_hours_list',
+                              backref=backref('worked_hours_list',
                                               cascade='all,delete-orphan'))
 
     def __init__(self, label, description):

@@ -15,7 +15,7 @@ from tg.i18n import ugettext as _
 from intranet.accessors import BasicAccessor
 from intranet.accessors.worked_hours.frequency import FrequencyAccessor
 from intranet.accessors.worked_hours.week_hours import WeekHoursAccessor
-from intranet.accessors.worked_hours.open_hours import OpenHoursAccessor
+from intranet.accessors.worked_hours.worked_hours import WorkedHoursAccessor
 from intranet.model.worked_hours.year_period import YearPeriod
 
 try:
@@ -27,15 +27,15 @@ except TypeError:
 class YearPeriodAccessor(BasicAccessor):
     def __init__(self, session=None):
         super(YearPeriodAccessor, self).__init__(YearPeriod, session=session)
-        self.open_hours_accessor = OpenHoursAccessor(session)
+        self.worked_hours_accessor = WorkedHoursAccessor(session)
         self.week_hours_accessor = WeekHoursAccessor(session)
         self.frequency_accessor = FrequencyAccessor(session)
 
     def setup(self):
         pass
 
-    def get_open_hours(self, open_hours_uid):
-        return self.open_hours_accessor.get_open_hours(open_hours_uid)
+    def get_worked_hours(self, worked_hours_uid):
+        return self.worked_hours_accessor.get_worked_hours(worked_hours_uid)
 
     def get_week_hours(self, week_hours_uid):
         return self.week_hours_accessor.get_week_hours(week_hours_uid)
@@ -65,21 +65,21 @@ class YearPeriodAccessor(BasicAccessor):
         """
         return self._get_record_list(filter_cond=filter_cond, order_by_cond=order_by_cond)
 
-    def insert_day_period(self, open_hours_uid, week_hours_uid, frequency_uid, start_date, end_date):
+    def insert_day_period(self, worked_hours_uid, week_hours_uid, frequency_uid, start_date, end_date):
         """
         Append a period of the year.
 
-        :param open_hours_uid: UID of the open hours (parent).
+        :param worked_hours_uid: UID of the open hours (parent).
         :param week_hours_uid: UID of the week hours.
         :param frequency_uid: UID of the frequency to append.
         :rtype: YearPeriod
         """
         with transaction.manager:
-            open_hours = self.get_open_hours(open_hours_uid)
+            worked_hours = self.get_worked_hours(worked_hours_uid)
             week_hours = self.get_week_hours(week_hours_uid)
             frequency = self.get_frequency(frequency_uid)
             year_period = YearPeriod(start_date, end_date)
-            year_period.open_hours = open_hours
+            year_period.worked_hours = worked_hours
             year_period.week_hours = week_hours
             year_period.frequency = frequency
             self.session.add(year_period)

@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 import sqlalchemy.exc
-
 import transaction
 from tg.i18n import ugettext as _
 
@@ -50,7 +49,7 @@ class WeekHoursAccessor(BasicAccessor):
         return super(WeekHoursAccessor, self)._get_record(uid)
 
     def get_by_label(self, label):
-        self.session.query(WeekHours).filter(WeekHours.label == label).one()
+        return self.session.query(WeekHours).filter(WeekHours.label == label).one()
 
     def insert_week_hours(self, position, label, description, **kwargs):
         """
