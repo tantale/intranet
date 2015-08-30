@@ -7,6 +7,7 @@ from sqlalchemy import create_engine
 import sqlalchemy.exc
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.sql.expression import desc
+
 from zope.sqlalchemy.datamanager import ZopeTransactionExtension
 
 from intranet.accessors import RecordNotFoundError
@@ -38,8 +39,8 @@ class TestDayPeriodAccessor(unittest.TestCase):
         self.session = session_maker()
 
         accessor = WeekHoursAccessor(self.session)
-        accessor.insert_week_hours(1, "Open hours", "All year open hours")
-        accessor.insert_week_hours(2, "Summer open hours", "Open hours in summer")
+        accessor.insert_week_hours("Open hours", "All year open hours")
+        accessor.insert_week_hours("Summer open hours", "Open hours in summer")
         week_hours_list = accessor.get_week_hours_list()
         self.week_hours1 = week_hours_list[0]
         self.week_hours2 = week_hours_list[1]

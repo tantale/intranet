@@ -53,8 +53,8 @@ class TestHoursIntervalAccessor(unittest.TestCase):
         wd_accessor.insert_week_day(7, "Sunday")
 
         wh_accessor = WeekHoursAccessor(self.session)
-        wh_accessor.insert_week_hours(1, "Open hours", "All year open hours")
-        wh_accessor.insert_week_hours(2, "Summer open hours", "Open hours in summer")
+        wh_accessor.insert_week_hours("Open hours", "All year open hours")
+        wh_accessor.insert_week_hours("Summer open hours", "Open hours in summer")
 
         week_hours1, week_hours2 = wh_accessor.get_week_hours_list(order_by_cond=WeekHours.position)
         dp_accessor = DayPeriodAccessor(self.session)

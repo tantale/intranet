@@ -9,6 +9,7 @@ Author: Laurent LAPORTE <tantale.solutions@gmail.com>
 """
 from __future__ import unicode_literals
 
+from sqlalchemy.sql.functions import func
 import transaction
 from tg.i18n import ugettext as _
 
@@ -49,21 +50,19 @@ class WorkedHoursAccessor(BasicAccessor):
 
     def get_worked_hours_list(self, filter_cond=None, order_by_cond=None):
         """
-        Get a filtered the list of open hourss.
+        Get a filtered the list of worked hours.
 
         :param filter_cond: SQL Alchemy filter predicate.
         :param order_by_cond: SQL Alchemy Order-by condition.
         :rtype: list[WorkedHours]
-        :return: list of open hourss.
+        :return: list of worked hours.
         """
         return self._get_record_list(filter_cond=filter_cond, order_by_cond=order_by_cond)
 
-    def insert_worked_hours(self, position, week_hours_uid, label, description):
+    def insert_worked_hours(self, week_hours_uid, label, description):
         """
-        Append a hours of the open.
+        Append worked hours.
 
-        :type position: int
-        :param position: Relative position.
         :param week_hours_uid: UID of the week hours.
         :type label: unicode
         :param label: Display name => used in selection.
@@ -71,8 +70,9 @@ class WorkedHoursAccessor(BasicAccessor):
         :param description: Description => used in tooltip.
         """
         with transaction.manager:
+            last_position = self.session.query(func.max(WorkedHours.position)).scalar() or 0
             week_hours = self.get_week_hours(week_hours_uid)
-            worked_hours = WorkedHours(position, label, description)
+            worked_hours = WorkedHours(last_position + 1, label, description)
             worked_hours.week_hours = week_hours
             self.session.add(worked_hours)
 

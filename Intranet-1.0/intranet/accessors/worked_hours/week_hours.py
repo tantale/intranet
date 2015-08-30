@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import sqlalchemy.exc
+from sqlalchemy.sql.functions import func
 import transaction
 from tg.i18n import ugettext as _
 
@@ -51,12 +52,10 @@ class WeekHoursAccessor(BasicAccessor):
     def get_by_label(self, label):
         return self.session.query(WeekHours).filter(WeekHours.label == label).one()
 
-    def insert_week_hours(self, position, label, description, **kwargs):
+    def insert_week_hours(self, label, description):
         """
         Create and insert a new WeekHours.
 
-        :type position: int
-        :param position: Relative position.
         :type label: unicode
         :param label: Display name of the day => used in selection.
         :type description: unicode
@@ -65,10 +64,10 @@ class WeekHoursAccessor(BasicAccessor):
         :rtype: WeekHours
         :return: The new WeekHours.
         """
-        return super(WeekHoursAccessor, self)._insert_record(position=position,
-                                                             label=label,
-                                                             description=description,
-                                                             **kwargs)
+        with transaction.manager:
+            last_position = self.session.query(func.max(WeekHours.position)).scalar() or 0
+            week_hours = WeekHours(last_position + 1, label, description)
+            self.session.add(week_hours)
 
     def get_week_hours_list(self, filter_cond=None, order_by_cond=None):
         """

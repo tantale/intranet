@@ -43,7 +43,7 @@ class TestWeekHoursAccessor(unittest.TestCase):
 
     def test_delete_week_hours(self):
         accessor = WeekHoursAccessor(self.session)
-        accessor.insert_week_hours(1, "label1", "Description1")
+        accessor.insert_week_hours("label1", "Description1")
         accessor.delete_week_hours(1)
         with self.assertRaises(RecordNotFoundError) as context:
             accessor.delete_week_hours(123)
@@ -51,8 +51,8 @@ class TestWeekHoursAccessor(unittest.TestCase):
 
     def test_get_week_hours(self):
         accessor = WeekHoursAccessor(self.session)
-        accessor.insert_week_hours(1, "label1", "Description1")
-        accessor.insert_week_hours(2, "label2", "Description2")
+        accessor.insert_week_hours("label1", "Description1")
+        accessor.insert_week_hours("label2", "Description2")
         (r1, r2) = accessor.get_week_hours_list()
         week_hours = accessor.get_week_hours(r1.uid)
         self.assertEqual(week_hours, r1)
@@ -63,29 +63,19 @@ class TestWeekHoursAccessor(unittest.TestCase):
 
     def test_insert_week_hours(self):
         accessor = WeekHoursAccessor(self.session)
-        accessor.insert_week_hours(1, "label1", "Description1")
+        accessor.insert_week_hours("label1", "Description1")
 
         # label is unique
         with self.assertRaises(sqlalchemy.exc.IntegrityError) as context:
-            accessor.insert_week_hours(2, "label1", "Description2")
-        LOG.debug(context.exception)
-
-        # position is unique
-        with self.assertRaises(sqlalchemy.exc.IntegrityError) as context:
-            accessor.insert_week_hours(1, "label2", "Description2")
-        LOG.debug(context.exception)
-
-        # position > 0
-        with self.assertRaises(sqlalchemy.exc.IntegrityError) as context:
-            accessor.insert_week_hours(0, "label2", "Description2")
+            accessor.insert_week_hours("label1", "Description2")
         LOG.debug(context.exception)
 
     def test_get_week_hours_list(self):
         accessor = WeekHoursAccessor(self.session)
         self.assertFalse(accessor.get_week_hours_list())
 
-        accessor.insert_week_hours(1, "label1", "Description1")
-        accessor.insert_week_hours(2, "label2", "Description2")
+        accessor.insert_week_hours("label1", "Description1")
+        accessor.insert_week_hours("label2", "Description2")
         curr = accessor.get_week_hours_list()
         self.assertEqual(curr[0].label, "label1")
         self.assertEqual(curr[1].label, "label2")
@@ -94,7 +84,7 @@ class TestWeekHoursAccessor(unittest.TestCase):
         self.assertEqual(len(curr), 1)
         self.assertEqual(curr[0].label, "label2")
 
-        accessor.insert_week_hours(3, "label3", "Description3")
+        accessor.insert_week_hours("label3", "Description3")
         curr = accessor.get_week_hours_list(order_by_cond=desc(WeekHours.label))
         self.assertEqual(len(curr), 3)
         self.assertEqual(curr[0].label, "label3")
@@ -109,7 +99,7 @@ class TestWeekHoursAccessor(unittest.TestCase):
 
     def test_update_week_hours(self):
         accessor = WeekHoursAccessor(self.session)
-        accessor.insert_week_hours(1, "label1", "Description1")
+        accessor.insert_week_hours("label1", "Description1")
         uid = 1
 
         accessor.update_week_hours(uid, position=12, label="new label", description="new description")
@@ -118,19 +108,9 @@ class TestWeekHoursAccessor(unittest.TestCase):
         self.assertEqual(curr.label, "new label")
         self.assertEqual(curr.description, "new description")
 
-        accessor.insert_week_hours(2, "label2", "Description2")
+        accessor.insert_week_hours("label2", "Description2")
 
         # label is unique
         with self.assertRaises(sqlalchemy.exc.IntegrityError) as context:
             accessor.update_week_hours(uid, label="label2")
-        LOG.debug(context.exception)
-
-        # position is unique
-        with self.assertRaises(sqlalchemy.exc.IntegrityError) as context:
-            accessor.update_week_hours(uid, position=2)
-        LOG.debug(context.exception)
-
-        # position > 0
-        with self.assertRaises(sqlalchemy.exc.IntegrityError) as context:
-            accessor.update_week_hours(uid, position=0)
         LOG.debug(context.exception)
