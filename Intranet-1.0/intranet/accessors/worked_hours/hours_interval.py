@@ -61,7 +61,7 @@ class HoursIntervalAccessor(BasicAccessor):
         try:
             with transaction.manager:
                 week_hours = self.week_hours_accessor.get_week_hours(week_hours_uid)
-                week_days = {wd.weekday: wd for wd in self.get_week_day_list()}
+                week_days = {wd.iso_weekday: wd for wd in self.get_week_day_list()}
                 day_periods = {dp.position: dp for dp in week_hours.day_period_list}
                 for weekday, periods in wh_dict.iteritems():
                     for position, interval in enumerate(periods, 1):
@@ -103,7 +103,7 @@ class HoursIntervalAccessor(BasicAccessor):
                 indexed_intervals[(hours_interval.week_day_uid, hours_interval.day_period_uid)] = hours_interval
         return [[indexed_intervals.get((week_day.uid, day_period.uid))
                  for day_period in week_hours.day_period_list]
-                for week_day in self.get_week_day_list(order_by_cond=WeekDay.weekday)]
+                for week_day in self.get_week_day_list(order_by_cond=WeekDay.iso_weekday)]
 
     def insert_hours_interval(self, week_day_uid, day_period_uid, start_hour, end_hour):
         with transaction.manager:

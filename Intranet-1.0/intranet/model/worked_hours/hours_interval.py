@@ -38,7 +38,7 @@ class HoursInterval(DeclarativeBase):
                           nullable=False, index=True)
 
     week_day = relationship('WeekDay',
-                            backref=backref('hour_interval_list',
+                            backref=backref('hours_interval_list',
                                             cascade='all,delete-orphan'))
 
     day_period_uid = Column(Integer, ForeignKey('DayPeriod.uid',

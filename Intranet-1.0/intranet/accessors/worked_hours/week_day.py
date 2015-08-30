@@ -20,7 +20,7 @@ class WeekDayAccessor(BasicAccessor):
     def setup(self):
         try:
             with transaction.manager:
-                # ISO weekday: Monday is 1 and Sunday is 7
+                # ISO iso_weekday: Monday is 1 and Sunday is 7
                 self.session.add_all([
                     WeekDay(1, _(u"Lundi"), _(u"Le Lundi")),
                     WeekDay(2, _(u"Mardi"), _(u"Le Mardi")),
@@ -59,12 +59,12 @@ class WeekDayAccessor(BasicAccessor):
     def get_by_label(self, label):
         return self.session.query(WeekDay).filter(WeekDay.label == label).one()
 
-    def insert_week_day(self, weekday, label, description=None, **kwargs):
+    def insert_week_day(self, iso_weekday, label, description=None, **kwargs):
         """
         Create and insert a new WeekDay.
 
-        :type weekday: int
-        :param weekday: Relative weekday.
+        :type iso_weekday: int
+        :param iso_weekday: ISO iso_weekday: Monday is 1 and Sunday is 7.
         :type label: unicode
         :param label: Display name of the day => used in selection.
         :type description: unicode
@@ -73,7 +73,7 @@ class WeekDayAccessor(BasicAccessor):
         :rtype: WeekDay
         :return: The new WeekDay.
         """
-        return super(WeekDayAccessor, self)._insert_record(weekday=weekday,
+        return super(WeekDayAccessor, self)._insert_record(iso_weekday=iso_weekday,
                                                            label=label,
                                                            description=description,
                                                            **kwargs)

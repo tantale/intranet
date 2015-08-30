@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 
 from sqlalchemy.schema import Column, CheckConstraint
 from sqlalchemy.types import Integer, SmallInteger, String
+
 from intranet.model import DeclarativeBase
 
 
@@ -11,15 +12,15 @@ class WeekDay(DeclarativeBase):
     WeekDay management.
     """
     __tablename__ = 'WeekDay'
-    # ISO weekday: Monday is 1 and Sunday is 7
-    __table_args__ = (CheckConstraint("1 <= weekday AND weekday <= 7", name="weekday_check"),)
+    # ISO iso_weekday: Monday is 1 and Sunday is 7
+    __table_args__ = (CheckConstraint("1 <= iso_weekday AND iso_weekday <= 7", name="iso_weekday_check"),)
 
     uid = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
-    weekday = Column(SmallInteger, unique=True, index=True, nullable=False)  # without duplicates
+    iso_weekday = Column(SmallInteger, unique=True, index=True, nullable=False)  # without duplicates
     label = Column(String(length=32), unique=True, nullable=False, index=True)  # without duplicates
     description = Column(String(length=200))
 
-    def __init__(self, weekday, label, description=None):
+    def __init__(self, iso_weekday, label, description=None):
         """
         The day of the week, from monday to sunday.
 
@@ -35,20 +36,20 @@ class WeekDay(DeclarativeBase):
             WeekDay(6, u"Saturday")
             WeekDay(7, u"Sunday")
 
-        :type weekday: int
-        :param weekday: Day in the week: 0 <= weekday <= 6
+        :type iso_weekday: int
+        :param iso_weekday: ISO iso_weekday: Monday is 1 and Sunday is 7.
         :type label: unicode
         :param label: Display name of the day => used in selection.
         :type description: unicode
         :param description: Description of the day => used in tooltip.
         """
-        self.weekday = weekday
+        self.iso_weekday = iso_weekday
         self.label = label
         self.description = description
 
     def __repr__(self):
         repr_fmt = ("{self.__class__.__name__}("
-                    "{self.weekday!r}, "
+                    "{self.iso_weekday!r}, "
                     "{self.label!r}, "
                     "{self.description!r})")
         return repr_fmt.format(self=self)

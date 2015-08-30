@@ -23,8 +23,8 @@ class YearPeriod(DeclarativeBase):
     __tablename__ = 'YearPeriod'
 
     uid = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
-    start_date = Column(Date, unique=False, index=False, nullable=True)
-    end_date = Column(Date, unique=False, index=False, nullable=True)
+    start_date = Column(Date, unique=False, index=False, nullable=False)
+    end_date = Column(Date, unique=False, index=False, nullable=False)
 
     worked_hours_uid = Column(Integer, ForeignKey('WorkedHours.uid',
                                                 ondelete='CASCADE',

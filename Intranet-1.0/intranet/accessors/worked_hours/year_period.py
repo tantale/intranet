@@ -45,7 +45,7 @@ class YearPeriodAccessor(BasicAccessor):
 
     def get_year_period(self, uid):
         """
-        Get a day_period given its UID.
+        Get a year_period given its UID.
 
         :type uid: int or str or unicode
         :param uid: UID of the record.
@@ -54,18 +54,18 @@ class YearPeriodAccessor(BasicAccessor):
         """
         return super(YearPeriodAccessor, self)._get_record(uid)
 
-    def get_day_period_list(self, filter_cond=None, order_by_cond=None):
+    def get_year_period_list(self, filter_cond=None, order_by_cond=None):
         """
-        Get a filtered the list of day periods.
+        Get a filtered the list of year periods.
 
         :param filter_cond: SQL Alchemy filter predicate.
         :param order_by_cond: SQL Alchemy Order-by condition.
         :rtype: list[YearPeriod]
-        :return: list of day periods.
+        :return: list of year periods.
         """
         return self._get_record_list(filter_cond=filter_cond, order_by_cond=order_by_cond)
 
-    def insert_day_period(self, worked_hours_uid, week_hours_uid, frequency_uid, start_date, end_date):
+    def insert_year_period(self, worked_hours_uid, week_hours_uid, frequency_uid, start_date, end_date):
         """
         Append a period of the year.
 
@@ -84,7 +84,7 @@ class YearPeriodAccessor(BasicAccessor):
             year_period.frequency = frequency
             self.session.add(year_period)
 
-    def update_day_period(self, uid, **kwargs):
+    def update_year_period(self, uid, **kwargs):
         """
         Update the fields of a given record.
 
@@ -94,9 +94,9 @@ class YearPeriodAccessor(BasicAccessor):
         """
         return super(YearPeriodAccessor, self)._update_record(uid, **kwargs)
 
-    def delete_day_period(self, uid):
+    def delete_year_period(self, uid):
         """
-        Delete the day_period.
+        Delete the year_period.
 
         :type uid: int or str or unicode
         :param uid: UID of the record.

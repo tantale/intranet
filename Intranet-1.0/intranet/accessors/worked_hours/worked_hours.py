@@ -58,10 +58,12 @@ class WorkedHoursAccessor(BasicAccessor):
         """
         return self._get_record_list(filter_cond=filter_cond, order_by_cond=order_by_cond)
 
-    def insert_worked_hours(self, week_hours_uid, label, description):
+    def insert_worked_hours(self, position, week_hours_uid, label, description):
         """
         Append a hours of the open.
 
+        :type position: int
+        :param position: Relative position.
         :param week_hours_uid: UID of the week hours.
         :type label: unicode
         :param label: Display name => used in selection.
@@ -70,7 +72,7 @@ class WorkedHoursAccessor(BasicAccessor):
         """
         with transaction.manager:
             week_hours = self.get_week_hours(week_hours_uid)
-            worked_hours = WorkedHours(label, description)
+            worked_hours = WorkedHours(position, label, description)
             worked_hours.week_hours = week_hours
             self.session.add(worked_hours)
 

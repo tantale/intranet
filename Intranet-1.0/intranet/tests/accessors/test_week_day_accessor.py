@@ -40,11 +40,11 @@ class TestWeekDayAccessor(unittest.TestCase):
     def test_setup(self):
         accessor = WeekDayAccessor(self.session)
         accessor.setup()
-        week_days = {wd.weekday: wd for wd in accessor.get_week_day_list()}
+        week_days = {wd.iso_weekday: wd for wd in accessor.get_week_day_list()}
         for days in xrange(7):
             date = datetime.date.today() + datetime.timedelta(days=days)
-            weekday = date.isoweekday()
-            LOG.debug("{weekday}: {label}".format(weekday=weekday, label=week_days[weekday].label))
+            iso_weekday = date.isoweekday()
+            LOG.debug("{iso_weekday}: {label}".format(iso_weekday=iso_weekday, label=week_days[iso_weekday].label))
 
         accessor.setup()  # on second setup, do nothing
 
@@ -77,17 +77,17 @@ class TestWeekDayAccessor(unittest.TestCase):
             accessor.insert_week_day(2, "Monday", "On Tuesday")
         LOG.debug(context.exception)
 
-        # weekday is unique
+        # iso_weekday is unique
         with self.assertRaises(sqlalchemy.exc.IntegrityError) as context:
             accessor.insert_week_day(1, "Tuesday", "On Tuesday")
         LOG.debug(context.exception)
 
-        # 0 <= weekday
+        # 0 <= iso_weekday
         with self.assertRaises(sqlalchemy.exc.IntegrityError) as context:
             accessor.insert_week_day(-1, "Tuesday", "On Tuesday")
         LOG.debug(context.exception)
 
-        # weekday <= 6
+        # iso_weekday <= 6
         with self.assertRaises(sqlalchemy.exc.IntegrityError) as context:
             accessor.insert_week_day(8, "Tuesday", "On Tuesday")
         LOG.debug(context.exception)
@@ -113,7 +113,7 @@ class TestWeekDayAccessor(unittest.TestCase):
         self.assertEqual(curr[1].label, "Tuesday")
         self.assertEqual(curr[2].label, "Monday")
 
-        curr = accessor.get_week_day_list(order_by_cond=desc(WeekDay.weekday))
+        curr = accessor.get_week_day_list(order_by_cond=desc(WeekDay.iso_weekday))
         self.assertEqual(len(curr), 3)
         self.assertEqual(curr[0].label, "label3")
         self.assertEqual(curr[1].label, "Tuesday")
@@ -124,9 +124,9 @@ class TestWeekDayAccessor(unittest.TestCase):
         accessor.insert_week_day(1, "Monday", "On Monday")
         uid = 1
 
-        accessor.update_week_day(uid, weekday=5, label="new label", description="new description")
+        accessor.update_week_day(uid, iso_weekday=5, label="new label", description="new description")
         curr = accessor.get_week_day(uid)
-        self.assertEqual(curr.weekday, 5)
+        self.assertEqual(curr.iso_weekday, 5)
         self.assertEqual(curr.label, "new label")
         self.assertEqual(curr.description, "new description")
 
@@ -137,17 +137,17 @@ class TestWeekDayAccessor(unittest.TestCase):
             accessor.update_week_day(uid, label="Tuesday")
         LOG.debug(context.exception)
 
-        # weekday is unique
+        # iso_weekday is unique
         with self.assertRaises(sqlalchemy.exc.IntegrityError) as context:
-            accessor.update_week_day(uid, weekday=2)
+            accessor.update_week_day(uid, iso_weekday=2)
         LOG.debug(context.exception)
 
-        # 0 <= weekday
+        # 0 <= iso_weekday
         with self.assertRaises(sqlalchemy.exc.IntegrityError) as context:
-            accessor.update_week_day(uid, weekday=-1)
+            accessor.update_week_day(uid, iso_weekday=-1)
         LOG.debug(context.exception)
 
-        # weekday <= 6
+        # iso_weekday <= 6
         with self.assertRaises(sqlalchemy.exc.IntegrityError) as context:
-            accessor.update_week_day(uid, weekday=8)
+            accessor.update_week_day(uid, iso_weekday=8)
         LOG.debug(context.exception)
