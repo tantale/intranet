@@ -3,9 +3,11 @@
 :date: 2013-07-28
 :author: Laurent LAPORTE <sandlol2009@gmail.com>
 """
-from intranet.model import DeclarativeBase
+from sqlalchemy.types import String, Float
 from sqlalchemy.schema import Column
-from sqlalchemy.types import Integer, String, Date, Float
+from sqlalchemy.types import Integer, Date
+
+from intranet.model import DeclarativeBase
 
 
 class Employee(DeclarativeBase):
@@ -26,6 +28,17 @@ class Employee(DeclarativeBase):
     entry_date = Column(Date, nullable=False, index=True)
     exit_date = Column(Date, nullable=True, index=True)
     photo_path = Column(String(length=200), nullable=True)
+
+    # todo: implement the *worked_hours* relationship in Employee table
+    #
+    # worked_hours_uid = Column(Integer, ForeignKey('WorkedHours.uid',
+    #                                             ondelete='CASCADE',
+    #                                             onupdate='CASCADE'),
+    #                         nullable=True)
+    #
+    # worked_hours = relationship('WorkedHours',
+    #                           backref=backref('employee_list',
+    #                                           cascade='all,delete-orphan'))
 
     def __init__(self, employee_name, worked_hours, entry_date,
                  exit_date=None, photo_path=None):
