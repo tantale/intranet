@@ -32,9 +32,13 @@ class WorkedHoursAccessor(BasicAccessor):
     def setup(self, week_hours_uid):
         LOG.info(u"Setup the default worked_hours...")
         try:
-            week_hours = self.week_hours_accessor.get_week_hours(week_hours_uid)
-            self.insert_worked_hours(week_hours.uid, week_hours.label, week_hours.description)
-        except sqlalchemy.exc.IntegrityError:
+            with transaction.manager:
+                week_hours = self.week_hours_accessor.get_week_hours(week_hours_uid)
+                week_hours.worked_hours_list.extend([
+                    WorkedHours(1, _(u"Horaires d’ouverture"), _(u"Horaires d’ouverture de l’entreprise"))
+                ])
+        except sqlalchemy.exc.IntegrityError as exc:
+            LOG.warning(exc)
             # setup already done.
             transaction.abort()
 

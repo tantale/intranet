@@ -7,7 +7,6 @@ from sqlalchemy import create_engine
 import sqlalchemy.exc
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.sql.expression import desc
-
 from zope.sqlalchemy.datamanager import ZopeTransactionExtension
 
 from intranet.accessors import RecordNotFoundError
@@ -20,7 +19,7 @@ LOG = logging.getLogger(__name__)
 
 
 class TestWorkedHoursAccessor(unittest.TestCase):
-    DEBUG = False
+    DEBUG = True
 
     @classmethod
     def setUpClass(cls):
@@ -47,10 +46,15 @@ class TestWorkedHoursAccessor(unittest.TestCase):
 
     def test_setup(self):
         accessor = WorkedHoursAccessor(self.session)
+
         # -- first setup
         week_hours_uid = self.week_hours1.uid
         accessor.setup(week_hours_uid)
+        worked_hours_list = accessor.get_worked_hours_list()
+        self.assertEqual(len(worked_hours_list), 1)
+
         accessor.setup(week_hours_uid)  # on second setup, do nothing
+        self.assertEqual(len(worked_hours_list), 1)
 
     def test_delete_worked_hours(self):
         wh_accessor = WeekHoursAccessor(self.session)

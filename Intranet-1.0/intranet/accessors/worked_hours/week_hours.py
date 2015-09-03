@@ -21,7 +21,7 @@ class WeekHoursAccessor(BasicAccessor):
         try:
             with transaction.manager:
                 self.session.add_all([
-                    WeekHours(1, _(u"Horaires d’ouverture"), _(u"Horaires d’ouverture de l’entreprise"))
+                    WeekHours(1, _(u"Grille d’horaires normales"), _(u"Grille d’horaires d’ouverture de l’entreprise"))
                 ])
         except sqlalchemy.exc.IntegrityError:
             # setup already done.
@@ -60,7 +60,6 @@ class WeekHoursAccessor(BasicAccessor):
         :param label: Display name of the day => used in selection.
         :type description: unicode
         :param description: Description of the day => used in tooltip.
-        :param kwargs: additional keywords.
         :rtype: WeekHours
         :return: The new WeekHours.
         """
