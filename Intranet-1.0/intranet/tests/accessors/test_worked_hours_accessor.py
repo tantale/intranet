@@ -38,14 +38,19 @@ class TestWorkedHoursAccessor(unittest.TestCase):
         session_maker = sessionmaker(bind=engine, extension=ZopeTransactionExtension())
         self.session = session_maker()
 
-        wh_accessor = WeekHoursAccessor(self.session)
-        wh_accessor.insert_week_hours("Open hours", "All year open hours")
-        wh_accessor.insert_week_hours("Summer open hours", "Open hours in summer")
+        accessor = WeekHoursAccessor(self.session)
+        accessor.insert_week_hours("Open hours", "All year open hours")
+        accessor.insert_week_hours("Summer open hours", "Open hours in summer")
+        week_hours_list = accessor.get_week_hours_list()
+        self.week_hours1 = week_hours_list[0]
+        self.week_hours2 = week_hours_list[1]
 
     def test_setup(self):
         accessor = WorkedHoursAccessor(self.session)
-        accessor.setup()
-        accessor.setup()  # on second setup, do nothing
+        # -- first setup
+        week_hours_uid = self.week_hours1.uid
+        accessor.setup(week_hours_uid)
+        accessor.setup(week_hours_uid)  # on second setup, do nothing
 
     def test_delete_worked_hours(self):
         wh_accessor = WeekHoursAccessor(self.session)

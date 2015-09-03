@@ -10,7 +10,7 @@
 
 <%def name="accordion_content()">
 <div id="accordion">
-    <h2>${_(u"Catégories de commandes")}</h2>
+    <h2 title="${_(u'Catégories de commandes')}">${_(u'Catégories de commandes')}</h2>
     <div>
         <ul class="menu">
             <li><a href="${tg.url('/admin/order_cat/index.html?display=detail')}"
@@ -24,6 +24,20 @@
             <li><a href="${tg.url('/admin/order_cat.css?display=html')}"
                    title="${_(u'Affichage de la feuille de styles CSS des catégories de commandes')}"><span
                     class="ui-button-icon-primary ui-icon ui-icon-script"></span>${_(u"Feuille de styles CSS")}</a>
+            </li>
+        </ul>
+    </div>
+    <h2 title="${_(u'Horaires d’ouverture et de travail')}">${_(u'Horaires')}</h2>
+
+    <div>
+        <ul class="menu">
+            <li><a href="${tg.url('/admin/hours/open_hours/index.html')}"
+                   title="${_(u'Horaires d’ouverture de l’entreprise')}"><span
+                    class="ui-button-icon-primary ui-icon ui-icon-document-b"></span>${_(u"Horaires d’ouverture")}</a>
+            </li>
+            <li><a href="${tg.url('/admin/hours/users/index.html')}"
+                   title="${_(u'Horaires de travail des employés')}"><span
+                    class="ui-button-icon-primary ui-icon ui-icon-document-b"></span>${_(u"Horaires de travail")}</a>
             </li>
         </ul>
     </div>

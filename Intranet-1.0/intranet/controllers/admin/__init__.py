@@ -13,6 +13,7 @@ from intranet.controllers.pointage.order_cat import OrderCatController
 from intranet.controllers.pointage.order_phase import OrderPhaseController
 from intranet.controllers.pointage.prefs import PrefsController
 from intranet.controllers.pointage.trcal import CalendarController
+from intranet.controllers.worked_hours.worked_hours import HoursController
 from intranet.lib.base import BaseController
 
 
@@ -34,3 +35,5 @@ class AdminController(BaseController):
     planning = PlanningController(main_menu)
     chart = ChartController(main_menu)
     prefs = PrefsController(main_menu)
+
+    hours = HoursController()

@@ -9,11 +9,12 @@ Author: Laurent LAPORTE <tantale.solutions@gmail.com>
 """
 from __future__ import unicode_literals
 
+import sqlalchemy.exc
 from sqlalchemy.sql.functions import func
 import transaction
 from tg.i18n import ugettext as _
 
-from intranet.accessors import BasicAccessor
+from intranet.accessors import BasicAccessor, LOG
 from intranet.accessors.worked_hours.week_hours import WeekHoursAccessor
 from intranet.model.worked_hours.worked_hours import WorkedHours
 
@@ -28,11 +29,20 @@ class WorkedHoursAccessor(BasicAccessor):
         super(WorkedHoursAccessor, self).__init__(WorkedHours, session=session)
         self.week_hours_accessor = WeekHoursAccessor(session)
 
-    def setup(self):
-        pass
+    def setup(self, week_hours_uid):
+        LOG.info(u"Setup the default worked_hours...")
+        try:
+            week_hours = self.week_hours_accessor.get_week_hours(week_hours_uid)
+            self.insert_worked_hours(week_hours.uid, week_hours.label, week_hours.description)
+        except sqlalchemy.exc.IntegrityError:
+            # setup already done.
+            transaction.abort()
 
     def get_week_hours(self, week_hours_uid):
         return self.week_hours_accessor.get_week_hours(week_hours_uid)
+
+    def get_week_hours_list(self, filter_cond=None, order_by_cond=None):
+        return self.week_hours_accessor.get_week_hours_list(filter_cond=filter_cond, order_by_cond=order_by_cond)
 
     def get_worked_hours(self, uid):
         """

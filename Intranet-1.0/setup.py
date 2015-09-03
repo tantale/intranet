@@ -15,8 +15,6 @@ try:
 except:
     pass
 
-import sys  # @UnusedImport
-
 try:
     from setuptools import setup, find_packages
 except ImportError:
@@ -33,8 +31,8 @@ install_requires = ["Genshi == 0.7",
                     "Mako == 0.7.3",
                     "zope.sqlalchemy >= 0.4",
                     "repoze.tm2 >= 1.0a5",
-                    "sqlalchemy-migrate == 0.7.2",
-                    "sqlalchemy < 0.8b1",
+                    "sqlalchemy-migrate",
+                    "sqlalchemy",
                     "tw2.forms == 2.2.0.3",
                     "TurboGears2 == 2.2.2"]
 
