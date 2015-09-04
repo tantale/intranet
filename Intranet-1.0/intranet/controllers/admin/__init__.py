@@ -5,15 +5,16 @@
 :author: Laurent LAPORTE <sandlol2009@gmail.com>
 """
 from intranet.accessors.pointage.menu_item import MenuItemAccessor
-from intranet.controllers.pointage.planning import PlanningController
+from intranet.controllers.planning import PlanningController
+# from intranet.controllers.pointage.planning import PlanningController
 from intranet.controllers.pointage.chart import ChartController
 from intranet.controllers.pointage.employee import EmployeeController
 from intranet.controllers.pointage.order import OrderController
 from intranet.controllers.pointage.order_cat import OrderCatController
 from intranet.controllers.pointage.order_phase import OrderPhaseController
 from intranet.controllers.pointage.prefs import PrefsController
-from intranet.controllers.pointage.trcal import CalendarController
-from intranet.controllers.worked_hours.worked_hours import HoursController
+from intranet.controllers.pointage.trcal import CalendarController as PointageCalendarController
+
 from intranet.lib.base import BaseController
 
 
@@ -31,9 +32,9 @@ class AdminController(BaseController):
     order = OrderController(main_menu)
     order_cat = OrderCatController()
     order_phase = OrderPhaseController()
-    trcal = CalendarController(main_menu)  # Time Recording Calendar
-    planning = PlanningController(main_menu)
+    trcal = PointageCalendarController(main_menu)  # Time Recording Calendar
+    # planning = PlanningController(main_menu)
     chart = ChartController(main_menu)
-    prefs = PrefsController(main_menu)
 
-    hours = HoursController()
+    prefs = PrefsController(main_menu)
+    planning = PlanningController()

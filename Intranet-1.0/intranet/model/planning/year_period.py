@@ -3,7 +3,7 @@
 Year period
 ===========
 
-Module: intranet.model.worked_hours.year_period
+Module: intranet.model.planning.year_period
 
 Created on: 2015-08-28
 """

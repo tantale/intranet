@@ -6,20 +6,17 @@ import logging
 import datetime
 
 from sqlalchemy import create_engine
-
 from sqlalchemy.exc import IntegrityError
-
 from sqlalchemy.orm import sessionmaker
-
 from zope.sqlalchemy.datamanager import ZopeTransactionExtension
 
 from intranet.accessors import RecordNotFoundError
-from intranet.accessors.worked_hours.day_period import DayPeriodAccessor
-from intranet.accessors.worked_hours.hours_interval import HoursIntervalAccessor
-from intranet.accessors.worked_hours.week_day import WeekDayAccessor
-from intranet.accessors.worked_hours.week_hours import WeekHoursAccessor
+from intranet.accessors.planning.day_period import DayPeriodAccessor
+from intranet.accessors.planning.hours_interval import HoursIntervalAccessor
+from intranet.accessors.planning.week_day import WeekDayAccessor
+from intranet.accessors.planning.week_hours import WeekHoursAccessor
 from intranet.model import DeclarativeBase
-from intranet.model.worked_hours.week_hours import WeekHours
+from intranet.model.planning.week_hours import WeekHours
 
 LOG = logging.getLogger(__name__)
 

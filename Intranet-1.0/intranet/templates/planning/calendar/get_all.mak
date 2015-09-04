@@ -6,8 +6,8 @@
     %if flash and not cat_group:
     ${flash | n}
     %endif
-    <h2>Tableaux des horaires d’ouverture</h2>
-    %for worked_hours in calendar_list:
-    <p>${worked_hours.position} ${worked_hours.label} ${worked_hours.description}</p>
+    <h2>Liste des calendriers</h2>
+    %for calendar in calendar_list:
+    <p>${calendar.position} ${calendar.label} ${calendar.description}</p>
     %endfor
 </div>

@@ -7,12 +7,12 @@ from sqlalchemy.exc import IntegrityError
 import transaction
 
 from intranet import model
-from intranet.accessors.worked_hours.day_period import DayPeriodAccessor
-from intranet.accessors.worked_hours.frequency import FrequencyAccessor
-from intranet.accessors.worked_hours.hours_interval import HoursIntervalAccessor
-from intranet.accessors.worked_hours.week_day import WeekDayAccessor
-from intranet.accessors.worked_hours.week_hours import WeekHoursAccessor
-from intranet.accessors.worked_hours.calendar import CalendarAccessor
+from intranet.accessors.planning.day_period import DayPeriodAccessor
+from intranet.accessors.planning.frequency import FrequencyAccessor
+from intranet.accessors.planning.hours_interval import HoursIntervalAccessor
+from intranet.accessors.planning.week_day import WeekDayAccessor
+from intranet.accessors.planning.week_hours import WeekHoursAccessor
+from intranet.accessors.planning.calendar import CalendarAccessor
 from intranet.websetup.employee_list import get_employee_list
 
 LOG = logging.getLogger(__name__)
@@ -84,7 +84,7 @@ def bootstrap(command, conf, vars):  # @ReservedAssignment
     week_hours_accessor = WeekHoursAccessor(model.DBSession)
     day_period_accessor = DayPeriodAccessor(model.DBSession)
     hours_interval_accessor = HoursIntervalAccessor(model.DBSession)
-    worked_hours_accessor = CalendarAccessor(model.DBSession)
+    calendar_accessor = CalendarAccessor(model.DBSession)
     frequency_accessor = FrequencyAccessor(model.DBSession)
 
     week_day_accessor.setup()
@@ -93,5 +93,5 @@ def bootstrap(command, conf, vars):  # @ReservedAssignment
     for week_hours in week_hours_list:
         day_period_accessor.setup(week_hours.uid)
         hours_interval_accessor.setup(week_hours.uid)
-        worked_hours_accessor.setup(week_hours.uid)
+        calendar_accessor.setup(week_hours.uid)
     frequency_accessor.setup()

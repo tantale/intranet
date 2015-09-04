@@ -5,15 +5,14 @@ import logging
 
 from sqlalchemy import create_engine
 import sqlalchemy.exc
-
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.sql.expression import desc, asc
 from zope.sqlalchemy.datamanager import ZopeTransactionExtension
 
 from intranet.accessors import RecordNotFoundError
-from intranet.accessors.worked_hours.frequency import FrequencyAccessor
+from intranet.accessors.planning.frequency import FrequencyAccessor
 from intranet.model import DeclarativeBase
-from intranet.model.worked_hours.frequency import Frequency
+from intranet.model.planning.frequency import Frequency
 
 LOG = logging.getLogger(__name__)
 

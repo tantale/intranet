@@ -2,7 +2,7 @@
 from __future__ import unicode_literals, print_function
 import unittest
 
-from intranet.model.worked_hours.week_day import WeekDay
+from intranet.model.planning.week_day import WeekDay
 
 
 class TestWeekDay(unittest.TestCase):

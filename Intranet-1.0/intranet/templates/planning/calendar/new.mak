@@ -6,5 +6,5 @@
     %if flash and not cat_group:
     ${flash | n}
     %endif
-    <h2>Ajouter de nouvelles horaires d’ouverture</h2>
+    <h2>Ajouter un nouveau calendrier</h2>
 </div>

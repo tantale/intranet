@@ -10,9 +10,9 @@ from sqlalchemy.sql.expression import desc
 from zope.sqlalchemy.datamanager import ZopeTransactionExtension
 
 from intranet.accessors import RecordNotFoundError
-from intranet.accessors.worked_hours.week_hours import WeekHoursAccessor
+from intranet.accessors.planning.week_hours import WeekHoursAccessor
 from intranet.model import DeclarativeBase
-from intranet.model.worked_hours.week_hours import WeekHours
+from intranet.model.planning.week_hours import WeekHours
 
 LOG = logging.getLogger(__name__)
 

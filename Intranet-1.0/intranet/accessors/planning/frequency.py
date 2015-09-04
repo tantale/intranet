@@ -6,7 +6,7 @@ import transaction
 from tg.i18n import ugettext as _
 
 from intranet.accessors import BasicAccessor
-from intranet.model.worked_hours.frequency import Frequency
+from intranet.model.planning.frequency import Frequency
 
 try:
     _("")

@@ -7,15 +7,16 @@ import datetime
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+
 from zope.sqlalchemy.datamanager import ZopeTransactionExtension
 
 from intranet.accessors import RecordNotFoundError
-from intranet.accessors.worked_hours.frequency import FrequencyAccessor
-from intranet.accessors.worked_hours.week_hours import WeekHoursAccessor
-from intranet.accessors.worked_hours.calendar import CalendarAccessor
-from intranet.accessors.worked_hours.year_period import YearPeriodAccessor
+from intranet.accessors.planning.frequency import FrequencyAccessor
+from intranet.accessors.planning.week_hours import WeekHoursAccessor
+from intranet.accessors.planning.calendar import CalendarAccessor
+from intranet.accessors.planning.year_period import YearPeriodAccessor
 from intranet.model import DeclarativeBase
-from intranet.model.worked_hours.week_hours import WeekHours
+from intranet.model.planning.week_hours import WeekHours
 
 LOG = logging.getLogger(__name__)
 

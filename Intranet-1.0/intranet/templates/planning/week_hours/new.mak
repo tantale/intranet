@@ -6,5 +6,5 @@
     %if flash and not cat_group:
     ${flash | n}
     %endif
-    <h2>Tableaux des horaires de travail</h2>
+    <h2>Ajouter un nouveau calendrier</h2>
 </div>

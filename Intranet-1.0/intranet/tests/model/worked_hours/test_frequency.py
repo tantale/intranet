@@ -2,7 +2,7 @@
 from __future__ import unicode_literals, print_function
 import unittest
 
-from intranet.model.worked_hours.frequency import Frequency
+from intranet.model.planning.frequency import Frequency
 
 
 class TestFrequency(unittest.TestCase):

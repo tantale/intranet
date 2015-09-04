@@ -16,8 +16,8 @@ from tg.i18n import ugettext as _
 
 from intranet.accessors import BasicAccessor, LOG
 from intranet.accessors.pointage.employee import EmployeeAccessor
-from intranet.accessors.worked_hours.week_hours import WeekHoursAccessor
-from intranet.model.worked_hours.calendar import Calendar
+from intranet.accessors.planning.week_hours import WeekHoursAccessor
+from intranet.model.planning.calendar import Calendar
 
 try:
     _("")

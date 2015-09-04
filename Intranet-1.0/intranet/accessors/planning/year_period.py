@@ -13,10 +13,10 @@ import transaction
 from tg.i18n import ugettext as _
 
 from intranet.accessors import BasicAccessor
-from intranet.accessors.worked_hours.frequency import FrequencyAccessor
-from intranet.accessors.worked_hours.week_hours import WeekHoursAccessor
-from intranet.accessors.worked_hours.calendar import CalendarAccessor
-from intranet.model.worked_hours.year_period import YearPeriod
+from intranet.accessors.planning.frequency import FrequencyAccessor
+from intranet.accessors.planning.week_hours import WeekHoursAccessor
+from intranet.accessors.planning.calendar import CalendarAccessor
+from intranet.model.planning.year_period import YearPeriod
 
 try:
     _("")

@@ -14,8 +14,8 @@ from tg.i18n import ugettext as _
 import sqlalchemy.exc
 
 from intranet.accessors import BasicAccessor
-from intranet.accessors.worked_hours.week_hours import WeekHoursAccessor
-from intranet.model.worked_hours.day_period import DayPeriod
+from intranet.accessors.planning.week_hours import WeekHoursAccessor
+from intranet.model.planning.day_period import DayPeriod
 
 try:
     _("")

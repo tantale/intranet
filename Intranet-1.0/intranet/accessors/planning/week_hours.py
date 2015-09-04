@@ -5,7 +5,7 @@ import transaction
 from tg.i18n import ugettext as _
 
 from intranet.accessors import BasicAccessor
-from intranet.model.worked_hours.week_hours import WeekHours
+from intranet.model.planning.week_hours import WeekHours
 
 try:
     _("")

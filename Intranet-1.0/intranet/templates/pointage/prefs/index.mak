@@ -31,13 +31,13 @@
 
     <div>
         <ul class="menu">
-            <li><a href="${tg.url('/admin/hours/open_hours/index.html')}"
-                   title="${_(u'Horaires d’ouverture de l’entreprise')}"><span
-                    class="ui-button-icon-primary ui-icon ui-icon-document-b"></span>${_(u"Horaires d’ouverture")}</a>
-            </li>
-            <li><a href="${tg.url('/admin/hours/users/index.html')}"
-                   title="${_(u'Horaires de travail des employés')}"><span
+            <li><a href="${tg.url('/admin/planning/week_hours/index.html')}"
+                   title="${_(u'Horaires de travail des employés et d’ouverture de l’entreprise')}"><span
                     class="ui-button-icon-primary ui-icon ui-icon-document-b"></span>${_(u"Horaires de travail")}</a>
+            </li>
+            <li><a href="${tg.url('/admin/planning/calendar/index.html')}"
+                   title="${_(u'Calendrier des employés')}"><span
+                    class="ui-button-icon-primary ui-icon ui-icon-document-b"></span>${_(u"Calendriers")}</a>
             </li>
         </ul>
     </div>

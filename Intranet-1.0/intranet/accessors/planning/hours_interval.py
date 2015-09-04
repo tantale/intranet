@@ -14,12 +14,12 @@ import transaction
 from tg.i18n import ugettext as _
 import sqlalchemy.exc
 
-from intranet.accessors.worked_hours.day_period import DayPeriodAccessor
-from intranet.accessors.worked_hours.week_day import WeekDayAccessor
+from intranet.accessors.planning.day_period import DayPeriodAccessor
+from intranet.accessors.planning.week_day import WeekDayAccessor
 from intranet.accessors import BasicAccessor
-from intranet.accessors.worked_hours.week_hours import WeekHoursAccessor
-from intranet.model.worked_hours.hours_interval import HoursInterval
-from intranet.model.worked_hours.week_day import WeekDay
+from intranet.accessors.planning.week_hours import WeekHoursAccessor
+from intranet.model.planning.hours_interval import HoursInterval
+from intranet.model.planning.week_day import WeekDay
 
 try:
     _("")
