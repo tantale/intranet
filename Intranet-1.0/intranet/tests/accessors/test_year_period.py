@@ -7,13 +7,12 @@ import datetime
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-
 from zope.sqlalchemy.datamanager import ZopeTransactionExtension
 
 from intranet.accessors import RecordNotFoundError
 from intranet.accessors.worked_hours.frequency import FrequencyAccessor
 from intranet.accessors.worked_hours.week_hours import WeekHoursAccessor
-from intranet.accessors.worked_hours.worked_hours import WorkedHoursAccessor
+from intranet.accessors.worked_hours.calendar import CalendarAccessor
 from intranet.accessors.worked_hours.year_period import YearPeriodAccessor
 from intranet.model import DeclarativeBase
 from intranet.model.worked_hours.week_hours import WeekHours
@@ -45,9 +44,9 @@ class TestYearPeriodAccessor(unittest.TestCase):
         wh_accessor.insert_week_hours("Summer open hours", "Open hours in summer")
         week_hours1, week_hours2 = wh_accessor.get_week_hours_list(order_by_cond=WeekHours.position)
 
-        worked_hours_accessor = WorkedHoursAccessor(self.session)
-        worked_hours_accessor.insert_worked_hours(week_hours1.uid,
-                                                  "Normal worked hours", "Same as enterprise's open hours")
+        calendar_accessor = CalendarAccessor(self.session)
+        calendar_accessor.insert_calendar(week_hours1.uid,
+                                          "General calendar", "Same as enterprise's open hours")
 
         fqc_accessor = FrequencyAccessor(self.session)
         fqc_accessor.insert_frequency("aperiodic", "all the year", 0, 1)
@@ -66,8 +65,8 @@ class TestYearPeriodAccessor(unittest.TestCase):
     def test_get_year_period(self):
         accessor = YearPeriodAccessor(self.session)
 
-        worked_hours_accessor = WorkedHoursAccessor(self.session)
-        worked_hours = worked_hours_accessor.get_by_label("Normal worked hours")
+        calendar_accessor = CalendarAccessor(self.session)
+        calendar = calendar_accessor.get_by_label("General calendar")
         wh_accessor = WeekHoursAccessor(self.session)
         week_hours = wh_accessor.get_by_label("Summer open hours")
         fqc_accessor = FrequencyAccessor(self.session)
@@ -75,7 +74,7 @@ class TestYearPeriodAccessor(unittest.TestCase):
 
         start_date = datetime.date(2015, 1, 1)
         end_date = datetime.date(2015, 12, 31)
-        accessor.insert_year_period(worked_hours.uid, week_hours.uid, frequency.uid, start_date, end_date)
+        accessor.insert_year_period(calendar.uid, week_hours.uid, frequency.uid, start_date, end_date)
 
         year_period = random.choice(accessor.get_year_period_list())
         current = accessor.get_year_period(year_period.uid)
@@ -88,8 +87,8 @@ class TestYearPeriodAccessor(unittest.TestCase):
         accessor = YearPeriodAccessor(self.session)
         self.assertFalse(accessor.get_year_period_list())
 
-        worked_hours_accessor = WorkedHoursAccessor(self.session)
-        worked_hours = worked_hours_accessor.get_by_label("Normal worked hours")
+        calendar_accessor = CalendarAccessor(self.session)
+        calendar = calendar_accessor.get_by_label("General calendar")
         wh_accessor = WeekHoursAccessor(self.session)
         week_hours = wh_accessor.get_by_label("Summer open hours")
         fqc_accessor = FrequencyAccessor(self.session)
@@ -97,15 +96,15 @@ class TestYearPeriodAccessor(unittest.TestCase):
 
         start_date = datetime.date(2015, 1, 1)
         end_date = datetime.date(2015, 12, 31)
-        accessor.insert_year_period(worked_hours.uid, week_hours.uid, frequency.uid, start_date, end_date)
+        accessor.insert_year_period(calendar.uid, week_hours.uid, frequency.uid, start_date, end_date)
 
         self.assertEqual(len(accessor.get_year_period_list()), 1)
 
     def test_insert_year_period(self):
         accessor = YearPeriodAccessor(self.session)
 
-        worked_hours_accessor = WorkedHoursAccessor(self.session)
-        worked_hours = worked_hours_accessor.get_by_label("Normal worked hours")
+        calendar_accessor = CalendarAccessor(self.session)
+        calendar = calendar_accessor.get_by_label("General calendar")
         wh_accessor = WeekHoursAccessor(self.session)
         week_hours = wh_accessor.get_by_label("Summer open hours")
         fqc_accessor = FrequencyAccessor(self.session)
@@ -113,23 +112,23 @@ class TestYearPeriodAccessor(unittest.TestCase):
 
         start_date = datetime.date(2015, 1, 1)
         end_date = datetime.date(2015, 12, 31)
-        accessor.insert_year_period(worked_hours.uid, week_hours.uid, frequency.uid, start_date, end_date)
+        accessor.insert_year_period(calendar.uid, week_hours.uid, frequency.uid, start_date, end_date)
 
-        worked_hours = worked_hours_accessor.get_worked_hours(worked_hours.uid)
+        calendar = calendar_accessor.get_calendar(calendar.uid)
         week_hours = wh_accessor.get_week_hours(week_hours.uid)
         frequency = fqc_accessor.get_frequency(frequency.uid)
-        self.assertEqual(len(worked_hours.year_period_list), 1)
+        self.assertEqual(len(calendar.year_period_list), 1)
         self.assertEqual(len(week_hours.year_period_list), 1)
         self.assertEqual(len(frequency.year_period_list), 1)
 
         # Can contain duplicates
-        accessor.insert_year_period(worked_hours.uid, week_hours.uid, frequency.uid, start_date, end_date)
+        accessor.insert_year_period(calendar.uid, week_hours.uid, frequency.uid, start_date, end_date)
         self.assertEqual(len(accessor.get_year_period_list()), 2)
 
-        worked_hours = worked_hours_accessor.get_worked_hours(worked_hours.uid)
+        calendar = calendar_accessor.get_calendar(calendar.uid)
         week_hours = wh_accessor.get_week_hours(week_hours.uid)
         frequency = fqc_accessor.get_frequency(frequency.uid)
-        self.assertEqual(len(worked_hours.year_period_list), 2)
+        self.assertEqual(len(calendar.year_period_list), 2)
         self.assertEqual(len(week_hours.year_period_list), 2)
         self.assertEqual(len(frequency.year_period_list), 2)
 
@@ -137,8 +136,8 @@ class TestYearPeriodAccessor(unittest.TestCase):
         accessor = YearPeriodAccessor(self.session)
         self.assertFalse(accessor.get_year_period_list())
 
-        worked_hours_accessor = WorkedHoursAccessor(self.session)
-        worked_hours = worked_hours_accessor.get_by_label("Normal worked hours")
+        calendar_accessor = CalendarAccessor(self.session)
+        calendar = calendar_accessor.get_by_label("General calendar")
         wh_accessor = WeekHoursAccessor(self.session)
         week_hours = wh_accessor.get_by_label("Summer open hours")
         fqc_accessor = FrequencyAccessor(self.session)
@@ -146,7 +145,7 @@ class TestYearPeriodAccessor(unittest.TestCase):
 
         start_date = datetime.date(2015, 1, 1)
         end_date = datetime.date(2015, 12, 31)
-        accessor.insert_year_period(worked_hours.uid, week_hours.uid, frequency.uid, start_date, end_date)
+        accessor.insert_year_period(calendar.uid, week_hours.uid, frequency.uid, start_date, end_date)
 
         week_hours = wh_accessor.get_by_label("Summer open hours")
         year_period = week_hours.year_period_list[0]

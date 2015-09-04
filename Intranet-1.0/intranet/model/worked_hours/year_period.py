@@ -26,14 +26,14 @@ class YearPeriod(DeclarativeBase):
     start_date = Column(Date, unique=False, index=False, nullable=False)
     end_date = Column(Date, unique=False, index=False, nullable=False)
 
-    worked_hours_uid = Column(Integer, ForeignKey('WorkedHours.uid',
-                                                ondelete='CASCADE',
-                                                onupdate='CASCADE'),
-                            nullable=False, index=True)
+    calendar_uid = Column(Integer, ForeignKey('Calendar.uid',
+                                              ondelete='CASCADE',
+                                              onupdate='CASCADE'),
+                          nullable=False, index=True)
 
-    worked_hours = relationship('WorkedHours',
-                              backref=backref('year_period_list',
-                                              cascade='all,delete-orphan'))
+    calendar = relationship('Calendar',
+                            backref=backref('year_period_list',
+                                            cascade='all,delete-orphan'))
 
     frequency_uid = Column(Integer, ForeignKey('Frequency.uid',
                                                ondelete='CASCADE',

@@ -7,7 +7,7 @@
     ${flash | n}
     %endif
     <h2>Tableaux des horaires d’ouverture</h2>
-    %for worked_hours in worked_hours_list:
+    %for worked_hours in calendar_list:
     <p>${worked_hours.position} ${worked_hours.label} ${worked_hours.description}</p>
     %endfor
 </div>

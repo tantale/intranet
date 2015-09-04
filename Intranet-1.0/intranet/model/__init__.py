@@ -71,5 +71,5 @@ from intranet.model.worked_hours.week_hours import WeekHours
 from intranet.model.worked_hours.day_period import DayPeriod
 from intranet.model.worked_hours.hours_interval import HoursInterval
 from intranet.model.worked_hours.frequency import Frequency
-from intranet.model.worked_hours.worked_hours import WorkedHours
+from intranet.model.worked_hours.calendar import Calendar
 from intranet.model.worked_hours.year_period import YearPeriod

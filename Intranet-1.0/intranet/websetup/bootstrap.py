@@ -12,7 +12,7 @@ from intranet.accessors.worked_hours.frequency import FrequencyAccessor
 from intranet.accessors.worked_hours.hours_interval import HoursIntervalAccessor
 from intranet.accessors.worked_hours.week_day import WeekDayAccessor
 from intranet.accessors.worked_hours.week_hours import WeekHoursAccessor
-from intranet.accessors.worked_hours.worked_hours import WorkedHoursAccessor
+from intranet.accessors.worked_hours.calendar import CalendarAccessor
 from intranet.websetup.employee_list import get_employee_list
 
 LOG = logging.getLogger(__name__)
@@ -84,7 +84,7 @@ def bootstrap(command, conf, vars):  # @ReservedAssignment
     week_hours_accessor = WeekHoursAccessor(model.DBSession)
     day_period_accessor = DayPeriodAccessor(model.DBSession)
     hours_interval_accessor = HoursIntervalAccessor(model.DBSession)
-    worked_hours_accessor = WorkedHoursAccessor(model.DBSession)
+    worked_hours_accessor = CalendarAccessor(model.DBSession)
     frequency_accessor = FrequencyAccessor(model.DBSession)
 
     week_day_accessor.setup()

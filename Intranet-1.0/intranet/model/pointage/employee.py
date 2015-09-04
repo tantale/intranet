@@ -31,12 +31,12 @@ class Employee(DeclarativeBase):
 
     # todo: implement the *worked_hours* relationship in Employee table
     #
-    # worked_hours_uid = Column(Integer, ForeignKey('WorkedHours.uid',
+    # worked_hours_uid = Column(Integer, ForeignKey('Calendar.uid',
     #                                             ondelete='CASCADE',
     #                                             onupdate='CASCADE'),
     #                         nullable=True)
     #
-    # worked_hours = relationship('WorkedHours',
+    # worked_hours = relationship('Calendar',
     #                           backref=backref('employee_list',
     #                                           cascade='all,delete-orphan'))
 
