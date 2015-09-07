@@ -1,0 +1,79 @@
+[
+  {
+    "cat_group": "Commandes client",
+    "css_def": "background-color: #ea750c; color: #ffffff;",
+    "uid": 1,
+    "cat_name": "colorMagasin",
+    "label": "Magasin"
+  },
+  {
+    "cat_group": "Commandes client",
+    "css_def": "background-color: #f6a9bc; color: #000000;",
+    "uid": 2,
+    "cat_name": "colorBureau",
+    "label": "Bureau"
+  },
+  {
+    "cat_group": "Commandes client",
+    "css_def": "background-color: #37ab51; color: #ffffff;",
+    "uid": 3,
+    "cat_name": "colorDressing",
+    "label": "Dressing"
+  },
+  {
+    "cat_group": "Commandes client",
+    "css_def": "background-color: #bf0e1d; color: #ffffff;",
+    "uid": 4,
+    "cat_name": "colorMeuble",
+    "label": "Meuble"
+  },
+  {
+    "cat_group": "Commandes client",
+    "css_def": "background-color: #f7c181; color: #000000;",
+    "uid": 5,
+    "cat_name": "colorMenuiserie",
+    "label": "Menuiserie"
+  },
+  {
+    "cat_group": "Commandes client",
+    "css_def": "background-color: #009fe5; color: #ffffff;",
+    "uid": 6,
+    "cat_name": "colorBain",
+    "label": "Salle de bain"
+  },
+  {
+    "cat_group": "Commandes client",
+    "css_def": "background-color: #fcc51c; color: #000000;",
+    "uid": 7,
+    "cat_name": "colorCuisine",
+    "label": "Cuisine"
+  },
+  {
+    "cat_group": "Projets interne",
+    "css_def": "background-color: #0B610B; color: #ffffff;",
+    "uid": 8,
+    "cat_name": "colorRenovation",
+    "label": "R\u00e9novation"
+  },
+  {
+    "cat_group": "Hors projet",
+    "css_def": "background-color: #6A0888; color: #ffffff;",
+    "uid": 9,
+    "cat_name": "colorConges",
+    "label": "Cong\u00e9s"
+  },
+  {
+    "cat_group": "Hors projet",
+    "css_def": "background-color: #61380B; color: #ffffff;",
+    "uid": 10,
+    "cat_name": "colorNettoyage",
+    "label": "Nettoyage"
+  },
+  {
+    "cat_group": "Hors projet",
+    "css_def": "background-color: #8A2908; color: #ffffff;",
+    "uid": 11,
+    "cat_name": "colorDechargement",
+    "label": "D\u00e9chargement"
+  }
+]
