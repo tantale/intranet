@@ -97,6 +97,7 @@ class CalendarAccessor(BasicAccessor):
             employee = self.get_employee(employee_uid) if employee_uid else None
             calendar = Calendar(last_position + 1, label, description)
             calendar.week_hours = week_hours
+            calendar.employee = employee
             self.session.add(calendar)
 
     def update_calendar(self, uid, **kwargs):

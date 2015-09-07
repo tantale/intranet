@@ -60,10 +60,13 @@
     "use strict";
     /*global $*/
     $(function() {
-        $('#calendar_${uid}__delete_form').button({
-            text : false,
-            icons : {
-                primary : "ui-icon-trash"
+        $('#calendar_${uid}__delete_form').ajaxForm({
+            target: '#confirm_dialog_content'
+        });
+        $('#calendar_${uid}__delete').button({
+            text: false,
+            icons: {
+                primary: "ui-icon-trash"
             }
         });
     });

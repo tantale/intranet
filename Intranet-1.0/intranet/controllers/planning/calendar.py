@@ -39,9 +39,10 @@ class CalendarController(RestController):
     # noinspection PyArgumentList
     @with_trailing_slash
     @expose("intranet.templates.planning.calendar.get_all")
-    def get_all(self, **kwargs):
-        LOG.info("get_all, kw = " + pformat(kwargs))
-        return dict(values=kwargs, calendar_list=self.accessor.get_calendar_list())
+    @expose("json")
+    def get_all(self):
+        LOG.info("get_all")
+        return dict(calendar_list=self.accessor.get_calendar_list())
 
     @expose('intranet.templates.planning.calendar.edit')
     def edit(self, uid, **kw):
@@ -104,3 +105,17 @@ class CalendarController(RestController):
                         u"dans la base de données avec succès.")
             flash(msg_fmt.format(label=label), status="ok")
             redirect('./new')
+
+    @expose('intranet.templates.planning.calendar.get_delete')
+    def get_delete(self, uid):
+        LOG.info("get_delete, uid={0}".format(pformat(uid)))
+        return dict(calendar=self.accessor.get_calendar(uid))
+
+    @expose()
+    def post_delete(self, uid):
+        LOG.info("post_delete, uid={0}".format(pformat(uid)))
+        old_calendar = self.accessor.delete_calendar(uid)
+        msg_fmt = _(u"Le calendrier « {label} » a été supprimé "
+                    u"de la base de données avec succès.")
+        flash(msg_fmt.format(label=old_calendar.label), status="ok")
+        return dict()
