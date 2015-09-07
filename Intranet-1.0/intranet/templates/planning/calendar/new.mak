@@ -11,7 +11,7 @@
         input_cls = "error" if has_error else ""
         input_val = values.get(input_name, "")
         %> -->
-        <input type="text" form="calendar_new__create_form"
+        <input type="text" form="calendar_new_create_form"
                name="${input_name}" title="${input_title}" placeholder="${input_placeholder}"
                class="${input_cls}" value="${input_val}"/>
         %if has_error:
@@ -22,13 +22,13 @@
     <td>
         <!-- <%
         input_name = "description"
-        input_title = _(u'Description du calendrier, contexte d’utilisation, etc.)')
+        input_title = _(u'Description du calendrier, contexte d’utilisation, etc.')
         input_placeholder = _(u'Description du calendrier')
         has_error = input_name in form_errors
         input_cls = "error" if has_error else ""
         input_val = values.get(input_name, "")
         %> -->
-    <textarea form="calendar_new__create_form"
+    <textarea form="calendar_new_create_form"
               name="${input_name}" title="${input_title}" placeholder="${input_placeholder}"
               class="${input_cls}">${input_val}</textarea>
         %if has_error:
@@ -42,7 +42,7 @@
         input_title = _(u'Attribuer un calendrier à un employé')
         input_val = values.get(input_name, "")
         %> -->
-        <select form="calendar_new__create_form"
+        <select form="calendar_new_create_form"
                 name="${input_name}" title="${input_title}">
             %if values.get('employee_uid'):
             <option value="" selected="selected">(aucun)</option>
@@ -64,7 +64,7 @@
         input_title = _(u'Attribuer un calendrier à un employé')
         input_val = values.get(input_name, "")
         %> -->
-        <select form="calendar_new__create_form"
+        <select form="calendar_new_create_form"
                 name="${input_name}" title="${input_title}">
             %for week_hours in week_hours_list:
             %if input_val == week_hours.uid:
@@ -77,11 +77,11 @@
     </td>
     <td>
         <!-- fixme: URL -->
-        <form id="calendar_new__create_form" class="create_form inline_form"
+        <form id="calendar_new_create_form" class="create_form inline_form"
               action="${tg.url('/admin/planning/calendar/')}"
               method="post" enctype="multipart/form-data">
             <p>
-                <button id="calendar_new__create" type="submit" class="create_button"
+                <button id="calendar_new_create" type="submit" class="create_button"
                         title="Ajouter un nouveau calendrier">${_(u"Créer")}
                 </button>
             </p>

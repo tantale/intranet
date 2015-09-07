@@ -258,3 +258,10 @@ input.input-medium.label {
     font-weight: bold;
     width: 12.5em;
 }
+
+input.input-medium.description {
+    font-family: arial;
+    font-size: 1em;
+    font-weight: bold;
+    width: 12.5em;
+}
