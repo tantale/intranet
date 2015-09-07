@@ -51,8 +51,21 @@
           method="get">
         <p>
             <button id="calendar_${uid}__delete" type="submit" class="delete_button"
-                    title="Supprimer ce calendrier">${_(u"Supprimer")}
+                    title="Supprimer le calendrier : ${values.get('label')}">${_(u"Supprimer")}
             </button>
         </p>
     </form>
 </td>
+<script type='text/javascript'><!--
+    "use strict";
+    /*global $*/
+    $(function() {
+        $('#calendar_${uid}__delete_form').button({
+            text : false,
+            icons : {
+                primary : "ui-icon-trash"
+            }
+        });
+    });
+-->
+</script>
