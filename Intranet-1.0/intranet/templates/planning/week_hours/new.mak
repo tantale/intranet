@@ -3,7 +3,7 @@
     <%! import collections %>
     <%flash = tg.flash_obj.render('flash', use_js=False)%>
     -->
-    %if flash and not cat_group:
+    %if flash:
     ${flash | n}
     %endif
     <h2>Ajouter un nouveau calendrier</h2>

@@ -7,7 +7,6 @@ from sqlalchemy import create_engine
 import sqlalchemy.exc
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.sql.expression import desc
-
 from zope.sqlalchemy.datamanager import ZopeTransactionExtension
 
 from intranet.accessors import RecordNotFoundError
@@ -93,6 +92,11 @@ class TestCalendarAccessor(unittest.TestCase):
         with self.assertRaises(sqlalchemy.exc.IntegrityError) as context:
             accessor.insert_calendar(week_hours2.uid, "label1", "Description2")
         LOG.debug(context.exception)
+        # label not NULL
+        with self.assertRaises(sqlalchemy.exc.IntegrityError) as context:
+            accessor.insert_calendar(week_hours2.uid, None, "Description3")
+        LOG.debug(context.exception)
+        accessor.insert_calendar(week_hours1.uid, "label4", "Description4")
 
     def test_get_calendar_list(self):
         wh_accessor = WeekHoursAccessor(self.session)

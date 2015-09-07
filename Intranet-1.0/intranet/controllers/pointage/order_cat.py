@@ -15,7 +15,6 @@ import pylons
 from tg.controllers.restcontroller import RestController
 from tg.controllers.util import redirect
 from tg.decorators import expose, with_trailing_slash, validate, without_trailing_slash
-
 from tg.flash import flash
 import sqlalchemy.exc
 
@@ -124,7 +123,7 @@ class OrderCatController(RestController):
             flash(err_msg, status="error")
             raise
         else:
-            msg_fmt = _(u"La catégorie de commande « {code} » a été créé "
+            msg_fmt = _(u"La catégorie de commande « {code} » a été créée "
                         u"dans la base de données avec succès.")
             flash(msg_fmt.format(code=code), status="ok")
 

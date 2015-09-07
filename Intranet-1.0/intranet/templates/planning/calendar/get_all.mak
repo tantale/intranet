@@ -1,13 +1,22 @@
-<div>
-    <!--
-    <%! import collections %>
-    <%flash = tg.flash_obj.render('flash', use_js=False)%>
-    -->
-    %if flash and not cat_group:
-    ${flash | n}
-    %endif
-    <h2>Liste des calendriers</h2>
-    %for calendar in calendar_list:
-    <p>${calendar.position} ${calendar.label} ${calendar.description}</p>
-    %endfor
-</div>
+%for calendar in calendar_list:
+<tr id="calendar_${calendar.uid}"></tr>
+<script type='text/javascript'>
+$(function() {
+    $('#calendar_${calendar.uid}').load("${tg.url('/admin/planning/calendar/{0}/edit'.format(calendar.uid))}");
+});
+
+</script>
+%endfor
+<script type='text/javascript'><!--
+    "use strict";
+    /*global $*/
+    $(function() {
+        $('#calendar tbody .delete_button').button({
+            text : false,
+            icons : {
+                primary : "ui-icon-trash"
+            }
+        });
+    });
+
+</script>

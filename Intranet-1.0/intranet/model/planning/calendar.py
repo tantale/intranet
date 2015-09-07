@@ -46,7 +46,7 @@ class Calendar(DeclarativeBase):
     employee = relationship('Employee',
                             backref=backref('calendar',
                                             uselist=False,
-                                            cascade='all,delete-orphan'))
+                                            cascade='save-update'))
 
     def __init__(self, position, label, description):
         """
