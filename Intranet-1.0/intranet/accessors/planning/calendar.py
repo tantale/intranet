@@ -26,6 +26,11 @@ except TypeError:
 
 
 class CalendarAccessor(BasicAccessor):
+    #: Default Event colors: intranet/public/css/fullcalendar.css:264
+    BACKGROUND_COLOR = Calendar.BACKGROUND_COLOR
+    BORDER_COLOR = Calendar.BORDER_COLOR
+    TEXT_COLOR = Calendar.TEXT_COLOR
+
     def __init__(self, session=None):
         super(CalendarAccessor, self).__init__(Calendar, session=session)
         self.week_hours_accessor = WeekHoursAccessor(session)
@@ -81,7 +86,8 @@ class CalendarAccessor(BasicAccessor):
         """
         return self._get_record_list(filter_cond=filter_cond, order_by_cond=order_by_cond)
 
-    def insert_calendar(self, week_hours_uid, label, description, employee_uid=None):
+    def insert_calendar(self, week_hours_uid, label, description, employee_uid=None,
+                        background_color=BACKGROUND_COLOR, border_color=BORDER_COLOR, text_color=TEXT_COLOR):
         """
         Append worked hours.
 
@@ -95,7 +101,8 @@ class CalendarAccessor(BasicAccessor):
             last_position = self.session.query(func.max(Calendar.position)).scalar() or 0
             week_hours = self.get_week_hours(week_hours_uid)
             employee = self.get_employee(employee_uid) if employee_uid else None
-            calendar = Calendar(last_position + 1, label, description)
+            calendar = Calendar(last_position + 1, label, description,
+                                background_color, border_color, text_color)
             calendar.week_hours = week_hours
             calendar.employee = employee
             self.session.add(calendar)

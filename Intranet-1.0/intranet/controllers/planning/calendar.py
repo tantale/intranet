@@ -2,7 +2,7 @@
 import logging
 from pprint import pformat
 
-from formencode.validators import NotEmpty, Int
+from formencode.validators import NotEmpty, Int, String
 import pylons
 from pylons.i18n import ugettext as _
 from tg import expose, flash
@@ -17,7 +17,9 @@ from intranet.accessors.planning.calendar import CalendarAccessor
 LOG = logging.getLogger(__name__)
 
 
+# noinspection PyAbstractClass
 class CalendarController(RestController):
+    # noinspection PyUnusedLocal
     def _before(self, *args, **kwargs):
         self.accessor = CalendarAccessor()
 
@@ -70,23 +72,36 @@ class CalendarController(RestController):
         if form_errors:
             err_msg = _(u"Le formulaire comporte des champs invalides")
             flash(err_msg, status="error")
+        kwargs.setdefault("background_color", self.convert_value("background_color", None))
+        kwargs.setdefault("border_color", self.convert_value("border_color", None))
+        kwargs.setdefault("text_color", self.convert_value("text_color", None))
         return dict(values=kwargs, form_errors=form_errors,
                     employee_list=self.accessor.get_employee_list(),
                     week_hours_list=self.accessor.get_week_hours_list())
 
     @validate({'week_hours_uid': Int(min=0),
                'label': NotEmpty(),
-               'employee_uid': Int(min=0)},
+               'employee_uid': Int(min=0),
+               'background_color': String(len=7),
+               'border_color': String(len=7),
+               'text_color': String(len=7)},
               error_handler=new)
     @expose()
-    def post(self, week_hours_uid, label, description, employee_uid, **kwargs):
+    def post(self, week_hours_uid, label, description, employee_uid,
+             background_color, border_color, text_color, **kwargs):
         LOG.info("post, kwargs={0}".format(pformat(kwargs)))
         try:
-            label = label or None
-            description = description or None
-            week_hours_uid = int(week_hours_uid)
-            employee_uid = int(employee_uid) if employee_uid else None
-            self.accessor.insert_calendar(week_hours_uid, label, description, employee_uid=employee_uid)
+            label = self.convert_value("label", label)
+            description = self.convert_value("description", description)
+            week_hours_uid = self.convert_value("week_hours_uid", week_hours_uid)
+            employee_uid = self.convert_value("employee_uid", employee_uid)
+            background_color = self.convert_value("background_color", background_color)
+            border_color = self.convert_value("border_color", border_color)
+            text_color = self.convert_value("text_color", text_color)
+            self.accessor.insert_calendar(week_hours_uid, label, description, employee_uid=employee_uid,
+                                          background_color=background_color,
+                                          border_color=border_color,
+                                          text_color=text_color)
         except sqlalchemy.exc.IntegrityError as exc:
             transaction.abort()
             LOG.warning(exc)
@@ -101,7 +116,10 @@ class CalendarController(RestController):
                      week_hours_uid=week_hours_uid,
                      label=label,
                      description=description,
-                     employee_uid=employee_uid)
+                     employee_uid=employee_uid,
+                     background_color=background_color,
+                     border_color=border_color,
+                     text_color=text_color)
         else:
             msg_fmt = _(u"Le calendrier « {label} » a été créé "
                         u"dans la base de données avec succès.")
@@ -143,14 +161,11 @@ class CalendarController(RestController):
         :param kwargs:
         :return:
         """
-        LOG.info("edit_label, name={name}, value={value}, kwargs={kwargs}".format(name=name,
+        LOG.info("edit_in_place, name={name}, value={value}, kwargs={kwargs}".format(name=name,
                                                                                   value=pformat(value),
                                                                                   kwargs=pformat(kwargs)))
         uid, field = name.split("_", 2)[1:]
-        if field in ("label", "description"):
-            value = value or None
-        elif field in ("week_hours_uid", "employee_uid"):
-            value = int(value) if value else None
+        value = self.convert_value(field, value)
         try:
             self.accessor.update_calendar(uid, **{field: value})
         except sqlalchemy.exc.IntegrityError:
@@ -164,3 +179,20 @@ class CalendarController(RestController):
             err_msg = msg_fmt.format(label=value)
             return dict(status='error', msg=err_msg)
         return dict(status='updated')
+
+    def convert_value(self, field, value):
+        converters = dict(label=unicode,
+                          description=unicode,
+                          week_hours_uid=int,
+                          employee_uid=int,
+                          background_color=unicode,
+                          border_color=unicode,
+                          text_color=unicode)
+        defaults = dict(label=None,
+                        description=None,
+                        week_hours_uid=None,
+                        employee_uid=None,
+                        background_color=self.accessor.BACKGROUND_COLOR,
+                        border_color=self.accessor.BORDER_COLOR,
+                        text_color=self.accessor.TEXT_COLOR)
+        return converters[field](value) if value else defaults[field]

@@ -37,7 +37,7 @@
             %endfor
         </select>
     </td>
-    <td>
+    <td rowspan="2">
         <form id="calendar_${calendar.uid}_delete_form" class="delete_form inline_form"
               action="${tg.url('/admin/planning/calendar/{0}/delete'.format(calendar.uid))}"
               method="get">
@@ -47,6 +47,27 @@
                 </button>
             </p>
         </form>
+    </td>
+</tr>
+<tr id="calendar_${calendar.uid}_color">
+    <th class="record-table-name ui-state-default alignRight">Couleurs&nbsp;:</th>
+    <td colspan="3">
+        <style scoped="scoped">
+            #calendar label.fixed-size {
+            display: inline-block;
+            width: 6em;
+            text-align: right;
+            }
+        </style>
+        <label class="fixed-size" for="calendar_${calendar.uid}_background_color">fond&nbsp;: </label>
+        <input id="calendar_${calendar.uid}_background_color" class="background_color editable" type="color"
+               name="background_color" title="${_(u'Couleur du fond')}" value="${calendar.background_color}"/>
+        <label class="fixed-size" for="calendar_${calendar.uid}_border_color">bordures&nbsp;: </label>
+        <input id="calendar_${calendar.uid}_border_color" class="border_color editable" type="color"
+               name="border_color" title="${_(u'Couleur des bordures')}" value="${calendar.border_color}"/>
+        <label class="fixed-size" for="calendar_${calendar.uid}_text_color">texte&nbsp;: </label>
+        <input id="calendar_${calendar.uid}_text_color" class="text_color editable" type="color"
+               name="text_color" title="${_(u'Couleur du texte')}" value="${calendar.text_color}"/>
     </td>
 </tr>
 %endfor
@@ -103,7 +124,9 @@
         jQuery.post("${tg.url('/admin/planning/calendar/edit_in_place')}",
             {name: this.id, value: this.value});
     });
+    $('#calendar input[type=color].editable').change(function() {
+        jQuery.post("${tg.url('/admin/planning/calendar/edit_in_place')}",
+            {name: this.id, value: this.value});
+    });
 -->
-
-
 </script>
