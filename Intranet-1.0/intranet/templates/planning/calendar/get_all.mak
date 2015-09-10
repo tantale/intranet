@@ -68,6 +68,7 @@
         <label class="fixed-size" for="calendar_${calendar.uid}_text_color">texte&nbsp;: </label>
         <input id="calendar_${calendar.uid}_text_color" class="text_color editable" type="color"
                name="text_color" title="${_(u'Couleur du texte')}" value="${calendar.text_color}"/>
+        <!-- todo: add class_name -->
     </td>
 </tr>
 %endfor

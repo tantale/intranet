@@ -101,7 +101,7 @@
         <!-- <%
         input_name = "background_color"
         input_title = _(u'Couleur du fond')
-        input_val = values.get(input_name, "")
+        input_val = values.get(input_name)
         %> -->
         <label class="fixed-size" for="calendar_new_background_color">fond&nbsp;: </label>
         <input id="calendar_new_background_color" type="color" form="calendar_new_create_form"
@@ -109,7 +109,7 @@
         <!-- <%
         input_name = "border_color"
         input_title = _(u'Couleur des bordures')
-        input_val = values.get(input_name, "")
+        input_val = values.get(input_name)
         %> -->
         <label class="fixed-size" for="calendar_new_border_color">bordures&nbsp;: </label>
         <input id="calendar_new_border_color" type="color" form="calendar_new_create_form"
@@ -117,11 +117,12 @@
         <!-- <%
         input_name = "text_color"
         input_title = _(u'Couleur du texte')
-        input_val = values.get(input_name, "")
+        input_val = values.get(input_name)
         %> -->
         <label class="fixed-size" for="calendar_new_text_color">texte&nbsp;: </label>
         <input id="calendar_new_text_color" type="color" form="calendar_new_create_form"
                name="${input_name}" title="${input_title}" value="${input_val}"/>
+        <!-- todo: add class_name -->
     </td>
 </tr>
 %if flash and not cat_group:
