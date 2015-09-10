@@ -24,12 +24,14 @@ class CalEvent(DeclarativeBase):
     uid = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
 
     # employee_uid -- non-standard field
+    # todo: Why employee_uid is nullable?
     employee_uid = Column(Integer, ForeignKey('Employee.uid',
                                               ondelete='CASCADE',
                                               onupdate='CASCADE'),
                           nullable=True, index=True)
 
     # order_phase_uid -- non-standard field
+    # todo: Why order_phase_uid is nullable?
     order_phase_uid = Column(Integer, ForeignKey('OrderPhase.uid',
                                                  ondelete='CASCADE',
                                                  onupdate='CASCADE'),
