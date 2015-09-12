@@ -46,7 +46,8 @@ class CalendarController(RestController):
         LOG.info("get_all")
         return dict(calendar_list=self.accessor.get_calendar_list(),
                     employee_list=self.accessor.get_employee_list(),
-                    week_hours_list=self.accessor.get_week_hours_list())
+                    week_hours_list=self.accessor.get_week_hours_list(),
+                    order_cat_groups=self.accessor.order_cat_accessor.get_order_cat_groups())
 
     # @expose('intranet.templates.planning.calendar.edit')
     # def edit(self, uid, **kwargs):
@@ -74,7 +75,8 @@ class CalendarController(RestController):
             flash(err_msg, status="error")
         return dict(values=kwargs, form_errors=form_errors,
                     employee_list=self.accessor.get_employee_list(),
-                    week_hours_list=self.accessor.get_week_hours_list())
+                    week_hours_list=self.accessor.get_week_hours_list(),
+                    order_cat_groups=self.accessor.order_cat_accessor.get_order_cat_groups())
 
     @validate({'week_hours_uid': Int(min=0),
                'label': NotEmpty(),

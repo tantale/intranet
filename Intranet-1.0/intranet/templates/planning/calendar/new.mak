@@ -1,3 +1,4 @@
+<%namespace file="intranet.templates.planning.calendar.ctrl_select_class_name" import="select_class_name"/>
 <!--
 <%flash = tg.flash_obj.render('flash', use_js=False)%>
 -->
@@ -122,7 +123,9 @@
         <label class="fixed-size" for="calendar_new_text_color">texte&nbsp;: </label>
         <input id="calendar_new_text_color" type="color" form="calendar_new_create_form"
                name="${input_name}" title="${input_title}" value="${input_val}"/>
-        <!-- todo: add class_name -->
+        ${select_class_name("calendar_new_groups", "class_name", _(u"Sélectionnez une catégorie"),
+        order_cat_groups, selected_cat_name=values.get("input_name"),
+        empty_label=_(u"(Aucune)"), form="calendar_new_create_form")}
     </td>
 </tr>
 %if flash and not cat_group:

@@ -34,7 +34,10 @@ install_requires = ["Genshi == 0.7",
                     "sqlalchemy-migrate",
                     "sqlalchemy",
                     "tw2.forms == 2.2.0.3",
-                    "TurboGears2 == 2.2.2"]
+                    "TurboGears2 == 2.2.2",
+
+                    # 'MySQL-python',
+                    ]
 
 setup(
     name='Intranet',

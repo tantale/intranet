@@ -17,6 +17,7 @@ from tg.i18n import ugettext as _
 from intranet.accessors import BasicAccessor, LOG
 from intranet.accessors.pointage.employee import EmployeeAccessor
 from intranet.accessors.planning.week_hours import WeekHoursAccessor
+from intranet.accessors.pointage.order_cat import OrderCatAccessor
 from intranet.model.planning.calendar import Calendar
 
 try:
@@ -30,6 +31,7 @@ class CalendarAccessor(BasicAccessor):
         super(CalendarAccessor, self).__init__(Calendar, session=session)
         self.week_hours_accessor = WeekHoursAccessor(session)
         self.employee_accessor = EmployeeAccessor(session)
+        self.order_cat_accessor = OrderCatAccessor(session)
 
     def setup(self, week_hours_uid):
         LOG.info(u"Setup the default calendar...")

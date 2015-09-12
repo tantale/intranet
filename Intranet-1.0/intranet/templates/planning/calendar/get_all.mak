@@ -1,3 +1,4 @@
+<%namespace file="intranet.templates.planning.calendar.ctrl_select_class_name" import="select_class_name"/>
 %for calendar in calendar_list:
 <tr id="calendar_${calendar.uid}">
     <td>
@@ -68,7 +69,8 @@
         <label class="fixed-size" for="calendar_${calendar.uid}_text_color">texte&nbsp;: </label>
         <input id="calendar_${calendar.uid}_text_color" class="text_color editable" type="color"
                name="text_color" title="${_(u'Couleur du texte')}" value="${calendar.text_color}"/>
-        <!-- todo: add class_name -->
+        ${select_class_name("calendar_${calendar.uid}_groups", "class_name", _(u"Sélectionnez une catégorie"),
+        order_cat_groups, selected_cat_name=calendar.class_name, empty_label=_(u"(Aucune)"))}
     </td>
 </tr>
 %endfor
