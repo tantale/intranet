@@ -1,5 +1,6 @@
-<%def name="select_class_name(id, name, title, order_cat_groups, selected_cat_name='', empty_label='(aucun)', form='')">
-<select id="${id}" name="${name}" title="${title}" class="${selected_cat_name}" form="${form}">
+<%def name="select_class_name(id, name, title, order_cat_groups, selected_cat_name='', empty_label='(aucun)')">
+<select id="${id}" name="${name}" title="${title}"
+        class="${selected_cat_name} ui-widget ui-state-default ui-corner-all">
     ##
     ## Empty option: if selected_cat_name == "", mark the empty option as selected
     ##

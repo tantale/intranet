@@ -41,8 +41,6 @@
             target : '#confirm_dialog_content',
             success: function(responseText, statusText, xhr) {
                 $("#calendar_${calendar.uid}").remove();
-                $("#calendar_${calendar.uid}_color").remove();
-                $('#calendar tfoot').load("${tg.url('/admin/planning/calendar/new')}");
             }
         });
     });
