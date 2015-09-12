@@ -1,6 +1,6 @@
 <%def name="select_class_name(id, name, title, order_cat_groups, selected_cat_name='', empty_label='(aucun)')">
 <select id="${id}" name="${name}" title="${title}"
-        class="${selected_cat_name} ui-widget ui-state-default ui-corner-all">
+        class="${selected_cat_name}">
     ##
     ## Empty option: if selected_cat_name == "", mark the empty option as selected
     ##
@@ -30,4 +30,21 @@
     </optgroup>
     %endfor
 </select>
+<script type='text/javascript'><!--
+    "use strict";
+    /*global $*/
+    $(function() {
+        $('#${id}').change(function() {
+            var thisSelect = $(this);
+            thisSelect.attr("class").split(" ").filter(function(color) {
+                return color.startsWith("color")
+            }).forEach(function(color) {
+                thisSelect.removeClass(color);
+            });
+            thisSelect.addClass(thisSelect.find('option:selected').attr('class'));
+        });
+    });
+-->
+
+</script>
 </%def>

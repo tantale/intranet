@@ -65,7 +65,7 @@
             </tr>
             <tr>
                 <td><label for="calendar_${calendar.uid}_groups">catégorie&nbsp;: </label></td>
-                <td>${select_class_name("calendar_${calendar.uid}_groups",
+                <td>${select_class_name("calendar_{0}_groups".format(calendar.uid),
                     "class_name", _(u"Sélectionnez une catégorie"),
                     order_cat_groups, selected_cat_name=calendar.class_name, empty_label=_(u"(Aucune)"))}
                 </td>
@@ -148,5 +148,4 @@
         });
     });
 -->
-
 </script>

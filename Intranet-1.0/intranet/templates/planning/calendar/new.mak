@@ -2,7 +2,7 @@
 <!--
 <%flash = tg.flash_obj.render('flash', use_js=False)%>
 -->
-<article>
+<article id="calendar_new">
     <form id="calendar_new_create_form" class="create_form"
           action="${tg.url('/admin/planning/calendar/')}"
           method="post" enctype="multipart/form-data">
@@ -85,38 +85,41 @@
                 %endfor
             </select>
         </p>
-        <table border="0">
-            <caption>Couleurs et style</caption>
-            <tbody>
-            <tr>
-                <td><label for="calendar_new_background_color">fond&nbsp;: </label></td>
-                <td><input id="calendar_new_background_color" class="background_color editable" type="color"
-                           name="background_color" title="${_(u'Couleur du fond')}"
-                           value="${values.get('background_color')}"/>
-                </td>
-            </tr>
-            <tr>
-                <td><label for="calendar_new_border_color">bordures&nbsp;: </label></td>
-                <td><input id="calendar_new_border_color" class="border_color editable" type="color"
-                           name="border_color" title="${_(u'Couleur des bordures')}"
-                           value="${values.get('border_color')}"/>
-                </td>
-            </tr>
-            <tr>
-                <td><label for="calendar_new_text_color">texte&nbsp;: </label></td>
-                <td><input id="calendar_new_text_color" class="text_color editable" type="color"
-                           name="text_color" title="${_(u'Couleur du texte')}" value="${values.get('text_color')}"/>
-                </td>
-            </tr>
-            <tr>
-                <td><label for="calendar_new_groups">catégorie&nbsp;: </label></td>
-                <td>${select_class_name("calendar_new_groups",
-                    "class_name", _(u"Sélectionnez une catégorie"),
-                    order_cat_groups, selected_cat_name=values.get('class_name'), empty_label=_(u"(Aucune)"))}
-                </td>
-            </tr>
-            </tbody>
-        </table>
+        <details>
+            <summary>Couleurs et style</summary>
+            <table border="0">
+                <tbody>
+                <tr>
+                    <td><label for="calendar_new_background_color">fond&nbsp;: </label></td>
+                    <td><input id="calendar_new_background_color" class="background_color editable" type="color"
+                               name="background_color" title="${_(u'Couleur du fond')}"
+                               value="${values.get('background_color')}"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td><label for="calendar_new_border_color">bordures&nbsp;: </label></td>
+                    <td><input id="calendar_new_border_color" class="border_color editable" type="color"
+                               name="border_color" title="${_(u'Couleur des bordures')}"
+                               value="${values.get('border_color')}"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td><label for="calendar_new_text_color">texte&nbsp;: </label></td>
+                    <td><input id="calendar_new_text_color" class="text_color editable" type="color"
+                               name="text_color" title="${_(u'Couleur du texte')}" value="${values.get('text_color')}"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td><label for="calendar_new_groups">catégorie&nbsp;: </label></td>
+                    <td>${select_class_name("calendar_new_groups",
+                        "class_name", _(u"Sélectionnez une catégorie"),
+                        order_cat_groups, selected_cat_name=values.get('class_name'), empty_label=_(u"(Aucune)"))}
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+
+        </details>
         <nav>
             <p>
                 <button id="calendar_new_create" type="submit" class="create_button"
