@@ -26,6 +26,28 @@ except TypeError:
     _ = lambda x: x
 
 
+def convert_value(field, value):
+    converters = dict(position=int,
+                      label=unicode,
+                      description=unicode,
+                      week_hours_uid=int,
+                      employee_uid=int,
+                      background_color=unicode,
+                      border_color=unicode,
+                      text_color=unicode,
+                      class_name=unicode)
+    defaults = dict(position=1,
+                    label=None,
+                    description=None,
+                    week_hours_uid=None,
+                    employee_uid=None,
+                    background_color=Calendar.BACKGROUND_COLOR,
+                    border_color=Calendar.BORDER_COLOR,
+                    text_color=Calendar.TEXT_COLOR,
+                    class_name=None)
+    return converters[field](value) if value else defaults[field]
+
+
 class CalendarAccessor(BasicAccessor):
     def __init__(self, session=None):
         super(CalendarAccessor, self).__init__(Calendar, session=session)
@@ -94,14 +116,20 @@ class CalendarAccessor(BasicAccessor):
         :type description: unicode
         :param description: Description => used in tooltip.
         """
+        week_hours_uid = convert_value("week_hours_uid", week_hours_uid)
+        label = convert_value("label", label)
+        description = convert_value("description", description)
+        employee_uid = convert_value("employee_uid", employee_uid)
+        background_color = convert_value("background_color", background_color)
+        border_color = convert_value("border_color", border_color)
+        text_color = convert_value("text_color", text_color)
+        class_name = convert_value("class_name", class_name)
         with transaction.manager:
             last_position = self.session.query(func.max(Calendar.position)).scalar() or 0
-            week_hours = self.get_week_hours(week_hours_uid)
-            employee = self.get_employee(employee_uid) if employee_uid else None
             calendar = Calendar(last_position + 1, label, description,
                                 background_color, border_color, text_color, class_name)
-            calendar.week_hours = week_hours
-            calendar.employee = employee
+            calendar.week_hours_uid = week_hours_uid
+            calendar.employee_uid = employee_uid
             self.session.add(calendar)
 
     def update_calendar(self, uid, **kwargs):
@@ -112,6 +140,7 @@ class CalendarAccessor(BasicAccessor):
         :rtype: Calendar
         :return: The updated OpenHours.
         """
+        kwargs = {key: convert_value(key, value) for key, value in kwargs.iteritems()}
         return super(CalendarAccessor, self)._update_record(uid, **kwargs)
 
     def delete_calendar(self, uid):

@@ -19,6 +19,11 @@ LOG = logging.getLogger(__name__)
 
 # noinspection PyAbstractClass
 class CalendarController(RestController):
+    #: Default Event colors: intranet/public/css/fullcalendar.css:264
+    BACKGROUND_COLOR = "#cc0000"
+    BORDER_COLOR = "#cc0000"
+    TEXT_COLOR = "#ffffff"
+
     # noinspection PyUnusedLocal
     def _before(self, *args, **kwargs):
         self.accessor = CalendarAccessor()
@@ -73,6 +78,9 @@ class CalendarController(RestController):
         if form_errors:
             err_msg = _(u"Le formulaire comporte des champs invalides")
             flash(err_msg, status="error")
+        kwargs.setdefault("background_color", self.BACKGROUND_COLOR)
+        kwargs.setdefault("border_color", self.BORDER_COLOR)
+        kwargs.setdefault("text_color", self.TEXT_COLOR)
         return dict(values=kwargs, form_errors=form_errors,
                     employee_list=self.accessor.get_employee_list(),
                     week_hours_list=self.accessor.get_week_hours_list(),
@@ -91,15 +99,8 @@ class CalendarController(RestController):
              background_color, border_color, text_color, class_name, **kwargs):
         LOG.info("post, kwargs={0}".format(pformat(kwargs)))
         try:
-            label = self.convert_value("label", label)
-            description = self.convert_value("description", description)
-            week_hours_uid = self.convert_value("week_hours_uid", week_hours_uid)
-            employee_uid = self.convert_value("employee_uid", employee_uid)
-            background_color = self.convert_value("background_color", background_color)
-            border_color = self.convert_value("border_color", border_color)
-            text_color = self.convert_value("text_color", text_color)
-            class_name = self.convert_value("class_name", class_name)
-            self.accessor.insert_calendar(week_hours_uid, label, description, employee_uid=employee_uid,
+            self.accessor.insert_calendar(week_hours_uid, label, description,
+                                          employee_uid=employee_uid,
                                           background_color=background_color,
                                           border_color=border_color,
                                           text_color=text_color,
@@ -168,7 +169,6 @@ class CalendarController(RestController):
                                                                                      value=pformat(value),
                                                                                      kwargs=pformat(kwargs)))
         uid, field = name.split("_", 2)[1:]
-        value = self.convert_value(field, value)
         try:
             self.accessor.update_calendar(uid, **{field: value})
         except sqlalchemy.exc.IntegrityError:
@@ -182,14 +182,3 @@ class CalendarController(RestController):
             err_msg = msg_fmt.format(label=value)
             return dict(status='error', msg=err_msg)
         return dict(status='updated')
-
-    def convert_value(self, field, value):
-        converters = dict(label=unicode,
-                          description=unicode,
-                          week_hours_uid=int,
-                          employee_uid=int,
-                          background_color=unicode,
-                          border_color=unicode,
-                          text_color=unicode,
-                          class_name=unicode)
-        return converters[field](value) if value else None
