@@ -2,9 +2,9 @@
 <%
 duration0 = datetime.timedelta(days=0)
 def duration(total):
-hours, remainder = divmod(int(total.total_seconds()), 3600)
-minute, seconds = divmod(remainder, 60)
-return "{hours:02d}:{minute:02d}".format(hours=hours, minute=minute)
+    hours, remainder = divmod(int(total.total_seconds()), 3600)
+    minute, seconds = divmod(remainder, 60)
+    return "{hours:02d}:{minute:02d}".format(hours=hours, minute=minute)
 %>
 <link rel="stylesheet" type="text/css" href="${tg.url('/css/blitzer/jquery-ui-1.10.3.custom.min.css')}"/>
 <div id="week_hours_${week_hours.uid}">
