@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import logging
-from pprint import pformat
+import pprint
 
 from formencode.validators import NotEmpty, Int, String
 import pylons
@@ -32,14 +32,14 @@ class CalendarController(RestController):
     @with_trailing_slash
     @expose("intranet.templates.planning.calendar.index")
     def index(self, **kwargs):
-        LOG.info("index, kwargs = " + pformat(kwargs))
+        LOG.info("index, kwargs = " + pprint.pformat(kwargs))
         return dict(values=kwargs)
 
     # noinspection PyArgumentList
     @with_trailing_slash
     @expose("intranet.templates.planning.calendar.get_one")
     def get_one(self, uid):
-        LOG.info("get_one, uid = " + pformat(uid))
+        LOG.info("get_one, uid = " + pprint.pformat(uid))
         calendar = self.accessor.get_calendar(uid)
         return dict(calendar=calendar)
 
@@ -73,7 +73,7 @@ class CalendarController(RestController):
     @without_trailing_slash
     @expose("intranet.templates.planning.calendar.new")
     def new(self, **kwargs):
-        LOG.info("new, kwargs = " + pformat(kwargs))
+        LOG.info("new, kwargs = " + pprint.pformat(kwargs))
         form_errors = pylons.tmpl_context.form_errors  # @UndefinedVariable
         if form_errors:
             err_msg = _(u"Le formulaire comporte des champs invalides")
@@ -97,7 +97,7 @@ class CalendarController(RestController):
     @expose()
     def post(self, week_hours_uid, label, description, employee_uid,
              background_color, border_color, text_color, class_name, **kwargs):
-        LOG.info("post, kwargs={0}".format(pformat(kwargs)))
+        LOG.info("post, kwargs={0}".format(pprint.pformat(kwargs)))
         try:
             self.accessor.insert_calendar(week_hours_uid, label, description,
                                           employee_uid=employee_uid,
@@ -132,12 +132,12 @@ class CalendarController(RestController):
 
     @expose('intranet.templates.planning.calendar.get_delete')
     def get_delete(self, uid):
-        LOG.info("get_delete, uid={0}".format(pformat(uid)))
+        LOG.info("get_delete, uid={0}".format(pprint.pformat(uid)))
         return dict(calendar=self.accessor.get_calendar(uid))
 
     @expose()
     def post_delete(self, uid):
-        LOG.info("post_delete, uid={0}".format(pformat(uid)))
+        LOG.info("post_delete, uid={0}".format(pprint.pformat(uid)))
         old_calendar = self.accessor.delete_calendar(uid)
         msg_fmt = _(u"Le calendrier « {label} » a été supprimé "
                     u"de la base de données avec succès.")
@@ -166,8 +166,8 @@ class CalendarController(RestController):
         :return:
         """
         LOG.info("edit_in_place, name={name}, value={value}, kwargs={kwargs}".format(name=name,
-                                                                                     value=pformat(value),
-                                                                                     kwargs=pformat(kwargs)))
+                                                                                     value=pprint.pformat(value),
+                                                                                     kwargs=pprint.pformat(kwargs)))
         uid, field = name.split("_", 2)[1:]
         try:
             self.accessor.update_calendar(uid, **{field: value})

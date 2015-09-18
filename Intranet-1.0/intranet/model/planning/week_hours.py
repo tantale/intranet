@@ -59,3 +59,13 @@ class WeekHours(DeclarativeBase):
 
     def __ge__(self, other):
         return self.position >= other.position
+
+    def get_hours_interval_table(self, week_day_list):
+        day_period_list = self.day_period_list
+        indexed_intervals = dict()
+        for day_period in day_period_list:
+            for hours_interval in day_period.hours_interval_list:
+                indexed_intervals[(hours_interval.week_day_uid, hours_interval.day_period_uid)] = hours_interval
+        return [[indexed_intervals.get((week_day.uid, day_period.uid))
+                 for day_period in day_period_list]
+                for week_day in week_day_list]

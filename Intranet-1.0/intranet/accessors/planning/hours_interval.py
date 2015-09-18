@@ -96,14 +96,9 @@ class HoursIntervalAccessor(BasicAccessor):
         return self._get_record_list(filter_cond=filter_cond, order_by_cond=order_by_cond)
 
     def get_hours_interval_table(self, week_hours_uid):
+        week_day_list = self.get_week_day_list(order_by_cond=WeekDay.iso_weekday)
         week_hours = self.week_hours_accessor.get_week_hours(week_hours_uid)
-        indexed_intervals = dict()
-        for day_period in week_hours.day_period_list:
-            for hours_interval in day_period.hours_interval_list:
-                indexed_intervals[(hours_interval.week_day_uid, hours_interval.day_period_uid)] = hours_interval
-        return [[indexed_intervals.get((week_day.uid, day_period.uid))
-                 for day_period in week_hours.day_period_list]
-                for week_day in self.get_week_day_list(order_by_cond=WeekDay.iso_weekday)]
+        return week_hours.get_hours_interval_table(week_day_list)
 
     def insert_hours_interval(self, week_day_uid, day_period_uid, start_hour, end_hour):
         with transaction.manager:
