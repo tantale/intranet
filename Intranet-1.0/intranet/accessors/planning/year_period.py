@@ -69,19 +69,16 @@ class YearPeriodAccessor(BasicAccessor):
         """
         Append a period of the year.
 
-        :param calendar_uid: UID of the open hours (parent).
+        :param calendar_uid: UID of the calendar (parent).
         :param week_hours_uid: UID of the week hours.
         :param frequency_uid: UID of the frequency to append.
         :rtype: YearPeriod
         """
         with transaction.manager:
-            calendar = self.get_calendar(calendar_uid)
-            week_hours = self.get_week_hours(week_hours_uid)
-            frequency = self.get_frequency(frequency_uid)
             year_period = YearPeriod(start_date, end_date)
-            year_period.calendar = calendar
-            year_period.week_hours = week_hours
-            year_period.frequency = frequency
+            year_period.calendar_uid = calendar_uid
+            year_period.week_hours_uid = week_hours_uid
+            year_period.frequency_uid = frequency_uid
             self.session.add(year_period)
 
     def update_year_period(self, uid, **kwargs):
