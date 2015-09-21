@@ -81,3 +81,21 @@ class Calendar(DeclarativeBase):
         self.border_color = border_color
         self.text_color = text_color
         self.class_name = class_name
+
+    def event_source_obj(self):
+        """
+        http://fullcalendar.io/docs1/event_data/Event_Source_Object/
+
+        :return: Event source object as a Python dictionary
+        """
+        dict_ = dict()
+        # -- Standard fields
+        dict_['id'] = ('{uid}'.format(uid=self.uid))
+        if self.class_name:
+            dict_['className'] = self.class_name
+        else:
+            dict_['backgroundColor'] = self.background_color
+            dict_['borderColor'] = self.border_color
+            dict_['textColor'] = self.text_color
+        return dict_
+

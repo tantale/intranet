@@ -1,6 +1,8 @@
-<h2>Planning des employés</h2>
+<h2>Planning</h2>
 
-<div id='calendar'><!-- calendar placeholder --></div>
+<pre>${eventSources|n}</pre>
+
+<div id='event_source'><!-- event_source placeholder --></div>
 
 <script type='text/javascript'>
 	"use strict";
@@ -10,20 +12,20 @@
 
         var prop = {
             viewRender: function( view, element ) {
-                var currDate = $("#calendar").fullCalendar('getDate');
+                var currDate = $("#event_source").fullCalendar('getDate');
                 var ajaxData = {
                     defaultView : view.name,
                     date : currDate.getDate(),
                     month : currDate.getMonth(),
                     year : currDate.getFullYear()
                 };
-                console.debug("calendar.full_calendar put:", ajaxData);
+                console.debug("event_source.full_calendar put:", ajaxData);
                 jQuery.ajax("./full_calendar", { method : "put", data : ajaxData });
             },
             eventSources: ${eventSources|n}
         };
 
-        $('#calendar').fullCalendar($.extend(data, prop));
+        $('#event_source').fullCalendar($.extend(data, prop));
 
     });
 </script>

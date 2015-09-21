@@ -1,10 +1,69 @@
 # -*- coding: utf-8 -*-
-from tg.controllers.restcontroller import RestController
+import collections
 
+from tg.controllers.restcontroller import RestController
+from tg.decorators import without_trailing_slash, expose
+
+from pylons.i18n import ugettext as _
+
+from intranet.accessors.planning.calendar import CalendarAccessor
 from intranet.controllers.planning.calendar import CalendarController
+from intranet.controllers.planning.event_source import EventSourceController
 from intranet.controllers.planning.week_hours import WeekHoursController
+from intranet.controllers.session_obj.calendar_selection import CalendarSelectionController
+from intranet.controllers.session_obj.layout import LayoutController
+from intranet.controllers.session_obj.full_calendar import FullCalendarController
+
+
+class ResourcesController(RestController):
+    calendar_selections = CalendarSelectionController("planning")
+
+    def _before(self, *args, **kw):
+        self.calendar_accessor = CalendarAccessor()
+
+    # noinspection PyArgumentList
+    @without_trailing_slash
+    @expose('intranet.templates.planning.resources')
+    def get_all(self):
+        # -- find all
+        calendar_list = self.calendar_accessor.get_calendar_list()
+
+        # -- add selection flag
+        selections = self.calendar_selections.get_all()["selections"]
+        for calendar in calendar_list:
+            calendar.checked = calendar.uid in selections
+
+        # -- Group resources
+        group_dict = collections.OrderedDict()
+        group_dict[_(u"Calendrier des employés")] = filter(lambda x: x.employee_uid is not None, calendar_list)
+        group_dict[_(u"Autres calendriers")] = filter(lambda x: x.employee_uid is None, calendar_list)
+
+        return dict(title_msg=_(u"Calendriers"),
+                    empty_msg=_(u"Aucun calendriers"),
+                    group_dict=group_dict)
+
+    @expose()
+    def put(self, uid, checked):
+        return self.calendar_selections.put(uid, checked)
 
 
 class PlanningController(RestController):
     week_hours = WeekHoursController()
     calendar = CalendarController()
+
+    layout = LayoutController("planning")
+    full_calendar = FullCalendarController("planning")
+    resources = ResourcesController()
+    sources = EventSourceController()
+
+    def __init__(self, main_menu):
+        self.main_menu = main_menu
+
+    # noinspection PyArgumentList
+    @without_trailing_slash
+    @expose('intranet.templates.planning.index')
+    def index(self, res=None):
+        """
+        Display the index page.
+        """
+        return dict(main_menu=self.main_menu)

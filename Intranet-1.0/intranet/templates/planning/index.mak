@@ -45,7 +45,7 @@
             modal: true
         });
         $('#planning_resources').load("./resources");
-        $('#planning_calendar').load("./calendar");
+        $('#planning_calendar').load("./sources");
 	});
 
 </script>

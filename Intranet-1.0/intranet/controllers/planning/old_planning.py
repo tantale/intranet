@@ -18,9 +18,11 @@ import time
 
 from tg.i18n import ugettext as _
 from tg.controllers.restcontroller import RestController
-from tg.decorators import expose, without_trailing_slash, with_trailing_slash, request
+
+from tg.decorators import expose, without_trailing_slash, request
 
 from intranet.accessors.pointage.employee import EmployeeAccessor
+from intranet.controllers.planning.event_source import EventSourceController
 from intranet.controllers.session_obj.full_calendar import FullCalendarController
 from intranet.controllers.session_obj.layout import LayoutController
 from intranet.controllers.session_obj.users_selection import UsersSelectionController
@@ -192,40 +194,11 @@ def _v(m1, m2, hue):
     return m1
 
 
-class CalendarController(RestController):
-    users_selections = UsersSelectionController("planning")
-    users = UsersController()
-
-    def get_event_source(self, uid):
-        """
-        Return the event source of a given user.
-
-        {
-            url: '/myfeed.php', // use the `url` property
-            color: 'yellow',    // an option!
-            textColor: 'black'  // an option!
-        }
-        """
-        uid = int(uid)
-        h, l, s = 1.0 * (uid % 10) / 10, .5, 0.5
-        red, green, blue = (int(256 * x) for x in hls_to_rgb(h, l, s))
-        return dict(url="./calendar/users/{uid}/events/".format(uid=uid),
-                    color="#{red:x}{green:x}{blue:x}".format(red=red, green=green, blue=blue))
-
-    # noinspection PyArgumentList
-    @with_trailing_slash
-    @expose('intranet.templates.pointage.planning.calendar')
-    def get_all(self):
-        selections = self.users_selections.get_all()["selections"]
-        event_source_list = [self.get_event_source(uid) for uid in selections]
-        return dict(eventSources=json.dumps(event_source_list, indent=True))
-
-
 class PlanningController(RestController):
     layout = LayoutController("planning")
     full_calendar = FullCalendarController("planning")
     resources = ResourcesController()
-    calendar = CalendarController()
+    calendar = EventSourceController()
 
     def __init__(self, main_menu):
         self.main_menu = main_menu

@@ -37,4 +37,4 @@ class AdminController(BaseController):
     chart = ChartController(main_menu)
 
     prefs = PrefsController(main_menu)
-    planning = PlanningController()
+    planning = PlanningController(main_menu)
