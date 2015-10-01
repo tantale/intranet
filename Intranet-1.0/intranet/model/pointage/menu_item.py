@@ -10,7 +10,6 @@ Author: Laurent LAPORTE <sandlol2009@gmail.com>
 
 
 class MenuItem(object):
-
     _AUTO_INCREMENT = 0
 
     ITEM_PAGE = u"PAGE"
@@ -27,6 +26,14 @@ class MenuItem(object):
         self.icon_name = icon_name
         self.target_page = target_page
         self.item_type = item_type
+
+    def __json__(self):
+        return dict(display_name=self.display_name,
+                    description=self.description,
+                    icon_name=self.icon_name,
+                    target_page=self.target_page,
+                    item_type=self.item_type,
+                    item_list=[item.__json__() for item in self.item_list])
 
     @property
     def is_header(self):
