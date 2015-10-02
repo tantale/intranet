@@ -8,7 +8,6 @@ from sqlalchemy import create_engine
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.sql.expression import and_
-
 from zope.sqlalchemy.datamanager import ZopeTransactionExtension
 
 from intranet.accessors import RecordNotFoundError
@@ -81,7 +80,9 @@ class TestPlanningEventAccessor(unittest.TestCase):
         event_end = event_start + datetime.timedelta(hours=1)
         self.accessor.insert_planning_event(self.calendar_uid, "Meeting", None,
                                             event_start=event_start,
-                                            event_end=event_end)
+                                            event_end=event_end,
+                                            location="At home",
+                                            private=True)
         filter_cond = and_(PlanningEvent.calendar_uid == self.calendar_uid, PlanningEvent.event_start == event_start,
                            PlanningEvent.event_end == event_end)
         all_events = self.accessor.get_planning_event_list(filter_cond)
@@ -99,7 +100,9 @@ class TestPlanningEventAccessor(unittest.TestCase):
         event_end = event_start + datetime.timedelta(hours=1)
         self.accessor.insert_planning_event(self.calendar_uid, "Meeting", None,
                                             event_start=event_start,
-                                            event_end=event_end)
+                                            event_end=event_end,
+                                            location="At home",
+                                            private=True)
 
         with self.assertRaises(IntegrityError) as context:
             self.accessor.insert_planning_event(self.calendar_uid, "Meeting", None,
@@ -115,7 +118,9 @@ class TestPlanningEventAccessor(unittest.TestCase):
         event_end = event_start + datetime.timedelta(hours=1)
         self.accessor.insert_planning_event(self.calendar_uid, "Meeting", None,
                                             event_start=event_start,
-                                            event_end=event_end)
+                                            event_end=event_end,
+                                            location="At home",
+                                            private=True)
         all_events = self.accessor.get_planning_event_list()
         self.assertEqual(len(all_events), 1)
 
@@ -124,7 +129,9 @@ class TestPlanningEventAccessor(unittest.TestCase):
         event_end = event_start + datetime.timedelta(hours=1)
         self.accessor.insert_planning_event(self.calendar_uid, "Meeting", "My meeting today",
                                             event_start=event_start,
-                                            event_end=event_end)
+                                            event_end=event_end,
+                                            location="At home",
+                                            private=True)
         first_uid = self.accessor.get_planning_event_list()[0].uid
 
         # -- calendar_uid required
@@ -137,7 +144,7 @@ class TestPlanningEventAccessor(unittest.TestCase):
             self.accessor.update_planning_event(first_uid, label=None)
         LOG.info(context.exception)
 
-        # -- comment optional
+        # -- description optional
         self.accessor.update_planning_event(first_uid, description=None)
         planning_event = self.accessor.get_planning_event(first_uid)
         self.assertIsNone(planning_event.description)
@@ -165,6 +172,16 @@ class TestPlanningEventAccessor(unittest.TestCase):
         # -- all_day required
         with self.assertRaises(IntegrityError) as context:
             self.accessor.update_planning_event(first_uid, all_day=None)
+        LOG.info(context.exception)
+
+        # -- location optional
+        self.accessor.update_planning_event(first_uid, location=None)
+        planning_event = self.accessor.get_planning_event(first_uid)
+        self.assertIsNone(planning_event.location)
+
+        # -- private required
+        with self.assertRaises(IntegrityError) as context:
+            self.accessor.update_planning_event(first_uid, private=None)
         LOG.info(context.exception)
 
     def test_increase_duration(self):

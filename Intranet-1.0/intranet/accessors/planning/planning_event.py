@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-
+import sqlalchemy.exc
 import transaction
 from tg.i18n import ugettext as _
 
@@ -19,7 +19,12 @@ class PlanningEventAccessor(BasicAccessor):
         self.calendar_accessor = CalendarAccessor(session)
 
     def setup(self):
-        pass
+        try:
+            with transaction.manager:
+                self.session.add_all([])
+        except sqlalchemy.exc.IntegrityError:
+            # setup already done.
+            transaction.abort()  # abort() is required here, why?...
 
     def get_calendar(self, calendar_uid):
         return self.calendar_accessor.get_calendar(calendar_uid)
@@ -47,7 +52,8 @@ class PlanningEventAccessor(BasicAccessor):
         return super(PlanningEventAccessor, self)._get_record(uid)
 
     def insert_planning_event(self, calendar_uid,
-                              label, description, event_start, event_end, editable=True, all_day=False):
+                              label, description, event_start, event_end, editable=True, all_day=False,
+                              location=None, private=False):
         """
         Create and insert a new PlanningEvent.
 
@@ -57,20 +63,25 @@ class PlanningEventAccessor(BasicAccessor):
         :param label: Display name of the event in the calendar grid.
         :type description: unicode or None
         :param description: Description of the event.
-        :param event_start: The date/time an event begins.
         :type event_start: datetime.datetime
-        :param event_end: The date/time an event ends (exclusive).
+        :param event_start: The date/time an event begins.
         :type event_end: datetime.datetime
-        :param editable: Determine if the events can be dragged and resized.
+        :param event_end: The date/time an event ends (exclusive).
         :type editable: bool
-        :param all_day: Whether an event occurs at a specific time-of-day.
+        :param editable: Determine if the events can be dragged and resized.
         :type all_day: bool
+        :param all_day: Whether an event occurs at a specific time-of-day.
+        :type location: unicode
+        :param location: location/address of the event (if any).
+        :type private: bool
+        :param private: is the event private? Default is public (``False``).
         :rtype: PlanningEvent
         :return: The new PlanningEvent.
         """
         with transaction.manager:
             planning_event = PlanningEvent(label, description, event_start, event_end,
-                                           editable=editable, all_day=all_day)
+                                           editable=editable, all_day=all_day,
+                                           location=location, private=private)
             planning_event.calendar_uid = calendar_uid
             self.session.add(planning_event)
 
