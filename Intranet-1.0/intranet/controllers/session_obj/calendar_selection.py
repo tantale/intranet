@@ -20,6 +20,7 @@ from intranet.controllers.session_obj.casting import as_int, as_bool
 LOG = logging.getLogger(__name__)
 
 
+# noinspection PyAbstractClass
 class CalendarSelectionController(RestController):
     """
     Memorize the selected calendar.
@@ -42,7 +43,7 @@ class CalendarSelectionController(RestController):
         if selections is None:
             accessor = CalendarAccessor()
             calendar_list = accessor.get_calendar_list()
-            # Select all calendars except calendars outside staff
+            # Select all calendars
             selections = {calendar.uid for calendar in calendar_list}
             self.selections = selections
         # It is more secure to return a dict than a list
