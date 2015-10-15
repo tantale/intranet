@@ -11,6 +11,7 @@ from intranet import model
 from intranet.accessors.planning.day_period import DayPeriodAccessor
 from intranet.accessors.planning.frequency import FrequencyAccessor
 from intranet.accessors.planning.hours_interval import HoursIntervalAccessor
+from intranet.accessors.planning.planning_event import PlanningEventAccessor
 from intranet.accessors.planning.week_day import WeekDayAccessor
 from intranet.accessors.planning.week_hours import WeekHoursAccessor
 from intranet.accessors.planning.calendar import CalendarAccessor
@@ -64,6 +65,7 @@ def bootstrap(command, conf, vars):  # @ReservedAssignment
     hours_interval_accessor = HoursIntervalAccessor(model.DBSession)
     calendar_accessor = CalendarAccessor(model.DBSession)
     frequency_accessor = FrequencyAccessor(model.DBSession)
+    planning_event_accessor = PlanningEventAccessor(model.DBSession)
 
     week_day_accessor.setup()
     week_hours_accessor.setup()
@@ -73,3 +75,4 @@ def bootstrap(command, conf, vars):  # @ReservedAssignment
         hours_interval_accessor.setup(week_hours.uid)
         calendar_accessor.setup(week_hours.uid)
     frequency_accessor.setup()
+    planning_event_accessor.setup()

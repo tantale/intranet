@@ -17,7 +17,6 @@ from intranet.accessors.planning.calendar import CalendarAccessor
 LOG = logging.getLogger(__name__)
 
 
-# noinspection PyAbstractClass
 class CalendarController(RestController):
     #: Default Event colors: intranet/public/css/fullcalendar.css:264
     BACKGROUND_COLOR = "#cc0000"

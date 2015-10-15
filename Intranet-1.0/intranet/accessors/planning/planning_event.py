@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from sqlalchemy import and_
 import sqlalchemy.exc
 import transaction
 from tg.i18n import ugettext as _
@@ -50,6 +51,24 @@ class PlanningEventAccessor(BasicAccessor):
         :return: The PlanningEvent.
         """
         return super(PlanningEventAccessor, self)._get_record(uid)
+
+    def get_event_by_dates(self, calendar_uid, event_start, event_end):
+        """
+        Get a planning_event given the Calendar UID, the start and end dates.
+
+        :type calendar_uid: int
+        :param calendar_uid: Calendar UID.
+        :type event_start: datetime.datetime
+        :param event_start: Start date/time of the event
+        :type event_end: datetime.datetime
+        :param event_end: End date/time of the event
+        :rtype: PlanningEvent
+        :return: The PlanningEvent (it is unique, there is a unique constraint).
+        """
+        filter_cond = and_(PlanningEvent.calendar_uid == calendar_uid,
+                           PlanningEvent.event_start == event_start,
+                           PlanningEvent.event_end == event_end)
+        return self.session.query(self.record_class).filter(filter_cond).one()
 
     def insert_planning_event(self, calendar_uid,
                               label, description, event_start, event_end, editable=True, all_day=False,

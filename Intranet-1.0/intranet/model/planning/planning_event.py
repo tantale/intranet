@@ -2,6 +2,7 @@
 from __future__ import unicode_literals
 
 from sqlalchemy.schema import Column, CheckConstraint, ForeignKey
+from sqlalchemy.sql.schema import UniqueConstraint
 from sqlalchemy.types import Integer, String, DateTime, Boolean
 from sqlalchemy.orm import relationship, backref
 
@@ -14,7 +15,9 @@ class PlanningEvent(DeclarativeBase):
     """
     __tablename__ = 'PlanningEvent'
     __table_args__ = (CheckConstraint("event_start <= event_end",
-                                      name="start_before_end_check"),)  # tuple
+                                      name="start_before_end_check"),
+                      UniqueConstraint('calendar_uid', 'event_start', 'event_end',
+                                       name="dates_unique"))  # tuple
 
     uid = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
     label = Column(String(length=32), unique=False, nullable=False)

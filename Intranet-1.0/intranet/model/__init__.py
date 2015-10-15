@@ -73,3 +73,4 @@ from intranet.model.planning.hours_interval import HoursInterval
 from intranet.model.planning.frequency import Frequency
 from intranet.model.planning.calendar import Calendar
 from intranet.model.planning.year_period import YearPeriod
+from intranet.model.planning.planning_event import PlanningEvent

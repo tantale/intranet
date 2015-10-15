@@ -30,24 +30,26 @@ class CalendarSelectionController(RestController):
 
     @property
     def selections(self):
+        if self.session_var not in session:
+            # Select all calendars
+            accessor = CalendarAccessor()
+            calendar_list = accessor.get_calendar_list()
+            session[self.session_var] = {calendar.uid for calendar in calendar_list}
+            session.save()
+            LOG.debug("init session[{key}] = {val!r}".format(key=self.session_var, val=session[self.session_var]))
+        LOG.debug("get session[{key}] = {val!r}".format(key=self.session_var, val=session[self.session_var]))
         return session.get(self.session_var)
 
     @selections.setter
     def selections(self, selections):
         session[self.session_var] = selections
         session.save()
+        LOG.debug("set session[{key}] = {val!r}".format(key=self.session_var, val=session[self.session_var]))
 
     @expose('json')
     def get_all(self):
-        selections = self.selections
-        if selections is None:
-            accessor = CalendarAccessor()
-            calendar_list = accessor.get_calendar_list()
-            # Select all calendars
-            selections = {calendar.uid for calendar in calendar_list}
-            self.selections = selections
         # It is more secure to return a dict than a list
-        return dict(selections=selections)
+        return dict(selections=self.selections)
 
     @expose()
     def put(self, uid, checked):

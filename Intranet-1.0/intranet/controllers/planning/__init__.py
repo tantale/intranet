@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 import collections
+import logging
+import pprint
 
 from tg.controllers.restcontroller import RestController
 from tg.decorators import without_trailing_slash, expose
-
 from pylons.i18n import ugettext as _
 
 from intranet.accessors.planning.calendar import CalendarAccessor
@@ -13,6 +14,8 @@ from intranet.controllers.planning.week_hours import WeekHoursController
 from intranet.controllers.session_obj.calendar_selection import CalendarSelectionController
 from intranet.controllers.session_obj.layout import LayoutController
 from intranet.controllers.session_obj.full_calendar import FullCalendarController
+
+LOG = logging.getLogger(__name__)
 
 
 class ResourcesController(RestController):
@@ -28,7 +31,7 @@ class ResourcesController(RestController):
         # -- find all
         calendar_list = self.calendar_accessor.get_calendar_list()
 
-        # -- add selection flag
+        # -- add checked flag
         selections = self.calendar_selections.get_all()["selections"]
         for calendar in calendar_list:
             calendar.checked = calendar.uid in selections
@@ -44,9 +47,12 @@ class ResourcesController(RestController):
 
     @expose()
     def put(self, uid, checked):
+        LOG.debug("put: uid={uid}, checked={checked}".format(uid=pprint.pformat(uid),
+                                                             checked=pprint.pformat(checked)))
         return self.calendar_selections.put(uid, checked)
 
 
+# noinspection PyAbstractClass
 class PlanningController(RestController):
     week_hours = WeekHoursController()
     calendar = CalendarController()
@@ -62,7 +68,7 @@ class PlanningController(RestController):
     # noinspection PyArgumentList
     @without_trailing_slash
     @expose('intranet.templates.planning.index')
-    def index(self, res=None):
+    def index(self):
         """
         Display the index page.
         """

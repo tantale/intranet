@@ -32,12 +32,21 @@ $(function() {
         heightStyle: "content"
     });
     $("#accordion .checkbox").button().click(function(event) {
-        var uid = this.id.split("_")[1];
-        jQuery.ajax("./resources", {method: "put", data: {uid: uid, checked: this.checked}});
+        var uid = this.id.split("_")[1], checked = this.checked;
+        jQuery.ajax("./resources", {method: "put", data: {uid: uid, checked: checked}});
+        jQuery.getJSON("./sources/" + uid, function( eventSource ) {
+            var action = (checked == true) ? 'addEventSource' : 'removeEventSource';
+            $('#event_sources').fullCalendar(action, eventSource);
+        });
     });
+    window.setTimeout(function(){
+        %for calendar_list in group_dict.itervalues():
+            %for calendar in calendar_list:
+                jQuery.getJSON("./sources/" + ${calendar.uid}, function( eventSource ) {
+                    $('#event_sources').fullCalendar('addEventSource', eventSource);
+                });
+            %endfor
+        %endfor
+    }, 100);
 });
-
-
-
-
 </script>
