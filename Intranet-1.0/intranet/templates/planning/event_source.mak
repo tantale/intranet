@@ -51,9 +51,12 @@
             },
             dayClick: function(date, allDay, jsEvent, view) {
 				var tz_offset = date.getTimezoneOffset(); // UTC offset
-				date_end = date;
 				var date_end = new Date(date);
-				date_end.setHours(date.getHours() + 1);
+				if (allDay) {
+                    date_end.setHours(date.getHours() + 24);
+				} else {
+                    date_end.setHours(date.getHours() + 1);
+				}
 				var data = {
 				    tz_offset : tz_offset,
 				    all_day : allDay,
@@ -65,7 +68,7 @@
 
                 $('#confirm_dialog').dialog({
                     width: 	600,
-                    height: 370,
+                    height: 450,
                     buttons: {
                         "Ajouter": function() {
                             $('#new_event_create_form').submit();
