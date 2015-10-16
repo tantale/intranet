@@ -33,8 +33,8 @@
 <div id='event_sources'><!-- event_sources placeholder --></div>
 
 <script type='text/javascript'>
-	"use strict";
-	/*global $*/
+    "use strict";
+    /*global $*/
 
     jQuery.get("./full_calendar.json", function(data) {
 
@@ -50,39 +50,42 @@
                 jQuery.ajax("./full_calendar", { method : "put", data : ajaxData });
             },
             dayClick: function(date, allDay, jsEvent, view) {
-				var tz_offset = date.getTimezoneOffset(); // UTC offset
-				var date_end = new Date(date);
-				if (allDay) {
+                var tz_offset = date.getTimezoneOffset(); // UTC offset
+                var date_end = new Date(date);
+                if (allDay) {
                     date_end.setHours(date.getHours() + 24);
-				} else {
+                } else {
                     date_end.setHours(date.getHours() + 1);
-				}
-				var data = {
-				    tz_offset : tz_offset,
-				    all_day : allDay,
-				    event_start : date.toISOString(),
-				    event_end : date_end.toISOString()
-				};
+                }
+                var data = {
+                    tz_offset : tz_offset,
+                    all_day : allDay,
+                    event_start : date.toISOString(),
+                    event_end : date_end.toISOString()
+                };
 
                 $('#confirm_dialog_content').load("./sources/events/new", data);
 
                 $('#confirm_dialog').dialog({
-                    width: 	600,
+                    width:  600,
                     height: 450,
                     buttons: {
                         "Ajouter": function() {
-                            $('#new_event_create_form').submit();
+                            $('#event_new_form').submit();
                         },
                         "Annuler": function() {
                             $(this).dialog("close");
                         }
                     },
-                    title: "Ajouter un événement ici",
+                    title: "Ajouter un événement",
                     close: function() {
                         $('#event_sources').fullCalendar('gotoDate', date);
                     }
                 }).dialog("open");
 
+            },
+            eventClick: function(event, jsEvent, view) {
+                console.log(event);
             },
         };
 
