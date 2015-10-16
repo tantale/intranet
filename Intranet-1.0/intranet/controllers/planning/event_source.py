@@ -114,24 +114,29 @@ class PlanningEventController(RestController):
         except sqlalchemy.exc.IntegrityError as exc:
             transaction.abort()
             LOG.warning(exc)
-            if label:
-                msg_fmt = _(u"Libellé de l’événement en doublon ! "
-                            u"Le libellé « {label} » existe déjà.")
+            # -- try to have a better error message
+            if "start_before_end_check" in exc.message:
+                msg_fmt = _(u"Les dates et heures ne sont pas cohérentes\u00a0: "
+                            u"l'heure et la date de début doivent être antérieures à celles de fin.")
+            elif "UNIQUE constraint failed: " \
+                 "PlanningEvent.calendar_uid, PlanningEvent.event_start, PlanningEvent.event_end" in exc.message:
+                msg_fmt = _(u"Les dates et heures sont déjà utilisées pour un autre événement.")
             else:
-                msg_fmt = _(u"Libellé de l’événement vide !")
-            err_msg = msg_fmt.format(label=label)
+                msg_fmt = _(u"Erreur d’intégrité : {exc}")
+            err_msg = msg_fmt.format(exc=exc)
             flash(err_msg, status="error")
+            iso_fmt = "%Y-%m-%dT%H:%M:%S.000Z"  # ignore trailing milliseconds
             redirect('./new',
                      tz_offset=tz_offset,
                      calendar_uid=calendar_uid,
                      label=label,
                      description=description,
-                     event_start=event_start,
-                     event_end=event_end,
-                     editable=editable,
-                     all_day=all_day,
+                     event_start=event_start_utc.strftime(iso_fmt),
+                     event_end=event_end_utc.strftime(iso_fmt),
+                     editable=unicode(editable).lower(),
+                     all_day=unicode(all_day).lower(),
                      location=location,
-                     private=private)
+                     private=unicode(private).lower())
         # -- Return a JSON object
         result = self.accessor.get_event_by_dates(calendar_uid, event_start_utc, event_end_utc)
         return json.dumps(result.event_obj())

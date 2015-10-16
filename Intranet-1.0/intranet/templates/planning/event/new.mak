@@ -1,6 +1,14 @@
+<% flash = tg.flash_obj.render('flash', use_js=False) %>
 <article>
-    <form id="new_event_create_form" class="create_form" action="./sources/events/post/"
+    <form id="event_new_form" class="create_form" action="./sources/events/"
           method="post" enctype="multipart/form-data">
+        %if flash:
+        ${flash | n}
+        %endif
+        <p style="display: none; visibility: hidden;">
+            <input name="tz_offset" type="hidden" value="${tz_offset}" />
+            <input type="hidden" name="editable" value="true">
+        </p>
         <p>
             %if not calendar_list:
             <span class="error">Aucun calendrier</span>
@@ -81,21 +89,18 @@
                                                 title="Cocher si l’événement dure toute une journée ou plus"></label>
             %endif
         </p>
-
-        <input type="hidden" name="editable" value="true">
-        <input type="hidden" name="tz_offset" value="${tz_offset}"/>
     </form>
 </article>
 <script type='text/javascript'>
     "use strict";
     /*global $*/
-    $('#new_event_create_form').ajaxForm({
+    $('#event_new_form').ajaxForm({
         target : '#confirm_dialog_content',
         beforeSubmit: function(arr, form, options) {
             $('#flash').hide();
         },
         success: function(responseText, statusText, xhr) {
-            var error = $('<div/>').append(responseText).find('span.error');
+            var error = $('<div/>').append(responseText).find('div.error');
             if (error.length) {
                 // keep '#confirm_dialog' opened
                 console.log("ERROR: don't update the calendar.");
