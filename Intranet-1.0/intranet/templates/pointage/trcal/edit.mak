@@ -1,9 +1,4 @@
 # -*- coding: utf-8 -*-
-<%doc>
-:template: intranet.templates.pointage.trcal.edit
-:date: 2013-09-22
-:author: Laurent LAPORTE <sandlol2009@gmail.com>
-</%doc>
 <%! import json %>
 <%flash = tg.flash_obj.render('flash', use_js=False)%>
 %if flash:
