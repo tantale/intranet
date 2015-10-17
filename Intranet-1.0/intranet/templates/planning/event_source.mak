@@ -57,35 +57,70 @@
                 } else {
                     date_end.setHours(date.getHours() + 1);
                 }
-                var data = {
-                    tz_offset : tz_offset,
-                    all_day : allDay,
-                    event_start : date.toISOString(),
-                    event_end : date_end.toISOString()
-                };
+                // var data = {
+                //     tz_offset : tz_offset,
+                //     all_day : allDay,
+                //     event_start : date.toISOString(),
+                //     event_end : date_end.toISOString()
+                // };
 
-                $('#confirm_dialog_content').load("./sources/events/new", data);
-
-                $('#confirm_dialog').dialog({
-                    width:  600,
-                    height: 450,
-                    buttons: {
-                        "Ajouter": function() {
-                            $('#event_new_form').submit();
+                // Create a URL to use "GET" (instead of "POST")
+                var url = "./sources/events/new?";
+                url += "tz_offset=" + encodeURIComponent(tz_offset) + "&";
+                url += "all_day=" + encodeURIComponent(allDay) + "&";
+                url += "event_start=" + encodeURIComponent(date.toISOString()) + "&";
+                url += "event_end=" + encodeURIComponent(date_end.toISOString()) + "&";
+                
+                // $('#confirm_dialog_content').load("./sources/events/new", data);
+                $('#confirm_dialog_content').load(url, function(){
+                    $('#confirm_dialog').dialog({
+                        width:  600,
+                        height: 450,
+                        buttons: {
+                            "Ajouter": function() {
+                                $('#event_new_form').submit();
+                            },
+                            "Annuler": function() {
+                                $(this).dialog("close");
+                            }
                         },
-                        "Annuler": function() {
-                            $(this).dialog("close");
+                        title: "Ajouter un événement",
+                        close: function() {
+                            $('#event_sources').fullCalendar('gotoDate', date);
                         }
-                    },
-                    title: "Ajouter un événement",
-                    close: function() {
-                        $('#event_sources').fullCalendar('gotoDate', date);
-                    }
-                }).dialog("open");
-
+                    }).dialog("open");
+                });
             },
             eventClick: function(event, jsEvent, view) {
-                console.log(event);
+                var tz_offset = event.start.getTimezoneOffset();  // UTC offset
+                var uid = event.id.split("_")[2];
+
+                // Create a URL to use "GET" (instead of "POST")
+                var url = "./sources/" + event.calendar_uid + "/events/" + uid + "/edit?";
+                url += "uid=" + encodeURIComponent(uid) + "&";
+                url += "tz_offset=" + encodeURIComponent(tz_offset);
+
+                $('#confirm_dialog_content').load(url, function(){
+                    $('#confirm_dialog').dialog({
+                        width:  600,
+                        height: 450,
+                        buttons: {
+                            "Modifier": function() {
+                                $('#event_edit_form').submit();
+                            },
+                            "Supprimer": function() {
+                                $('#event_delete_form').submit();
+                            },
+                            "Annuler": function() {
+                                $(this).dialog("close");
+                            }
+                        },
+                        title: "Modifier/Supprimer un événement",
+                        close: function() {
+                            $('#event_sources').fullCalendar('gotoDate', event.start);
+                        }
+                    }).dialog("open");  
+                });
             },
         };
 

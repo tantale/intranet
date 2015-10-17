@@ -34,6 +34,8 @@ class FullCalendarController(RestController):
         firstDay=1,
         firstHour=8,
         weekends=True,
+        snapMinutes=15,
+        slotEventOverlap=True,
         ignoreTimezone=False,
         header={'left': 'month,agendaWeek,agendaDay',
                 'center': 'title',

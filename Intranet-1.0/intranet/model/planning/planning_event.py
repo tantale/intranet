@@ -103,6 +103,7 @@ class PlanningEvent(DeclarativeBase):
         dict_['editable'] = self.editable
         # todo: dict_['className'] = ""
         # -- Non-standard Fields
+        dict_['calendar_uid'] = self.calendar_uid
         dict_['description'] = self.description
         dict_['location'] = self.location
         dict_['private'] = self.private

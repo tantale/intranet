@@ -1,7 +1,7 @@
 <% flash = tg.flash_obj.render('flash', use_js=False) %>
 <article>
-    <form id="event_new_form" class="create_form"
-          action="./sources/events/"
+    <form id="event_edit_form" class="create_form"
+          action="${'./sources/{calendar_uid}/events/{uid}'.format(**values)}"
           method="post" enctype="multipart/form-data">
         %if flash:
         ${flash | n}
@@ -9,6 +9,7 @@
         <p style="display: none; visibility: hidden;">
             <input name="tz_offset" type="hidden" value="${tz_offset}">
             <input type="hidden" name="editable" value="true">
+            <input type="hidden" name="_method" value="PUT">
         </p>
         <p>
             %if not calendar_list:
@@ -95,11 +96,20 @@
             %endif
         </p>
     </form>
+
+    <form id="event_delete_form" class="minimal_form"
+          action="${'./sources/{calendar_uid}/events/{uid}'.format(**values)}"
+          method="post">
+        <p style="display: none; visibility: hidden;">
+            <input type="hidden" name="_method" value="DELETE" />
+        </p>
+    </form>
+
 </article>
 <script type='text/javascript'>
     "use strict";
     /*global $*/
-    $('#event_new_form').ajaxForm({
+    $('#event_edit_form').ajaxForm({
         target : '#confirm_dialog_content',
         beforeSubmit: function(arr, form, options) {
             $('#flash').hide();
@@ -111,13 +121,24 @@
                 console.log("ERROR: don't update the calendar.");
             } else {
                 var event_obj = jQuery.parseJSON(responseText);
-                console.log("new_event", event_obj);
+                console.log("edit_event", event_obj);
                 var start = $.fullCalendar.parseISO8601(event_obj.start);
                 $('#confirm_dialog').dialog("close");
                 $('#event_sources')
                     .fullCalendar('refetchEvents')
                     .fullCalendar('gotoDate', start);
             }
+        }
+    });
+    $('#event_delete_form').ajaxForm({
+        target : '#confirm_dialog_content',
+        beforeSubmit: function(arr, form, options) {
+            $('#flash').hide();
+        },
+        success: function(responseText, statusText, xhr) {
+            var deleted_event = jQuery.parseJSON(responseText);
+            $('#confirm_dialog').dialog("close");
+            $('#event_sources').fullCalendar('refetchEvents');
         }
     });
 </script>
