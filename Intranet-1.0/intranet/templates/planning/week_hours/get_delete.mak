@@ -10,7 +10,7 @@
         %if len(calendar_set) == 0:
         <p style="margin-bottom: .5em">Cette grille d’horaires n’est associée à aucun calendrier.</p>
         %elif len(calendar_set) == 1:
-        <p style="margin-bottom: .5em">Cette grille d’horaires est associée à 1 calendrier&nbsp:</p>
+        <p style="margin-bottom: .5em">Cette grille d’horaires est associée à 1 calendrier&nbsp;:</p>
         %else:
         <p style="margin-bottom: .5em">Cette grille d’horaires est associée à ${len(calendar_set)} calendriers&nbsp;</p>
         %endif

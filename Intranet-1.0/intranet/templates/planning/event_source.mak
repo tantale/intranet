@@ -71,7 +71,6 @@
                 url += "event_start=" + encodeURIComponent(date.toISOString()) + "&";
                 url += "event_end=" + encodeURIComponent(date_end.toISOString()) + "&";
                 
-                // $('#confirm_dialog_content').load("./sources/events/new", data);
                 $('#confirm_dialog_content').load(url, function(){
                     $('#confirm_dialog').dialog({
                         width:  600,

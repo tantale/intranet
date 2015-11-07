@@ -9,9 +9,10 @@ Author: Laurent LAPORTE <tantale.solutions@gmail.com>
 """
 from __future__ import unicode_literals
 
-import transaction
-from tg.i18n import ugettext as _
 import sqlalchemy.exc
+import transaction
+from sqlalchemy import and_
+from tg.i18n import ugettext as _
 
 from intranet.accessors import BasicAccessor
 from intranet.accessors.planning.week_hours import WeekHoursAccessor
@@ -20,7 +21,8 @@ from intranet.model.planning.day_period import DayPeriod
 try:
     _("")
 except TypeError:
-    _ = lambda x: x
+    def _(x):
+        return x
 
 
 class DayPeriodAccessor(BasicAccessor):
@@ -53,6 +55,10 @@ class DayPeriodAccessor(BasicAccessor):
         :return: The DayPeriod.
         """
         return super(DayPeriodAccessor, self)._get_record(uid)
+
+    def get_by_label(self, week_hours_uid, label):
+        filter_cond = and_(DayPeriod.week_hours_uid == week_hours_uid, DayPeriod.label == label)
+        return self.session.query(self.record_class).filter(filter_cond).one()
 
     def get_day_period_list(self, filter_cond=None, order_by_cond=None):
         """
@@ -92,6 +98,8 @@ class DayPeriodAccessor(BasicAccessor):
         """
         Update the fields of a given record.
 
+        :type uid: int or str or unicode
+        :param uid: UID of the record.
         :param kwargs: keywords arguments: "position", "label", "description".
         :rtype: DayPeriod
         :return: The updated DayPeriod.

@@ -30,15 +30,8 @@
     }
 </style>
 <style scoped="scoped">
-    .ts-time {text-align: right;}
-    .ts-start {color: rgb(238, 130, 14);}
-    .ts-end {color: rgb(8, 151, 59);}
-    .ts-delta {color: rgb(18, 151, 214);}
-    .ts-interval-invalid {
-        background-color: #f2dede;
-        border-color: #eed3d7;
-        color: #b94a48;
-    }
+    .ts-start { color: rgb(238, 130, 14); text-align: right; }
+    .ts-end   { color: rgb(8, 151, 59);   text-align: right; }
     .styletable { border-collapse: separate; }
     .styletable td { font-weight: normal !important; padding: .4em; border-top-width: 0px !important; }
     .styletable th { text-align: center; padding: .8em .4em; }
