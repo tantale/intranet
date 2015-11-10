@@ -1,10 +1,3 @@
-# -*- coding: utf-8 -*-
-<%doc>
-:template: templates.pointage.trcal.print_rec_times
-:date: 2014-04-05
-:author: Laurent LAPORTE <sandlol2009@gmail.com>
-:title: Control record time print preview.
-</%doc>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Strict//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
 <head>
@@ -23,11 +16,11 @@
 <%include file="local:templates.pointage.trcal.ctrl_rec_times"/>
 </div>
 <script type='text/javascript'>
-	"use strict";
-	/*global $*/
-	$(function() {
-		window.print();
-	});
+    "use strict";
+    /*global $*/
+    $(function() {
+        window.print();
+    });
 </script>
 </body>
 </html>
