@@ -4,15 +4,15 @@ import json
 import logging
 import pprint
 
+import pylons
+import sqlalchemy.exc
+import transaction
 from formencode import All
 from formencode.validators import Int, NotEmpty, MaxLength, StringBool
-import pylons
 from pylons.i18n import ugettext as _
-import sqlalchemy.exc
 from tg import expose, flash, validate, redirect
 from tg.controllers import RestController
 from tg.decorators import with_trailing_slash, without_trailing_slash
-import transaction
 
 from intranet.accessors.planning.calendar import CalendarAccessor
 from intranet.accessors.planning.planning_event import PlanningEventAccessor
@@ -274,3 +274,21 @@ class PlanningEventController(RestController):
         self.accessor.delete_planning_event(uid)
         # -- return an event object with it's id only
         return json.dumps(dict(id='planning_event_{uid}'.format(uid=uid)))
+
+    @expose()
+    def event_drop(self, uid, day_delta, minute_delta, all_day):
+        LOG.info("event_drop, locals={0}".format(pprint.pformat(locals())))
+        day_delta = int(day_delta)
+        minute_delta = int(minute_delta)
+        all_day = unicode(all_day).lower() in ("true", "yes", "on", "1")
+        delta = datetime.timedelta(days=day_delta, minutes=minute_delta)
+        self.accessor.move_datetime(uid, delta, all_day=all_day)
+
+    @expose()
+    def event_resize(self, uid, day_delta, minute_delta):
+        LOG.info("event_resize, locals={0}".format(pprint.pformat(locals())))
+        day_delta = int(day_delta)
+        minute_delta = int(minute_delta)
+        delta = datetime.timedelta(days=day_delta, minutes=minute_delta)
+        self.accessor.increase_duration(uid, delta)
+

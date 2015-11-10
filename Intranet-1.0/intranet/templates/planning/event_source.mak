@@ -36,6 +36,22 @@
     "use strict";
     /*global $*/
 
+    function displayErrDialog(title, text) {
+        var msg = $('<div id="flash"></div>') //
+            .append($('<div class="error"/>').text(text));
+        $('#confirm_dialog_content').empty().append(msg);
+        $('#confirm_dialog').dialog({
+            width:  400,
+            height: 200,
+            buttons: {
+                "OK": function() {
+                    $(this).dialog("close");
+                }
+            },
+            title: title
+        }).dialog("open");
+    }
+
     jQuery.get("./full_calendar.json", function(data) {
 
         var prop = {
@@ -96,7 +112,6 @@
 
                 // Create a URL to use "GET" (instead of "POST")
                 var url = "./sources/" + event.calendar_uid + "/events/" + uid + "/edit?";
-                url += "uid=" + encodeURIComponent(uid) + "&";
                 url += "tz_offset=" + encodeURIComponent(tz_offset);
 
                 $('#confirm_dialog_content').load(url, function(){
@@ -121,6 +136,56 @@
                     }).dialog("open");  
                 });
             },
+            eventDrop: function(event, dayDelta, minuteDelta, allDay, revertFunc) {
+                var
+                    uid = event.id.split("_")[2],
+                    url = "./sources/" + event.calendar_uid + "/events/" + uid + "/event_drop";
+
+                $.ajax({
+                    type: "GET",
+                    url: url,
+                    data: {
+                        day_delta: dayDelta,
+                        minute_delta: minuteDelta,
+                        all_day: allDay
+                    },
+                    success: function(){
+                        $('#calendar').fullCalendar('gotoDate', event.start);
+                    },
+                    error: function() {
+                        revertFunc();
+                        var title = "Erreur de connexion HTTP",
+                            text = "Impossible de mettre à jour l\u2019événement\u00a0!";
+                        displayErrDialog(title, text);
+                    }
+                });
+            },
+            eventResize: function(event, dayDelta, minuteDelta, revertFunc) {
+                var
+                    uid = event.id.split("_")[2],
+                    url = "./sources/" + event.calendar_uid + "/events/" + uid + "/event_resize";
+                    
+                $.ajax({
+                    type: "GET",
+                    url: url,
+                    data: {
+                        day_delta: dayDelta,
+                        minute_delta: minuteDelta
+                    },
+                    success: function(){
+                        $('#calendar').fullCalendar('gotoDate', event.start);
+                        if (dayDelta) {
+                            $('#calendar').fullCalendar('refetchEvents');
+                        }
+                    },
+                    error: function() {
+                        revertFunc();
+                        var title = "Erreur de connexion HTTP",
+                            text = "Impossible de mettre à jour la durée de l\u2019événements\u00a0!";
+                        displayErrDialog(title, text);
+                    }
+                });
+            }
         };
 
         $('#event_sources').fullCalendar($.extend(data, prop));

@@ -1,17 +1,18 @@
 # -*- coding: utf-8 -*-
-from sqlalchemy import and_
 import sqlalchemy.exc
 import transaction
+from sqlalchemy import and_
 from tg.i18n import ugettext as _
 
 from intranet.accessors import BasicAccessor
-from intranet.model.planning.planning_event import PlanningEvent
 from intranet.accessors.planning.calendar import CalendarAccessor
+from intranet.model.planning.planning_event import PlanningEvent
 
 try:
     _("")
 except TypeError:
-    _ = lambda x: x
+    def _(x):
+        return x
 
 
 class PlanningEventAccessor(BasicAccessor):
@@ -119,6 +120,8 @@ class PlanningEventAccessor(BasicAccessor):
         """
         Update the fields of a given record.
 
+        :type uid: int
+        :param uid: UID of the event in the calendar (parent).
         :param kwargs: keywords arguments: "label", "description", "event_start", "event_end", "editable", "all_day".
         :rtype: PlanningEvent
         :return: The updated PlanningEvent.
@@ -129,21 +132,27 @@ class PlanningEventAccessor(BasicAccessor):
         """
         Event has changed in duration.
 
-        :param uid:
+        :type uid: int
+        :param uid: UID of the event in the calendar (parent).
         :param end_timedelta:
         """
         with transaction.manager:
             event = self._get_record(uid)
             event.event_end += end_timedelta
 
-    def move_datetime(self, uid, timedelta):
+    def move_datetime(self, uid, timedelta, all_day=False):
         """
         Event has moved to a different day/time.
 
-        :param uid:
-        :param timedelta:
+        :type uid: int
+        :param uid: UID of the event in the calendar (parent).
+        :type timedelta: datetime.timedelta
+        :param timedelta: Amount of time the event was moved by.
+        :type all_day: bool
+        :param all_day: Whether an event occurs at a specific time-of-day.
         """
         with transaction.manager:
             record = self._get_record(uid)
             record.event_start += timedelta
             record.event_end += timedelta
+            record.all_day = all_day

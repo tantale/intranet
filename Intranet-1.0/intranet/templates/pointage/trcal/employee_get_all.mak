@@ -142,7 +142,7 @@ else:
         error: function() {
             var title = "Erreur de connexion HTTP",
                 text = "Impossible contrôler les événements\u00a0!";
-            display_err_dialog(title, text);
+            displayErrDialog(title, text);
         }
     });
     $('#print_rec_times .print_button').button({

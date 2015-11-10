@@ -70,7 +70,7 @@ event_resize_url_json = json.dumps(event_resize_url)
                 callback();
                 var title = "Erreur de connexion HTTP",
                     text = "Impossible de récupérer les événements\u00a0!";
-                display_err_dialog(title, text);
+                displayErrDialog(title, text);
             }
         });
     }
@@ -105,7 +105,7 @@ event_resize_url_json = json.dumps(event_resize_url)
                     revertFunc();
                     var title = "Erreur de connexion HTTP",
                         text = "Impossible de mettre à jour l\u2019événement\u00a0!";
-                    display_err_dialog(title, text);
+                    displayErrDialog(title, text);
                 }
             });
         }
@@ -133,7 +133,7 @@ event_resize_url_json = json.dumps(event_resize_url)
                 revertFunc();
                 var title = "Erreur de connexion HTTP",
                     text = "Impossible de mettre à jour la durée de l\u2019événements\u00a0!";
-                display_err_dialog(title, text);
+                displayErrDialog(title, text);
             }
         });
     }
@@ -222,7 +222,7 @@ event_resize_url_json = json.dumps(event_resize_url)
         }).dialog("open");
     }
 
-    function display_err_dialog(title, text) {
+    function displayErrDialog(title, text) {
         var msg = $('<div id="flash"></div>') //
             .append($('<div class="error"/>').text(text));
         $('#confirm_dialog_content').empty().append(msg);
