@@ -68,9 +68,7 @@
             dayClick: function(date, allDay, jsEvent, view) {
                 var tz_offset = date.getTimezoneOffset(); // UTC offset
                 var date_end = new Date(date);
-                if (allDay) {
-                    date_end.setHours(date.getHours() + 24);
-                } else {
+                if (!allDay) {
                     date_end.setHours(date.getHours() + 1);
                 }
                 // var data = {
@@ -164,7 +162,7 @@
                 var
                     uid = event.id.split("_")[2],
                     url = "./sources/" + event.calendar_uid + "/events/" + uid + "/event_resize";
-                    
+
                 $.ajax({
                     type: "GET",
                     url: url,

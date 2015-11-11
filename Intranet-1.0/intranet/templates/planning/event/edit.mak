@@ -1,7 +1,7 @@
 <% flash = tg.flash_obj.render('flash', use_js=False) %>
 <article>
     <form id="event_edit_form" class="create_form"
-          action="${'./sources/{calendar_uid}/events/{uid}'.format(**values)}"
+          action="${'./sources/events/{uid}'.format(**values)}"
           method="post" enctype="multipart/form-data">
         %if flash:
         ${flash | n}

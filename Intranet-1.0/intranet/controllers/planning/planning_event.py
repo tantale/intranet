@@ -215,7 +215,7 @@ class PlanningEventController(RestController):
               error_handler=edit)
     @expose()
     def put(self, uid, tz_offset, calendar_uid,
-            label, description, event_start, event_end, editable=True, all_day=False,
+            label, event_start, event_end, description=u"", editable=True, all_day=False,
             location=None, private=False,
             **kwargs):
         LOG.info("put, locals={0}".format(pprint.pformat(locals())))

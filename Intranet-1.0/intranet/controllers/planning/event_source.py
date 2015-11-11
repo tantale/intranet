@@ -7,7 +7,7 @@ from tg.controllers import RestController
 from tg.decorators import with_trailing_slash
 
 from intranet.accessors.planning.calendar import CalendarAccessor
-from intranet.controllers.planning.event import PlanningEventController
+from intranet.controllers.planning.planning_event import PlanningEventController
 
 LOG = logging.getLogger(__name__)
 
