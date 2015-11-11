@@ -49,16 +49,26 @@ article_id = "week_hours_{0}".format(week_hours.uid)
                     size="5"
                     class="ts-start"
                     type="time"
+                    step="900"
                     value="${hours_interval.start_hour}"/>
                 à <input
                     id="end_${hours_interval.week_day_uid}_${hours_interval.day_period_uid}"
                     size="5"
                     class="ts-end"
                     type="time"
+                    step="900"
                     value="${hours_interval.end_hour}"/>&#x2002;</td>
             %endfor
-            <td class="ts-range new_day_period" style="display: none;">&#x2002;de <input size="5" class="ts-start" type="time" disabled="disabled"/>
-                à <input size="5" class="ts-end" type="time" disabled="disabled"/>&#x2002;</td>
+            <td class="ts-range new_day_period" style="display: none;">&#x2002;de <input size="5"
+                                                                                         class="ts-start"
+                                                                                         type="time"
+                                                                                         step="900"
+                                                                                         disabled="disabled"/>
+                à <input size="5"
+                         class="ts-end"
+                         type="time"
+                         step="900"
+                         disabled="disabled"/>&#x2002;</td>
             <td style="text-align: right;"><strong class="ts-sum"></strong>&#x2003;</td>
         </tr>
         %endfor

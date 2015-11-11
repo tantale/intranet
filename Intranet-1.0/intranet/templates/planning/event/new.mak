@@ -70,9 +70,11 @@
         <p>
             <label>Du&nbsp;<input type="datetime-local" name="event_start"
                                   title="Date/Heure de début"
+                                  step="900"
                                   value="${values.get('event_start')}"></label>
             <label>au&nbsp;<input type="datetime-local" name="event_end"
                                   title="Date/Heure de début"
+                                  step="900"
                                   value="${values.get('event_end')}"></label>
             %if 'event_start'in form_errors:
             <br/>

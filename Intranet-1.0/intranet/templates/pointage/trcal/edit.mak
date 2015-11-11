@@ -25,8 +25,9 @@
 ##
     <p><label for="cal_event_update__event_start">Date / Heure :</label>
         <input id="cal_event_update__event_start" type="datetime-local" name="event_start"
-            value="${values.get('event_start')}"
-            title="Date (et heure) du pointage (requis)" />
+               step="900"
+               value="${values.get('event_start')}"
+               title="Date (et heure) du pointage (requis)" />
     %if 'event_start' in form_errors:
     <span class="error">${form_errors['event_start']}</span>
     %endif
