@@ -8,22 +8,21 @@ Date: 2015-03-31
 Author: Laurent LAPORTE <sandlol2009@gmail.com>
 """
 from __future__ import unicode_literals, print_function
+
 import contextlib
 
 from sqlalchemy import MetaData
 from sqlalchemy import create_engine
 from sqlalchemy.orm.session import sessionmaker
 from zope.sqlalchemy.datamanager import ZopeTransactionExtension
-import transaction
 
 
 def automap_demo():
-
     # engine, suppose it has two tables 'user' and 'address' set up
     here = "/Users/laurentlaporte/git/repo-intranet-master/Intranet-1.0/__backup/"
     # here = "/Users/laurentlaporte/Desktop"
-    # engine = create_engine('sqlite:///{here}/productiondata.db'.format(here=here), echo=False)
-    engine = create_engine('mysql+mysqlconnector://root@localhost:3306/planning', echo=False)
+    engine = create_engine('sqlite:///{here}/productiondata.db'.format(here=here), echo=False)
+    # engine = create_engine('mysql+mysqlconnector://root@localhost:3306/planning', echo=False)
 
     # produce our own MetaData object
     metadata = MetaData()
