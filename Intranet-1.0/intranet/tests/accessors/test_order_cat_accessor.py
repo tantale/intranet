@@ -8,13 +8,13 @@ Module: ${PACKAGE}.test_order_cat_accessor
 Created on: 2015-09-10
 """
 from __future__ import unicode_literals, print_function
+
+import logging
 import pprint
 import unittest
-import logging
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-
 from zope.sqlalchemy.datamanager import ZopeTransactionExtension
 
 from intranet.accessors.pointage.order_cat import OrderCatAccessor
@@ -45,11 +45,14 @@ class TestOrderCatAccessor(unittest.TestCase):
 
         self.accessor = OrderCatAccessor(self.session)
 
-    # def test_get_order_cat(self):
-    #     self.fail()
+    def test_setup(self):
+        # -- first setup
+        self.accessor.setup()
+        order_cat_list = self.accessor.get_order_cat_list()
+        self.assertEqual(len(order_cat_list), 11)
 
-    # def test_get_order_cat_list(self):
-    #     self.fail()
+        self.accessor.setup()  # on second setup, do nothing
+        self.assertEqual(len(order_cat_list), 11)
 
     def test_insert_order_cat(self):
         LOG.info("Insert a OrderCat...")
