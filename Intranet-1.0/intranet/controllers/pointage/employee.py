@@ -5,18 +5,20 @@
 :author: Laurent LAPORTE <sandlol2009@gmail.com>
 """
 import logging
+import pprint
 
-from formencode.validators import NotEmpty, Number
-from tg.controllers.restcontroller import RestController
-from tg.controllers.util import redirect
-from tg.decorators import with_trailing_slash, expose, validate, \
-    without_trailing_slash
-from tg.flash import flash
 import pylons
 import sqlalchemy.exc
+from formencode.validators import NotEmpty, Number, String
+from sqlalchemy.sql.expression import or_
+from tg.controllers.restcontroller import RestController
+from tg.controllers.util import redirect
+from tg.decorators import with_trailing_slash, expose, validate, without_trailing_slash
+from tg.flash import flash
 
 from intranet.accessors.pointage.employee import EmployeeAccessor
 from intranet.controllers.session_obj.layout import LayoutController
+from intranet.model.planning.calendar import Calendar
 from intranet.model.pointage.employee import Employee
 from intranet.validators.date_interval import check_date_interval
 from intranet.validators.iso_date_converter import IsoDateConverter
@@ -24,6 +26,7 @@ from intranet.validators.iso_date_converter import IsoDateConverter
 LOG = logging.getLogger(__name__)
 
 
+# noinspection PyAbstractClass
 class EmployeeController(RestController):
     """
     Create / Modify / Remove Employees
@@ -36,12 +39,21 @@ class EmployeeController(RestController):
     def __init__(self, main_menu):
         self.main_menu = main_menu
 
+    # noinspection PyUnusedLocal
+    def _before(self, *args, **kwargs):
+        self.accessor = EmployeeAccessor()
+        self.calendar_accessor = self.accessor.calendar_accessor
+
     # noinspection PyArgumentList
     @without_trailing_slash
     @expose('intranet.templates.pointage.employee.index')
     def index(self, uid=None, keyword=None):
         """
         Display the index page.
+
+        :param uid: Employee UID
+        :param keyword: Search keyword
+        :return: Mako template parameters
         """
         return dict(main_menu=self.main_menu, uid=uid, keyword=keyword)
 
@@ -59,15 +71,17 @@ class EmployeeController(RestController):
 
         :param uid: UID of the employee to display.
         """
-        accessor = EmployeeAccessor()
-        employee = accessor.get_employee(uid)
-        return dict(employee=employee)
+        employee = self.accessor.get_employee(uid)
+        # noinspection PyComparisonWithNone
+        predicate = or_(Calendar.employee_uid == employee.uid, Calendar.employee_uid == None)
+        calendar_list = self.calendar_accessor.get_calendar_list(filter_cond=predicate)
+        return dict(employee=employee, calendar_list=calendar_list)
 
     # noinspection PyArgumentList
     @with_trailing_slash
     @expose('json')
     @expose('intranet.templates.pointage.employee.get_all')
-    def get_all(self, keyword=None, uid=None):
+    def get_all(self, uid=None, keyword=None):
         """
         Display all records in a resource.
 
@@ -76,14 +90,15 @@ class EmployeeController(RestController):
         GET /pointage/employee/get_all
         GET /pointage/employee/get_all.json
 
-        :param uid: Active employee's UID if any
+        :param uid: Active employee UID if any
+        :param keyword: Search keyword
+        :return: Mako template parameters
         """
         # -- filter the employee list/keyword
-        accessor = EmployeeAccessor()
         order_by_cond = Employee.employee_name
         filter_cond = (Employee.employee_name.like('%' + keyword + '%')
                        if keyword else None)
-        employee_list = accessor.get_employee_list(filter_cond, order_by_cond)
+        employee_list = self.accessor.get_employee_list(filter_cond, order_by_cond)
 
         # -- active_index of the employee by uid
         active_index = False
@@ -93,35 +108,36 @@ class EmployeeController(RestController):
                 if employee.uid == uid:
                     active_index = index
                     break
-        return dict(employee_list=employee_list, keyword=keyword,
+        return dict(employee_list=employee_list,
+                    keyword=keyword,
                     active_index=active_index)
 
     @expose('intranet.templates.pointage.employee.new')
-    def new(self, **kw):
+    def new(self, **kwargs):
         """
         Display a page to prompt the User for resource creation:
 
         GET /pointage/employee/new
+
+        :param kwargs: Extra URL parameters
+        :return: Mako template parameters
         """
         form_errors = pylons.tmpl_context.form_errors  # @UndefinedVariable
         if form_errors:
             err_msg = u"Le formulaire comporte des champs invalides"
             flash(err_msg, status="error")
-        return dict(values=kw, form_errors=form_errors)
+        return dict(values=kwargs, form_errors=form_errors)
 
     @validate({'employee_name': NotEmpty(),
                'worked_hours': Number(min=1, max=39, not_empty=True),
                'entry_date': IsoDateConverter(not_empty=True),
-               'exit_date': IsoDateConverter(not_empty=False)},
+               'exit_date': IsoDateConverter(not_empty=False),
+               'photo_path': String()},
               error_handler=new)
     @expose()
     def post(self, employee_name, worked_hours, entry_date,
              exit_date=None, photo_path=None):
-        LOG.info("EmployeeController.post")
-        LOG.debug("- employee_name: {!r}".format(employee_name))
-        LOG.debug("- worked_hours:  {!r}".format(worked_hours))
-        LOG.debug("- entry_date:    {!r}".format(entry_date))
-        LOG.debug("- exit_date:     {!r}".format(exit_date))
+        LOG.info(u"post: " + pprint.pformat(locals()))
 
         ctrl_dict = check_date_interval(entry_date, exit_date)
         if ctrl_dict['status'] != "ok":
@@ -134,12 +150,11 @@ class EmployeeController(RestController):
                      photo_path=photo_path)
 
         try:
-            accessor = EmployeeAccessor()
-            accessor.insert_employee(employee_name=employee_name,
-                                     worked_hours=worked_hours,
-                                     entry_date=entry_date,
-                                     exit_date=exit_date,
-                                     photo_path=photo_path)
+            self.accessor.insert_employee(employee_name=employee_name,
+                                          worked_hours=worked_hours,
+                                          entry_date=entry_date,
+                                          exit_date=exit_date,
+                                          photo_path=photo_path)
         except sqlalchemy.exc.IntegrityError:
             msg_fmt = (u"Nom de l’employé en doublon ! "
                        u"Le nom « {employee_name} » existe déjà.")
@@ -158,17 +173,18 @@ class EmployeeController(RestController):
             redirect('./new')
 
     @expose('intranet.templates.pointage.employee.edit')
-    def edit(self, uid, **kw):
+    def edit(self, uid, **kwargs):
         """
         Display a page to prompt the User for resource modification.
 
         GET /pointage/employee/1/edit
 
         :param uid: UID of the Employee to edit
+        :param kwargs: Extra URL parameters
+        :return: Mako template parameters
         """
         form_errors = pylons.tmpl_context.form_errors  # @UndefinedVariable
-        accessor = EmployeeAccessor()
-        employee = accessor.get_employee(uid)
+        employee = self.accessor.get_employee(uid)
         entry_date = employee.entry_date.isoformat()
         exit_date = (None if employee.exit_date is None
                      else employee.exit_date.isoformat())
@@ -177,31 +193,43 @@ class EmployeeController(RestController):
                       worked_hours=str(employee.worked_hours),
                       entry_date=entry_date,
                       exit_date=exit_date,
-                      photo_path=employee.photo_path)
-        values.update(kw)
-        return dict(values=values, form_errors=form_errors)
+                      photo_path=employee.photo_path,
+                      calendar_uid=employee.calendar.uid if employee.calendar else None)
+        values.update(kwargs)
+        # noinspection PyComparisonWithNone
+        predicate = or_(Calendar.employee_uid == employee.uid, Calendar.employee_uid == None)
+        calendar_list = self.calendar_accessor.get_calendar_list(filter_cond=predicate)
+        return dict(values=values, form_errors=form_errors, calendar_list=calendar_list)
 
+    # noinspection PyUnusedLocal
     @validate({'employee_name': NotEmpty(),
                'worked_hours': Number(min=1, max=39, not_empty=True),
                'entry_date': IsoDateConverter(not_empty=True),
-               'exit_date': IsoDateConverter(not_empty=False)},
+               'exit_date': IsoDateConverter(not_empty=False),
+               'photo_path': String(),
+               'calendar_uid': Number(min=1, not_empty=False)},
               error_handler=edit)
     @expose()
-    def put(self, uid, employee_name, worked_hours, entry_date, exit_date,
-            photo_path, **kw):
+    def put(self, uid, employee_name, worked_hours, entry_date, exit_date=None,
+            photo_path=None, calendar_uid=None, **kwargs):
         """
         Update an existing record.
 
         POST /pointage/employee/1?_method=PUT
         PUT /pointage/employee/1
-        """
-        LOG.info("EmployeeController.post")
-        LOG.debug("- uid:           {!r}".format(uid))
-        LOG.debug("- employee_name: {!r}".format(employee_name))
-        LOG.debug("- worked_hours:  {!r}".format(worked_hours))
-        LOG.debug("- entry_date:    {!r}".format(entry_date))
-        LOG.debug("- exit_date:     {!r}".format(exit_date))
 
+        :param uid: Employee UID
+        :param employee_name: Employee display name
+        :param worked_hours:
+        :param entry_date: Entry date of the employee in the firm.
+        :param exit_date: Exit date of the employee in the firm.
+        :param photo_path: Relative path of the photo image.
+        :param calendar_uid: Employee calendar (if any).
+        :param kwargs: Extra URL parameters
+        :return: Mako template parameters
+        """
+        LOG.info(u"put: " + pprint.pformat(locals()))
+        calendar = self.calendar_accessor.get_calendar(calendar_uid) if calendar_uid else None
         ctrl_dict = check_date_interval(entry_date, exit_date)
         if ctrl_dict['status'] != "ok":
             flash(ctrl_dict['message'], status=ctrl_dict['status'])
@@ -210,16 +238,17 @@ class EmployeeController(RestController):
                      worked_hours=worked_hours,
                      entry_date=entry_date,
                      exit_date=exit_date,
-                     photo_path=photo_path)
+                     photo_path=photo_path,
+                     calendar_uid=calendar_uid)
 
         try:
-            accessor = EmployeeAccessor()
-            accessor.update_employee(uid,
-                                     employee_name=employee_name,
-                                     worked_hours=worked_hours,
-                                     entry_date=entry_date,
-                                     exit_date=exit_date,
-                                     photo_path=photo_path)
+            self.accessor.update_employee(uid,
+                                          employee_name=employee_name,
+                                          worked_hours=worked_hours,
+                                          entry_date=entry_date,
+                                          exit_date=exit_date,
+                                          photo_path=photo_path,
+                                          calendar=calendar)
         except sqlalchemy.exc.IntegrityError:
             msg_fmt = u"L'employé « {employee_name} » existe déjà."
             err_msg = msg_fmt.format(employee_name=employee_name)
@@ -229,7 +258,8 @@ class EmployeeController(RestController):
                      worked_hours=worked_hours,
                      entry_date=entry_date,
                      exit_date=exit_date,
-                     photo_path=photo_path)
+                     photo_path=photo_path,
+                     calendar_uid=calendar_uid)
         else:
             msg_fmt = u"L'employé « {employee_name} » est modifiée."
             flash(msg_fmt.format(employee_name=employee_name), status="ok")
@@ -243,9 +273,9 @@ class EmployeeController(RestController):
         GET /pointage/employee/1/delete
 
         :param uid: UID of the Employee to delete.
+        :return: Mako template parameters
         """
-        accessor = EmployeeAccessor()
-        employee = accessor.get_employee(uid)
+        employee = self.accessor.get_employee(uid)
         return dict(employee=employee)
 
     @expose('intranet.templates.pointage.employee.get_delete')
@@ -258,10 +288,8 @@ class EmployeeController(RestController):
 
         :param uid: UID of the Employee to delete.
         """
-        accessor = EmployeeAccessor()
-        old_employee = accessor.delete_employee(uid)
+        employee_name = self.accessor.delete_employee(uid)
         msg_fmt = (u"L’employé « {employee_name} » a été supprimé "
                    u"de la base de données avec succès.")
-        flash(msg_fmt.format(employee_name=old_employee.employee_name),
-              status="ok")
+        flash(msg_fmt.format(employee_name=employee_name), status="ok")
         return dict(employee=None)

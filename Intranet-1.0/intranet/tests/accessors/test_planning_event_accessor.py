@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals, print_function
-import unittest
-import logging
-import datetime
 
+import datetime
+import logging
+import unittest
+
+import transaction
 from sqlalchemy import create_engine
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import sessionmaker
@@ -108,6 +110,7 @@ class TestPlanningEventAccessor(unittest.TestCase):
             self.accessor.insert_planning_event(self.calendar_uid, "Meeting", None,
                                                 event_start=event_end,
                                                 event_end=event_start)
+        transaction.abort()
         LOG.info(context.exception)
 
     def test_get_planning_event_list(self):
@@ -137,11 +140,13 @@ class TestPlanningEventAccessor(unittest.TestCase):
         # -- calendar_uid required
         with self.assertRaises(IntegrityError) as context:
             self.accessor.update_planning_event(first_uid, calendar_uid=None)
+        transaction.abort()
         LOG.info(context.exception)
 
         # -- label required
         with self.assertRaises(IntegrityError) as context:
             self.accessor.update_planning_event(first_uid, label=None)
+        transaction.abort()
         LOG.info(context.exception)
 
         # -- description optional
@@ -152,26 +157,31 @@ class TestPlanningEventAccessor(unittest.TestCase):
         # -- event_start required
         with self.assertRaises(IntegrityError) as context:
             self.accessor.update_planning_event(first_uid, event_start=None)
+        transaction.abort()
         LOG.info(context.exception)
 
         # -- event_end required
         with self.assertRaises(IntegrityError) as context:
             self.accessor.update_planning_event(first_uid, event_end=None)
+        transaction.abort()
         LOG.info(context.exception)
 
         # -- start_before_end_check
         with self.assertRaises(IntegrityError) as context:
             self.accessor.update_planning_event(first_uid, event_start=event_end, event_end=event_start)
+        transaction.abort()
         LOG.info(context.exception)
 
         # -- editable required
         with self.assertRaises(IntegrityError) as context:
             self.accessor.update_planning_event(first_uid, editable=None)
+        transaction.abort()
         LOG.info(context.exception)
 
         # -- all_day required
         with self.assertRaises(IntegrityError) as context:
             self.accessor.update_planning_event(first_uid, all_day=None)
+        transaction.abort()
         LOG.info(context.exception)
 
         # -- location optional
@@ -182,6 +192,7 @@ class TestPlanningEventAccessor(unittest.TestCase):
         # -- private required
         with self.assertRaises(IntegrityError) as context:
             self.accessor.update_planning_event(first_uid, private=None)
+        transaction.abort()
         LOG.info(context.exception)
 
     def test_increase_duration(self):

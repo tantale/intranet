@@ -66,17 +66,20 @@
                 jQuery.ajax("./full_calendar", { method : "put", data : ajaxData });
             },
             dayClick: function(date, allDay, jsEvent, view) {
-                var tz_offset = date.getTimezoneOffset(); // UTC offset
+                var tz_offset = date.getTimezoneOffset();  // UTC offset
                 var date_end = new Date(date);
+                var firstHour = view.calendar.options.firstHour;
+                console.log(firstHour);
+
+                // Set allDay to false when view is Month
+                if (view.name == "month") {
+                    allDay = false;
+                    date.setHours(firstHour);
+                }
+
                 if (!allDay) {
                     date_end.setHours(date.getHours() + 1);
                 }
-                // var data = {
-                //     tz_offset : tz_offset,
-                //     all_day : allDay,
-                //     event_start : date.toISOString(),
-                //     event_end : date_end.toISOString()
-                // };
 
                 // Create a URL to use "GET" (instead of "POST")
                 var url = "./sources/events/new?";

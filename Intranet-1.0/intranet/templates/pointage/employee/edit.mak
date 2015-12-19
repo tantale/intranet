@@ -1,9 +1,4 @@
 # -*- coding: utf-8 -*-
-<%doc>
-:template: intranet.templates.pointage.employee.edit
-:date: 2013-08-10
-:author: Laurent LAPORTE <sandlol2009@gmail.com>
-</%doc>
 <%! import json %>
 <%flash = tg.flash_obj.render('flash', use_js=False)%>
 %if flash:
@@ -65,7 +60,25 @@
 							%if 'photo_path' in form_errors:
 							<span class="error">${form_errors['photo_path']}</span>
 							%endif
-							</p></td>
+							</p>
+					<p><label for="employee_update__calendar_uid">Calendrier :</label>
+				        <select id="employee_update__calendar_uid"
+				        		name="calendar_uid"
+				                class="ui-widget ui-state-default ui-corner-all"
+				                title="Attribuer un calendrier à un employé">
+				            %if values.get('calendar_uid'):
+							<option value="">(aucun)</option>
+				            %else:
+				            <option value="" selected="selected">(aucun)</option>
+				            %endif
+				            %for calendar in calendar_list:
+				            %if values.get('calendar_uid') == calendar.uid:
+				            <option value="${calendar.uid}" selected="selected">${calendar.label}</option>
+				            %else:
+				            <option value="${calendar.uid}">${calendar.label}</option>
+				            %endif
+				            %endfor
+				        </select></p></td>
 			</tr>
 			<tr>
 				<td class="alignRight" colspan="2">

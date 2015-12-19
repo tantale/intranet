@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals, print_function
-import unittest
-import logging
 
-from sqlalchemy import create_engine
+import logging
+import unittest
+
 import sqlalchemy.exc
+import transaction
+from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.sql.expression import desc
 from zope.sqlalchemy.datamanager import ZopeTransactionExtension
@@ -108,6 +110,7 @@ class TestDayPeriodAccessor(unittest.TestCase):
         # label is unique for this week_hours
         with self.assertRaises(sqlalchemy.exc.IntegrityError) as context:
             accessor.insert_day_period(self.week_hours1.uid, "Morning")
+        transaction.abort()
         LOG.debug(context.exception)
 
     def test_update_day_period(self):
@@ -122,6 +125,7 @@ class TestDayPeriodAccessor(unittest.TestCase):
         # label is unique for this week_hours
         with self.assertRaises(sqlalchemy.exc.IntegrityError) as context:
             accessor.update_day_period(1, label="Morning")
+        transaction.abort()
         LOG.debug(context.exception)
 
     def test_delete_day_period(self):

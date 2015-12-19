@@ -6,7 +6,7 @@ from sqlalchemy.schema import Column, CheckConstraint, ForeignKey
 from sqlalchemy.sql.schema import UniqueConstraint
 from sqlalchemy.types import Integer, String, DateTime, Boolean
 
-from intranet.model import DeclarativeBase
+from intranet.maintenance.versions.v02_00.model import DeclarativeBase
 
 
 class PlanningEvent(DeclarativeBase):

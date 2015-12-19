@@ -132,6 +132,17 @@
             }
         }
     });
+    function setupEventEnd() {
+        var checked = $('#event_edit_form input[name="all_day"]').prop("checked");
+        var label = $('#event_edit_form input[name="event_end"]').parents("label");
+        if (checked) {
+            label.hide();
+        } else {
+            label.show();
+        }
+    }
+    $('#event_edit_form').ready(setupEventEnd);
+    $('#event_edit_form input[name="all_day"]').click(setupEventEnd);
     $('#event_delete_form').ajaxForm({
         target : '#confirm_dialog_content',
         beforeSubmit: function(arr, form, options) {

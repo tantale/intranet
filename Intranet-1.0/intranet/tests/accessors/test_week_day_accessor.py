@@ -1,11 +1,13 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-import unittest
-import logging
-import datetime
 
-from sqlalchemy import create_engine
+import datetime
+import logging
+import unittest
+
 import sqlalchemy.exc
+import transaction
+from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.sql.expression import desc
 from zope.sqlalchemy.datamanager import ZopeTransactionExtension
@@ -75,21 +77,25 @@ class TestWeekDayAccessor(unittest.TestCase):
         # label is unique
         with self.assertRaises(sqlalchemy.exc.IntegrityError) as context:
             accessor.insert_week_day(2, "Monday", "On Tuesday")
+        transaction.abort()
         LOG.debug(context.exception)
 
         # iso_weekday is unique
         with self.assertRaises(sqlalchemy.exc.IntegrityError) as context:
             accessor.insert_week_day(1, "Tuesday", "On Tuesday")
+        transaction.abort()
         LOG.debug(context.exception)
 
         # 0 <= iso_weekday
         with self.assertRaises(sqlalchemy.exc.IntegrityError) as context:
             accessor.insert_week_day(-1, "Tuesday", "On Tuesday")
+        transaction.abort()
         LOG.debug(context.exception)
 
         # iso_weekday <= 6
         with self.assertRaises(sqlalchemy.exc.IntegrityError) as context:
             accessor.insert_week_day(8, "Tuesday", "On Tuesday")
+        transaction.abort()
         LOG.debug(context.exception)
 
     def test_get_week_day_list(self):
@@ -135,19 +141,23 @@ class TestWeekDayAccessor(unittest.TestCase):
         # label is unique
         with self.assertRaises(sqlalchemy.exc.IntegrityError) as context:
             accessor.update_week_day(uid, label="Tuesday")
+        transaction.abort()
         LOG.debug(context.exception)
 
         # iso_weekday is unique
         with self.assertRaises(sqlalchemy.exc.IntegrityError) as context:
             accessor.update_week_day(uid, iso_weekday=2)
+        transaction.abort()
         LOG.debug(context.exception)
 
         # 0 <= iso_weekday
         with self.assertRaises(sqlalchemy.exc.IntegrityError) as context:
             accessor.update_week_day(uid, iso_weekday=-1)
+        transaction.abort()
         LOG.debug(context.exception)
 
         # iso_weekday <= 6
         with self.assertRaises(sqlalchemy.exc.IntegrityError) as context:
             accessor.update_week_day(uid, iso_weekday=8)
+        transaction.abort()
         LOG.debug(context.exception)

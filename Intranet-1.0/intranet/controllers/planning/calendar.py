@@ -2,21 +2,22 @@
 import logging
 import pprint
 
-from formencode.validators import NotEmpty, Int, String
 import pylons
+import sqlalchemy.exc
+import transaction
+from formencode.validators import NotEmpty, Int, String
 from pylons.i18n import ugettext as _
 from tg import expose, flash
 from tg.controllers import RestController
-from tg.decorators import with_trailing_slash, without_trailing_slash, validate
 from tg.controllers.util import redirect
-import sqlalchemy.exc
-import transaction
+from tg.decorators import with_trailing_slash, without_trailing_slash, validate
 
 from intranet.accessors.planning.calendar import CalendarAccessor
 
 LOG = logging.getLogger(__name__)
 
 
+# noinspection PyAbstractClass
 class CalendarController(RestController):
     #: Default Event colors: intranet/public/css/fullcalendar.css:264
     BACKGROUND_COLOR = "#cc0000"
@@ -49,7 +50,6 @@ class CalendarController(RestController):
     def get_all(self):
         LOG.info("get_all")
         return dict(calendar_list=self.accessor.get_calendar_list(),
-                    employee_list=self.accessor.get_employee_list(),
                     week_hours_list=self.accessor.get_week_hours_list(),
                     order_cat_groups=self.accessor.order_cat_accessor.get_order_cat_groups())
 
@@ -81,25 +81,22 @@ class CalendarController(RestController):
         kwargs.setdefault("border_color", self.BORDER_COLOR)
         kwargs.setdefault("text_color", self.TEXT_COLOR)
         return dict(values=kwargs, form_errors=form_errors,
-                    employee_list=self.accessor.get_employee_list(),
                     week_hours_list=self.accessor.get_week_hours_list(),
                     order_cat_groups=self.accessor.order_cat_accessor.get_order_cat_groups())
 
     @validate({'week_hours_uid': Int(min=0),
                'label': NotEmpty(),
-               'employee_uid': Int(min=0),
                'background_color': String(len=7),
                'border_color': String(len=7),
                'text_color': String(len=7),
                'class_name': String(len=50)},
               error_handler=new)
     @expose()
-    def post(self, week_hours_uid, label, description, employee_uid,
+    def post(self, week_hours_uid, label, description,
              background_color, border_color, text_color, class_name, **kwargs):
         LOG.info("post, kwargs={0}".format(pprint.pformat(kwargs)))
         try:
             self.accessor.insert_calendar(week_hours_uid, label, description,
-                                          employee_uid=employee_uid,
                                           background_color=background_color,
                                           border_color=border_color,
                                           text_color=text_color,
@@ -118,7 +115,6 @@ class CalendarController(RestController):
                      week_hours_uid=week_hours_uid,
                      label=label,
                      description=description,
-                     employee_uid=employee_uid,
                      background_color=background_color,
                      border_color=border_color,
                      text_color=text_color,
@@ -161,8 +157,10 @@ class CalendarController(RestController):
         """
         edit_label, kwargs={'name': u'calendar_4_label', 'pk': u'unused', 'value': u'gfggfdf'}
 
-        :param kwargs:
-        :return:
+        :param name: Field ID and name
+        :param value: Field value
+        :param kwargs: Extra parameters
+        :return: exit status
         """
         LOG.info("edit_in_place, name={name}, value={value}, kwargs={kwargs}".format(name=name,
                                                                                      value=pprint.pformat(value),

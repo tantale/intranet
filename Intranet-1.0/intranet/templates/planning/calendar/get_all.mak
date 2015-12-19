@@ -9,21 +9,15 @@
              title="${_(u'Description du calendrier, contexte d’utilisation, etc.')}">${calendar.description}</span></p>
 
     <p><label for="calendar_${calendar.uid}_employee_uid">Calendrier de&nbsp: </label>
+        ## Read only
         <select id="calendar_${calendar.uid}_employee_uid"
-                class="employee_uid editable ui-widget ui-state-default ui-corner-all"
-                title="Attribuer un calendrier à un employé">
-            %if calendar.employee_uid:
-            <option value="" selected="selected">(personne)</option>
+                class="employee_uid ui-widget ui-state-default ui-corner-all"
+                title="Liste des affectations pour ce calendrier">
+            %if calendar.employee:
+            <option value="${calendar.employee.uid}">${calendar.employee.employee_name}</option>
             %else:
-            <option value="">(personne)</option>
+            <option value="">(non affecté)</option>
             %endif
-            %for employee in employee_list:
-            %if calendar.employee_uid == employee.uid:
-            <option value="${employee.uid}" selected="selected">${employee.employee_name}</option>
-            %else:
-            <option value="${employee.uid}">${employee.employee_name}</option>
-            %endif
-            %endfor
         </select>
     </p>
 

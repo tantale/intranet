@@ -13,7 +13,7 @@ from sqlalchemy.orm import relationship, backref
 from sqlalchemy.schema import Column, ForeignKey, CheckConstraint
 from sqlalchemy.types import Integer, String, Float
 
-from intranet.model import DeclarativeBase
+from intranet.maintenance.versions.v02_00.model import DeclarativeBase
 
 
 class Calendar(DeclarativeBase):

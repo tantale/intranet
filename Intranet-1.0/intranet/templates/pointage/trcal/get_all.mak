@@ -249,7 +249,6 @@ event_resize_url_json = json.dumps(event_resize_url)
                     month : currDate.getMonth(),
                     year : currDate.getFullYear()
                 };
-                console.debug("trcal.full_calendar put:", ajaxData);
                 jQuery.ajax("./full_calendar", { method : "put", data : ajaxData });
             },
             // Only accept <li/> elements

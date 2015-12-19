@@ -43,7 +43,7 @@ form_post_id = 'order_phase_post_{}'.format(order_uid)
 <form id="${form_post_id}" class="inline_form alignCenter"
 	action="${tg.url('../order_phase/')}"
 	method="post">
-	<p><input type="hidden" name="order_uid" value="${order_uid}"
+	<p style="margin-left: 5px; margin-bottom: 5px;"><input type="hidden" name="order_uid" value="${order_uid}"
 		/><input id="${form_post_id}__label" type="text" name="label"
 		value="" placeholder="Libellé"
 		title="Libellé de la phase (requis)" />

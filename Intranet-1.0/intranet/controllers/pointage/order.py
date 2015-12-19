@@ -8,15 +8,15 @@ import collections
 import datetime
 import logging
 
-from tg.i18n import ugettext as _
-from formencode.validators import NotEmpty
 import pylons
+import sqlalchemy.exc
+from formencode.validators import NotEmpty
 from sqlalchemy.sql.expression import desc, and_
 from tg.controllers.restcontroller import RestController
 from tg.controllers.util import redirect
 from tg.decorators import with_trailing_slash, expose, validate, without_trailing_slash, request
 from tg.flash import flash
-import sqlalchemy.exc
+from tg.i18n import ugettext as _
 
 from intranet.accessors.pointage.order import OrderAccessor
 from intranet.controllers.session_obj.layout import LayoutController

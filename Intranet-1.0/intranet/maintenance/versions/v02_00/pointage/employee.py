@@ -9,7 +9,7 @@ from sqlalchemy.types import Date
 from sqlalchemy.types import Float
 from sqlalchemy.types import Integer, String
 
-from intranet.model import DeclarativeBase
+from intranet.maintenance.versions.v02_00.model import DeclarativeBase
 
 
 class Employee(DeclarativeBase):
@@ -31,8 +31,7 @@ class Employee(DeclarativeBase):
     exit_date = Column(Date, nullable=True, index=True)
     photo_path = Column(String(length=200), nullable=True)
 
-    # attr calendar: don't delete-orphan
-    calendar = relationship("Calendar", uselist=False, back_populates="employee", cascade='all')
+    calendar = relationship("Calendar", uselist=False, back_populates="employee", cascade='all,delete-orphan')
 
     def __init__(self, employee_name, worked_hours, entry_date,
                  exit_date=None, photo_path=None):

@@ -10,14 +10,13 @@ Author: Laurent LAPORTE <tantale.solutions@gmail.com>
 from __future__ import unicode_literals
 
 import sqlalchemy.exc
-from sqlalchemy.sql.functions import func
 import transaction
 from tg.i18n import ugettext as _
 
 from intranet.accessors import BasicAccessor, LOG
-from intranet.accessors.pointage.employee import EmployeeAccessor
 from intranet.accessors.planning.week_hours import WeekHoursAccessor
 from intranet.accessors.pointage.order_cat import OrderCatAccessor
+from intranet.accessors.positioning import calc_places
 from intranet.model.planning.calendar import Calendar
 
 try:
@@ -31,7 +30,6 @@ def convert_value(field, value):
                       label=unicode,
                       description=unicode,
                       week_hours_uid=int,
-                      employee_uid=int,
                       background_color=unicode,
                       border_color=unicode,
                       text_color=unicode,
@@ -40,7 +38,6 @@ def convert_value(field, value):
                     label=None,
                     description=None,
                     week_hours_uid=None,
-                    employee_uid=None,
                     background_color=Calendar.BACKGROUND_COLOR,
                     border_color=Calendar.BORDER_COLOR,
                     text_color=Calendar.TEXT_COLOR,
@@ -52,7 +49,6 @@ class CalendarAccessor(BasicAccessor):
     def __init__(self, session=None):
         super(CalendarAccessor, self).__init__(Calendar, session=session)
         self.week_hours_accessor = WeekHoursAccessor(session)
-        self.employee_accessor = EmployeeAccessor(session)
         self.order_cat_accessor = OrderCatAccessor(session)
 
     def setup(self, week_hours_uid):
@@ -73,12 +69,6 @@ class CalendarAccessor(BasicAccessor):
 
     def get_week_hours_list(self, filter_cond=None, order_by_cond=None):
         return self.week_hours_accessor.get_week_hours_list(filter_cond=filter_cond, order_by_cond=order_by_cond)
-
-    def get_employee(self, employee_uid):
-        return self.employee_accessor.get_employee(employee_uid)
-
-    def get_employee_list(self, filter_cond=None, order_by_cond=None):
-        return self.employee_accessor.get_employee_list(filter_cond=filter_cond, order_by_cond=order_by_cond)
 
     def get_calendar(self, uid):
         """
@@ -105,7 +95,7 @@ class CalendarAccessor(BasicAccessor):
         """
         return self._get_record_list(filter_cond=filter_cond, order_by_cond=order_by_cond)
 
-    def insert_calendar(self, week_hours_uid, label, description, employee_uid=None,
+    def insert_calendar(self, week_hours_uid, label, description,
                         background_color=None, border_color=None, text_color=None, class_name=None):
         """
         Append worked hours.
@@ -115,22 +105,31 @@ class CalendarAccessor(BasicAccessor):
         :param label: Display name => used in selection.
         :type description: unicode
         :param description: Description => used in tooltip.
+        :param background_color: Event's background color (if any)
+        :param border_color: Event's border color (if any)
+        :param text_color: Event's text color (if any)
+        :param class_name: Event's CSS class name (if any), see: project's category ``project_cat``.
         """
         week_hours_uid = convert_value("week_hours_uid", week_hours_uid)
         label = convert_value("label", label)
         description = convert_value("description", description)
-        employee_uid = convert_value("employee_uid", employee_uid)
         background_color = convert_value("background_color", background_color)
         border_color = convert_value("border_color", border_color)
         text_color = convert_value("text_color", text_color)
         class_name = convert_value("class_name", class_name)
+        calendar = Calendar(0, label, description,
+                            background_color, border_color, text_color, class_name)
+        calendar.week_hours_uid = week_hours_uid
+        self.insert_calendar_after(None, calendar)
+
+    def insert_calendar_after(self, position, calendar, *calendars):
+        records = [calendar] + list(calendars)
+        existing = self.session.query(Calendar).order_by(Calendar.position).all()
+        places = calc_places([e.position for e in existing], position, len(records))
         with transaction.manager:
-            last_position = self.session.query(func.max(Calendar.position)).scalar() or 0
-            calendar = Calendar(last_position + 1, label, description,
-                                background_color, border_color, text_color, class_name)
-            calendar.week_hours_uid = week_hours_uid
-            calendar.employee_uid = employee_uid
-            self.session.add(calendar)
+            for place, record in zip(places, records):
+                record.position = place
+                self.session.add(record)
 
     def update_calendar(self, uid, **kwargs):
         """

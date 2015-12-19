@@ -1,17 +1,19 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals, print_function
-import unittest
-import logging
 
-from sqlalchemy import create_engine
+import logging
+import unittest
+
+import sqlalchemy
 import sqlalchemy.exc
+import transaction
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.sql.expression import desc
 from zope.sqlalchemy.datamanager import ZopeTransactionExtension
 
 from intranet.accessors import RecordNotFoundError
-from intranet.accessors.planning.week_hours import WeekHoursAccessor
 from intranet.accessors.planning.calendar import CalendarAccessor
+from intranet.accessors.planning.week_hours import WeekHoursAccessor
 from intranet.model import DeclarativeBase
 from intranet.model.planning.calendar import Calendar
 
@@ -30,7 +32,7 @@ class TestCalendarAccessor(unittest.TestCase):
         super(TestCalendarAccessor, self).setUp()
 
         # -- Connecting to the database
-        engine = create_engine('sqlite:///:memory:', echo=False)
+        engine = sqlalchemy.create_engine('sqlite:///:memory:', echo=False)
         DeclarativeBase.metadata.create_all(engine)  # @UndefinedVariable
 
         # -- Creating a Session
@@ -92,9 +94,12 @@ class TestCalendarAccessor(unittest.TestCase):
         with self.assertRaises(sqlalchemy.exc.IntegrityError) as context:
             accessor.insert_calendar(week_hours2.uid, "label1", "Description2")
         LOG.debug(context.exception)
+        transaction.abort()
         # label not NULL
         with self.assertRaises(sqlalchemy.exc.IntegrityError) as context:
+            # noinspection PyTypeChecker
             accessor.insert_calendar(week_hours2.uid, None, "Description3")
+        transaction.abort()
         LOG.debug(context.exception)
         accessor.insert_calendar(week_hours1.uid, "label4", "Description4")
 
@@ -149,4 +154,5 @@ class TestCalendarAccessor(unittest.TestCase):
         # label is unique
         with self.assertRaises(sqlalchemy.exc.IntegrityError) as context:
             accessor.update_calendar(calendar.uid, label="label2")
+        transaction.abort()
         LOG.debug(context.exception)

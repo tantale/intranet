@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals, print_function
-import unittest
-import logging
 
-from sqlalchemy import create_engine
+import logging
+import unittest
+
 import sqlalchemy.exc
+import transaction
+from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.sql.expression import desc
 from zope.sqlalchemy.datamanager import ZopeTransactionExtension
@@ -68,6 +70,7 @@ class TestWeekHoursAccessor(unittest.TestCase):
         # label is unique
         with self.assertRaises(sqlalchemy.exc.IntegrityError) as context:
             accessor.insert_week_hours("label1", "Description2")
+        transaction.abort()
         LOG.debug(context.exception)
 
     def test_get_week_hours_list(self):
@@ -113,4 +116,5 @@ class TestWeekHoursAccessor(unittest.TestCase):
         # label is unique
         with self.assertRaises(sqlalchemy.exc.IntegrityError) as context:
             accessor.update_week_hours(uid, label="label2")
+        transaction.abort()
         LOG.debug(context.exception)

@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
+import copy
+
 import sqlalchemy.exc
-from sqlalchemy.sql.functions import func
 import transaction
+from sqlalchemy.sql.functions import func
 from tg.i18n import ugettext as _
 
 from intranet.accessors import BasicAccessor
@@ -66,6 +68,9 @@ class WeekHoursAccessor(BasicAccessor):
         with transaction.manager:
             last_position = self.session.query(func.max(WeekHours.position)).scalar() or 0
             week_hours = WeekHours(last_position + 1, label, description)
+            first = self.session.query(WeekHours).filter(WeekHours.label != label).first()
+            if first:
+                week_hours.day_period_list = copy.deepcopy(first.day_period_list)
             self.session.add(week_hours)
 
     def get_week_hours_list(self, filter_cond=None, order_by_cond=None):

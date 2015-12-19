@@ -43,30 +43,6 @@
         </p>
 
         <p>
-            <label for="calendar_new_employee_uid">Calendrier de&nbsp: </label>
-            <!-- <%
-            input_name = "employee_uid"
-            input_title = _(u'Attribuer un calendrier à un employé')
-            input_val = values.get(input_name, "")
-            %> -->
-            <select id="calendar_new_employee_uid"
-                    class="ui-widget ui-state-default ui-corner-all"
-                    name="${input_name}" title="${input_title}">
-                %if values.get('employee_uid'):
-                <option value="" selected="selected">(aucun)</option>
-                %else:
-                <option value="">(aucun)</option>
-                %endif
-                %for employee in employee_list:
-                %if input_val == employee.uid:
-                <option value="${employee.uid}" selected="selected">${employee.employee_name}</option>
-                %else:
-                <option value="${employee.uid}">${employee.employee_name}</option>
-                %endif
-                %endfor
-            </select>
-        </p>
-        <p>
             <label for="calendar_new_week_hours_uid">Horaires applicables&nbsp;: </label>
             <!-- <%
             input_name = "week_hours_uid"
@@ -85,27 +61,28 @@
                 %endfor
             </select>
         </p>
+
         <details>
             <summary>Couleurs et style</summary>
             <table border="0">
                 <tbody>
                 <tr>
                     <td><label for="calendar_new_background_color">fond&nbsp;: </label></td>
-                    <td><input id="calendar_new_background_color" class="background_color editable" type="color"
+                    <td><input id="calendar_new_background_color" class="background_color" type="color"
                                name="background_color" title="${_(u'Couleur du fond')}"
                                value="${values.get('background_color')}"/>
                     </td>
                 </tr>
                 <tr>
                     <td><label for="calendar_new_border_color">bordures&nbsp;: </label></td>
-                    <td><input id="calendar_new_border_color" class="border_color editable" type="color"
+                    <td><input id="calendar_new_border_color" class="border_color" type="color"
                                name="border_color" title="${_(u'Couleur des bordures')}"
                                value="${values.get('border_color')}"/>
                     </td>
                 </tr>
                 <tr>
                     <td><label for="calendar_new_text_color">texte&nbsp;: </label></td>
-                    <td><input id="calendar_new_text_color" class="text_color editable" type="color"
+                    <td><input id="calendar_new_text_color" class="text_color" type="color"
                                name="text_color" title="${_(u'Couleur du texte')}" value="${values.get('text_color')}"/>
                     </td>
                 </tr>

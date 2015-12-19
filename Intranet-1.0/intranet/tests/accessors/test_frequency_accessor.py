@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals, print_function
-import unittest
-import logging
 
-from sqlalchemy import create_engine
+import logging
+import unittest
+
 import sqlalchemy.exc
+import transaction
+from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.sql.expression import desc, asc
 from zope.sqlalchemy.datamanager import ZopeTransactionExtension
@@ -68,26 +70,31 @@ class TestFrequencyAccessor(unittest.TestCase):
         # label is unique
         with self.assertRaises(sqlalchemy.exc.IntegrityError) as context:
             accessor.insert_frequency("frequency1", "description2", 1, 2)
+        transaction.abort()
         LOG.debug(context.exception)
 
         # (modulo, quotient) is unique
         with self.assertRaises(sqlalchemy.exc.IntegrityError) as context:
             accessor.insert_frequency("frequency3", "description3", 0, 2)
+        transaction.abort()
         LOG.debug(context.exception)
 
         # 0 < quotient
         with self.assertRaises(sqlalchemy.exc.IntegrityError) as context:
             accessor.insert_frequency("frequency4", "description4", 1, 0)
+        transaction.abort()
         LOG.debug(context.exception)
 
         # 0 <= modulo < quotient
         with self.assertRaises(sqlalchemy.exc.IntegrityError) as context:
             accessor.insert_frequency("frequency5", "description5", -1, 1)
+        transaction.abort()
         LOG.debug(context.exception)
 
         # 0 <= modulo < quotient
         with self.assertRaises(sqlalchemy.exc.IntegrityError) as context:
             accessor.insert_frequency("frequency6", "description6", 5, 2)
+        transaction.abort()
         LOG.debug(context.exception)
 
     def test_get_frequency_list(self):
@@ -133,24 +140,29 @@ class TestFrequencyAccessor(unittest.TestCase):
         # label is unique
         with self.assertRaises(sqlalchemy.exc.IntegrityError) as context:
             accessor.update_frequency(uid, label="frequency1")
+        transaction.abort()
         LOG.debug(context.exception)
 
         # (modulo, quotient) is unique
         with self.assertRaises(sqlalchemy.exc.IntegrityError) as context:
             accessor.update_frequency(uid, modulo=0, quotient=2)
+        transaction.abort()
         LOG.debug(context.exception)
 
         # 0 < quotient
         with self.assertRaises(sqlalchemy.exc.IntegrityError) as context:
             accessor.update_frequency(uid, quotient=0)
+        transaction.abort()
         LOG.debug(context.exception)
 
         # 0 <= modulo < quotient
         with self.assertRaises(sqlalchemy.exc.IntegrityError) as context:
             accessor.update_frequency(uid, modulo=-1)
+        transaction.abort()
         LOG.debug(context.exception)
 
         # 0 <= modulo < quotient
         with self.assertRaises(sqlalchemy.exc.IntegrityError) as context:
             accessor.update_frequency(uid, modulo=5, quotient=2)
+        transaction.abort()
         LOG.debug(context.exception)

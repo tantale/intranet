@@ -15,7 +15,7 @@ from sqlalchemy.orm import relationship, backref
 from sqlalchemy.schema import Column, CheckConstraint, ForeignKey
 from sqlalchemy.types import Integer, Time
 
-from intranet.model import DeclarativeBase
+from intranet.maintenance.versions.v02_00.model import DeclarativeBase
 
 
 class HoursInterval(DeclarativeBase):

@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals, print_function
+
+import datetime
+import logging
 import random
 import unittest
-import logging
-import datetime
 
+import transaction
 from sqlalchemy import create_engine
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import sessionmaker
@@ -70,9 +72,8 @@ class TestHoursIntervalAccessor(unittest.TestCase):
         accessor.setup(week_hours.uid)
         week_hours = accessor.get_week_hours_list()[0]
         table = accessor.get_hours_interval_table(week_hours.uid)
-        display = lambda hi: unicode(hi) if hi else "--:-- / --:--"
         for row in table:
-            LOG.debug("| " + " | ".join(map(display, row)) + " |")
+            LOG.debug("| " + " | ".join(map(unicode, row)) + " |")
 
         # -- next setup...
         accessor.setup(week_hours.uid)  # must not raise
@@ -127,6 +128,7 @@ class TestHoursIntervalAccessor(unittest.TestCase):
 
         with self.assertRaises(IntegrityError):
             accessor.insert_hours_interval(week_day_uid, day_period_uid, start_hour, end_hour)
+        transaction.abort()
 
     def test_update_hours_interval(self):
         accessor = HoursIntervalAccessor(self.session)
