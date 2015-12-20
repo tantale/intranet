@@ -36,7 +36,7 @@ class ResourcesController(RestController):
         # for calendar in calendar_list:
         #     calendar.checked = calendar.uid in selections
         for calendar in calendar_list:
-            calendar.checked = True
+            calendar.checked = False
 
         # -- Group resources
         group_dict = collections.OrderedDict()

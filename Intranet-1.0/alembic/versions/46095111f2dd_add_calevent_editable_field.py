@@ -5,7 +5,7 @@ Add CalEvent.editable field
 :Revises: 
 :Create Date: 2015-12-15 13:37:16.822293
 """
-from __future__ import unicode_literals, print_function
+from __future__ import unicode_literals
 
 import datetime
 import logging
