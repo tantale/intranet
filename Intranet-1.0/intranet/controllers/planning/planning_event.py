@@ -16,6 +16,8 @@ from tg.decorators import with_trailing_slash, without_trailing_slash
 
 from intranet.accessors.planning.calendar import CalendarAccessor
 from intranet.accessors.planning.planning_event import PlanningEventAccessor
+from intranet.controllers.session_obj.calendar_selection import CalendarSelectionController
+from intranet.model import Calendar
 from intranet.validators.iso_date_converter import IsoDatetimeConverter
 
 LOG = logging.getLogger(__name__)
@@ -41,6 +43,8 @@ class PlanningEventController(RestController):
                                                                         DELETE /events/1
     ===========  =====================================================  ==============================
     """
+    calendar_selections = CalendarSelectionController("planning")
+
     # noinspection PyUnusedLocal
     def _before(self, *args, **kw):
         self.accessor = PlanningEventAccessor()
@@ -89,8 +93,11 @@ class PlanningEventController(RestController):
         if form_errors:
             err_msg = _(u"Le formulaire comporte des champs invalides")
             flash(err_msg, status="error")
+        selections = self.calendar_selections.get_all()["selections"]
+        predicate = Calendar.uid.in_(selections)
+        calendar_list = self.calendar_accessor.get_calendar_list(predicate)
         return dict(tz_offset=tz_offset, values=kwargs, form_errors=form_errors,
-                    calendar_list=self.calendar_accessor.get_calendar_list())
+                    calendar_list=calendar_list)
 
     @validate({'tz_offset': Int(min=-720, max=720),
                'calendar_uid': Int(min=0),

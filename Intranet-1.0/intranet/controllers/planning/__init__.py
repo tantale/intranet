@@ -32,11 +32,9 @@ class ResourcesController(RestController):
         calendar_list = self.calendar_accessor.get_calendar_list()
 
         # -- add checked flag
-        # fixme: selections = self.calendar_selections.get_all()["selections"]
-        # for calendar in calendar_list:
-        #     calendar.checked = calendar.uid in selections
+        selections = self.calendar_selections.get_all()["selections"]
         for calendar in calendar_list:
-            calendar.checked = False
+            calendar.checked = calendar.uid in selections
 
         # -- Group resources
         group_dict = collections.OrderedDict()
