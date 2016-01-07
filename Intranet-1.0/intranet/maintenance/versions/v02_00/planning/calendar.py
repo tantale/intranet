@@ -9,11 +9,22 @@ Created on: 2015-08-28
 """
 from __future__ import unicode_literals
 
+import re
+
 from sqlalchemy.orm import relationship, backref
 from sqlalchemy.schema import Column, ForeignKey, CheckConstraint
 from sqlalchemy.types import Integer, String, Float
 
 from intranet.maintenance.versions.v02_00.model import DeclarativeBase
+
+COLOR_REGEX = ur"^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$"
+match_color = re.compile(COLOR_REGEX).match
+
+
+def checked_color(color):
+    if color is None or match_color(color):
+        return color
+    raise ValueError(color)
 
 
 class Calendar(DeclarativeBase):
@@ -74,9 +85,9 @@ class Calendar(DeclarativeBase):
         self.position = position
         self.label = label
         self.description = description
-        self.background_color = background_color
-        self.border_color = border_color
-        self.text_color = text_color
+        self.background_color = checked_color(background_color)
+        self.border_color = checked_color(border_color)
+        self.text_color = checked_color(text_color)
         self.class_name = class_name
 
     def event_source_obj(self):
