@@ -17,12 +17,12 @@ from sqlalchemy.orm.session import sessionmaker
 from zope.sqlalchemy.datamanager import ZopeTransactionExtension
 
 
-class DatetimeEncoder(json.JSONEncoder):
+class DatabaseEncoder(json.JSONEncoder):
     def default(self, obj):
         if isinstance(obj, (datetime.date, datetime.datetime, datetime.time)):
             return obj.isoformat()
 
-        return super(DatetimeEncoder, self).default(obj)
+        return super(DatabaseEncoder, self).default(obj)
 
 
 def export_database(connection_uri, json_dir):
@@ -71,10 +71,15 @@ def export_database(connection_uri, json_dir):
             records = session.query(table).all()
             table_obj = dict(name=table.name,
                              records=[dict(zip(names, record)) for record in records])
+            # -- workaround for beaker_cache: data field is a BLOB
+            if table.name == "beaker_cache":
+                for record in table_obj["records"]:
+                    record["data"] = record["data"].encode("base64_codec")
             table_json = os.path.join(json_dir, table.name + ".json")
             print("Writing '{path}'...".format(path=table_json))
             with io.open(table_json, mode="wb") as fd:
-                fd.write(json.dumps(table_obj, indent=4, cls=DatetimeEncoder))
+                json_repr = json.dumps(table_obj, indent=4, cls=DatabaseEncoder)
+                fd.write(json_repr)
 
 
 def main():
