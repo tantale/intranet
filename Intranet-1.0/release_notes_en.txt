@@ -1,8 +1,8 @@
 Changelog
 =========
 
-%%version%% (unreleased)
-------------------------
+2.0.0 (2016-01-08)
+------------------
 
 New
 ~~~
@@ -292,6 +292,11 @@ Fix
 - Issue #2: use the user’s time zone to compute the first day of the
   week for time recording control. [Laurent LAPORTE]
 
+Other
+~~~~~
+
+- Prepare next release: version '1.2.0'. [Laurent LAPORTE]
+
 1.1.2 (2014-01-27)
 ------------------
 
@@ -338,6 +343,8 @@ Other
 ~~~~~
 
 - Prepare next minor release: version '1.1.1'. [Laurent LAPORTE]
+
+- Prepare next release: version '1.2.0'. [Laurent LAPORTE]
 
 1.1.0 (2014-01-15)
 ------------------
