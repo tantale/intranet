@@ -42,7 +42,7 @@ install_requires = ["TurboGears2 == 2.2.2",
                     ]
 
 setup(name='Intranet',
-      version='2.0.0',
+      version='2.1.0',
       description='Intranet for time tracking and planning',
       author='Laurent LAPORTE',
       author_email='tantale.solutions@gmail.com',
