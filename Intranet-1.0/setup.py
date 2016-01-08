@@ -41,7 +41,7 @@ install_requires = ["Genshi == 0.7",
 
 setup(
     name='Intranet',
-    version='2.0.0-alpha',
+    version='2.0.0',
     description='Intranet for time tracking and planning',
     author='Laurent LAPORTE',
     author_email='tantale.solutions@gmail.com',
