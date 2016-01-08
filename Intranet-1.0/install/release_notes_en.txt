@@ -1,6 +1,20 @@
 Changelog
 =========
 
+2.1.0 (2016-01-08)
+------------------
+
+Changes
+~~~~~~~
+
+- Add database migration scripts in deliverable. [Laurent LAPORTE]
+
+Fix
+~~~
+
+- Dependency problem with ``WebTest`` library. Add data files in
+  deliverable. [Laurent LAPORTE]
+
 2.0.0 (2016-01-08)
 ------------------
 
