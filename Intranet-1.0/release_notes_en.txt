@@ -1,25 +1,621 @@
-New in version 1.4.0
-====================
+Changelog
+=========
 
-News
+%%version%% (unreleased)
+------------------------
 
-- New "Statistics" topic: review of tracked time carried out on orders. Total per phase and per order.
+New
+~~~
+
+- Drop 'migrate_version' table. [Laurent LAPORTE]
+
+- New migration script: add missing calendars: one calendar for each
+  employee. [Laurent LAPORTE]
+
+- Add migration scripts (alembic). [Laurent LAPORTE]
+
+- Add a calendar selector in the Employee view. Automatically create a
+  calendar for each employee creation. [Laurent LAPORTE]
+
+- Now we can edit and delete planning events. [Laurent LAPORTE]
+
+- We can now add a events in the planning calendar. [Laurent LAPORTE]
+
+- New attributes: :attr:`Planning.Event.location` => event
+  location/address, and :attr:`PlanningEvent.private` => is the event
+  private or public? [Laurent LAPORTE]
+
+- Implement EventSourceController() and PlanningEventController()
+  [Laurent LAPORTE]
+
+- New object model for ``PlanningEvent``(child of ``Calendar``) [Laurent
+  LAPORTE]
+
+- Implementation of the week_hours controller: todo: create default
+  hours_intervals on new, edit in place. [Laurent LAPORTE]
+
+- Add columns to store CSS colors for events in planning calendar.
+  [Laurent LAPORTE]
+
+- OpenHours and YearPeriod. [Laurent LAPORTE]
+
+- Implementation of :class:`HoursInterval` accessor. [Laurent LAPORTE]
+
+  Create the default list of hours intervals based on fixed list of intervals.
+
+- Implementation of :class:`HoursInterval` accessor. [Laurent LAPORTE]
+
+  Create the default list of hours intervals based on fixed list of intervals.
+
+- New ``HoursInterval`` table. [Laurent LAPORTE]
+
+- New :class:`DayPeriod` and :class:`DayPeriodAccessor` classes.
+  [Laurent LAPORTE]
+
+- Worked hours model and accessor. [Laurent LAPORTE]
+
+- Week day model (fixed list of week days, not in database). [Laurent
+  LAPORTE]
+
+- Worked hours model (partial). refactoring of accessor. Drop
+  :class:`DuplicateFoundError` (use
+  :class:`sqlalchemy.exc.IntegrityError`). [Laurent LAPORTE]
+
+Changes
+~~~~~~~
+
+- Store session data in database. Fix calendar selection bug. [Laurent
+  LAPORTE]
+
+- Change in the :class:`OrderCatAccessor`: add the (missing)
+  :meth:`OrderCatAccessor.setup` function. Update the ``bootstrap.py``
+  file. [Laurent LAPORTE]
+
+- Add database export and import (experimental). [Laurent LAPORTE]
+
+- Change the step value in ``datetime`` and ``time`` input fields to
+  900s (15min). [Laurent LAPORTE]
+
+- Implement event move and event duration increase. [Laurent LAPORTE]
+
+- Week_hours: create default hours_intervals on new, edit in place. Full
+  implementation of the week hours grid. Calculate the time intervals
+  duration. [Laurent LAPORTE]
+
+- Refactoring in ``planning/event_source.mak`` [Laurent LAPORTE]
+
+- Better handling of error messages in ``planning/event/new.mak``.
+  [Laurent LAPORTE]
+
+- Improve "new event" dialog box. [Laurent LAPORTE]
+
+- Render :class:`MenuItem` in JSON. [Laurent LAPORTE]
+
+- Optimisation in insert_year_period. [Laurent LAPORTE]
+
+- Update the color of the OrderCat selector on change, in Calendar
+  views. [Laurent LAPORTE]
+
+- Set default colors for Calendar. [Laurent LAPORTE]
+
+- Replace the grid view with a list of "forms" for Calendar. [Laurent
+  LAPORTE]
+
+- We can select a CatGroup / class name for each calendar. [Laurent
+  LAPORTE]
+
+- Change default color in calendar (set to NULL). [Laurent LAPORTE]
+
+- Implementation "edit in place" of calendar. [Laurent LAPORTE]
+
+- Improve bootstrap. [Laurent LAPORTE]
+
+- Improve insertion and deletion of Calendar records. [Laurent LAPORTE]
+
+- Reimplementation of the :class:`CalendarController` has a child of
+  "planning". Implemented methods are get_all, get_one, edit, new and
+  post: missing "delete". [Laurent LAPORTE]
+
+- Implement setup-app => :file:`bootstrap.py`. Add
+  :class:`WorkedHoursController` and templates. Change requirements for
+  SQLAlchemy > 1.0.0. [Laurent LAPORTE]
+
+- Preparation: implement the *worked_hours* relationship in Employee
+  table. [Laurent LAPORTE]
+
+- Add unit tests for :class:`WorkedHoursAccessor`. [Laurent LAPORTE]
+
+- Calculate the max of the position to fill the position of a new
+  :class:`WeekHours` and :class:`WorkedHours` record. [Laurent LAPORTE]
+
+- Add unit tests for :class:`YearPeriodAccessor`. [Laurent LAPORTE]
+
+- Refactoring of database (rename ``weekday`` to ``iso_weekday``, add
+  ``position`` in :class:`WorkedHours`, fix constraints) [Laurent
+  LAPORTE]
+
+- Refactoring of database (rename OpenHours table to WorkedHours)
+  [Laurent LAPORTE]
+
+- Change :class:`DayPeriodAccessor` implementation. [Laurent LAPORTE]
+
+- Use a database table for WeekDay. [Laurent LAPORTE]
+
+- Add unit tests for :`DayPeriodAccessor`. Fix `IntegrityError` in
+  :meth:`reorder_position`. [Laurent LAPORTE]
+
+Fix
+~~~
+
+- Restore missing tables in migration scripts. Update database. [Laurent
+  LAPORTE]
+
+- Planning event can now have empty description. [Laurent LAPORTE]
+
+- Set remove icon on remove buttons in
+  :file:`intranet/templates/planning/calendar/edit.mak` [Laurent
+  LAPORTE]
+
+- Bad setup in :class:`WorkedHoursAccessor`. [Laurent LAPORTE]
+
+- Use ISO weekday (Monday is 1 and Sunday is 7) for :class:`WeekDay`
+  instances. [Laurent LAPORTE]
+
+Other
+~~~~~
+
+- Initial commit. [Laurent LAPORTE]
+
+1.4.0 (2015-06-25)
+------------------
+
+New
+~~~
+
+- Prepare next release: version 1.4.0. [Laurent LAPORTE]
+
+  News
+
+  - New "Statistics" topic: review of tracked time carried out on orders. Total per phase and per order.
+
+  Enhancements
+
+  - Save the position of the left pane,
+  - Time tracking: storing the current user selection,
+  - Calendar: storing the view (month, week, day) and the current date,
+  - Updated third-party JavaScript libraries: "fullcalendar" and "jquery-layout".
+
+  Modifications
+
+  - Replacing the "Calendar" icon by the "Clock" icon, under "Time tracking". The "Calendar" icon will be dedicated to planning.
+
+  Fixed bugs
+
+  - Fixed an issue caused by the left pane overlapping the calendar;
+  - Fixed the Quick menu: the "Administration" menu and "Time tracking" is displayed correctly (dynamically).
+
+- The layout of the pages is now saved in session. [Laurent LAPORTE]
+
+Changes
+~~~~~~~
+
+- Update third-party libraries: ``fullcalendar`` and ``jquery-layout``.
+  [Laurent LAPORTE]
+
+- Fix vertical alignment of the title in toolbar. [Laurent LAPORTE]
+
+Fix
+~~~
+
+- Correction in quick access menu: show the admin and time tracking menu
+  correctly (dynamic calculation). [Laurent LAPORTE]
+
+- Error handling in :class:`FileStorage`. [Laurent LAPORTE]
+
+Other
+~~~~~
+
+- Internal changes: [Laurent LAPORTE]
+
+  * refactoring of the toolbar menu: add a new ``MenuItem`` object, create de new HTML template: ``templates.pointage.master``.
+  * Prepare a new page to display time tracking statistics.
+
+1.3.0 (2015-03-03)
+------------------
+
+New
+~~~
+
+- Add a help message for the orders page. [Laurent LAPORTE]
+
+- Add a help message for the employees page. [Laurent LAPORTE]
+
+- Add a help message (French) for the preferences page. [Laurent
+  LAPORTE]
+
+- New Preferences page with order categories management. [Laurent
+  LAPORTE]
+
+Changes
+~~~~~~~
+
+- Improve help messages for employees and user preferences pages.
+  [Laurent LAPORTE]
+
+- Use :func:`gettext` for help message in preferences page. [Laurent
+  LAPORTE]
+
+- Remove tooltips (too cumbersome). [Laurent LAPORTE]
+
+- Add `requirements.txt` file and `dist/` directory in version control.
+  Update `README.txt` with new installation instructions based on `pip`.
+  [Laurent LAPORTE]
+
+Fix
+~~~
+
+- The "edit order" view now display a default category name when the
+  order has lost its category (removed category). [Laurent LAPORTE]
+
+1.2.0 (2014-05-11)
+------------------
+
+Changes
+~~~~~~~
+
+- MOD: change email address in about page to
+  `tantale.solutions@gmail.com`. [Laurent LAPORTE]
+
+- Add the version information in the main page, also change the
+  presentation paragraph. [Laurent LAPORTE]
+
+- Better print function. [Laurent LAPORTE]
+
+- Remove useless DEBUG message. [Laurent LAPORTE]
+
+- Fix column with for chart table label in statistics view. [Laurent
+  LAPORTE]
+
+Fix
+~~~
+
+- Issues #8: decimal value for worked_hours, and #11: allow duplicates
+  for order and employees. Don't fix #3: order's references with auto-
+  increment. [Laurent LAPORTE]
+
+- Issue #6: it is now possible to print the recorded times from the
+  calendar view. [Laurent LAPORTE]
+
+- Issue #7: use `kwargs` arguments to the `update_cal_event` call.
+  [Laurent LAPORTE]
+
+- Issue #2: use the user’s time zone to compute the first day of the
+  week for time recording control. [Laurent LAPORTE]
+
+1.1.2 (2014-01-27)
+------------------
+
+Changes
+~~~~~~~
+
+- Add default work hours for Saturday in `CalEventAccessor`. [Laurent
+  LAPORTE]
+
+Other
+~~~~~
+
+- Prepare next minor release: version '1.1.2'. [Laurent LAPORTE]
+
+1.1.1 (2014-01-26)
+------------------
+
+New
+~~~
+
+- Create a new `Tools` entry in the main menu and a `fix_bad_centuries`
+  tool. [Laurent LAPORTE]
+
+Changes
+~~~~~~~
+
+- When searching an order by uid, the phases list is now moved to the
+  top to view all the phases. [Laurent LAPORTE]
+
+- Minor changes: source code formatting. [Laurent LAPORTE]
+
+- Minor changes in code formatting. [Laurent LAPORTE]
+
+Fix
+~~~
+
+- Update the century of a date/time when 0 <= year < 100. Better display
+  dates with wrong century < 100. [Laurent LAPORTE]
+
+- Change `schema.py` for testing: change to current working directory to
+  the parent of "migration/". [Laurent LAPORTE]
+
+Other
+~~~~~
+
+- Prepare next minor release: version '1.1.1'. [Laurent LAPORTE]
+
+1.1.0 (2014-01-15)
+------------------
+
+New
+~~~
+
+- New feature: Show the order's number (the `uid`) in different views
+  (search field, edit view, time recording calendar, order statistics).
+  [Laurent LAPORTE]
+
+Changes
+~~~~~~~
+
+- Minor change: rename the heavy loading parameter to `_heavy_loading`
+  instead of `_load` (debug parameter). [Laurent LAPORTE]
+
+- Now display orders list in reverse chronological order. [Laurent
+  LAPORTE]
+
+- Minor change in `chart` controller: remove usless (and probably wrong)
+  `get_all` method. [Laurent LAPORTE]
+
+- Use `localhost` for development. [Laurent LAPORTE]
+
+- Minor change: remove unused import `math`. [Laurent LAPORTE]
+
+Other
+~~~~~
+
+- Prepare new release: version '1.1.0'. [Laurent LAPORTE]
+
+1.0.0 (2013-12-17)
+------------------
+
+New
+~~~
+
+- Remove useless `Modernizr`. [Laurent LAPORTE]
+
+- "about" and "environ" pages. [Laurent LAPORTE]
+
+- Error and master HTML pages. [Laurent LAPORTE]
+
+Changes
+~~~~~~~
+
+- Change in `setup.py` prepare next release: '1.0.0'. [Laurent LAPORTE]
+
+- Change `.gitignore`: ignore `egg` files. [Laurent LAPORTE]
+
+- Change the project's name from `Intranat-1.0` to `Intranet`. [Laurent
+  LAPORTE]
+
+- Upgrapde the `imgLiquid` JavaScript library to version "0.9.944".
+  [Laurent LAPORTE]
+
+- HTML and JavaScript optimization. [Laurent LAPORTE]
+
+- Change the `event_duration` unit in Calendar from hours/100 to hours.
+  [Laurent LAPORTE]
+
+- Prepare next release: 1.0. [Laurent LAPORTE]
+
+0.1 (2013-11-17)
+----------------
+
+New
+~~~
+
+- New Mako template used to generate the HTML page (fragment) for
+  recorded times control. [Laurent LAPORTE]
+
+- New "close" button to close an order or mark an employee as out.
+  [Laurent LAPORTE]
+
+- At new order creation, we add a default phase list. [Laurent LAPORTE]
+
+- New feature: display time recording statistics. [Laurent LAPORTE]
+
+- Event's start and end date/time are automatically calculated from
+  available time intervals in the selected day. Add the missing
+  "event_start" field in edit form. [Laurent LAPORTE]
+
+- New edit event and delete event forms. [Laurent LAPORTE]
+
+- Register event's moves (in day and time) and duration changes in
+  database. [Laurent LAPORTE]
+
+- Create an "admin" URL with a full menu. The "pointage" URL now
+  contains only the calendar for time recording. [Laurent LAPORTE]
+
+- Remove 'title' field from CelEvent object. Now the title is a
+  concatenation of the order reference and the phase label. The event's
+  comment is shown in a tooltip. [Laurent LAPORTE]
+
+- New 'trcal' controller for Timer Recorder Calendar. Still a prototype!
+  [Laurent LAPORTE]
+
+- New 'CalEvent' class in model and accessors for the calendar page.
+  [Laurent LAPORTE]
+
+- Some database tutorials. [Laurent LAPORTE]
+
+- A new 'reorder' method to re-order a list of phases. [Laurent LAPORTE]
+
+- Remove test code in 'index.mak'. [Laurent LAPORTE]
+
+- Start integration of Order Phases. Still a bug with editInPlace.
+  [Laurent LAPORTE]
+
+- Add 'click' event in order title to display the edit form. [Laurent
+  LAPORTE]
+
+- New 'Order', 'OrderPhase' and 'OrderCat' model classes. Start the
+  implementation of 'OrderController'. [Laurent LAPORTE]
+
+- New model and controller for Order. Views (templates) are missing.
+  [Laurent LAPORTE]
+
+- New model classes: 'Order' and 'OrderPhase'. Add test cases (and make
+  them work correctly). Change the database name to 'testdata.db' for
+  testing. [Laurent LAPORTE]
+
+- Add turbogears sources (first commit) [Laurent LAPORTE]
+
+Changes
+~~~~~~~
+
+- Prepare beta version. [Laurent LAPORTE]
+
+- Change "setup.py" to correctly insert all package data during build
+  process. [Laurent LAPORTE]
+
+- Minorchanges: add comments in 'intranet.templates.pointage' package.
+  [Laurent LAPORTE]
+
+- Before adding a new time record, check overlapping dates in other
+  events of the current employee. [Laurent LAPORTE]
+
+- Update employee list during calendar pagination. [Laurent LAPORTE]
+
+- Order list is updated after each calendar pagination. Current
+  calendar's date is preserved after refreshing. [Laurent LAPORTE]
+
+- Upgrade fullcalendar version to "1.6.4". [Laurent LAPORTE]
+
+- Display the recorded times control in a dialog box. [Laurent LAPORTE]
+
+- Calculate the recorded times for each week of the month. [Laurent
+  LAPORTE]
+
+- Refactoring: put JavaScript codes at the end of the body. [Laurent
+  LAPORTE]
+
+- Dates intervals are now checked before Empoyee and Order creation /
+  modification. [Laurent LAPORTE]
+
+- Minor changes in unit test. [Laurent LAPORTE]
+
+- When a new order is created, we display the phases list. [Laurent
+  LAPORTE]
+
+- Refactoring of order duplication. [Laurent LAPORTE]
+
+- Change icon for the "Display order chart" button: use "calculator"
+  icon. [Laurent LAPORTE]
+
+- Dynamically load google chart from the web and display a pie in the
+  time recording statistics' page. [Laurent LAPORTE]
+
+- Use a custom format for the dragged element from a phase list.
+  [Laurent LAPORTE]
+
+- When an event is resized on several days: divide the event and insert
+  a new event for each extra day. [Laurent LAPORTE]
+
+- Activate the event's duration change (resize) on several days by
+  splitting the event in several events. Fix time zone bug. [Laurent
+  LAPORTE]
+
+- Update calendar's current date after event creation, move or resize.
+  [Laurent LAPORTE]
+
+- Change the 'new' event form: reduce the size, put order reference and
+  phase label in a single line. [Laurent LAPORTE]
+
+- Close the '#confirm_dialog' when the 'new' form is OK, keep it opened
+  when an error occurs. [Laurent LAPORTE]
+
+- Render the newly created event in the calendar. [Laurent LAPORTE]
+
+- Update calendar from events list. Make a separation between 'get_all'
+  and the events list. Fix date/time format in CalEvent object. Now
+  event can be dragged from the order list and dropped in the calendar
+  for an event creation. [Laurent LAPORTE]
+
+- Update the list of colors and add a missing entry in 'OrderCat'.
+  [Laurent LAPORTE]
+
+- Refactoring: Make 'employee' controller completly RESTfull. Better
+  error handling using 'formencode' validators. [Laurent LAPORTE]
+
+- Minor change in Order controller for JSON result. [Laurent LAPORTE]
+
+- Raise an exception when a record is missing in the database. [Laurent
+  LAPORTE]
+
+- Refactoring of database access: use accessors with transactional
+  queries. [Laurent LAPORTE]
+
+- Use transaction manager to perform transactions and fix integrity
+  error during Order creation or deletion. [Laurent LAPORTE]
+
+- Refactoring: use simple quote for '$()' jQuery selector function.
+  [Laurent LAPORTE]
+
+- Delete OrderPhase if empty label. [Laurent LAPORTE]
+
+- Replace 'jquery.editinplace.js' by 'jquery.editable.js'. See:
+  http://vitalets.github.io/x-editable/index.html. [Laurent LAPORTE]
+
+- Add a confirmation message for order deletion. [Laurent LAPORTE]
+
+- Minor changes: use JSON for JavaScript values. [Laurent LAPORTE]
+
+- Remove '#order_get_all', rename '#search_form' in '#order_get_all'.
+  Fix the freezing of accordion collapsing. [Laurent LAPORTE]
+
+- Minor changes: re-indent template using spaces. [Laurent LAPORTE]
+
+- Order and employee's templates amelioration. [Laurent LAPORTE]
+
+- Minor changes: remove JSLint warnings/errors. [Laurent LAPORTE]
+
+- Finalize Employee features. [Laurent LAPORTE]
+
+- Refactoring: rename the 'select' method/view in 'edit' to better
+  conform to the REST interface. [Laurent LAPORTE]
+
+- Refactoring: rename the 'add' method/view in 'new' to conform to the
+  REST interface. [Laurent LAPORTE]
+
+- Refactoring: separation of concepts for forms: select / update /
+  search / add / create / delete. Use 'jquery.forms.js' script in order
+  to have ajax forms. [Laurent LAPORTE]
+
+- Minor changes in code formatting. [Laurent LAPORTE]
+
+- Minor changes in code formatting. [Laurent LAPORTE]
+
+- Add FileStorage class and test case. [Laurent LAPORTE]
+
+- Use FileStorage to store photos in local filesystem. [Laurent LAPORTE]
+
+- Minor changes: remove PEP8 warnings. [Laurent LAPORTE]
+
+- Integration of the Employee controller/template. [Laurent LAPORTE]
+
+Fix
+~~~
+
+- Bad time zone offset computation after daylight saving time. [Laurent
+  LAPORTE]
+
+- Use 'String' class instead of 'Text' class in column definitions in
+  model. [Laurent LAPORTE]
+
+- Fix creation form loss when the user click "new" after a previous
+  Order edition. [Laurent LAPORTE]
+
+- Comment lines in 'jquery.editinplace/js' script which contains
+  incompatible lines of code. Implementation of the 'edit_in_place'
+  function. [Laurent LAPORTE]
+
+- All accordion problems. [Laurent LAPORTE]
+
+- Fix slow image display's problem: uploaded images are now delivered as
+  static files. [Laurent LAPORTE]
 
 
-Enhancements
-
-- Save the position of the left pane,
-- Time tracking: storing the current user selection,
-- Calendar: storing the view (month, week, day) and the current date,
-- Updated third-party JavaScript libraries: "fullcalendar" and "jquery-layout".
-
-
-Modifications
-
-- Replacing the "Calendar" icon by the "Clock" icon, under "Time tracking". The "Calendar" icon will be dedicated to planning.
-
-
-Fixed bugs
-
-- Fixed an issue caused by the left pane overlapping the calendar;
-- Fixed the Quick menu: the "Administration" menu and "Time tracking" is displayed correctly (dynamically).

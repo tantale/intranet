@@ -1,8 +1,16 @@
 ﻿Développements en cours
 =======================
 
-- Planning des événements : ensemble de calendriers associés aux utilisateurs.
 - Planification des tâches associées aux phases des commandes.
+
+
+Nouveautés de la version 2.2.0
+==============================
+
+Nouveautés
+
+- Nouvelle rubrique « Planning » : cette rubrique présente les calendriers des employés.
+- Planning des événements : ensemble de calendriers associés aux utilisateurs.
 - Paramétrage des calendriers.
 
 
