@@ -22,48 +22,57 @@ except ImportError:
     use_setuptools()
     from setuptools import setup, find_packages
 
-testpkgs = ['WebTest >= 1.2.3',
-            'nose == 1.1.2',
-            'coverage',
-            'wsgiref']
 
-install_requires = ["Genshi == 0.7",
+testpkgs = [  # 'WebTest >= 1.2.3',
+    'WebTest == 1.4.3',
+    'nose',
+    'coverage',
+    'wsgiref']
+
+install_requires = ["TurboGears2 == 2.2.2",
+                    "Genshi == 0.7",
                     "Mako == 0.7.3",
                     "zope.sqlalchemy >= 0.4",
                     "repoze.tm2 >= 1.0a5",
                     "sqlalchemy",
                     "tw2.forms == 2.2.0.3",
-                    "TurboGears2 == 2.2.2",
-
+                    'WebTest == 1.4.3',  # required here to avoid version conflict
                     "alembic",
                     # 'MySQL-python',
                     ]
 
-setup(
-    name='Intranet',
-    version='2.0.0',
-    description='Intranet for time tracking and planning',
-    author='Laurent LAPORTE',
-    author_email='tantale.solutions@gmail.com',
-    url='http://tantalesolutions.wordpress.com/',
-    setup_requires=["PasteScript >= 1.7"],
-    paster_plugins=['PasteScript', 'Pylons', 'TurboGears2', 'tg.devtools'],
-    packages=find_packages(exclude=['ez_setup']),
-    install_requires=install_requires,
-    include_package_data=True,
-    test_suite='nose.collector',
-    tests_require=testpkgs,
-    package_data={'intranet': ['i18n/*/LC_MESSAGES/*.mo',
-                               'templates/*/*/*/*/*',
-                               'public/*/*/*/*/*']},
-    message_extractors={'intranet': [('**.py', 'python', None),
-                                     ('templates/**.mak', 'mako', None),
-                                     ('public/**', 'ignore', None)]},
+setup(name='Intranet',
+      version='2.0.0',
+      description='Intranet for time tracking and planning',
+      author='Laurent LAPORTE',
+      author_email='tantale.solutions@gmail.com',
+      url='http://tantalesolutions.wordpress.com/',
+      setup_requires=["PasteScript >= 1.7"],
+      paster_plugins=['PasteScript', 'Pylons', 'TurboGears2', 'tg.devtools'],
+      packages=find_packages(exclude=['ez_setup']),
+      install_requires=install_requires,
+      include_package_data=True,
+      test_suite='nose.collector',
+      tests_require=testpkgs,
+      package_data={'intranet': ['i18n/*/LC_MESSAGES/*.mo',
+                                 'templates/*/*/*/*/*',
+                                 'public/*/*/*/*/*']},
+      data_files=[('', ['install/intranet.conf',
+                        'install/README.txt',
+                        'install/release_notes_en.txt',
+                        'install/release_notes_fr.txt',
+                        'install/intranet.py']),
+                  ('work', ['install/work/alembic.ini',
+                            'install/work/livebox.ini',
+                            'install/work/production.ini',
+                            'install/work/productiondata.db'])],
+      message_extractors={'intranet': [('**.py', 'python', None),
+                                       ('templates/**.mak', 'mako', None),
+                                       ('public/**', 'ignore', None)]},
 
-    entry_points = {'paste.app_factory': ['main = intranet.config.middleware:make_app'],
+      entry_points={'paste.app_factory': ['main = intranet.config.middleware:make_app'],
                     'paste.app_install': ['main = pylons.util:PylonsInstaller'],
                     'console_scripts': ['intranet_upgrade = intranet.maintenance.versions.v01_02.upgrade:main']},
 
-    dependency_links=["http://tg.gy/222"],
-    zip_safe=False
-)
+      dependency_links=["http://tg.gy/222"],
+      zip_safe=False)
