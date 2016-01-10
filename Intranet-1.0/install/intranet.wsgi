@@ -9,17 +9,17 @@ import sys
 prev_sys_path = list(sys.path)
 
 import site
-site.addsitedir('C:\Program Files\Tantale\Intranet\Lib\site-packages')
+site.addsitedir('C:\\Program Files\\Tantale\\Intranet\\Lib\\site-packages')
 
 # Set the environment variable PYTHON_EGG_CACHE to an appropriate directory
 # where the Apache user has write permission and into which it can unpack egg files.
 import os
-os.environ['PYTHON_EGG_CACHE'] = '/var/www/python-eggs'
+os.environ['PYTHON_EGG_CACHE'] = "C:\\Apache24\\python-eggs"
 
 # Initialize logging module from your TurboGears config file
 from paste.script.util.logging_config import fileConfig
-fileConfig('C:\Program Files\Tantale\Intranet\work\production.ini')
+fileConfig('C:\\Program Files\\Tantale\\work\\production.ini')
 
 # Finally, load your application's production.ini file.
 from paste.deploy import loadapp
-application = loadapp('config:C:\Program Files\Tantale\Intranet\work\production.ini')
+application = loadapp('config:C:\\Program Files\\Tantale\\\work\\production.ini')

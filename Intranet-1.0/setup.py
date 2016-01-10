@@ -19,9 +19,9 @@ try:
     from setuptools import setup, find_packages
 except ImportError:
     from ez_setup import use_setuptools
+
     use_setuptools()
     from setuptools import setup, find_packages
-
 
 testpkgs = [  # 'WebTest >= 1.2.3',
     'WebTest == 1.4.3',
@@ -29,17 +29,27 @@ testpkgs = [  # 'WebTest >= 1.2.3',
     'coverage',
     'wsgiref']
 
-install_requires = ["TurboGears2 == 2.2.2",
-                    "Genshi == 0.7",
-                    "Mako == 0.7.3",
-                    "zope.sqlalchemy >= 0.4",
-                    "repoze.tm2 >= 1.0a5",
-                    "sqlalchemy",
-                    "tw2.forms == 2.2.0.3",
-                    'WebTest == 1.4.3',  # required here to avoid version conflict
-                    "alembic",
-                    # 'MySQL-python',
-                    ]
+install_requires = [
+    # This two packages must have version fixed, and install in this order:
+    'WebOb == 1.1.1',
+    'WebTest == 1.4.3',
+
+    # 'WebOb==1.1.1',
+    # 'Pylons==1.0',
+    # 'WebFlash==0.1a9',
+    # 'WebError==0.10.3',
+    # 'Babel==0.9.6',
+    # 'crank==0.6.4',
+    "TurboGears2 == 2.2.2",
+
+    "Genshi == 0.7",
+    "Mako == 0.7.3",
+    "zope.sqlalchemy >= 0.4",
+    "repoze.tm2 >= 1.0a5",
+    "sqlalchemy",
+    "tw2.forms == 2.2.0.3",
+    "alembic",
+]
 
 setup(name='Intranet',
       version='2.1.0',
@@ -61,9 +71,8 @@ setup(name='Intranet',
                         'install/README.txt',
                         'install/release_notes_en.txt',
                         'install/release_notes_fr.txt',
-                        'install/intranet.py']),
+                        'install/intranet.wsgi']),
                   ('work', ['install/work/alembic.ini',
-                            'install/work/livebox.ini',
                             'install/work/production.ini',
                             'install/work/productiondata.db'])],
       message_extractors={'intranet': [('**.py', 'python', None),
