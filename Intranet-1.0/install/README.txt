@@ -1,4 +1,4 @@
-Tantale Intranet - version 2.1.0
+Tantale Intranet - version 2.1.1
 --------------------------------
 
 Procédure d’installation et me migration de la base de donnée.
