@@ -1,3 +1,4 @@
+/.eggs
 # Ignore temporary files.
 *.bak
 *.bkp

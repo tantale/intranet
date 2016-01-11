@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# quickstarted Options:
+# quicks tarted Options:
 #
 # sqlalchemy: True
 # auth:       None
@@ -23,14 +23,14 @@ except ImportError:
     use_setuptools()
     from setuptools import setup, find_packages
 
-testpkgs = [  # 'WebTest >= 1.2.3',
+tests_require = [
     'WebTest == 1.4.3',
     'nose',
     'coverage',
     'wsgiref']
 
 install_requires = [
-    # This two packages must have version fixed, and install in this order:
+    # This two packages must have version fixed, and must be installed in this order:
     'WebOb == 1.1.1',
     'WebTest == 1.4.3',
 
@@ -63,7 +63,7 @@ setup(name='Intranet',
       install_requires=install_requires,
       include_package_data=True,
       test_suite='nose.collector',
-      tests_require=testpkgs,
+      tests_require=tests_require,
       package_data={'intranet': ['i18n/*/LC_MESSAGES/*.mo',
                                  'templates/*/*/*/*/*',
                                  'public/*/*/*/*/*']},
