@@ -18,8 +18,8 @@ os.environ['PYTHON_EGG_CACHE'] = "C:\\Apache24\\python-eggs"
 
 # Initialize logging module from your TurboGears config file
 from paste.script.util.logging_config import fileConfig
-fileConfig('C:\\Program Files\\Tantale\\work\\production.ini')
+fileConfig('C:\\Program Files\\Tantale\\Intranet\\work\\production.ini')
 
 # Finally, load your application's production.ini file.
 from paste.deploy import loadapp
-application = loadapp('config:C:\\Program Files\\Tantale\\\work\\production.ini')
+application = loadapp('config:C:\\Program Files\\Tantale\\Intranet\\work\\production.ini')
