@@ -9,21 +9,19 @@ import datetime
 import json
 import logging
 
-from formencode.validators import Int, Number
 import pylons
+from formencode.validators import Int, Number
 from sqlalchemy.sql.expression import or_, and_, desc
 from tg.controllers.restcontroller import RestController
 from tg.controllers.util import redirect
-
 from tg.decorators import with_trailing_slash, expose, validate, without_trailing_slash
-
 from tg.flash import flash
 
+from intranet.accessors.pointage.cal_event import CalEventAccessor
+from intranet.accessors.pointage.order import OrderAccessor
 from intranet.controllers.session_obj.curr_user import CurrUserController
 from intranet.controllers.session_obj.full_calendar import FullCalendarController
 from intranet.controllers.session_obj.layout import LayoutController
-from intranet.accessors.pointage.cal_event import CalEventAccessor
-from intranet.accessors.pointage.order import OrderAccessor
 from intranet.model.pointage.cal_event import CalEvent
 from intranet.model.pointage.employee import Employee
 from intranet.model.pointage.order import Order
@@ -45,13 +43,13 @@ def overlap_cond(ref_start, ref_end, field_start, field_end):
     """
     Construct a sqlalchemy's predicate to check if two date intervals overlap.
 
-    :param ref_start: reference insterval's start date
+    :param ref_start: reference interval start date
 
-    :param ref_end: reference insterval's end date
+    :param ref_end: reference interval end date
 
-    :param field_start: field insterval's start date
+    :param field_start: field interval start date
 
-    :param field_end: field insterval's end date, or None for eternity
+    :param field_end: field interval end date, or None for eternity
 
     :return: ref_start <= field_start < ref_end or
              field_start <= ref_start < field_end

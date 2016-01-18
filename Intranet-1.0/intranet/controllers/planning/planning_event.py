@@ -68,6 +68,7 @@ class PlanningEventController(RestController):
     @with_trailing_slash
     @expose()
     def get_all(self, start, end, **kwargs):
+        # fixme: use the [start; end] interval to filter the events, see: overlap_cond.
         LOG.info("get_all: start={start}, end={end}, kwargs={kwargs}".format(start=pprint.pformat(start),
                                                                              end=pprint.pformat(end),
                                                                              kwargs=pprint.pformat(kwargs)))
