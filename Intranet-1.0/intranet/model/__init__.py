@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 """The application's model objects"""
 
-from zope.sqlalchemy import ZopeTransactionExtension
 from sqlalchemy.orm import scoped_session, sessionmaker
-#from sqlalchemy import MetaData
+from zope.sqlalchemy import ZopeTransactionExtension
+
+# from sqlalchemy import MetaData
 from sqlalchemy.ext.declarative import declarative_base
 
 # Global session manager: DBSession() returns the Thread-local
@@ -27,9 +28,10 @@ DeclarativeBase = declarative_base()
 # The default metadata is the one from the declarative base.
 metadata = DeclarativeBase.metadata
 
+
 # If you have multiple databases with overlapping table names, you'll need a
 # metadata for each database. Feel free to rename 'metadata2'.
-#metadata2 = MetaData()
+# metadata2 = MetaData()
 
 #####
 # Generally you will not want to define your table's mappers, and data objects
@@ -52,12 +54,13 @@ def init_model(engine):
     #
     # See the following example:
 
-    #global t_reflected
+    # global t_reflected
 
-    #t_reflected = Table("Reflected", metadata,
+    # t_reflected = Table("Reflected", metadata,
     #    autoload=True, autoload_with=engine)
 
-    #mapper(Reflected, t_reflected)
+    # mapper(Reflected, t_reflected)
+
 
 # Import your model modules here.
 from intranet.model.pointage.employee import Employee
@@ -74,3 +77,5 @@ from intranet.model.planning.frequency import Frequency
 from intranet.model.planning.calendar import Calendar
 from intranet.model.planning.year_period import YearPeriod
 from intranet.model.planning.planning_event import PlanningEvent
+
+from intranet.model.planning.assignation import Assignation

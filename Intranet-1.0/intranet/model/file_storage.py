@@ -8,7 +8,6 @@ import errno
 import logging
 import os
 
-
 LOG = logging.getLogger(__name__)
 
 
