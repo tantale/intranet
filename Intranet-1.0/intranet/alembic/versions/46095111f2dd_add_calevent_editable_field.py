@@ -105,5 +105,3 @@ def downgrade():
     new_records = map(create_old_record, records)
 
     op.bulk_insert(employee_table, new_records)
-
-

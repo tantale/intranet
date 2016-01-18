@@ -11,7 +11,7 @@ from __future__ import unicode_literals
 
 import datetime
 
-from sqlalchemy.orm import relationship, backref
+from sqlalchemy.orm import relationship
 from sqlalchemy.schema import Column, CheckConstraint, ForeignKey
 from sqlalchemy.types import Integer, Time
 
@@ -39,9 +39,7 @@ class HoursInterval(DeclarativeBase):
                           primary_key=True,
                           nullable=False, index=True)
 
-    week_day = relationship('WeekDay',
-                            backref=backref('hours_interval_list',
-                                            cascade='all,delete-orphan'))
+    week_day = relationship('WeekDay', back_populates='hours_interval_list')
 
     day_period_uid = Column(Integer, ForeignKey('DayPeriod.uid',
                                                 ondelete='CASCADE',
@@ -49,9 +47,7 @@ class HoursInterval(DeclarativeBase):
                             primary_key=True,
                             nullable=False, index=True)
 
-    day_period = relationship('DayPeriod',
-                              backref=backref('hours_interval_list',
-                                              cascade='all,delete-orphan'))
+    day_period = relationship('DayPeriod', back_populates='hours_interval_list')
 
     def __init__(self, start_hour, end_hour):
         super(HoursInterval, self).__init__()

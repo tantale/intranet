@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+from sqlalchemy.orm import relationship
 from sqlalchemy.schema import Column, CheckConstraint
 from sqlalchemy.types import Integer, SmallInteger, String
 
@@ -19,6 +20,19 @@ class WeekHours(DeclarativeBase):
     position = Column(SmallInteger, unique=True, index=True, nullable=False)  # no duplicates
     label = Column(String(length=32), unique=True, nullable=False, index=True)  # no duplicates
     description = Column(String(length=200))
+
+    calendar_list = relationship("Calendar",
+                                 back_populates='week_hours',
+                                 cascade='all,delete-orphan')
+
+    day_period_list = relationship("DayPeriod",
+                                   back_populates='week_hours',
+                                   order_by="DayPeriod.position",
+                                   cascade='all,delete-orphan')
+
+    year_period_list = relationship('YearPeriod',
+                                    back_populates='week_hours',
+                                    cascade='all,delete-orphan')
 
     def __init__(self, position, label, description):
         """

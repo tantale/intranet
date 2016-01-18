@@ -3,10 +3,11 @@
 :date: 2013-09-16
 :author: Laurent LAPORTE <sandlol2009@gmail.com>
 """
-from intranet.model import DeclarativeBase
-from sqlalchemy.orm import relationship, backref
+from sqlalchemy.orm import relationship
 from sqlalchemy.schema import Column, ForeignKey
 from sqlalchemy.types import Integer, String, DateTime, Boolean
+
+from intranet.model import DeclarativeBase
 
 
 class CalEvent(DeclarativeBase):
@@ -50,14 +51,8 @@ class CalEvent(DeclarativeBase):
     editable = Column(Boolean(), nullable=True, default=True)
 
     # -- relationships
-    employee = relationship('Employee',
-                            backref=backref('cal_event_list',
-                                            order_by=event_start,
-                                            cascade='all,delete-orphan'))
-    order_phase = relationship('OrderPhase',
-                               backref=backref('cal_event_list',
-                                               order_by=event_start,
-                                               cascade='all,delete-orphan'))  # @IgnorePep8
+    employee = relationship('Employee', back_populates='cal_event_list')
+    order_phase = relationship('OrderPhase', back_populates='cal_event_list')
 
     def __init__(self, event_start, event_end, comment, editable=True):
         """

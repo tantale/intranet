@@ -9,7 +9,7 @@ Created on: 2015-08-28
 """
 from __future__ import unicode_literals
 
-from sqlalchemy.orm import relationship, backref
+from sqlalchemy.orm import relationship
 from sqlalchemy.schema import Column, ForeignKey
 from sqlalchemy.types import Integer, Date
 
@@ -31,27 +31,19 @@ class YearPeriod(DeclarativeBase):
                                               onupdate='CASCADE'),
                           nullable=False, index=True)
 
-    calendar = relationship('Calendar',
-                            backref=backref('year_period_list',
-                                            cascade='all,delete-orphan'))
-
     frequency_uid = Column(Integer, ForeignKey('Frequency.uid',
                                                ondelete='CASCADE',
                                                onupdate='CASCADE'),
                            nullable=False, index=True)
-
-    frequency = relationship('Frequency',
-                             backref=backref('year_period_list',
-                                             cascade='all,delete-orphan'))
 
     week_hours_uid = Column(Integer, ForeignKey('WeekHours.uid',
                                                 ondelete='CASCADE',
                                                 onupdate='CASCADE'),
                             nullable=False, index=True)
 
-    week_hours = relationship('WeekHours',
-                              backref=backref('year_period_list',
-                                              cascade='all,delete-orphan'))
+    calendar = relationship('Calendar', back_populates='year_period_list')
+    frequency = relationship('Frequency', back_populates='year_period_list')
+    week_hours = relationship('WeekHours', back_populates='year_period_list')
 
     def __init__(self, start_date, end_date):
         self.start_date = start_date

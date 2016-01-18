@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+from sqlalchemy.orm import relationship
 from sqlalchemy.schema import Column, CheckConstraint
 from sqlalchemy.types import Integer, SmallInteger, String
 
@@ -19,6 +20,10 @@ class WeekDay(DeclarativeBase):
     iso_weekday = Column(SmallInteger, unique=True, index=True, nullable=False)  # without duplicates
     label = Column(String(length=32), unique=True, nullable=False, index=True)  # without duplicates
     description = Column(String(length=200))
+
+    hours_interval_list = relationship('HoursInterval',
+                                       back_populates='week_day',
+                                       cascade='all,delete-orphan')
 
     def __init__(self, iso_weekday, label, description=None):
         """

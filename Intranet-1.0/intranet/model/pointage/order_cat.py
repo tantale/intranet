@@ -4,9 +4,11 @@
 :author: Laurent LAPORTE <sandlol2009@gmail.com>
 """
 import re
-from intranet.model import DeclarativeBase
+
 from sqlalchemy.schema import Column
 from sqlalchemy.types import Integer, String
+
+from intranet.model import DeclarativeBase
 
 
 def format_css_def(css):

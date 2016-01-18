@@ -5,9 +5,7 @@
 """
 from sqlalchemy.orm import relationship
 from sqlalchemy.schema import Column
-from sqlalchemy.types import Date
-from sqlalchemy.types import Float
-from sqlalchemy.types import Integer, String
+from sqlalchemy.types import Date, Float, Integer, String
 
 from intranet.model import DeclarativeBase
 
@@ -22,6 +20,7 @@ class Employee(DeclarativeBase):
         - The worked hours field can be a decimal value, eg.: 31.2 hours.
     """
     __tablename__ = 'Employee'
+    __table_args__ = ({'mysql_engine': 'InnoDB'},)
 
     uid = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
     employee_name = Column(String(length=50), unique=False, nullable=False,
@@ -33,6 +32,16 @@ class Employee(DeclarativeBase):
 
     # attr calendar: don't delete-orphan
     calendar = relationship("Calendar", uselist=False, back_populates="employee", cascade='all')
+
+    cal_event_list = relationship('CalEvent',
+                                  back_populates="employee",
+                                  order_by="CalEvent.event_start",
+                                  cascade='all,delete-orphan')
+
+    # -- New fields/relationships for order planning (since: 2.2.0)
+    assignation_list = relationship('Assignation',
+                                    back_populates="employee",
+                                    cascade='all,delete-orphan')
 
     def __init__(self, employee_name, worked_hours, entry_date,
                  exit_date=None, photo_path=None):

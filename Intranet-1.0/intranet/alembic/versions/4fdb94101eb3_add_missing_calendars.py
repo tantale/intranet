@@ -26,7 +26,6 @@ down_revision = u'e81333c7679'
 branch_labels = None
 depends_on = None
 
-
 LOG = logging.getLogger("alembic.revision.{0}".format(revision))
 
 Session = sessionmaker()

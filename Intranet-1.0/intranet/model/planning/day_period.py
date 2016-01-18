@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 
 import copy
 
-from sqlalchemy.orm import relationship, backref
+from sqlalchemy.orm import relationship
 from sqlalchemy.schema import Column, CheckConstraint, UniqueConstraint, ForeignKey
 from sqlalchemy.types import Integer, SmallInteger, String
 
@@ -31,10 +31,11 @@ class DayPeriod(DeclarativeBase):
                                                 onupdate='CASCADE'),
                             nullable=False, index=True)
 
-    week_hours = relationship('WeekHours',
-                              backref=backref('day_period_list',
-                                              order_by=position,
-                                              cascade='all,delete-orphan'))
+    week_hours = relationship('WeekHours', back_populates='day_period_list')
+
+    hours_interval_list = relationship('HoursInterval',
+                                       back_populates='day_period',
+                                       cascade='all,delete-orphan')
 
     def __init__(self, position, label, description):
         """

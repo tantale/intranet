@@ -5,6 +5,7 @@
 """
 import collections
 
+from sqlalchemy.orm import relationship
 from sqlalchemy.schema import Column
 from sqlalchemy.types import Integer, String, Date
 
@@ -28,11 +29,10 @@ class Order(DeclarativeBase):
     creation_date = Column(Date, nullable=False, index=True)
     close_date = Column(Date, nullable=True, index=True)
 
-    # generated backref: order_phase_list
-    # order_phase_list = relationship('OrderPhase,
-    # backref='order',
-    #                                 order_by='OrderPhase.position,
-    #                                 cascade='all,delete-orphan')
+    order_phase_list = relationship('OrderPhase',
+                                    back_populates='order',
+                                    order_by='OrderPhase.position',
+                                    cascade='all,delete-orphan')
 
     def __init__(self, order_ref, project_cat, creation_date, close_date=None):
         """
@@ -73,6 +73,5 @@ class Order(DeclarativeBase):
         statistics = collections.Counter()
         for order_phase in self.order_phase_list:
             key = order_phase.label
-            for cal_event in order_phase.cal_event_list:
-                statistics[key] += cal_event.event_duration
+            statistics[key] = order_phase.tracked_duration
         return statistics

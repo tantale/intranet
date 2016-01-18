@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from sqlalchemy.orm import relationship, backref
-from sqlalchemy.schema import Column, CheckConstraint, ForeignKey
-from sqlalchemy.sql.schema import UniqueConstraint
+from sqlalchemy.orm import relationship
+from sqlalchemy.schema import Column, CheckConstraint, ForeignKey, UniqueConstraint
 from sqlalchemy.types import Integer, String, DateTime, Boolean
 
 from intranet.model import DeclarativeBase
@@ -17,7 +16,8 @@ class PlanningEvent(DeclarativeBase):
     __table_args__ = (CheckConstraint("event_start <= event_end",
                                       name="start_before_end_check"),
                       UniqueConstraint('calendar_uid', 'event_start', 'event_end',
-                                       name="dates_unique"))  # tuple
+                                       name="dates_unique"),
+                      {'mysql_engine': 'InnoDB'})
 
     uid = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
     label = Column(String(length=32), unique=False, nullable=False)
@@ -40,10 +40,14 @@ class PlanningEvent(DeclarativeBase):
                                               onupdate='CASCADE'),
                           nullable=False, index=True)
 
-    calendar = relationship('Calendar',
-                            backref=backref('planning_event_list',
-                                            order_by=event_start,
-                                            cascade='all,delete-orphan'))
+    calendar = relationship('Calendar', back_populates='planning_event_list')
+
+    assignation_uid = Column(Integer, ForeignKey('Assignation.uid',
+                                                 ondelete='CASCADE',
+                                                 onupdate='CASCADE'),
+                             nullable=True, index=True)
+
+    assignation = relationship('Assignation', back_populates='planning_event_list')
 
     def __init__(self, label, description, event_start, event_end, editable=True, all_day=False,
                  location=None, private=False):

@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+from sqlalchemy.orm import relationship
 from sqlalchemy.schema import Column, UniqueConstraint, CheckConstraint
 from sqlalchemy.types import Integer, String, SmallInteger
 
@@ -22,6 +23,10 @@ class Frequency(DeclarativeBase):
     description = Column(String(length=200))
     modulo = Column(SmallInteger, nullable=False)
     quotient = Column(SmallInteger, nullable=False)
+
+    year_period_list = relationship('YearPeriod',
+                                    back_populates='frequency',
+                                    cascade='all,delete-orphan')
 
     def __init__(self, label, description, modulo, quotient):
         """

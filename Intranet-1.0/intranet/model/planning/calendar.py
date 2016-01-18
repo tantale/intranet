@@ -11,7 +11,7 @@ from __future__ import unicode_literals
 
 import re
 
-from sqlalchemy.orm import relationship, backref
+from sqlalchemy.orm import relationship
 from sqlalchemy.schema import Column, ForeignKey, CheckConstraint
 from sqlalchemy.types import Integer, String, Float
 
@@ -55,16 +55,22 @@ class Calendar(DeclarativeBase):
                                                 onupdate='CASCADE'),
                             nullable=False, index=True)
 
-    week_hours = relationship('WeekHours',
-                              backref=backref('calendar_list',
-                                              cascade='all,delete-orphan'))
-
     employee_uid = Column(Integer, ForeignKey('Employee.uid',
                                               ondelete='CASCADE',
                                               onupdate='CASCADE'),
                           nullable=True, index=True)
 
-    employee = relationship("Employee", back_populates="calendar")
+    week_hours = relationship('WeekHours', back_populates='calendar_list')
+
+    employee = relationship("Employee", back_populates="calendar")  # one-to-one
+
+    planning_event_list = relationship('PlanningEvent',
+                                       back_populates="calendar",
+                                       cascade='all,delete-orphan')
+
+    year_period_list = relationship('YearPeriod',
+                                    back_populates="calendar",
+                                    cascade='all,delete-orphan')
 
     def __init__(self, position, label, description,
                  background_color=BACKGROUND_COLOR, border_color=BORDER_COLOR, text_color=TEXT_COLOR, class_name=None):
