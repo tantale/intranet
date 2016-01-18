@@ -5,7 +5,7 @@ from sqlalchemy.schema import Column, CheckConstraint
 from sqlalchemy.types import Integer, SmallInteger, String
 
 from intranet.maintenance.versions.v02_00.model import DeclarativeBase
-from intranet.model.planning.hours_interval import HoursInterval
+from intranet.maintenance.versions.v02_00.planning.hours_interval import HoursInterval
 
 
 class WeekHours(DeclarativeBase):
