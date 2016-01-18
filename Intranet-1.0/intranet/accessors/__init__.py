@@ -9,8 +9,6 @@ import logging
 
 import transaction
 
-from intranet.model import DBSession
-
 LOG = logging.getLogger(__name__)
 
 
@@ -31,7 +29,10 @@ class BasicAccessor(object):
     def __init__(self, record_class, session=None):
         self.record_class = record_class
         self.class_name = self.record_class.__name__
-        self.session = session or DBSession
+        if session is None:
+            from intranet.model import DBSession
+            session = DBSession
+        self.session = session
 
     def _get_record(self, uid):
         if isinstance(uid, basestring):
@@ -105,6 +106,11 @@ class BasicAccessor(object):
     def edit_label_in_place(self, uid, label):
         """
         Edit a record label in place.
+
+        :type uid: int or tuple
+        :param uid: UID of the record tu update.
+        :type label: unicode
+        :param label: The new label
         """
         assert hasattr(self.record_class, "label")
         if label:
