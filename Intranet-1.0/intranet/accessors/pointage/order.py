@@ -4,12 +4,14 @@
 :date: 2013-09-07
 :author: Laurent LAPORTE <sandlol2009@gmail.com>
 """
+import collections
 import datetime
 
 import transaction
 
 from intranet.accessors import BasicAccessor
 from intranet.accessors.pointage.order_cat import OrderCatAccessor
+from intranet.accessors.statistics import gauss_filter, mean
 from intranet.model.pointage.order import Order
 from intranet.model.pointage.order_phase import OrderPhase
 
@@ -55,7 +57,7 @@ class OrderAccessor(BasicAccessor):
                                            label=phase.label)
                                 for phase in actual_order.order_phase_list]
         new_order.order_phase_list.extend(new_order_phase_list)
-        with transaction.manager:
+        with transaction.TransactionManager():
             self.session.add(new_order)
         return dict(order_ref=new_order_ref,
                     project_cat=new_project_cat,
@@ -74,7 +76,7 @@ class OrderAccessor(BasicAccessor):
                                        label=label)
                             for position, label in enumerate(phases, 1)]
         order.order_phase_list.extend(order_phase_list)
-        with transaction.manager:
+        with transaction.TransactionManager():
             self.session.add(order)
         return kwargs
 
@@ -83,3 +85,30 @@ class OrderAccessor(BasicAccessor):
 
     def delete_order(self, uid):
         return super(OrderAccessor, self)._delete_record(uid)
+
+    def estimate_duration(self, uid, closed=True, max_count=64):
+        new_order = self.get_order(uid)
+        criterion = [Order.project_cat == new_order.project_cat]
+        if closed is True:
+            # noinspection PyComparisonWithNone
+            criterion.append(Order.close_date != None)
+        elif closed is False:
+            # noinspection PyComparisonWithNone
+            criterion.append(Order.close_date == None)
+        # in reverse order => to use LIMIT
+        order_by_cond = Order.creation_date.desc()
+        order_list = self.session.query(Order).filter(*criterion).order_by(order_by_cond).limit(max_count).all()
+
+        tracked_time_by_label = collections.defaultdict(list)
+        for order in order_list:
+            statistics = order.statistics
+            for order_phase in new_order.order_phase_list:
+                tracked_time = statistics.get(order_phase.label, 0)
+                if tracked_time:
+                    tracked_time_by_label[order_phase].append(tracked_time)
+
+        with transaction.TransactionManager():
+            for order_phase, tracked_times in tracked_time_by_label.iteritems():
+                pertinents = gauss_filter(tracked_times) if tracked_times else []
+                mean_time = int(mean(pertinents) * 4) / 4.0 if pertinents else 0
+                order_phase.estimated_duration = mean_time or None

@@ -4,9 +4,9 @@
 :author: Laurent LAPORTE <sandlol2009@gmail.com>
 """
 import logging
+import os
 import time
 
-import os
 import tg
 import transaction
 
@@ -109,6 +109,7 @@ class EmployeeAccessor(BasicAccessor):
             raise
         return employee_name
 
+    # noinspection PyMethodMayBeStatic
     def store_photo(self, uid, photo_storage):
         if photo_storage is None:
             return None
@@ -122,6 +123,7 @@ class EmployeeAccessor(BasicAccessor):
         file_storage[relpath] = photo_storage.file.read()
         return relpath
 
+    # noinspection PyMethodMayBeStatic
     def delete_photo(self, photo_path):
         if photo_path is None:
             return
