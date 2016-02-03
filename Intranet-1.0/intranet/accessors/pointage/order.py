@@ -57,7 +57,7 @@ class OrderAccessor(BasicAccessor):
                                            label=phase.label)
                                 for phase in actual_order.order_phase_list]
         new_order.order_phase_list.extend(new_order_phase_list)
-        with transaction.TransactionManager():
+        with transaction.manager:
             self.session.add(new_order)
         return dict(order_ref=new_order_ref,
                     project_cat=new_project_cat,
@@ -76,7 +76,7 @@ class OrderAccessor(BasicAccessor):
                                        label=label)
                             for position, label in enumerate(phases, 1)]
         order.order_phase_list.extend(order_phase_list)
-        with transaction.TransactionManager():
+        with transaction.manager:
             self.session.add(order)
         return kwargs
 
@@ -107,7 +107,7 @@ class OrderAccessor(BasicAccessor):
                 if tracked_time:
                     tracked_time_by_label[order_phase].append(tracked_time)
 
-        with transaction.TransactionManager():
+        with transaction.manager:
             for order_phase, tracked_times in tracked_time_by_label.iteritems():
                 pertinents = gauss_filter(tracked_times) if tracked_times else []
                 mean_time = int(mean(pertinents) * 4) / 4.0 if pertinents else 0

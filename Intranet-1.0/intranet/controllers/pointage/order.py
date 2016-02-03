@@ -10,7 +10,7 @@ import logging
 
 import pylons
 import sqlalchemy.exc
-from formencode.validators import NotEmpty
+from formencode.validators import Int, NotEmpty, StringBool
 from sqlalchemy.sql.expression import desc, and_
 from tg.controllers.restcontroller import RestController
 from tg.controllers.util import redirect
@@ -42,7 +42,34 @@ class TasksController(RestController):
         """
         order/uid/tasks
         """
-        self.order_uid = int(request.url.split('/')[-2])
+        # http://127.0.0.1:8080/admin/order/160/tasks/estimate_form
+        parts = request.url.split('/')
+        index = parts.index("tasks")
+        self.order_uid = int(parts[index - 1])
+
+    @expose('intranet.templates.pointage.order.tasks.estimate_form')
+    def estimate_form(self, closed=False, max_count=64):
+        # In case of error, values are form values => need to convert
+        if closed in ("", "true", "false"):
+            closed = closed == "true" if closed else None
+        max_count = int(max_count) if max_count else 64  # default value
+        form_errors = pylons.tmpl_context.form_errors  # @UndefinedVariable
+        return dict(order_uid=self.order_uid,
+                    closed=closed,
+                    max_count=max_count,
+                    form_errors=form_errors)
+
+    @validate({'closed': StringBool(),
+               'max_count': Int(min=32, max=128, not_empty=True)},
+              error_handler=estimate_form)
+    @expose('intranet.templates.pointage.order.tasks')
+    def estimate_tasks(self, closed=True, max_count=64):
+        LOG.debug("estimate_tasks: closed={closed!r}, max_count={max_count!r}".format(**locals()))
+        order_accessor = OrderAccessor()
+        order_accessor.estimate_duration(self.order_uid, closed=closed, max_count=max_count)
+        order = order_accessor.get_order(self.order_uid)
+        task_list = order.order_phase_list
+        return dict(order=order, task_list=task_list, sample_count=max_count)
 
     @expose('intranet.templates.pointage.order.tasks')
     def get_all(self, **kwargs):

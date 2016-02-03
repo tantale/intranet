@@ -143,6 +143,14 @@ import datetime
 			title="Afficher les statistiques de pointages de la commande ${values.get('order_ref')}">Statistiques</button>
 	</p>
 </form>
+<form id="order_estimate_form" class="inline_form"
+	action="${tg.url('./{uid}/tasks/estimate_form'.format(uid=values['uid']))}"
+	method="get">
+	<p>
+		<button id="order_estimate_form__display" type="submit" class="display_button"
+			title="${_(u'Estimer les tâches de la commande {ref}').format(ref=values.get('order_ref'))}">${_(u"Estimer les tâches")}</button>
+	</p>
+</form>
 
 <form id="order_plan" class="inline_form"
 	action="${tg.url('./{uid}/tasks'.format(uid=values['uid']))}"
@@ -239,6 +247,51 @@ import datetime
 	});
 	$('#order_chart_detail').ajaxForm({
 		target: '#order_content'
+	});
+	$('#order_estimate_form .display_button').button({
+		text: true,
+		icons: {
+			primary : "ui-icon-calendar"
+		}
+	});
+	$('#order_estimate_form').ajaxForm({
+		target: '#confirm_dialog_content',
+		success: function(responseJson, statusText, xhr) {
+
+			var thisDialog = $('#confirm_dialog').dialog({
+				width: 500,
+				height: 300,
+				buttons: {
+					"Estimer les tâches" : function() {
+						$('#estimate_form').submit();
+					},
+					"Annuler": function() {
+						$(this).dialog("close");
+					}
+				},
+				title: "Estimer les tâches",
+				close: function() {
+				}
+			});
+
+			var ajaxFormProp = {
+				success: function(responseText, statusText, xhr) {
+					console.log("search for '<span class=\"error\">' tag...");
+					var error = $('<div/>').append(responseText).find('span.error');
+					if (error.length) {
+						$('#confirm_dialog_content').html(responseText);
+						$('#estimate_form').ajaxForm(ajaxFormProp);
+					} else {
+						$('#order_tasks').html(responseText);
+						thisDialog.dialog("close");
+					}
+				}
+			};
+
+			$('#estimate_form').ajaxForm(ajaxFormProp);
+
+			thisDialog.dialog("open");
+		}
 	});
 	$('#order_plan .display_button').button({
 		text: true,
