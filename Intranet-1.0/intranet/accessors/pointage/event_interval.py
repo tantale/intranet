@@ -1,13 +1,9 @@
 """
 :module: intranet.accessors.event_interval
 :date: 2013-10-11
-:author: Laurent LAPORTE <sandlol2009@gmail.com>
+:author: Laurent LAPORTE <tantale.solutions@gmail.com>
 """
 import datetime
-
-__author__ = "Laurent LAPORTE <llaporte@jouve.fr>"
-__version__ = "$Revision: $"
-# $Id: $
 
 
 def datetime_interval(day, hour_interval, tz_delta):
@@ -79,9 +75,9 @@ def intersect_intervals(i, j):
         return None
 
 
-def find_event_intervals(day, event_list, work_hours_dict, tz_delta):
+def find_event_intervals(day, event_list, slots, tz_delta):
     """
-    Find the event intervals available in open hours.
+    Find the event intervals available in open hours (slots).
 
     :param day: day's date
     :type day: datetime.date
@@ -89,21 +85,11 @@ def find_event_intervals(day, event_list, work_hours_dict, tz_delta):
     :param event_list: events list with event's start and end date/time (UTC).
     :type event_list: list<Event>
 
-    :param work_hours_dict: dictionary containing the lists of open hours
-    grouped by week day (ISO week day).
-    Each open hour is a time interval (in local time).
+    :type slots: list[tuple(datetime.time, datetime.time)]
+    :param slots: List of slots. Each slot is a open hour is a time interval (in local time).
 
-    Example: {1: [(datetime.time(14, 0), datetime.time(17, 45))],
-              2: [(datetime.time(8, 30), datetime.time(12, 30)),
-                  (datetime.time(14, 0), datetime.time(17, 45))],
-              3: [(datetime.time(8, 30), datetime.time(12, 30)),
-                  (datetime.time(14, 0), datetime.time(17, 45))],
-              4: [(datetime.time(8, 30), datetime.time(12, 30)),
-                  (datetime.time(14, 0), datetime.time(17, 45))],
-              5: [(datetime.time(8, 30), datetime.time(12, 30)),
-                  (datetime.time(14, 0), datetime.time(17, 30))],
-              6: [],
-              7: []}
+        Example: [(datetime.time(8, 0),   datetime.time(12, 30)),
+                  (datetime.time(13, 30), datetime.time(17, 45))]
 
     :param tz_delta: time-zone delta from UTC.
     :type tz_delta: datetime.timedelta
@@ -112,9 +98,8 @@ def find_event_intervals(day, event_list, work_hours_dict, tz_delta):
     :rtype: tuple(start, end)
     """
     # -- date/time intervals for the open hours with the given time-zone offset
-    work_hours = work_hours_dict[day.isoweekday()]
     open_list = [datetime_interval(day, interval, tz_delta)
-                 for interval in work_hours]
+                 for interval in slots]
 
     # -- compute the available dates between the events
     min_datetime = datetime.datetime.combine(day, datetime.time(0)) + tz_delta
@@ -134,8 +119,7 @@ def find_event_intervals(day, event_list, work_hours_dict, tz_delta):
     return intersection_list
 
 
-def find_first_event_interval(day, first_hour, event_list, work_hours_dict,
-                              tz_delta):
+def find_first_event_interval(day, first_hour, event_list, slots, tz_delta):
     """
     Find the first event interval available in open hours.
 
@@ -148,9 +132,11 @@ def find_first_event_interval(day, first_hour, event_list, work_hours_dict,
     :param event_list: events list with event's start and end date/time (UTC).
     :type event_list: list<Event>
 
-    :param work_hours_dict: dictionary containing the lists of open hours
-    grouped by week day (ISO week day).
-    Each open hour is a time interval (in local time).
+    :type slots: list[tuple(datetime.time, datetime.time)]
+    :param slots: List of slots. Each slot is a open hour is a time interval (in local time).
+
+        Example: [(datetime.time(8, 0),   datetime.time(12, 30)),
+                  (datetime.time(13, 30), datetime.time(17, 45))]
 
     :param tz_delta: time-zone delta from UTC.
     :type tz_delta: datetime.timedelta
@@ -158,8 +144,7 @@ def find_first_event_interval(day, first_hour, event_list, work_hours_dict,
     :return: a date/time interval (in UTC) used to create a new event
     :rtype: tuple(start, end)
     """
-    interval_list = find_event_intervals(day, event_list, work_hours_dict,
-                                         tz_delta)
+    interval_list = find_event_intervals(day, event_list, slots, tz_delta)
     if interval_list:
         # -- return the 1st interval...
         interval_list.sort()
@@ -171,8 +156,7 @@ def find_first_event_interval(day, first_hour, event_list, work_hours_dict,
         return event_start, event_end
 
 
-def guess_event_duration(day, hour_start, event_list, work_hours_dict,
-                         tz_delta):
+def guess_event_duration(day, hour_start, event_list, slots, tz_delta):
     """
     Guess the event duration by finding available time intervals
     in the current day.
@@ -186,9 +170,11 @@ def guess_event_duration(day, hour_start, event_list, work_hours_dict,
     :param event_list: events list with event's start and end date/time (UTC).
     :type event_list: list<Event>
 
-    :param work_hours_dict: dictionary containing the lists of open hours
-    grouped by week day (ISO week day).
-    Each open hour is a time interval (in local time).
+    :type slots: list[tuple(datetime.time, datetime.time)]
+    :param slots: List of slots. Each slot is a open hour is a time interval (in local time).
+
+        Example: [(datetime.time(8, 0),   datetime.time(12, 30)),
+                  (datetime.time(13, 30), datetime.time(17, 45))]
 
     :param tz_delta: time-zone delta from UTC.
     :type tz_delta: datetime.timedelta
@@ -198,8 +184,7 @@ def guess_event_duration(day, hour_start, event_list, work_hours_dict,
     :rtype: datetime.timedelta
     """
     event_start = datetime.datetime.combine(day, hour_start) + tz_delta
-    interval_list = find_event_intervals(day, event_list, work_hours_dict,
-                                         tz_delta)
+    interval_list = find_event_intervals(day, event_list, slots, tz_delta)
     for interval in interval_list:
         if interval[0] <= event_start < interval[1]:
             return interval[1] - event_start  # timedelta

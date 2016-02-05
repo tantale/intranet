@@ -1,18 +1,17 @@
 """
 :module: intranet.accessors.cal_event
 :date: 2013-09-19
-:author: Laurent LAPORTE <sandlol2009@gmail.com>
+:author: Laurent LAPORTE <tantale.solutions@gmail.com>
 """
 import datetime
 import logging
 
-from sqlalchemy.sql.expression import and_
 import transaction
+from sqlalchemy.sql.expression import and_
 
 from intranet.accessors import BasicAccessor
 from intranet.accessors.pointage.employee import EmployeeAccessor
-from intranet.accessors.pointage.event_interval import find_first_event_interval,\
-    guess_event_duration
+from intranet.accessors.pointage.event_interval import find_first_event_interval, guess_event_duration
 from intranet.accessors.pointage.order import OrderAccessor
 from intranet.accessors.pointage.order_phase import OrderPhaseAccessor
 from intranet.model.pointage.cal_event import CalEvent
@@ -56,35 +55,11 @@ class CalEventAccessor(BasicAccessor):
         LOG.debug("get_cal_event_list")
         return self._get_record_list(filter_cond, order_by_cond)
 
-    def get_work_hours(self, employee_uid):
-        """
-        Get the work hours of a given employee.
-
-        :param employee_uid: employee's uid
-
-        :return: dictionary of work hours grouped by week day (ISO week day).
-        Each open hour is a time interval (in local time).
-        Monday is 1 and Sunday is 7.
-        """
-        # TODO: Query the database for work hours
-        wh_dict = {1: [(datetime.time(13, 30), datetime.time(17, 45))],
-                   2: [(datetime.time(8, 0), datetime.time(12, 30)),
-                       (datetime.time(13, 30), datetime.time(17, 45))],
-                   3: [(datetime.time(8, 0), datetime.time(12, 30)),
-                       (datetime.time(13, 30), datetime.time(17, 45))],
-                   4: [(datetime.time(8, 0), datetime.time(12, 30)),
-                       (datetime.time(13, 30), datetime.time(17, 45))],
-                   5: [(datetime.time(8, 0), datetime.time(12, 30)),
-                       (datetime.time(13, 30), datetime.time(17, 30))],
-                   6: [(datetime.time(8, 0), datetime.time(12, 30)),
-                       (datetime.time(13, 30), datetime.time(17, 45))],
-                   7: []}
-        return wh_dict
-
     def get_day_events(self, employee_uid, day, tz_delta):
         """
         Get the day's events of a given employee.
 
+        :type employee_uid: int
         :param employee_uid: employee's uid
 
         :param day: day's date (local time)
@@ -105,10 +80,56 @@ class CalEventAccessor(BasicAccessor):
         event_list = self.get_cal_event_list(filter_cond)
         return event_list
 
+    @staticmethod
+    def _get_default_work_hours():
+        """
+        Get the default work hours of any employee.
+
+        :return: dictionary of work hours grouped by week day (ISO week day).
+        Each open hour is a time interval (in local time).
+        Monday is 1 and Sunday is 7.
+        """
+        wh_dict = {1: [(datetime.time(13, 30), datetime.time(17, 45))],
+                   2: [(datetime.time(8, 0), datetime.time(12, 30)),
+                       (datetime.time(13, 30), datetime.time(17, 45))],
+                   3: [(datetime.time(8, 0), datetime.time(12, 30)),
+                       (datetime.time(13, 30), datetime.time(17, 45))],
+                   4: [(datetime.time(8, 0), datetime.time(12, 30)),
+                       (datetime.time(13, 30), datetime.time(17, 45))],
+                   5: [(datetime.time(8, 0), datetime.time(12, 30)),
+                       (datetime.time(13, 30), datetime.time(17, 30))],
+                   6: [(datetime.time(8, 0), datetime.time(12, 30)),
+                       (datetime.time(13, 30), datetime.time(17, 45))],
+                   7: []}
+        return wh_dict
+
+    def _get_slots(self, employee_uid, day, tz_delta):
+        """
+        Get the available slots of the employee at a given date.
+
+        :type employee_uid: int
+        :param employee_uid: employee's uid
+
+        :param day: day's date (local time)
+        :type day: datetime.date
+
+        :param tz_delta: time-zone delta from UTC.
+        :type tz_delta: datetime.timedelta
+
+        :rtype: list[tuple(datetime.time, datetime.time)]
+        :return: List of slots. Each slot is a open hour is a time interval (in local time).
+
+            Example: [(datetime.time(8, 0),   datetime.time(12, 30)),
+                      (datetime.time(13, 30), datetime.time(17, 45))]
+        """
+        wh_dict = self._get_default_work_hours()
+        return wh_dict[day.isoweekday()]
+
     def get_event_interval(self, employee_uid, day, tz_delta):
         """
         Find the start date for a new event in a day.
 
+        :type employee_uid: int
         :param employee_uid: employee's uid
 
         :param day: day's date (local time)
@@ -126,16 +147,17 @@ class CalEventAccessor(BasicAccessor):
         # -- events list of the current employee for that day
         event_list = self.get_day_events(employee_uid, day, tz_delta)
 
-        # -- dictionary containing the lists of open hours
-        wh_dict = self.get_work_hours(employee_uid)
+        # -- lists of available slots of this day
+        slots = self._get_slots(employee_uid, day, tz_delta)
 
         return find_first_event_interval(day, first_hour, event_list,
-                                         wh_dict, tz_delta)
+                                         slots, tz_delta)
 
     def get_event_duration(self, employee_uid, day, tz_delta, hour_start):
         """
         Find the start date for a new event in a day.
 
+        :type employee_uid: int
         :param employee_uid: employee's uid
 
         :param day: day's date (local time)
@@ -153,11 +175,11 @@ class CalEventAccessor(BasicAccessor):
         # -- events list of the current employee for that day
         event_list = self.get_day_events(employee_uid, day, tz_delta)
 
-        # -- dictionary containing the lists of open hours
-        wh_dict = self.get_work_hours(employee_uid)
+        # -- lists of available slots of this day
+        slots = self._get_slots(employee_uid, day, tz_delta)
 
         return guess_event_duration(day, hour_start, event_list,
-                                    wh_dict, tz_delta)
+                                    slots, tz_delta)
 
     def insert_cal_event(self, employee_uid, order_phase_uid,
                          event_start, event_end, comment):
@@ -180,29 +202,6 @@ class CalEventAccessor(BasicAccessor):
 
     def update_cal_event(self, uid, **kwargs):
         return super(CalEventAccessor, self)._update_record(uid, **kwargs)
-
-    # @deprecated: replace by update_cal_event
-    def update_duration(self, uid, end_timedelta, comment):
-        """
-        Update the event's duration and comment.
-
-        :param uid:
-        :param end_timedelta:
-        """
-        raise NotImplementedError("@deprecated: replace by update_cal_event")
-        LOG.debug("update_duration: {uid!r}".format(uid=uid))
-        event = self._get_record(uid)
-        try:
-            LOG.debug("before: [{event.event_start}, {event.event_end}]"
-                      .format(event=event))
-            event.event_end = event.event_start + end_timedelta
-            LOG.debug("after:  [{event.event_start}, {event.event_end}]"
-                      .format(event=event))
-            event.comment = comment
-            transaction.commit()
-        except:
-            transaction.abort()
-            raise
 
     def increase_duration(self, uid, end_timedelta):
         """
