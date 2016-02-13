@@ -59,3 +59,18 @@ class YearPeriod(DeclarativeBase):
         new.frequency_uid = self.frequency_uid
         new.week_hours_uid = None
         return new
+
+    def select_week_hours(self, day):
+        """
+        Select the week hours matching the given day.
+        Return ``None`` if the day doesn't match.
+
+        :type day: datetime.date
+        :param day: The day to select in the year period.
+        :rtype: WeekHours
+        :return: The matching week hours instance, or ``None`` if no match.
+        """
+        week = day.isocalendar()[1]
+        if self.start_date <= day <= self.end_date and self.frequency.match_week(week):
+            return self.week_hours
+        return None

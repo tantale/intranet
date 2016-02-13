@@ -82,6 +82,14 @@ class CalendarAccessor(BasicAccessor):
         return super(CalendarAccessor, self)._get_record(uid)
 
     def get_by_label(self, label):
+        """
+        Get a calendar by label, raise an exception if missing.
+
+        :type label: unicode
+        :param label: Calendar label to search for in the database.
+        :rtype: Calendar
+        :return: The matching calendar.
+        """
         return self.session.query(Calendar).filter(Calendar.label == label).one()
 
     def get_calendar_list(self, filter_cond=None, order_by_cond=None):
@@ -135,6 +143,8 @@ class CalendarAccessor(BasicAccessor):
         """
         Update the fields of a given record.
 
+        :type uid: int or str or unicode
+        :param uid: UID of the record.
         :param kwargs: keywords arguments: "position", "label", "description".
         :rtype: Calendar
         :return: The updated OpenHours.

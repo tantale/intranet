@@ -92,6 +92,8 @@ class FrequencyAccessor(BasicAccessor):
         """
         Update the fields of a given record.
 
+        :type uid: int or str or unicode
+        :param uid: UID of the record.
         :param kwargs: keywords arguments: "label", "description", "modulo", "quotient".
         :rtype: Frequency
         :return: The updated Frequency.

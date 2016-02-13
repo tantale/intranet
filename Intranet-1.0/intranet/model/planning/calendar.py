@@ -112,3 +112,17 @@ class Calendar(DeclarativeBase):
             dict_['borderColor'] = self.border_color
             dict_['textColor'] = self.text_color
         return dict_
+
+    def select_week_hours(self, day):
+        """
+        Select the week hours matching the given day.
+        First look in the year periods to find a matching day, then in the default week hours.
+
+        :type day: datetime.date
+        :param day:
+        :rtype: WeekHours
+        :return: The matching week hours instance, may return ``None`` if nothing match.
+        """
+        week_hours = [year_period.select_week_hours(day) for year_period in self.year_period_list]
+        week_hours = filter(None, week_hours)
+        return week_hours[0] if week_hours else self.week_hours
