@@ -74,6 +74,9 @@ class HoursInterval(DeclarativeBase):
         end = b"{0:%H:%M}".format(self.end_hour) if self.end_hour else b"--"
         return start + b" / " + end
 
+    def __repr__(self):
+        return self.__str__()
+
     @property
     def duration(self):
         day_start = datetime.date.today()

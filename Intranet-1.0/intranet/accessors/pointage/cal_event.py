@@ -57,12 +57,12 @@ class CalEventAccessor(BasicAccessor):
 
     def get_day_events(self, employee_uid, day, tz_delta):
         """
-        Get the day's events of a given employee.
+        Get the day events of a given employee.
 
         :type employee_uid: int
         :param employee_uid: employee's uid
 
-        :param day: day's date (local time)
+        :param day: day date (local time)
         :type day: datetime.date
 
         :param tz_delta: time-zone delta from UTC.
@@ -110,7 +110,7 @@ class CalEventAccessor(BasicAccessor):
         :type employee_uid: int
         :param employee_uid: employee's uid
 
-        :param day: day's date (local time)
+        :param day: day date (local time)
         :type day: datetime.date
 
         :param tz_delta: time-zone delta from UTC.
@@ -130,9 +130,9 @@ class CalEventAccessor(BasicAccessor):
         Find the start date for a new event in a day.
 
         :type employee_uid: int
-        :param employee_uid: employee's uid
+        :param employee_uid: employee uid
 
-        :param day: day's date (local time)
+        :param day: day date (local time)
         :type day: datetime.date
 
         :param tz_delta: time-zone delta from UTC.
@@ -158,9 +158,9 @@ class CalEventAccessor(BasicAccessor):
         Find the start date for a new event in a day.
 
         :type employee_uid: int
-        :param employee_uid: employee's uid
+        :param employee_uid: employee uid
 
-        :param day: day's date (local time)
+        :param day: day date (local time)
         :type day: datetime.date
 
         :param tz_delta: time-zone delta from UTC.
@@ -227,7 +227,7 @@ class CalEventAccessor(BasicAccessor):
         """
         Divide the event and insert a new event for each extra day.
 
-        :param uid: clendar event's UID.
+        :param uid: calendar event UID.
         :type uid: int
 
         :param days: number of days

@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+import datetime
+
 from sqlalchemy.orm import relationship
 from sqlalchemy.schema import Column, CheckConstraint
 from sqlalchemy.types import Integer, SmallInteger, String
@@ -92,3 +94,36 @@ class WeekHours(DeclarativeBase):
         return [[indexed_intervals.get((week_day.uid, day_period.uid)) or empty(week_day.uid, day_period.uid)
                  for day_period in day_period_list]
                 for week_day in week_day_list]
+
+    def get_hours_intervals(self, iso_weekday):
+        """
+        Get the hours intervals of the given day.
+
+        :type iso_weekday: int
+        :param iso_weekday: ISO iso_weekday: Monday is 1 and Sunday is 7.
+        :rtype: list[HoursInterval]
+        :return: List of matching hours intervals.
+        """
+        return [hours_interval
+                for day_period in self.day_period_list
+                for hours_interval in day_period.hours_interval_list
+                if hours_interval.week_day.iso_weekday == iso_weekday]
+
+    def get_time_slots(self, iso_weekday):
+        """
+        Get the time slots of the given day.
+
+        :type iso_weekday: int
+        :param iso_weekday: ISO iso_weekday: Monday is 1 and Sunday is 7.
+        :rtype: list[(datetime.time, datetime.time)]
+        :return: An ordered list of time intervals representing the time slots for this day.
+        """
+        slots = []
+        for hours_interval in self.get_hours_intervals(iso_weekday):
+            if hours_interval.start_hour <= hours_interval.end_hour:
+                slots.append((hours_interval.start_hour, hours_interval.end_hour))
+            else:
+                slots.append((datetime.time.min, hours_interval.end_hour))
+                slots.append((hours_interval.start_hour, datetime.time.max))
+        slots.sort()
+        return slots

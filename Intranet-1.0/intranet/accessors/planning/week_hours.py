@@ -22,6 +22,7 @@ class WeekHoursAccessor(BasicAccessor):
     def setup(self):
         try:
             with transaction.manager:
+                # noinspection SpellCheckingInspection
                 self.session.add_all([
                     WeekHours(1, _(u"Grille d’horaires normales"), _(u"Grille d’horaires d’ouverture de l’entreprise"))
                 ])
@@ -52,6 +53,15 @@ class WeekHoursAccessor(BasicAccessor):
         return super(WeekHoursAccessor, self)._get_record(uid)
 
     def get_by_label(self, label):
+        """
+        Get the week hours by label
+
+        :type label: unicode
+        :param label: Week hours label.
+        :rtype: WeekHours
+        :return: The matching week hours.
+        :raise sqlalchemy.orm.exc.NoResultFound: if the record is not found.
+        """
         return self.session.query(WeekHours).filter(WeekHours.label == label).one()
 
     def insert_week_hours(self, label, description):
@@ -88,6 +98,8 @@ class WeekHoursAccessor(BasicAccessor):
         """
         Update the fields of a given record.
 
+        :type uid: int or str or unicode
+        :param uid: UID of the record.
         :param kwargs: keywords arguments: "label", "description", "modulo", "quotient".
         :rtype: WeekHours
         :return: The updated WeekHours.
