@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals, print_function
 
+import datetime
 import logging
 import unittest
 
@@ -155,6 +156,16 @@ class TestWeekHoursAccessor(unittest.TestCase):
         week_hours_accessor.insert_week_hours("label1", "Description1")
         week_hours = week_hours_accessor.get_by_label("label1")
 
+        expected = [[(datetime.time(14, 0), datetime.time(17, 45))],
+                    [(datetime.time(8, 30), datetime.time(12, 30)), (datetime.time(14, 0), datetime.time(17, 45))],
+                    [(datetime.time(8, 30), datetime.time(12, 30)), (datetime.time(14, 0), datetime.time(17, 45))],
+                    [(datetime.time(8, 30), datetime.time(12, 30)), (datetime.time(14, 0), datetime.time(17, 45))],
+                    [(datetime.time(8, 30), datetime.time(12, 30)), (datetime.time(14, 0), datetime.time(17, 30))],
+                    [(datetime.time(8, 30), datetime.time(12, 30))],
+                    []]
+
         for iso_weekday in [1, 2, 3, 4, 5, 6, 7]:
             hours_intervals = week_hours.get_hours_intervals(iso_weekday)
-            print(hours_intervals)
+            current = [(hours_interval.start_hour, hours_interval.end_hour)
+                       for hours_interval in hours_intervals]
+            self.assertEqual(expected[iso_weekday - 1], current)
