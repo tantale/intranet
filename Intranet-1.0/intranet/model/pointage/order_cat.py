@@ -70,6 +70,7 @@ class OrderCat(DeclarativeBase):
     def css(self):
         entry_list = filter(None, re.split(r";\s*", self.css_def))
         try:
+            # noinspection PyTypeChecker
             css = dict(re.split(r":\s+", entry) for entry in entry_list)
         except ValueError:
             css = dict()
