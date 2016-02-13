@@ -3,10 +3,14 @@
 :date: 2013-07-28
 :author: Laurent LAPORTE <sandlol2009@gmail.com>
 """
+import datetime
+
 from sqlalchemy.orm import relationship
 from sqlalchemy.schema import Column
 from sqlalchemy.types import Date, Float, Integer, String
 
+from intranet.accessors.gap_fill import GapFill
+from intranet.accessors.time_slot import create_time_slot, create_time_interval, FREE_SLOT, BUSY_SLOT
 from intranet.model import DeclarativeBase
 
 
@@ -75,3 +79,85 @@ class Employee(DeclarativeBase):
                     "exit_date={self.exit_date!r}, "
                     "photo_path={self.photo_path!r})")
         return repr_fmt.format(self=self)
+
+    def select_cal_events(self, date_start_utc, date_end_utc):
+        """
+        Select the calendar events which appears in the date interval.
+
+        ::
+
+            --------------[date_start_utc.........date_end_utc[--------->
+                [event_start...event_end[
+                              [event_start...event_end[
+                                            [event_start...event_end[
+
+        :type date_start_utc: datetime.datetime
+        :param date_start_utc: End date/time (UTC) of the interval (exclusive)
+        :type date_end_utc: datetime.datetime
+        :param date_end_utc: Start date/time (UTC) of the interval (inclusive)
+        :rtype: list[intranet.model.pointage.cal_event.CalEvent]
+        :return: The list of matching calendar events.
+        """
+        return [cal_event for cal_event in self.cal_event_list
+                if (date_start_utc <= cal_event.event_start < date_end_utc or
+                    date_start_utc <= cal_event.event_end < date_end_utc)]
+
+    def get_free_intervals(self, day):
+        """
+        Get the free time intervals (for time tracking).
+
+        :type day: datetime.date
+        :param day: day date (local time)
+        :rtype: list[(datetime.time, datetime.time)]
+        :return: An list of time intervals representing the time intervals for this day.
+        """
+        if not self.calendar:
+            return []  # sorry
+        return self.calendar.get_free_intervals(day)
+
+    def get_busy_intervals(self, day, tz_delta):
+        """
+        Get the busy time intervals (for planing).
+
+        :type day: datetime.date
+        :param day: day date (local time)
+        :type tz_delta: datetime.timedelta
+        :param tz_delta: time-zone delta from UTC (tz_delta = local_date - utc_date).
+        :rtype: list[(datetime.time, datetime.time)]
+        :return: An list of time intervals representing the time intervals for this day.
+        """
+        day_start_local = datetime.datetime.combine(day, datetime.time(0, 0))
+        day_start_utc = day_start_local - tz_delta
+        day_end_utc = day_start_utc + datetime.timedelta(days=1)
+        cal_events = self.select_cal_events(day_start_utc, day_end_utc)
+        return [cal_event.get_time_interval(day_start_utc, day_end_utc, tz_delta)
+                for cal_event in cal_events]
+
+    def get_available_intervals(self, day, tz_delta, minutes=15):
+        """
+        Get the available time intervals of the given day.
+        Available intervals = free from the current week hours - busy from existing planning events.
+
+        :type day: datetime.date
+        :param day: day date (local time)
+        :type tz_delta: datetime.timedelta
+        :param tz_delta: time-zone delta from UTC (tz_delta = local_date - utc_date).
+        :type minutes: int
+        :param minutes: number of minutes to round, default is 15 minutes.
+        :rtype: list[(datetime.time, datetime.time)]
+        :return: An ordered list of time intervals representing the free time intervals for this day.
+        """
+        # -- Extract the "FREE" intervals
+        free_intervals = self.get_free_intervals(day)
+
+        # -- Extract the "BUSY" intervals
+        busy_intervals = self.get_busy_intervals(day, tz_delta)
+
+        # -- Merge "FREE" and "BUSY" intervals
+        free_slots = [create_time_slot(interval, FREE_SLOT, minutes=minutes)
+                      for interval in free_intervals]
+        busy_slots = [create_time_slot(interval, BUSY_SLOT, minutes=minutes)
+                      for interval in busy_intervals]
+        gap_fill = GapFill(free_slots, busy_slots)
+        available_slots = [slot for slot in gap_fill.colored_slots if slot[1] == FREE_SLOT]
+        return filter(None, [create_time_interval(slot, minutes=minutes) for slot in available_slots])

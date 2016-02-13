@@ -14,7 +14,9 @@ from intranet.accessors.planning.day_period import DayPeriodAccessor
 from intranet.accessors.planning.hours_interval import HoursIntervalAccessor
 from intranet.accessors.planning.week_day import WeekDayAccessor
 from intranet.accessors.planning.week_hours import WeekHoursAccessor
+from intranet.accessors.pointage.cal_event import CalEventAccessor
 from intranet.accessors.pointage.employee import EmployeeAccessor
+from intranet.accessors.pointage.order import OrderAccessor
 from intranet.model import DeclarativeBase
 
 LOG = logging.getLogger(__name__)
@@ -87,3 +89,44 @@ class TestCalendarAccessor(unittest.TestCase):
         calendar_accessor = CalendarAccessor(self.session)
         calendar_list = calendar_accessor.get_calendar_list()
         self.assertEqual(len(calendar_list), 1)
+
+    def test_get_available_intervals(self):
+        today = datetime.date.today()
+
+        employee_accessor = EmployeeAccessor(self.session)
+        self.accessor.insert_employee(employee_name="Employee",
+                                      worked_hours=39.0,
+                                      entry_date=today,
+                                      exit_date=None,
+                                      photo_path=None)
+
+        employee = employee_accessor.get_employee_list()[-1]
+
+        # -- Insert a new order
+        order_accessor = OrderAccessor(self.session)
+        order_accessor.insert_order(order_ref="order #1", project_cat="my cat", creation_date=today)
+        order = order_accessor.get_order_list()[-1]
+        order_phase_uid = order.order_phase_list[0].uid
+
+        # I have some meeting today
+        accessor = CalEventAccessor(self.session)
+
+        event_start = datetime.datetime.combine(today, datetime.time(8, 30))
+        event_end = event_start + datetime.timedelta(hours=1)
+        accessor.insert_cal_event(employee.uid, order_phase_uid, event_start, event_end, u"comment")
+
+        event_start = datetime.datetime.combine(today, datetime.time(10, 0))
+        event_end = event_start + datetime.timedelta(hours=1.5)
+        accessor.insert_cal_event(employee.uid, order_phase_uid, event_start, event_end, u"comment")
+
+        event_start = datetime.datetime.combine(today, datetime.time(22, 35))
+        event_end = event_start + datetime.timedelta(hours=3)
+        accessor.insert_cal_event(employee.uid, order_phase_uid, event_start, event_end, u"comment")
+
+        # Any time slot available today?
+        employee = employee_accessor.get_employee(employee.uid)
+        intervals = employee.get_available_intervals(today, tz_delta=datetime.timedelta())
+        LOG.debug(intervals)
+        expected = [(datetime.time(9, 30), datetime.time(10, 0)),
+                    (datetime.time(11, 30), datetime.time(12, 30))]
+        self.assertEqual(expected, intervals)
