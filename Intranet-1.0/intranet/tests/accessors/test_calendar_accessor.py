@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals, print_function
+from __future__ import unicode_literals
 
+import datetime
 import logging
 import unittest
 
@@ -13,6 +14,10 @@ from zope.sqlalchemy.datamanager import ZopeTransactionExtension
 
 from intranet.accessors import RecordNotFoundError
 from intranet.accessors.planning.calendar import CalendarAccessor
+from intranet.accessors.planning.day_period import DayPeriodAccessor
+from intranet.accessors.planning.hours_interval import HoursIntervalAccessor
+from intranet.accessors.planning.planning_event import PlanningEventAccessor
+from intranet.accessors.planning.week_day import WeekDayAccessor
 from intranet.accessors.planning.week_hours import WeekHoursAccessor
 from intranet.model import DeclarativeBase
 from intranet.model.planning.calendar import Calendar
@@ -21,7 +26,7 @@ LOG = logging.getLogger(__name__)
 
 
 class TestCalendarAccessor(unittest.TestCase):
-    DEBUG = True
+    DEBUG = False
 
     @classmethod
     def setUpClass(cls):
@@ -32,6 +37,7 @@ class TestCalendarAccessor(unittest.TestCase):
         super(TestCalendarAccessor, self).setUp()
 
         # -- Connecting to the database
+        # noinspection SpellCheckingInspection
         engine = sqlalchemy.create_engine('sqlite:///:memory:', echo=False)
         DeclarativeBase.metadata.create_all(engine)  # @UndefinedVariable
 
@@ -39,44 +45,47 @@ class TestCalendarAccessor(unittest.TestCase):
         session_maker = sessionmaker(bind=engine, extension=ZopeTransactionExtension())
         self.session = session_maker()
 
-        accessor = WeekHoursAccessor(self.session)
-        accessor.insert_week_hours("Open hours", "All year calendar")
-        accessor.insert_week_hours("Summer calendar", "Open hours in summer")
-        week_hours_list = accessor.get_week_hours_list()
-        self.week_hours1 = week_hours_list[0]
-        self.week_hours2 = week_hours_list[1]
+        week_day_accessor = WeekDayAccessor(self.session)
+        week_hours_accessor = WeekHoursAccessor(self.session)
+        day_period_accessor = DayPeriodAccessor(self.session)
+        hours_interval_accessor = HoursIntervalAccessor(self.session)
+        calendar_accessor = CalendarAccessor(self.session)
+
+        week_day_accessor.setup()
+        week_hours_accessor.setup()
+        week_hours_list = week_hours_accessor.get_week_hours_list()
+        for week_hours in week_hours_list:
+            day_period_accessor.setup(week_hours.uid)
+            hours_interval_accessor.setup(week_hours.uid)
+            calendar_accessor.setup(week_hours.uid)
 
     def test_setup(self):
-        accessor = CalendarAccessor(self.session)
-
-        # -- first setup
-        week_hours_uid = self.week_hours1.uid
-        accessor.setup(week_hours_uid)
-        calendar_list = accessor.get_calendar_list()
-        self.assertEqual(len(calendar_list), 1)
-
-        accessor.setup(week_hours_uid)  # on second setup, do nothing
-        self.assertEqual(len(calendar_list), 1)
+        week_hours_accessor = WeekHoursAccessor(self.session)
+        calendar_accessor = CalendarAccessor(self.session)
+        week_hours_list = week_hours_accessor.get_week_hours_list()
+        for week_hours in week_hours_list:
+            calendar_accessor.setup(week_hours.uid)  # second setup
 
     def test_delete_calendar(self):
-        wh_accessor = WeekHoursAccessor(self.session)
-        week_hours = wh_accessor.get_by_label("Open hours")
-        accessor = CalendarAccessor(self.session)
-        accessor.insert_calendar(week_hours.uid, "Enterprise's calendar", "The normal calendar")
-        calendar = accessor.get_by_label("Enterprise's calendar")
-        accessor.delete_calendar(calendar.uid)
+        calendar_accessor = CalendarAccessor(self.session)
+        calendar_list = calendar_accessor.get_calendar_list()
+        calendar = calendar_list[0]
+        calendar_accessor.delete_calendar(calendar.uid)
         with self.assertRaises(RecordNotFoundError) as context:
-            accessor.delete_calendar(123)
+            calendar_accessor.delete_calendar(123)
         LOG.debug(context.exception)
 
     def test_get_calendar(self):
         wh_accessor = WeekHoursAccessor(self.session)
+        wh_accessor.insert_week_hours("Open hours", "Open hours")
+        wh_accessor.insert_week_hours("Summer calendar", "Summer calendar")
         week_hours1 = wh_accessor.get_by_label("Open hours")
         week_hours2 = wh_accessor.get_by_label("Summer calendar")
         accessor = CalendarAccessor(self.session)
         accessor.insert_calendar(week_hours1.uid, "Enterprise's calendar", "The normal calendar")
         accessor.insert_calendar(week_hours2.uid, "Summer calendar", "Normal calendar in summer")
-        (r1, r2) = accessor.get_calendar_list()
+        calendar_list = accessor.get_calendar_list()
+        (r1, r2) = calendar_list[:2]
         calendar = accessor.get_calendar(r1.uid)
         self.assertEqual(calendar, r1)
         calendar = accessor.get_calendar(r2.uid)
@@ -86,6 +95,8 @@ class TestCalendarAccessor(unittest.TestCase):
 
     def test_insert_calendar(self):
         wh_accessor = WeekHoursAccessor(self.session)
+        wh_accessor.insert_week_hours("Open hours", "Open hours")
+        wh_accessor.insert_week_hours("Summer calendar", "Summer calendar")
         week_hours1 = wh_accessor.get_by_label("Open hours")
         week_hours2 = wh_accessor.get_by_label("Summer calendar")
         accessor = CalendarAccessor(self.session)
@@ -105,11 +116,15 @@ class TestCalendarAccessor(unittest.TestCase):
 
     def test_get_calendar_list(self):
         wh_accessor = WeekHoursAccessor(self.session)
+        wh_accessor.insert_week_hours("Open hours", "Open hours")
+        wh_accessor.insert_week_hours("Summer calendar", "Summer calendar")
         week_hours1 = wh_accessor.get_by_label("Open hours")
         week_hours2 = wh_accessor.get_by_label("Summer calendar")
 
         accessor = CalendarAccessor(self.session)
-        self.assertFalse(accessor.get_calendar_list())
+        # drop all calendar for testing
+        for calendar in accessor.get_calendar_list():
+            accessor.delete_calendar(calendar.uid)
 
         accessor.insert_calendar(week_hours1.uid, "label1", "Description1")
         accessor.insert_calendar(week_hours2.uid, "label2", "Description2")
@@ -136,6 +151,8 @@ class TestCalendarAccessor(unittest.TestCase):
 
     def test_update_calendar(self):
         wh_accessor = WeekHoursAccessor(self.session)
+        wh_accessor.insert_week_hours("Open hours", "Open hours")
+        wh_accessor.insert_week_hours("Summer calendar", "Summer calendar")
         week_hours1 = wh_accessor.get_by_label("Open hours")
         week_hours2 = wh_accessor.get_by_label("Summer calendar")
 
@@ -156,3 +173,82 @@ class TestCalendarAccessor(unittest.TestCase):
             accessor.update_calendar(calendar.uid, label="label2")
         transaction.abort()
         LOG.debug(context.exception)
+
+    def test_get_free_intervals(self):
+        calendar_accessor = CalendarAccessor(self.session)
+        calendar_list = calendar_accessor.get_calendar_list()
+        calendar = calendar_list[0]
+
+        expected = [[(datetime.time(14, 0), datetime.time(17, 45))],
+                    [(datetime.time(8, 30), datetime.time(12, 30)), (datetime.time(14, 0), datetime.time(17, 45))],
+                    [(datetime.time(8, 30), datetime.time(12, 30)), (datetime.time(14, 0), datetime.time(17, 45))],
+                    [(datetime.time(8, 30), datetime.time(12, 30)), (datetime.time(14, 0), datetime.time(17, 45))],
+                    [(datetime.time(8, 30), datetime.time(12, 30)), (datetime.time(14, 0), datetime.time(17, 30))],
+                    [(datetime.time(8, 30), datetime.time(12, 30))],
+                    []]
+
+        today = datetime.date.today()
+        for index in xrange(len(expected)):
+            day = today + datetime.timedelta(days=index)
+            current = calendar.get_free_intervals(day)
+            iso_weekday = day.isoweekday()
+            self.assertEqual(expected[iso_weekday - 1], current)
+
+    def test_get_busy_intervals(self):
+        calendar_accessor = CalendarAccessor(self.session)
+        calendar_list = calendar_accessor.get_calendar_list()
+        calendar = calendar_list[0]
+        today = datetime.date.today()
+
+        # I have some meeting today
+        accessor = PlanningEventAccessor(self.session)
+
+        event_start = datetime.datetime.combine(today, datetime.time(8, 30))
+        event_end = event_start + datetime.timedelta(hours=1)
+        accessor.insert_planning_event(calendar.uid, "event1", "description1", event_start, event_end)
+
+        event_start = datetime.datetime.combine(today, datetime.time(10, 0))
+        event_end = event_start + datetime.timedelta(hours=1.5)
+        accessor.insert_planning_event(calendar.uid, "event2", "description2", event_start, event_end)
+
+        event_start = datetime.datetime.combine(today, datetime.time(22, 35))
+        event_end = event_start + datetime.timedelta(hours=3)
+        accessor.insert_planning_event(calendar.uid, "event3", "description3", event_start, event_end)
+
+        # Am I so busy?
+        calendar = calendar_accessor.get_calendar(calendar.uid)
+        intervals = calendar.get_busy_intervals(today, tz_delta=datetime.timedelta())
+        LOG.debug(intervals)
+        expected = [(datetime.time(8, 30), datetime.time(9, 30)),
+                    (datetime.time(10, 0), datetime.time(11, 30)),
+                    (datetime.time(22, 35), datetime.time(0, 0))]  # truncated
+        self.assertEqual(expected, intervals)
+
+    def test_get_available_intervals(self):
+        calendar_accessor = CalendarAccessor(self.session)
+        calendar_list = calendar_accessor.get_calendar_list()
+        calendar = calendar_list[0]
+        today = datetime.date.today()
+
+        # I have some meeting today
+        accessor = PlanningEventAccessor(self.session)
+
+        event_start = datetime.datetime.combine(today, datetime.time(8, 30))
+        event_end = event_start + datetime.timedelta(hours=1)
+        accessor.insert_planning_event(calendar.uid, "event1", "description1", event_start, event_end)
+
+        event_start = datetime.datetime.combine(today, datetime.time(10, 0))
+        event_end = event_start + datetime.timedelta(hours=1.5)
+        accessor.insert_planning_event(calendar.uid, "event2", "description2", event_start, event_end)
+
+        event_start = datetime.datetime.combine(today, datetime.time(22, 35))
+        event_end = event_start + datetime.timedelta(hours=3)
+        accessor.insert_planning_event(calendar.uid, "event3", "description3", event_start, event_end)
+
+        # Any time slot available today?
+        calendar = calendar_accessor.get_calendar(calendar.uid)
+        intervals = calendar.get_available_intervals(today, tz_delta=datetime.timedelta())
+        LOG.debug(intervals)
+        expected = [(datetime.time(9, 30), datetime.time(10, 0)),
+                    (datetime.time(11, 30), datetime.time(12, 30))]
+        self.assertEqual(expected, intervals)

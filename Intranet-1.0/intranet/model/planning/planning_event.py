@@ -123,3 +123,33 @@ class PlanningEvent(DeclarativeBase):
         """
         delta = self.event_end - self.event_start
         return delta.seconds / 3600.0
+
+    def get_time_interval(self, date_start_utc, date_end_utc, tz_delta):
+        """
+        Get the time interval of the event, restricted in the current day.
+
+        ::
+
+            --------------[date_start_utc.........date_end_utc[--------->
+                [event_start...event_end[
+                              [event_start...event_end[
+                                            [event_start...event_end[
+
+        :type date_start_utc: datetime.datetime
+        :param date_start_utc: End date/time (UTC) of the interval (exclusive)
+        :type date_end_utc: datetime.datetime
+        :param date_end_utc: Start date/time (UTC) of the interval (inclusive)
+        :type tz_delta: datetime.timedelta
+        :param tz_delta: time-zone delta from UTC (tz_delta = local_date - utc_date).
+        :rtype: (datetime.time, datetime.time)
+        :return: An single time interval representing the time interval in local time.
+        """
+        if self.all_day:
+            event_start = date_start_utc
+            event_end = date_end_utc
+        else:
+            event_start = max(date_start_utc, self.event_start)
+            event_end = min(date_end_utc, self.event_end)
+        event_start_local = event_start + tz_delta
+        event_end_local = event_end + tz_delta
+        return event_start_local.time(), event_end_local.time()

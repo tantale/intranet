@@ -13,9 +13,9 @@ import transaction
 from tg.i18n import ugettext as _
 
 from intranet.accessors import BasicAccessor
+from intranet.accessors.planning.calendar import CalendarAccessor
 from intranet.accessors.planning.frequency import FrequencyAccessor
 from intranet.accessors.planning.week_hours import WeekHoursAccessor
-from intranet.accessors.planning.calendar import CalendarAccessor
 from intranet.model.planning.year_period import YearPeriod
 
 try:
@@ -69,6 +69,10 @@ class YearPeriodAccessor(BasicAccessor):
         """
         Append a period of the year.
 
+        :type start_date: datetime.date
+        :param start_date: Start date of the period (local time).
+        :type end_date: datetime.date
+        :param end_date: End date of the period (local time).
         :param calendar_uid: UID of the calendar (parent).
         :param week_hours_uid: UID of the week hours.
         :param frequency_uid: UID of the frequency to append.
@@ -85,6 +89,8 @@ class YearPeriodAccessor(BasicAccessor):
         """
         Update the fields of a given record.
 
+        :type uid: int or str or unicode
+        :param uid: UID of the record.
         :param kwargs: keywords arguments: "position", "label", "description".
         :rtype: YearPeriod
         :return: The updated YearPeriod.

@@ -101,7 +101,7 @@ class WeekHours(DeclarativeBase):
 
         :type iso_weekday: int
         :param iso_weekday: ISO iso_weekday: Monday is 1 and Sunday is 7.
-        :rtype: list[HoursInterval]
+        :rtype: list[intranet.model.planning.hours_interval.HoursInterval]
         :return: List of matching hours intervals.
         """
         return [hours_interval
@@ -109,21 +109,20 @@ class WeekHours(DeclarativeBase):
                 for hours_interval in day_period.hours_interval_list
                 if hours_interval.week_day.iso_weekday == iso_weekday]
 
-    def get_time_slots(self, iso_weekday):
+    def get_time_intervals(self, iso_weekday):
         """
-        Get the time slots of the given day.
+        Get the time intervals of the given day.
 
         :type iso_weekday: int
         :param iso_weekday: ISO iso_weekday: Monday is 1 and Sunday is 7.
         :rtype: list[(datetime.time, datetime.time)]
-        :return: An ordered list of time intervals representing the time slots for this day.
+        :return: An list of time intervals representing the time intervals for this day.
         """
-        slots = []
+        intervals = []
         for hours_interval in self.get_hours_intervals(iso_weekday):
             if hours_interval.start_hour <= hours_interval.end_hour:
-                slots.append((hours_interval.start_hour, hours_interval.end_hour))
+                intervals.append((hours_interval.start_hour, hours_interval.end_hour))
             else:
-                slots.append((datetime.time.min, hours_interval.end_hour))
-                slots.append((hours_interval.start_hour, datetime.time.max))
-        slots.sort()
-        return slots
+                intervals.append((datetime.time.min, hours_interval.end_hour))
+                intervals.append((hours_interval.start_hour, datetime.time.max))
+        return intervals
