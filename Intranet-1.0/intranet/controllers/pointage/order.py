@@ -38,6 +38,7 @@ class TasksController(RestController):
         This controller is experimental.
     """
 
+    # noinspection PyUnusedLocal
     def _before(self, *args, **kw):
         """
         order/uid/tasks
@@ -151,6 +152,7 @@ class OrderController(RestController):
 
     def __init__(self, main_menu):
         self.main_menu = main_menu
+        self.order_accessor = OrderAccessor()
 
     def _get_cat_dict(self):
         """
@@ -188,9 +190,8 @@ class OrderController(RestController):
 
         :param uid: UID of the order to display.
         """
-        accessor = OrderAccessor()
-        order = accessor.get_order(uid)
-        order_cat_list = accessor.get_order_cat_list()
+        order = self.order_accessor.get_order(uid)
+        order_cat_list = self.order_accessor.get_order_cat_list()
         cat_label_dict = {order_cat.cat_name: order_cat.label
                           for order_cat in order_cat_list}
         # populate the lazy loaded order_phase_list for json result:
@@ -203,35 +204,42 @@ class OrderController(RestController):
     @with_trailing_slash
     @expose('json')
     @expose('intranet.templates.pointage.order.get_all')
-    def get_all(self, keyword=None, uid=None, order_ref=None,
-                _heavy_loading=False):
+    def get_all(self, keyword=None, uid=None, order_ref=None):
         """
-        Display all records in a resource.
+        Get all order matching the given query.
 
         GET /pointage/order/
         GET /pointage/order.json
         GET /pointage/order/get_all
         GET /pointage/order/get_all.json
 
-        :param uid: Active order's UID if any
+        :param keyword: Search keyword (for ``order_ref`` field), or empty.
+        :param uid: The currently selected ``uid``, or empty if none is selected.
+        :param order_ref: The currently selected ``order_ref``, or empty if none is selected.
         """
+        uid = int(uid) if uid else None  # not: uid can't be 0
+
         # -- filter the order list/keyword
-        accessor = OrderAccessor()
         order_by_cond = desc(Order.creation_date)
         filter_cond = (Order.order_ref.like('%' + keyword + '%')
                        if keyword else None)
-        order_list = accessor.get_order_list(filter_cond, order_by_cond)
+        order_list = self.order_accessor.get_order_list(filter_cond, order_by_cond)
 
-        # -- heavy loading for debug
-        if _heavy_loading:
-            for order in order_list:
-                # noinspection PyStatementEffect
-                order.order_phase_list
+        # -- Limit the list to 25 orders
+        order_list[:] = order_list[:25]
+
+        # -- but add missing matches
+        if uid:
+            extras = self.order_accessor.get_order_list(Order.uid == uid)
+            order_list.extend(extras)
+        if order_ref:
+            extras = self.order_accessor.get_order_list(Order.order_ref == order_ref)
+            order_list.extend(extras)
+        order_list.sort(key=lambda o: o.creation_date, reverse=True)
 
         # -- active_index of the order by uid
         active_index = False
         if uid:
-            uid = int(uid)
             for index, order in enumerate(order_list):
                 if order.uid == uid:
                     active_index = index
@@ -296,11 +304,11 @@ class OrderController(RestController):
                      close_date=close_date)
 
         try:
-            accessor = OrderAccessor()
-            values = accessor.insert_order(order_ref=order_ref,
-                                           project_cat=project_cat,
-                                           creation_date=creation_date,
-                                           close_date=close_date)
+
+            values = self.order_accessor.insert_order(order_ref=order_ref,
+                                                      project_cat=project_cat,
+                                                      creation_date=creation_date,
+                                                      close_date=close_date)
         except sqlalchemy.exc.IntegrityError:
             msg_fmt = u"La commande « {order_ref} » existe déjà."
             err_msg = msg_fmt.format(order_ref=order_ref)
@@ -327,8 +335,7 @@ class OrderController(RestController):
         :param uid: UID of the Order to edit
         """
         form_errors = pylons.tmpl_context.form_errors  # @UndefinedVariable
-        accessor = OrderAccessor()
-        order = accessor.get_order(uid)
+        order = self.order_accessor.get_order(uid)
         creation_date = order.creation_date.isoformat()
         close_date = (None if order.close_date is None
                       else order.close_date.isoformat())
@@ -380,12 +387,12 @@ class OrderController(RestController):
                      close_date=close_date)
 
         try:
-            accessor = OrderAccessor()
-            accessor.update_order(uid,
-                                  order_ref=order_ref,
-                                  project_cat=project_cat,
-                                  creation_date=creation_date,
-                                  close_date=close_date)
+
+            self.order_accessor.update_order(uid,
+                                             order_ref=order_ref,
+                                             project_cat=project_cat,
+                                             creation_date=creation_date,
+                                             close_date=close_date)
         except sqlalchemy.exc.IntegrityError:
             msg_fmt = u"La commande « {order_ref} » existe déjà."
             err_msg = msg_fmt.format(order_ref=order_ref)
@@ -409,8 +416,7 @@ class OrderController(RestController):
 
         :param uid: UID of the Order to delete.
         """
-        accessor = OrderAccessor()
-        values = accessor.duplicate(uid)
+        values = self.order_accessor.duplicate(uid)
         return dict(action='duplicate',
                     result='ok',
                     values=values)
@@ -424,8 +430,7 @@ class OrderController(RestController):
 
         :param uid: UID of the Order to delete.
         """
-        accessor = OrderAccessor()
-        order = accessor.get_order(uid)
+        order = self.order_accessor.get_order(uid)
         return dict(order=order)
 
     @expose('intranet.templates.pointage.order.get_delete')
@@ -438,8 +443,7 @@ class OrderController(RestController):
 
         :param uid: UID of the Order to delete.
         """
-        accessor = OrderAccessor()
-        old_order = accessor.delete_order(uid)
+        old_order = self.order_accessor.delete_order(uid)
         msg_fmt = u"La commande « {order_ref} » est supprimée."
         flash(msg_fmt.format(order_ref=old_order.order_ref), status="ok")
         return dict(order=None)
