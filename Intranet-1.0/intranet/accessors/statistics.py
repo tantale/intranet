@@ -103,8 +103,8 @@ def gauss_filter(items, r=1.6449, key=None):
     ...          Item(8, 6.5), Item(9, 12), Item(10, 10.75), Item(12, 9.25),
     ...          Item(13, 9), Item(14, 5.5), Item(15, 6), Item(17, 5.5),
     ...          Item(18, 8.75), Item(19, 9.75)]
-    >>> filteresd = gauss_filter(items, key=lambda i: i[1], r=1.5)
-    >>> missing = [x for x in items if x not in filteresd]
+    >>> filtered = gauss_filter(items, key=lambda i: i[1], r=1.5)
+    >>> missing = [x for x in items if x not in filtered]
     >>> missing
     [Item(uid=3, duration=4), Item(uid=9, duration=12)]
 
