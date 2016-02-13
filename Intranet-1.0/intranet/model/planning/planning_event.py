@@ -140,7 +140,7 @@ class PlanningEvent(DeclarativeBase):
         :type date_end_utc: datetime.datetime
         :param date_end_utc: Start date/time (UTC) of the interval (inclusive)
         :type tz_delta: datetime.timedelta
-        :param tz_delta: time-zone delta from UTC (tz_delta = local_date - utc_date).
+        :param tz_delta: time-zone delta from UTC (tz_delta = utc_date - local_date).
         :rtype: (datetime.time, datetime.time)
         :return: An single time interval representing the time interval in local time.
         """
@@ -150,6 +150,6 @@ class PlanningEvent(DeclarativeBase):
         else:
             event_start = max(date_start_utc, self.event_start)
             event_end = min(date_end_utc, self.event_end)
-        event_start_local = event_start + tz_delta
-        event_end_local = event_end + tz_delta
+        event_start_local = event_start - tz_delta
+        event_end_local = event_end - tz_delta
         return event_start_local.time(), event_end_local.time()

@@ -27,6 +27,15 @@ class EmployeeAccessor(BasicAccessor):
         self.week_hours_accessor = WeekHoursAccessor(session)
 
     def get_employee(self, uid):
+        """
+        Get a employee by UID.
+
+        :type uid: int | str | unicode
+        :param uid: Employee UID.
+        :rtype: Employee
+        :return: The matching employee.
+        :raise sqlalchemy.orm.exc.NoResultFound: if the record is not found.
+        """
         return super(EmployeeAccessor, self)._get_record(uid)
 
     def get_last_employee(self):

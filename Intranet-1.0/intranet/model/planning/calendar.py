@@ -17,7 +17,7 @@ from sqlalchemy.schema import Column, ForeignKey, CheckConstraint
 from sqlalchemy.types import Integer, String, Float
 
 from intranet.accessors.gap_fill import GapFill
-from intranet.accessors.time_slot import create_time_slot, FREE_SLOT, BUSY_SLOT, create_time_interval
+from intranet.accessors.time_slot import create_time_slot, FREE_SLOT, BUSY_SLOT, create_time_interval, EMPTY_SLOT
 from intranet.model import DeclarativeBase
 
 COLOR_REGEX = ur"^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$"
@@ -173,12 +173,12 @@ class Calendar(DeclarativeBase):
         :type day: datetime.date
         :param day: day date (local time)
         :type tz_delta: datetime.timedelta
-        :param tz_delta: time-zone delta from UTC (tz_delta = local_date - utc_date).
+        :param tz_delta: time-zone delta from UTC (tz_delta = utc_date - local_date).
         :rtype: list[(datetime.time, datetime.time)]
         :return: An list of time intervals representing the time intervals for this day.
         """
         day_start_local = datetime.datetime.combine(day, datetime.time(0, 0))
-        day_start_utc = day_start_local - tz_delta
+        day_start_utc = day_start_local + tz_delta
         day_end_utc = day_start_utc + datetime.timedelta(days=1)
         planning_events = self.select_planning_events(day_start_utc, day_end_utc)
         return [planning_event.get_time_interval(day_start_utc, day_end_utc, tz_delta)
@@ -192,7 +192,7 @@ class Calendar(DeclarativeBase):
         :type day: datetime.date
         :param day: day date (local time)
         :type tz_delta: datetime.timedelta
-        :param tz_delta: time-zone delta from UTC (tz_delta = local_date - utc_date).
+        :param tz_delta: time-zone delta from UTC (tz_delta = utc_date - local_date).
         :type minutes: int
         :param minutes: number of minutes to round, default is 15 minutes.
         :rtype: list[(datetime.time, datetime.time)]
@@ -205,10 +205,12 @@ class Calendar(DeclarativeBase):
         busy_intervals = self.get_busy_intervals(day, tz_delta)
 
         # -- Merge "FREE" and "BUSY" intervals
+        day_interval = datetime.time.min, datetime.time.max
+        day_slots = [create_time_slot(day_interval, EMPTY_SLOT, minutes=minutes)]
         free_slots = [create_time_slot(interval, FREE_SLOT, minutes=minutes)
                       for interval in free_intervals]
         busy_slots = [create_time_slot(interval, BUSY_SLOT, minutes=minutes)
                       for interval in busy_intervals]
-        gap_fill = GapFill(free_slots, busy_slots)
+        gap_fill = GapFill(day_slots, free_slots, busy_slots)
         available_slots = [slot for slot in gap_fill.colored_slots if slot[1] == FREE_SLOT]
         return filter(None, [create_time_interval(slot, minutes=minutes) for slot in available_slots])

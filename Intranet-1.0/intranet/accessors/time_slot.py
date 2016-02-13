@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 import datetime
 
-FREE_SLOT, BUSY_SLOT = "FREE_SLOT", "BUSY_SLOT"
-ALL_SLOTS = [FREE_SLOT, BUSY_SLOT]
+EMPTY_SLOT, FREE_SLOT, BUSY_SLOT = "EMPTY_SLOT", "FREE_SLOT", "BUSY_SLOT"
+ALL_SLOTS = [EMPTY_SLOT, FREE_SLOT, BUSY_SLOT]
 
 
 def round_datetime(dt, seconds=60):

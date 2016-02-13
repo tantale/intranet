@@ -103,25 +103,31 @@ class CalEventAccessor(BasicAccessor):
                    7: []}
         return wh_dict
 
-    def _get_slots(self, employee_uid, day, tz_delta):
+    def _get_time_intervals(self, employee_uid, day, tz_delta, minutes=15):
         """
-        Get the available slots of the employee at a given date.
+        Get the available time intervals of the employee at a given date.
 
         :type employee_uid: int
         :param employee_uid: employee's uid
-
-        :param day: day date (local time)
         :type day: datetime.date
-
-        :param tz_delta: time-zone delta from UTC.
+        :param day: day date (local time)
         :type tz_delta: datetime.timedelta
-
-        :rtype: list[tuple(datetime.time, datetime.time)]
-        :return: List of slots. Each slot is a open hour is a time interval (in local time).
+        :param tz_delta: time-zone delta from UTC.
+        :type minutes: int
+        :param minutes: number of minutes to round, default is 15 minutes.
+        :rtype: list[(datetime.time, datetime.time)]
+        :return: An ordered list of time intervals representing the available time intervals for this day.
 
             Example: [(datetime.time(8, 0),   datetime.time(12, 30)),
                       (datetime.time(13, 30), datetime.time(17, 45))]
         """
+        employee = self.employee_accessor.get_employee(employee_uid)
+        available_intervals = employee.get_available_intervals(day, tz_delta, minutes=minutes)
+        if available_intervals:
+            return available_intervals
+        free_intervals = employee.get_free_intervals(day)
+        if free_intervals:
+            return free_intervals
         wh_dict = self._get_default_work_hours()
         return wh_dict[day.isoweekday()]
 
@@ -148,7 +154,7 @@ class CalEventAccessor(BasicAccessor):
         event_list = self.get_day_events(employee_uid, day, tz_delta)
 
         # -- lists of available slots of this day
-        slots = self._get_slots(employee_uid, day, tz_delta)
+        slots = self._get_time_intervals(employee_uid, day, tz_delta)
 
         return find_first_event_interval(day, first_hour, event_list,
                                          slots, tz_delta)
@@ -176,7 +182,7 @@ class CalEventAccessor(BasicAccessor):
         event_list = self.get_day_events(employee_uid, day, tz_delta)
 
         # -- lists of available slots of this day
-        slots = self._get_slots(employee_uid, day, tz_delta)
+        slots = self._get_time_intervals(employee_uid, day, tz_delta)
 
         return guess_event_duration(day, hour_start, event_list,
                                     slots, tz_delta)
