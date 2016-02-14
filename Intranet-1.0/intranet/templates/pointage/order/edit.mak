@@ -310,5 +310,6 @@ import datetime
 	$('#order_plan').ajaxForm({
 		target: '#order_tasks'
 	});
+	$('#order_tasks').load("${tg.url('./{uid}/tasks/'.format(uid=values['uid']))|n}");
 --></script>
 </div>

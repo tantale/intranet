@@ -75,3 +75,8 @@ class Order(DeclarativeBase):
             key = order_phase.label
             statistics[key] = order_phase.tracked_duration
         return statistics
+
+    @property
+    def estimated_duration(self):
+        estimated_durations = filter(None, [order_phase.estimated_duration for order_phase in self.order_phase_list])
+        return sum(estimated_durations)
