@@ -25,7 +25,7 @@ else:
     <input type="hidden" name="week_end"/>
     <input type="hidden" name="tz_offset"/>
     <button id="ctrl_rec_times__ctrl" type="submit" class="ctrl_button"
-        title="Contrôler les pointages de la semaine">Contrôler les pointages</button></td>
+        title="Contrôler les pointages de la semaine">Contrôler les pointages</button>
 </form>
 <form id="print_rec_times" class="ui-helper-hidden" target='_blank'
     action="${tg.url('./print_rec_times')}" method="get">
@@ -34,7 +34,7 @@ else:
     <input type="hidden" name="week_end"/>
     <input type="hidden" name="tz_offset"/>
     <button id="print_rec_times__print" type="submit" class="print_button"
-        title="Imprimer les pointages de la semaine">Imprimer les pointages</button></td>
+        title="Imprimer les pointages de la semaine">Imprimer les pointages</button>
 </form>
 %endif
 
