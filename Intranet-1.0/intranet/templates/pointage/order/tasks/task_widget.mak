@@ -7,6 +7,7 @@
 STATUS_PENDING, STATUS_IN_PROGRESS, STATUS_DONE = "PENDING", "IN_PROGRESS", "DONE"
 task_id = "task_{0}".format(task.uid)
 task_form_id = "task_form_{0}".format(task.uid)
+new_affectation_form_id = "new_affectation_form_{0}".format(task.uid)
 form_errors = form_errors or dict()
 values = values or dict()
 obj_label = values.get("label") or task.label
@@ -132,15 +133,17 @@ obj_task_status = values.get("task_status") or task.task_status
                     %>
                     %if unassigned_employees:
                     <div class="badge ui-widget ui-state-default ui-corner-all">
-                        <!--
-                        <select name="employee_uid" class="add ui-widget ui-state-default ui-corner-all"
-                                title="Liste des employés">
-                            <option value="" selected="selected">&lt;Ajoutez&gt;</option>
-                            %for employee in task.get_unassigned_employees(active_employees):
-                            <option value="${employee.uid}">${employee.employee_name}</option>
-                            %endfor
-                        </select>
-                        -->
+                        <form id="${new_affectation_form_id}"
+                              action="#" method="post" enctype="multipart/form-data">
+                            <select name="employee_uid" class="add ui-widget ui-state-default ui-corner-all"
+                                    form="${new_affectation_form_id}"
+                                    title="Liste des employés">
+                                <option value="" selected="selected">&lt;Ajoutez&gt;</option>
+                                %for employee in task.get_unassigned_employees(active_employees):
+                                <option value="${employee.uid}">${employee.employee_name}</option>
+                                %endfor
+                            </select>
+                        </form>
                     </div>
                     %endif
                 </div>
@@ -150,7 +153,7 @@ obj_task_status = values.get("task_status") or task.task_status
             <div class="col-xs-12">
                 <nav>
                     <button type="submit" class="refresh_button"
-                            title="Met à jour la planificarion de la tâche">Re-estimer</button>
+                            title="Met à jour la planificarion de la tâche">Réévaluaer</button>
                     <button type="submit" class="update_button"
                             title="Modifier la tâche">Appliquer</button>
                 </nav>
@@ -164,6 +167,18 @@ obj_task_status = values.get("task_status") or task.task_status
         var tz_offset = today.getTimezoneOffset();
         $('#${task_form_id}').find('input[name=tz_offset]').val(tz_offset);
         $('#${task_form_id}').ajaxForm({target: '#${task_id}'});
+        $("#${task_form_id} .refresh_button").button({
+            text : true,
+            icons : {
+                primary : "ui-icon-refresh"
+            }
+        });
+        $("#${task_form_id} .update_button").button({
+            text : true,
+            icons : {
+                primary : "ui-icon-pencil"
+            }
+        });
     });
 </script>
 </%def>

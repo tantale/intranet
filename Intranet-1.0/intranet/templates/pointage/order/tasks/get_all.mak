@@ -71,5 +71,20 @@
         </form>
     </footer>
 </section>
-<script type='text/javascript' src="${tg.url('/javascript/intranet.js')}"></script>
+<script type="application/javascript" defer="defer">
+    $(function() {
+        $("#${tasks_id} .refresh_button").button({
+            text : true,
+            icons : {
+                primary : "ui-icon-refresh"
+            }
+        });
+        $("#${tasks_id} .calendar_button").button({
+            text : true,
+            icons : {
+                primary : "ui-icon-calendar"
+            }
+        });
+    });
+</script>
 %endif
