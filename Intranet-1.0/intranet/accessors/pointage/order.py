@@ -87,27 +87,27 @@ class OrderAccessor(BasicAccessor):
         return super(OrderAccessor, self)._delete_record(uid)
 
     def estimate_duration(self, uid, closed=True, max_count=64):
-        new_order = self.get_order(uid)
-        criterion = [Order.project_cat == new_order.project_cat]
-        if closed is True:
-            # noinspection PyComparisonWithNone
-            criterion.append(Order.close_date != None)
-        elif closed is False:
-            # noinspection PyComparisonWithNone
-            criterion.append(Order.close_date == None)
-        # in reverse order => to use LIMIT
-        order_by_cond = Order.creation_date.desc()
-        order_list = self.session.query(Order).filter(*criterion).order_by(order_by_cond).limit(max_count).all()
-
-        tracked_time_by_label = collections.defaultdict(list)
-        for order in order_list:
-            statistics = order.statistics
-            for order_phase in new_order.order_phase_list:
-                tracked_time = statistics.get(order_phase.label, 0)
-                if tracked_time:
-                    tracked_time_by_label[order_phase].append(tracked_time)
-
         with transaction.manager:
+            new_order = self.get_order(uid)
+            criterion = [Order.project_cat == new_order.project_cat]
+            if closed is True:
+                # noinspection PyComparisonWithNone
+                criterion.append(Order.close_date != None)
+            elif closed is False:
+                # noinspection PyComparisonWithNone
+                criterion.append(Order.close_date == None)
+            # in reverse order => to use LIMIT
+            order_by_cond = Order.creation_date.desc()
+            order_list = self.session.query(Order).filter(*criterion).order_by(order_by_cond).limit(max_count).all()
+
+            tracked_time_by_label = collections.defaultdict(list)
+            for order in order_list:
+                statistics = order.statistics
+                for order_phase in new_order.order_phase_list:
+                    tracked_time = statistics.get(order_phase.label, 0)
+                    if tracked_time:
+                        tracked_time_by_label[order_phase].append(tracked_time)
+
             for order_phase, tracked_times in tracked_time_by_label.iteritems():
                 pertinents = gauss_filter(tracked_times) if tracked_times else []
                 mean_time = int(mean(pertinents) * 4) / 4.0 if pertinents else 0
