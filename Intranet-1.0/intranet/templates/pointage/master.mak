@@ -10,11 +10,12 @@
     <link rel="stylesheet" type="text/css" href="${tg.url('/css/jqueryui-editable.css')}"/>
     <link rel="stylesheet" type="text/css" href="${tg.url('/css/fullcalendar.css')}" />
     <link rel="stylesheet" type="text/css" href="${tg.url('/css/intranet.css')}"/>
+    <link rel="stylesheet" type="text/css" href="${tg.url('/css/intranet.print.css')}" media="print"/>
     <link rel="stylesheet" type="text/css" href="${tg.url('/css/intranet.pointage.css')}"/>
     <link rel="stylesheet" type="text/css" href="${tg.url('../order_cat.css')}"/>
 </head>
 <body>
-<div id="topFrame" class="ui-layout-north">
+<div id="topFrame" class="ui-layout-north no-print">
 <nav id="toolbar" class="ui-widget-header">
     <h1 title="${main_menu.description}">${main_menu.display_name}</h1>
     %for item in main_menu.item_list:
@@ -26,7 +27,7 @@
     %endfor
 </nav>
 </div>
-<div id="leftFrame" class="ui-layout-west">
+<div id="leftFrame" class="ui-layout-west no-print">
 <aside id="searchFrame">${self.search_frame()}</aside>
 <aside id="newFrame">${self.new_frame()}</aside>
 <aside id="accordion_content">${self.accordion_content()}</aside>

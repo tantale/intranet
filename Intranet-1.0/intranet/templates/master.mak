@@ -7,6 +7,7 @@
     <link rel="icon" type="image/ico" href="${tg.url('/favicon.ico')}"/>
     <link rel="stylesheet" type="text/css" href="${tg.url('/css/blitzer/jquery-ui-1.10.3.custom.min.css')}"/>
     <link rel="stylesheet" type="text/css" href="${tg.url('/css/intranet.css')}"/>
+    <link rel="stylesheet" type="text/css" href="${tg.url('/css/intranet.print.css')}" media="print"/>
     <style>
         article {
             margin: .5cm .5cm .5cm .5cm;
