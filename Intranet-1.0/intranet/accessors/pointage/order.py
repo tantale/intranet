@@ -13,7 +13,7 @@ from intranet.accessors import BasicAccessor
 from intranet.accessors.pointage.order_cat import OrderCatAccessor
 from intranet.accessors.statistics import gauss_filter, mean
 from intranet.model.pointage.order import Order
-from intranet.model.pointage.order_phase import OrderPhase
+from intranet.model.pointage.order_phase import OrderPhase, STATUS_PENDING
 
 
 class OrderAccessor(BasicAccessor):
@@ -112,3 +112,5 @@ class OrderAccessor(BasicAccessor):
                 pertinents = gauss_filter(tracked_times) if tracked_times else []
                 mean_time = int(mean(pertinents) * 4) / 4.0 if pertinents else 0
                 order_phase.estimated_duration = mean_time or None
+                order_phase.remain_duration = max(0, order_phase.estimated_duration - order_phase.tracked_duration)
+                order_phase.task_status = STATUS_PENDING
