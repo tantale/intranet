@@ -18,12 +18,13 @@ from tg.decorators import with_trailing_slash, expose, validate, without_trailin
 from tg.flash import flash
 
 from intranet.accessors.pointage.cal_event import CalEventAccessor
+from intranet.accessors.pointage.employee import EmployeeAccessor
 from intranet.accessors.pointage.order import OrderAccessor
+from intranet.accessors.pointage.order_phase import OrderPhaseAccessor
 from intranet.controllers.session_obj.curr_user import CurrUserController
 from intranet.controllers.session_obj.full_calendar import FullCalendarController
 from intranet.controllers.session_obj.layout import LayoutController
 from intranet.model.pointage.cal_event import CalEvent
-from intranet.model.pointage.employee import Employee
 from intranet.model.pointage.order import Order
 from intranet.validators.iso_date_converter import IsoDatetimeConverter
 
@@ -108,6 +109,10 @@ class CalendarController(RestController):
 
     def __init__(self, main_menu):
         self.main_menu = main_menu
+        self.cal_event_accessor = CalEventAccessor()
+        self.order_accessor = OrderAccessor()
+        self.order_phase_accessor = OrderPhaseAccessor()
+        self.employee_accessor = EmployeeAccessor()
 
     # noinspection PyArgumentList
     @without_trailing_slash
@@ -138,7 +143,7 @@ class CalendarController(RestController):
 
         :param cal_end: end date/time of the calendar interval (timestamps)
 
-        :param: keyword: current keyword from the search form.
+        :param keyword: current keyword from the search form.
 
         :param uid: Active order's UID if any
         """
@@ -147,8 +152,6 @@ class CalendarController(RestController):
         LOG.debug("- cal_end:   {!r}".format(cal_end))
         LOG.debug("- keyword:   {!r}".format(keyword))
         LOG.debug("- uid:       {!r}".format(uid))
-
-        accessor = OrderAccessor()
 
         # -- date interval from the calendar's timestamps
         start_date = datetime.datetime.utcfromtimestamp(float(cal_start))
@@ -165,7 +168,7 @@ class CalendarController(RestController):
             filter_cond = and_(filter_cond,
                                Order.order_ref.like('%' + keyword + '%'))
         order_by_cond = desc(Order.creation_date)
-        order_list = accessor.get_order_list(filter_cond, order_by_cond)
+        order_list = self.order_accessor.get_order_list(filter_cond, order_by_cond)
 
         # -- active_index of the order by uid
         active_index = False
@@ -192,6 +195,9 @@ class CalendarController(RestController):
         GET /pointage/trcal/1
 
         :param uid: UID of the calendar event to display.
+        :param employee_uid: UID of the employee
+        :param order_phase_uid: UID of the OrderPhase
+        :param event_start: Start date and time of the event (ISO 8601 string).
         """
         LOG.info("CalendarController.get_one")
         LOG.debug("- uid:             {!r}".format(uid))
@@ -199,9 +205,8 @@ class CalendarController(RestController):
         LOG.debug("- order_phase_uid: {!r}".format(order_phase_uid))
         LOG.debug("- event_start:     {!r}".format(event_start))
 
-        accessor = CalEventAccessor()
         if uid:
-            cal_event = accessor.get_cal_event(uid)
+            cal_event = self.cal_event_accessor.get_cal_event(uid)
         else:
             employee_uid = int(employee_uid)
             order_phase_uid = int(order_phase_uid)
@@ -209,7 +214,7 @@ class CalendarController(RestController):
             filter_cond = and_(CalEvent.employee_uid == employee_uid,
                                CalEvent.order_phase_uid == order_phase_uid,
                                CalEvent.event_start == event_start)
-            cal_event_list = accessor.get_cal_event_list(filter_cond)
+            cal_event_list = self.cal_event_accessor.get_cal_event_list(filter_cond)
             cal_event = cal_event_list[0]
         return json.dumps(cal_event.event_obj())
 
@@ -239,8 +244,6 @@ class CalendarController(RestController):
         LOG.debug("- cal_curr:     {!r}".format(cal_curr))
         LOG.debug("- employee_uid: {!r}".format(employee_uid))
 
-        accessor = CalEventAccessor()
-
         # -- date interval from the calendar's timestamps
         start_date = datetime.datetime.utcfromtimestamp(float(cal_start))
         end_date = datetime.datetime.utcfromtimestamp(float(cal_end))
@@ -250,16 +253,12 @@ class CalendarController(RestController):
                           end_date=end_date))
 
         # -- employees currently working
-        filter_cond = overlap_cond(start_date, end_date,
-                                   Employee.entry_date, Employee.exit_date)
-        order_by_cond = Employee.employee_name
-        employee_list = accessor.get_employee_list(filter_cond,
-                                                   order_by_cond)
+        employee_list = self.employee_accessor.get_active_employees(start_date, end_date)
 
         # -- current employee, if any
         employee_uid = int(employee_uid) if employee_uid else 0
         if employee_uid:
-            employee = accessor.get_employee(employee_uid)
+            employee = self.employee_accessor.get_employee(employee_uid)
             if employee not in employee_list:
                 employee = None
                 err_msg = u"Aucun employée n'est en activité."
@@ -315,8 +314,6 @@ class CalendarController(RestController):
         LOG.debug("- cal_end:      {!r}".format(cal_end))
         LOG.debug("- employee_uid: {!r}".format(employee_uid))
 
-        accessor = CalEventAccessor()
-
         # -- date interval from the calendar's timestamps
         start_date = datetime.datetime.utcfromtimestamp(float(cal_start))
         end_date = datetime.datetime.utcfromtimestamp(float(cal_end))
@@ -326,16 +323,12 @@ class CalendarController(RestController):
                           end_date=end_date))
 
         # -- employees currently working
-        filter_cond = overlap_cond(start_date, end_date,
-                                   Employee.entry_date, Employee.exit_date)
-        order_by_cond = Employee.employee_name
-        employee_list = accessor.get_employee_list(filter_cond,
-                                                   order_by_cond)
+        employee_list = self.employee_accessor.get_active_employees(start_date, end_date)
 
         # -- current employee, if any
         employee_uid = int(employee_uid) if employee_uid else 0
         if employee_uid:
-            employee = accessor.get_employee(employee_uid)
+            employee = self.employee_accessor.get_employee(employee_uid)
             if employee not in employee_list:
                 employee = None
                 err_msg = u"Aucun employée n'est en activité."
@@ -368,6 +361,7 @@ class CalendarController(RestController):
                     employee=employee,
                     employee_list=employee_list)
 
+    # noinspection PyUnusedLocal
     @expose()
     def events(self, employee_uid, start, end, **kw):
         """
@@ -377,6 +371,9 @@ class CalendarController(RestController):
         @see: http://arshaw.com/fullcalendar/docs/event_data/events_json_feed/
 
         :param employee_uid: Current employee uid's UID
+        :param start: Start date (UTC timestamp).
+        :param end: End date (UTC timestamp).
+        :param kw: extra parameters (not used).
         """
         LOG.info("CalendarController.events")
         LOG.debug("- employee_uid: {!r}".format(employee_uid))
@@ -392,8 +389,7 @@ class CalendarController(RestController):
                           end_date=end_date))
 
         # -- current employee
-        accessor = CalEventAccessor()
-        employee = accessor.get_employee(employee_uid)
+        employee = self.employee_accessor.get_employee(employee_uid)
 
         # -- current events of the current employee
         cal_overlap_cond = overlap_cond(start_date, end_date,
@@ -402,8 +398,8 @@ class CalendarController(RestController):
         cal_filter_cond = and_(CalEvent.employee == employee,
                                cal_overlap_cond)
         cal_order_by_cond = CalEvent.event_start
-        cal_event_list = accessor.get_cal_event_list(cal_filter_cond,
-                                                     cal_order_by_cond)
+        cal_event_list = self.cal_event_accessor.get_cal_event_list(cal_filter_cond,
+                                                                    cal_order_by_cond)
 
         return json.dumps([cal_event.event_obj()
                            for cal_event in cal_event_list])
@@ -416,12 +412,11 @@ class CalendarController(RestController):
         LOG.debug("- minute_delta: {!r}".format(minute_delta))
         day_delta = int(day_delta)
         minute_delta = int(minute_delta)
-        accessor = CalEventAccessor()
         if day_delta:
-            accessor.divide_event(uid, day_delta)
+            self.cal_event_accessor.divide_event(uid, day_delta)
         else:
             delta = datetime.timedelta(minutes=minute_delta)
-            accessor.increase_duration(uid, delta)
+            self.cal_event_accessor.increase_duration(uid, delta)
 
     @expose()
     def event_drop(self, uid, day_delta, minute_delta):
@@ -431,10 +426,9 @@ class CalendarController(RestController):
         LOG.debug("- minute_delta: {!r}".format(minute_delta))
         day_delta = int(day_delta)
         minute_delta = int(minute_delta)
-        accessor = CalEventAccessor()
         delta = datetime.timedelta(days=day_delta,
                                    minutes=minute_delta)
-        accessor.move_datetime(uid, delta)
+        self.cal_event_accessor.move_datetime(uid, delta)
 
     @expose('intranet.templates.pointage.trcal.new')
     def new(self, employee_uid, order_phase_uid, tz_offset, **kw):
@@ -444,19 +438,17 @@ class CalendarController(RestController):
         GET /pointage/trcal/new?employee_uid=&order_phase_uid=
 
         :param employee_uid: Current employee uid's UID
-
         :param order_phase_uid: Current order phase uid's UID
+        :param tz_offset: Timezone offset from UTC in minutes (tz_offset = utc_date - local_date).
         """
         LOG.info("CalendarController.new")
         LOG.debug("- employee_uid:     {!r}".format(employee_uid))
         LOG.debug("- order_phase_uid:  {!r}".format(order_phase_uid))
         LOG.debug("- tz_offset:        {!r}".format(tz_offset))
 
-        accessor = CalEventAccessor()
-
         if 'date' in kw and 'allDay' in kw:
             # -- [A]: receive parameters from open_new_event_dialog in get_all
-            # :param date: JavaScript date in ISO 8601 format (UTC date/itme)
+            # :param date: JavaScript date in ISO 8601 format (UTC date/time)
             # :param allDay: JavaScript boolean value: "true" or "false"
             LOG.debug("- date:             {!r}".format(kw.get('date')))
             LOG.debug("- allDay:           {!r}".format(kw.get('allDay')))
@@ -468,9 +460,9 @@ class CalendarController(RestController):
                 # -- find the best interval in available work hours
                 local_datetime = datetime_utc - tz_delta
                 local_day = local_datetime.date()
-                start_utc, end_utc = accessor.get_event_interval(employee_uid,
-                                                                 local_day,
-                                                                 tz_delta)
+                start_utc, end_utc = self.cal_event_accessor.get_event_interval(employee_uid,
+                                                                                local_day,
+                                                                                tz_delta)
                 event_start = start_utc - tz_delta
                 delta = end_utc - start_utc
                 kw['event_start'] = event_start.isoformat()
@@ -481,17 +473,17 @@ class CalendarController(RestController):
                 local_datetime = datetime_utc - tz_delta
                 local_day = local_datetime.date()
                 local_time = local_datetime.time()
-                delta = accessor.get_event_duration(employee_uid,
-                                                    local_day,
-                                                    tz_delta,
-                                                    local_time)
+                delta = self.cal_event_accessor.get_event_duration(employee_uid,
+                                                                   local_day,
+                                                                   tz_delta,
+                                                                   local_time)
                 kw['event_start'] = local_datetime.isoformat()
                 kw['event_duration'] = delta.seconds / 3600.0
                 kw['comment'] = None
 
         elif 'event_start' in kw and 'event_duration' in kw:
             # -- [B]: receive parameters from post() method for error handling
-            # :param event_start: date in ISO 8601 format (local date/itme)
+            # :param event_start: date in ISO 8601 format (local date/time)
             # :param event_duration: duration (in hour number)
             # :param comment: optional comment (200 characters)
             LOG.debug("- event_start:      {!r}".format(kw.get('event_start')))
@@ -506,12 +498,13 @@ class CalendarController(RestController):
         if form_errors:
             err_msg = u"Le formulaire comporte des champs invalides"
             flash(err_msg, status="error")
-        employee = accessor.get_employee(employee_uid)
-        order_phase = accessor.get_order_phase(order_phase_uid)
+        employee = self.employee_accessor.get_employee(employee_uid)
+        order_phase = self.order_phase_accessor.get_order_phase(order_phase_uid)
         return dict(tz_offset=tz_offset,
                     employee=employee, order_phase=order_phase,
                     values=kw, form_errors=form_errors)
 
+    # noinspection PyUnusedLocal
     @validate({'employee_uid': Int(min=0, not_empty=True),
                'order_phase_uid': Int(min=0, not_empty=True),
                'tz_offset': Int(min=-1200, max=1200, not_empty=True),
@@ -520,15 +513,20 @@ class CalendarController(RestController):
               error_handler=new)
     @expose()
     def post(self, employee_uid, order_phase_uid, tz_offset,
-             event_start, event_duration, comment, **kwagrs):
+             event_start, event_duration, comment, **kw):
         """
+
         Create a new record.
 
         POST /pointage/trcal/
 
         :param employee_uid: Current employee uid's UID
-
         :param order_phase_uid: Current order phase uid's UID
+        :param tz_offset: Timezone offset from UTC in minutes (tz_offset = utc_date - local_date).
+        :param event_start: Start date of the event (ISO 8601 string).
+        :param event_duration: Event duration in hours.
+        :param comment: Event comment.
+        :param kw: extra parameters (not used).
         """
         LOG.info("CalendarController.post")
         LOG.debug("- employee_uid:     {!r}".format(employee_uid))
@@ -546,18 +544,16 @@ class CalendarController(RestController):
         LOG.debug("- event_start_utc:  {!r}".format(event_start_utc))
         LOG.debug("- event_end_utc:    {!r}".format(event_end_utc))
 
-        accessor = CalEventAccessor()
-
         # -- check overlapping dates in other events of the current employee
-        employee = accessor.get_employee(employee_uid)
+        employee = self.employee_accessor.get_employee(employee_uid)
         cal_overlap_cond = overlap_cond(event_start_utc, event_end_utc,
                                         CalEvent.event_start,
                                         CalEvent.event_end)
         cal_filter_cond = and_(CalEvent.employee == employee,
                                cal_overlap_cond)
         cal_order_by_cond = CalEvent.event_start
-        cal_event_list = accessor.get_cal_event_list(cal_filter_cond,
-                                                     cal_order_by_cond)
+        cal_event_list = self.cal_event_accessor.get_cal_event_list(cal_filter_cond,
+                                                                    cal_order_by_cond)
         if cal_event_list:
             err_msg = (u"Ce pointage intercepte un pointage existant. "
                        u"Veuillez changer la date/heure ou ajuster la durée.")
@@ -571,9 +567,9 @@ class CalendarController(RestController):
                      comment=comment)
 
         # -- insert event in database
-        accessor.insert_cal_event(employee_uid, order_phase_uid,
-                                  event_start_utc,
-                                  event_end_utc, comment)
+        self.cal_event_accessor.insert_cal_event(employee_uid, order_phase_uid,
+                                                 event_start_utc,
+                                                 event_end_utc, comment)
 
         # -- return the newly created event
         redirect('./get_one',
@@ -589,14 +585,14 @@ class CalendarController(RestController):
         GET /pointage/trcal/1/?uid
 
         :param uid: UID of the CalEvent to update
+        :param tz_offset: Timezone offset from UTC in minutes (tz_offset = utc_date - local_date).
         """
         LOG.info("CalendarController.edit")
         LOG.debug("- uid:              {!r}".format(uid))
         LOG.debug("- tz_offset:        {!r}".format(tz_offset))
 
         form_errors = pylons.tmpl_context.form_errors  # @UndefinedVariable
-        accessor = CalEventAccessor()
-        cal_event = accessor.get_cal_event(uid)
+        cal_event = self.cal_event_accessor.get_cal_event(uid)
         tz_delta = datetime.timedelta(minutes=int(tz_offset))
         event_start = cal_event.event_start - tz_delta
         delta = cal_event.event_end - cal_event.event_start
@@ -613,6 +609,7 @@ class CalendarController(RestController):
                     order_phase=cal_event.order_phase,
                     form_errors=form_errors)
 
+    # noinspection PyUnusedLocal
     @validate({'uid': Int(min=0, not_empty=True),
                'tz_offset': Int(min=-1200, max=1200, not_empty=True),
                'event_start': IsoDatetimeConverter(),
@@ -627,6 +624,11 @@ class CalendarController(RestController):
         PUT /pointage/trcal/1
 
         :param uid: UID of the CalEvent to update
+        :param tz_offset: Timezone offset from UTC in minutes (tz_offset = utc_date - local_date).
+        :param event_start: Start date of the event (ISO 8601 string).
+        :param event_duration: Event duration in hours.
+        :param comment: Event comment.
+        :param kw: extra parameters (not used)
         """
         LOG.info("CalendarController.put")
         LOG.debug("- uid:              {!r}".format(uid))
@@ -644,11 +646,10 @@ class CalendarController(RestController):
         LOG.debug("- event_end_utc:    {!r}".format(event_end_utc))
 
         # -- update the event's duration and comment
-        accessor = CalEventAccessor()
-        accessor.update_cal_event(uid,
-                                  event_start=event_start_utc,
-                                  event_end=event_end_utc,
-                                  comment=comment)
+        self.cal_event_accessor.update_cal_event(uid,
+                                                 event_start=event_start_utc,
+                                                 event_end=event_end_utc,
+                                                 comment=comment)
 
         # -- return the updated event
         redirect('./get_one', uid=uid)
@@ -665,8 +666,7 @@ class CalendarController(RestController):
         """
         LOG.info("CalendarController.post_delete")
         LOG.debug("- uid: {!r}".format(uid))
-        accessor = CalEventAccessor()
-        accessor.delete_cal_event(uid)
+        self.cal_event_accessor.delete_cal_event(uid)
         # -- return an event object with it's id only
         return json.dumps(dict(id='cal_event_{uid}'.format(uid=uid)))
 
@@ -674,6 +674,13 @@ class CalendarController(RestController):
     @expose('intranet.templates.pointage.trcal.ctrl_rec_times')
     def ctrl_rec_times(self, employee_uid, week_start, week_end, tz_offset, display_messages=False):
         """
+        Control recorded/tracked times.
+
+        :param employee_uid: UID of the current employee.
+        :param week_start: Start date (UTC timestamp).
+        :param week_end: End date (UTC timestamp).
+        :param tz_offset: Timezone offset from UTC in minutes (tz_offset = utc_date - local_date).
+        :param display_messages:
         """
         LOG.info("CalendarController.ctrl_rec_times")
         LOG.debug("- employee_uid: {!r}".format(employee_uid))
@@ -694,8 +701,7 @@ class CalendarController(RestController):
                           end_date=end_date))
 
         # -- current employee
-        accessor = CalEventAccessor()
-        employee = accessor.get_employee(employee_uid)
+        employee = self.employee_accessor.get_employee(employee_uid)
 
         # -- current events of the current employee
         cal_overlap_cond = overlap_cond(start_date, end_date,
@@ -704,8 +710,8 @@ class CalendarController(RestController):
         cal_filter_cond = and_(CalEvent.employee == employee,
                                cal_overlap_cond)
         cal_order_by_cond = CalEvent.event_start
-        cal_event_list = accessor.get_cal_event_list(cal_filter_cond,
-                                                     cal_order_by_cond)
+        cal_event_list = self.cal_event_accessor.get_cal_event_list(cal_filter_cond,
+                                                                    cal_order_by_cond)
 
         # -- count events duration by day and week
         delta = end_date - start_date

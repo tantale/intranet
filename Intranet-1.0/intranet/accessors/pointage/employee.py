@@ -9,6 +9,7 @@ import time
 
 import tg
 import transaction
+from sqlalchemy.sql.expression import or_, and_
 
 from intranet.accessors import BasicAccessor
 from intranet.accessors.planning.calendar import CalendarAccessor
@@ -18,6 +19,24 @@ from intranet.model.planning.calendar import Calendar
 from intranet.model.pointage.employee import Employee
 
 LOG = logging.getLogger(__name__)
+
+
+# noinspection PyComparisonWithNone
+def overlap_cond(ref_start, ref_end, field_start, field_end):
+    """
+    Construct a sqlalchemy's predicate to check if two date intervals overlap.
+
+    :param ref_start: reference interval start date
+    :param ref_end: reference interval end date
+    :param field_start: field interval start date
+    :param field_end: field interval end date, or None for eternity
+    :return: ref_start <= field_start < ref_end or
+             field_start <= ref_start < field_end
+    """
+    return or_(and_(field_start >= ref_start,
+                    field_start < ref_end),
+               and_(field_start <= ref_start,
+                    or_(field_end == None, field_end > ref_start)))
 
 
 class EmployeeAccessor(BasicAccessor):
@@ -139,3 +158,19 @@ class EmployeeAccessor(BasicAccessor):
         file_storage = FileStorage(tg.config.file_storage_dir)
         if photo_path in file_storage:
             del file_storage[photo_path]
+
+    def get_active_employees(self, start_date_utc, end_date_utc=None):
+        """
+        Get the employees currently working at a given date interval.
+
+        :type start_date_utc: datetime.date
+        :param start_date_utc: Start date of the interval (UTC date).
+        :type end_date_utc: datetime.date
+        :param end_date_utc: End date of the interval (UTC date).
+        :return: The ordered list of employees, possibly empty.
+        """
+        end_date_utc = end_date_utc or start_date_utc
+        filter_cond = overlap_cond(start_date_utc, end_date_utc,
+                                   Employee.entry_date, Employee.exit_date)
+        query = self.session.query(self.record_class)
+        return query.filter(filter_cond).order_by(Employee.employee_name).all()
