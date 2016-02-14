@@ -262,3 +262,17 @@ td.record-table-label {
     -ms-transition: all 0.3s ease-in-out;
     transition: all 0.3s ease-in-out;
 }
+
+/**
+ * Currently for Order task list...
+ */
+.container-fluid {padding: 5px; width: 100%;}
+.row-xs {display: block; clear: left;}
+.col-xs-1  {display: inline-block; vertical-align: middle; min-width:   3em; width:   8.33%; float: left; padding: 5px;}
+.col-xs-2  {display: inline-block; vertical-align: middle; min-width:   7em; width:  16.66%; float: left; padding: 5px;}
+.col-xs-4  {display: inline-block; vertical-align: middle; min-width:  14em; width:  33.00%; float: left; padding: 5px;}
+.col-xs-5  {display: inline-block; vertical-align: middle; min-width:  17em; width:  41.66%; float: left; padding: 5px;}
+.col-xs-6  {display: inline-block; vertical-align: middle; min-width:  21em; width:  50.00%; float: left; padding: 5px;}
+.col-xs-7  {display: inline-block; vertical-align: middle; min-width:  25em; width:  58.33%; float: left; padding: 5px;}
+.col-xs-10 {display: inline-block; vertical-align: middle; min-width:  35em; width:  83.33%; float: left; padding: 5px;}
+.col-xs-12 {display: inline-block; vertical-align: middle; min-width:  42em; width: 100.00%; float: left; padding: 5px;}

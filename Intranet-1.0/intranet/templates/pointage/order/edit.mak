@@ -275,7 +275,7 @@ import datetime
 			});
 
 			var ajaxFormProp = {
-				beforeSubmit: function(arr, $form, options) {
+				beforeSubmit: function(arr, form, options) {
 					$("body").css("cursor", "progress");
 					return true;
 				},
@@ -310,6 +310,10 @@ import datetime
 	$('#order_plan').ajaxForm({
 		target: '#order_tasks'
 	});
-	$('#order_tasks').load("${tg.url('./{uid}/tasks/'.format(uid=values['uid']))|n}");
+
+	var today = new Date();
+	var tz_offset = today.getTimezoneOffset();
+	var order_tasks_url = "${tg.url('./{uid}/tasks/'.format(uid=values['uid']))|n}" + "?&tz_offset=" + tz_offset;
+	$('#order_tasks').load(order_tasks_url);
 --></script>
 </div>

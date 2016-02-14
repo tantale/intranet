@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 :module: intranet.model.pointage.order_phase
 :date: 2013-08-09
@@ -9,7 +10,7 @@ from sqlalchemy.orm import relationship
 from intranet.model import DeclarativeBase
 
 STATUS_PENDING, STATUS_IN_PROGRESS, STATUS_DONE = "PENDING", "IN_PROGRESS", "DONE"
-ALL_STATUS = [STATUS_PENDING, STATUS_IN_PROGRESS, STATUS_DONE]
+ALL_TASK_STATUS = [STATUS_PENDING, STATUS_IN_PROGRESS, STATUS_DONE]
 
 
 class OrderPhase(DeclarativeBase):
@@ -36,7 +37,7 @@ class OrderPhase(DeclarativeBase):
     # -- New fields/relationships for order planning (since: 2.2.0)
     estimated_duration = Column(Float, nullable=True)
     remain_duration = Column(Float, nullable=True)
-    task_status = Column(Enum(*ALL_STATUS), nullable=False, default=STATUS_PENDING)
+    task_status = Column(Enum(*ALL_TASK_STATUS), nullable=False, default=STATUS_PENDING)
 
     assignation_list = relationship('Assignation',
                                     back_populates="order_phase",
@@ -48,8 +49,8 @@ class OrderPhase(DeclarativeBase):
 
         :param position: the index position of the phase in it's parent order.
         :type position: int
-
-        :param label: the phase's label (required)
+        :type label: unicode
+        :param label: the order phase label (required)
         """
         self.position = position
         self.label = label
@@ -73,6 +74,37 @@ class OrderPhase(DeclarativeBase):
 
     @property
     def total_duration(self):
-        if self.remain_duration is None:
-            return None
-        return self.remain_duration + self.tracked_duration
+        if self.remain_duration:
+            return self.remain_duration + self.tracked_duration
+        return self.tracked_duration
+
+    @property
+    def all_status_info(self):
+        return [dict(value=STATUS_PENDING,
+                     label=u"Attente",
+                     description=u"La tâche est estimée et en attente de planification",
+                     checked=self.task_status == STATUS_PENDING),
+                dict(value=STATUS_IN_PROGRESS,
+                     label=u"En cours",
+                     description=u"La tâche est cours de planification, "
+                                 u"il est encore possible d’ajuster le reste à faire",
+                     checked=self.task_status == STATUS_IN_PROGRESS),
+                dict(value=STATUS_DONE,
+                     label=u"Terminée",
+                     description=u"La tâche est terminée.",
+                     checked=self.task_status == STATUS_DONE)]
+
+    @property
+    def assigned_employees(self):
+        return frozenset([assignation.employee for assignation in self.assignation_list])
+
+    def get_unassigned_employees(self, active_employees):
+        return frozenset(active_employees) - self.assigned_employees
+
+    @property
+    def description(self):
+        return u""
+
+    @description.setter
+    def description(self, value):
+        pass

@@ -1,7 +1,7 @@
 <section>
     <style type="text/css" scoped="scoped">
         .container-fluid {padding: 5px; width: 100%;}
-        .row {display: block; clear: left;}
+        .row-xs {display: block; clear: left;}
         .col-xs-1  {display: inline-block; vertical-align: middle; min-width:   3em; width:   8.33%; float: left; padding: 5px;}
         .col-xs-2  {display: inline-block; vertical-align: middle; min-width:   7em; width:  16.66%; float: left; padding: 5px;}
         .col-xs-4  {display: inline-block; vertical-align: middle; min-width:  14em; width:  33.00%; float: left; padding: 5px;}
@@ -60,7 +60,7 @@
         <article class="ui-state-default">
             <form id="task_1__form">
                 <fieldset id="task_1" class="task ui-widget">
-                    <div class="row">
+                    <div class="row-xs">
                         <div class="col-xs-6">
                             <input class="position" name="position" value="1" disabled="disabled"/>
                             <input class="display_name" name="display_name" value="Étude / commercialisation" title="Nom de la tâche"/>
@@ -75,7 +75,7 @@
                             </select>
                         </div>
                     </div>
-                    <div class="row">
+                    <div class="row-xs">
                         <div class="col-xs-6">
                             <label class="description" for="task_1__description">Description&nbsp;:</label>
                         <textarea class="description" id="task_1__description" name="description" title="Description de la tâche à effectuer"
@@ -129,7 +129,7 @@
                             </table>
                         </div>
                     </div>
-                    <div class="row">
+                    <div class="row-xs">
                         <div class="col-xs-2">
                             <label class="assignment">Affectation(s)&nbsp;:</label>
                         </div>
@@ -166,7 +166,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="row">
+                    <div class="row-xs">
                         <div class="col-xs-12">
                             <nav>
                                 <button type="submit" class="refresh_button" title="Met à jour la planificarion de la tâche">Planifier</button>
@@ -181,7 +181,7 @@
         <article class="ui-state-default">
             <form id="task_2__form">
                 <fieldset id="task_2" class="task ui-widget">
-                    <div class="row">
+                    <div class="row-xs">
                         <div class="col-xs-6">
                             <input class="position" name="position" value="2" disabled="disabled"/>
                             <input class="display_name" name="display_name" value="Fabrication" title="Nom de la tâche"/>
@@ -196,7 +196,7 @@
                             </select>
                         </div>
                     </div>
-                    <div class="row">
+                    <div class="row-xs">
                         <div class="col-xs-6">
                             <label class="description" for="task_2__description">Description&nbsp;:</label>
                         <textarea class="description" id="task_2__description" name="description" title="Description de la tâche à effectuer"
@@ -250,7 +250,7 @@
                             </table>
                         </div>
                     </div>
-                    <div class="row">
+                    <div class="row-xs">
                         <div class="col-xs-2">
                             <label class="assignment">Affectation(s)&nbsp;:</label>
                         </div>
@@ -302,7 +302,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="row">
+                    <div class="row-xs">
                         <div class="col-xs-12">
                             <nav>
                                 <button type="submit" class="refresh_button" title="Met à jour la planificarion de la tâche">Planifier</button>
@@ -317,7 +317,7 @@
         <article class="ui-state-default">
             <form id="task_3__form">
                 <fieldset id="task_3" class="task ui-widget">
-                    <div class="row">
+                    <div class="row-xs">
                         <div class="col-xs-6">
                             <input class="position" name="position" value="3" disabled="disabled"/>
                             <input class="display_name" name="display_name" value="Finition" title="Nom de la tâche"/>
@@ -332,7 +332,7 @@
                             </select>
                         </div>
                     </div>
-                    <div class="row">
+                    <div class="row-xs">
                         <div class="col-xs-6">
                             <label class="description" for="task_3__description">Description&nbsp;:</label>
                         <textarea class="description" id="task_3__description" name="description" title="Description de la tâche à effectuer"
@@ -387,7 +387,7 @@
                             </table>
                         </div>
                     </div>
-                    <div class="row">
+                    <div class="row-xs">
                         <div class="col-xs-2">
                             <label class="assignment">Affectation(s)&nbsp;:</label>
                         </div>
@@ -409,7 +409,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="row">
+                    <div class="row-xs">
                         <div class="col-xs-12">
                             <nav>
                                 <button type="submit" class="refresh_button" title="Met à jour la planificarion de la tâche">Planifier</button>
@@ -426,7 +426,7 @@
     <footer class="ui-state-default">
         <form id="new_task__form">
             <fieldset id="new_task" class="task ui-widget">
-                <div class="row">
+                <div class="row-xs">
                     <div class="col-xs-12">
                         <nav>
                             <button type="submit" class="refresh_button" title="Met à jour la planificarion des tâches">Planifier tout</button>

@@ -28,6 +28,9 @@
         </span></p>
     </header>
     <form id="estimate_form" action="./${order_uid}/tasks/estimate_tasks" method="get">
+        <p style="display: none; visibility: hidden;">
+            <input name="tz_offset" type="hidden" value="${tz_offset}">
+        </p>
         <p><label class="tooltip"><b>Nombre de commandes à analyser&nbsp;:</b>
             <input name="max_count" type="number" min="32" max="128" value="${max_count}"></label>
             <span class="ui-icon ui-icon-help"></span></p>
@@ -84,6 +87,10 @@
             },
             tooltipClass: "info"
         });
+
+        var today = new Date();
+        var tz_offset = today.getTimezoneOffset();
+        $('#estimate_form').find('input[name=tz_offset]').val(tz_offset);
     });
     </script>
 </section>

@@ -10,18 +10,20 @@ import logging
 
 import pylons
 import sqlalchemy.exc
-from formencode.validators import Int, NotEmpty, StringBool
-from sqlalchemy.sql.expression import desc, and_
+from formencode.validators import Int, NotEmpty, StringBool, Number, UnicodeString, OneOf
+from sqlalchemy.sql.expression import desc
 from tg.controllers.restcontroller import RestController
 from tg.controllers.util import redirect
 from tg.decorators import with_trailing_slash, expose, validate, without_trailing_slash, request
 from tg.flash import flash
 from tg.i18n import ugettext as _
 
+from intranet.accessors.pointage.employee import EmployeeAccessor
 from intranet.accessors.pointage.order import OrderAccessor
+from intranet.accessors.pointage.order_phase import OrderPhaseAccessor
 from intranet.controllers.session_obj.layout import LayoutController
 from intranet.model.pointage.order import Order
-from intranet.model.pointage.order_phase import OrderPhase
+from intranet.model.pointage.order_phase import ALL_TASK_STATUS
 from intranet.validators.date_interval import check_date_interval
 from intranet.validators.iso_date_converter import IsoDateConverter
 
@@ -37,9 +39,12 @@ class TasksController(RestController):
     .. note::
         This controller is experimental.
     """
+
     def __init__(self):
         super(TasksController, self).__init__()
         self.order_accessor = OrderAccessor()
+        self.order_phase_accessor = OrderPhaseAccessor()
+        self.employee_accessor = EmployeeAccessor()
 
     # noinspection PyUnusedLocal
     def _before(self, *args, **kw):
@@ -48,99 +53,122 @@ class TasksController(RestController):
         """
         # http://127.0.0.1:8080/admin/order/160/tasks/estimate_form
         parts = request.url.split('/')
-        index = parts.index("tasks")
-        self.order_uid = int(parts[index - 1])
+        order_index = parts.index("order")
+        tasks_index = parts.index("tasks")
+        uid_list = parts[order_index + 1:tasks_index]
+        self.order_uid = int(uid_list[0]) if uid_list else None
 
     @expose('intranet.templates.pointage.order.tasks.estimate_form')
-    def estimate_form(self, closed=False, max_count=64):
+    def estimate_form(self, closed=False, max_count=64, tz_offset=0):
         # In case of error, values are form values => need to convert
         if closed in ("", "true", "false"):
             closed = closed == "true" if closed else None
         max_count = int(max_count) if max_count else 64  # default value
+        tz_offset = int(tz_offset) if tz_offset else 0
         form_errors = pylons.tmpl_context.form_errors  # @UndefinedVariable
         return dict(order_uid=self.order_uid,
                     closed=closed,
                     max_count=max_count,
+                    tz_offset=tz_offset,
                     form_errors=form_errors)
 
     @validate({'closed': StringBool(),
-               'max_count': Int(min=32, max=128, not_empty=True)},
+               'max_count': Int(min=32, max=128, not_empty=True),
+               'tz_offset': Int(not_empty=True)},
               error_handler=estimate_form)
     @expose()
-    def estimate_tasks(self, closed=True, max_count=64):
-        LOG.debug("estimate_tasks: closed={closed!r}, max_count={max_count!r}".format(**locals()))
+    def estimate_tasks(self, closed=True, max_count=64, tz_offset=0):
+        LOG.debug("estimate_tasks: "
+                  "closed={closed!r},"
+                  "max_count={max_count!r},"
+                  "tz_offset={tz_offset!r}".format(**locals()))
         self.order_accessor.estimate_duration(self.order_uid, closed=closed, max_count=max_count)
-        redirect('./')
+        redirect('./', tz_offset=tz_offset)
 
+    @expose('json')
+    def get_one(self, uid, **kwargs):
+        task = self.order_phase_accessor.get_order_phase(uid)
+        return dict(task=task, **kwargs)
+
+    # noinspection PyUnusedLocal
     @expose('intranet.templates.pointage.order.tasks.get_all')
-    def get_all(self, **kwargs):
+    def get_all(self, tz_offset="0", **kwargs):
+        tz_delta = datetime.timedelta(minutes=int(tz_offset))
+        start_date_utc = datetime.datetime.now() + tz_delta
+        active_employees = self.employee_accessor.get_active_employees(start_date_utc)
         order = self.order_accessor.get_order(self.order_uid)
         title_fmt = u"Liste des tâches de la commande {order_ref}"
         return dict(title=title_fmt.format(order_ref=order.order_ref),
-                    order=order)
+                    order=order, active_employees=active_employees)
 
-    # @expose('intranet.templates.pointage.order.tasks')
-    # def get_all(self, **kwargs):
-    #     """
-    #     Get the tasks of the given order.
-    #     """
-    #     accessor = OrderAccessor()
-    #     order = accessor.get_order(self.order_uid)
-    #
-    #     # -- Search order of the same project category
-    #     same_cat = Order.project_cat == order.project_cat
-    #
-    #     # Not too old: 1/2 year, one year, two years, all records
-    #     for days in (182, 365, 730, None):
-    #         if days:
-    #             start_date = order.creation_date - datetime.timedelta(days=days)
-    #             not_too_old = Order.creation_date > start_date
-    #             order_filter = and_(same_cat, not_too_old)
-    #         else:
-    #             order_filter = same_cat
-    #         sample_list = accessor.get_order_list(order_filter)
-    #         if len(sample_list) > 30:
-    #             break
-    #
-    #     # -- Prepare a list of tasks
-    #     task_list = []
-    #
-    #     # noinspection PyPep8Naming
-    #     Task = collections.namedtuple("Task", "display_name description position "
-    #                                           "done_duration remain_duration total_duration min_duration max_duration")
-    #
-    #     for order_phase in order.order_phase_list:
-    #         assert isinstance(order_phase, OrderPhase)
-    #
-    #         # find the orders which phase duration is not null
-    #         key = (order_phase.position, order_phase.label)
-    #         duration_list = [x.statistics[key] for x in sample_list
-    #                          if x.statistics[key] != 0]
-    #
-    #         done_duration = order.statistics[key]
-    #         if len(duration_list):
-    #             total_duration = max(done_duration, float(sum(duration_list)) / len(duration_list))
-    #             remain_duration = total_duration - done_duration
-    #             min_duration = min(duration_list)
-    #             max_duration = max(duration_list)
-    #         else:
-    #             total_duration = done_duration or None
-    #             remain_duration = total_duration - done_duration if total_duration else None
-    #             min_duration = None
-    #             max_duration = None
-    #
-    #         round4 = lambda x: None if x is None else int(x * 4) / 4.0
-    #         task = Task(display_name=order_phase.label,
-    #                     description=u"",
-    #                     position=order_phase.position,
-    #                     done_duration=round4(done_duration),
-    #                     remain_duration=round4(remain_duration),
-    #                     total_duration=round4(total_duration),
-    #                     min_duration=round4(min_duration),
-    #                     max_duration=round4(max_duration))
-    #         task_list.append(task)
-    #     task_list.sort(key=lambda x: x.position)
-    #     return dict(order=order, task_list=task_list, sample_count=len(sample_list))
+    @expose('intranet.templates.pointage.order.tasks.edit')
+    def edit(self, uid, tz_offset="0", **attrs):
+        tz_delta = datetime.timedelta(minutes=int(tz_offset))
+        start_date_utc = datetime.datetime.now() + tz_delta
+        active_employees = self.employee_accessor.get_active_employees(start_date_utc)
+        task = self.order_phase_accessor.get_order_phase(uid)
+        values = dict(label=task.label,
+                      description=task.description,
+                      estimated_duration=task.estimated_duration,
+                      remain_duration=task.remain_duration,
+                      task_status=task.task_status)
+        values.update(attrs)
+        form_errors = pylons.tmpl_context.form_errors
+        return dict(task=task, active_employees=active_employees, form_errors=form_errors, values=values)
+
+    # noinspection PyUnusedLocal
+    @validate({'uid': Int(not_empty=True),
+               'tz_offset': Int(not_empty=True),
+               'label': UnicodeString(not_empty=True),
+               'description': UnicodeString(if_empty=u""),
+               'estimated_duration': Number(if_empty=0),
+               'remain_duration': Number(if_empty=0),
+               'task_status': OneOf(ALL_TASK_STATUS, not_empty=True)},
+              error_handler=edit)
+    @expose()
+    def put(self, uid,
+            tz_offset,
+            label,
+            description,
+            estimated_duration,
+            remain_duration,
+            task_status,
+            **kwargs):
+        u"""
+        PUT /admin/order/index.html
+
+        Arguments are:
+
+        - label = "Commercialisation / Étude"
+        - description = "Commercialisation / Étude"
+        - estimated_duration = 2.25
+        - remain_duration = 2.25
+        - task_status = "PENDING"
+
+        :param uid: OrderPhase UID
+        :param tz_offset: Timezone offset from UTC in minutes (tz_offset = utc_date - local_date).
+        :param label: the order phase label (required)
+        :param description: the order phase description (more a task description)
+        :param estimated_duration: Estimated duration (calculated).
+        :param remain_duration: Remain duration
+        :param task_status: Task status: "PENDING", "IN_PROGRESS", "DONE".
+        :param kwargs: extra parameters (not used).
+        """
+        attrs = dict(label=label,
+                     description=description,
+                     estimated_duration=estimated_duration,
+                     remain_duration=remain_duration,
+                     task_status=task_status)
+        LOG.debug("put: attrs={attrs!r}".format(**locals()))
+        try:
+            self.order_phase_accessor.update_order_phase(uid, **attrs)
+        except sqlalchemy.exc.IntegrityError as exc:
+            LOG.warning(u"Trouble", exc_info=True)
+            form_errors = pylons.tmpl_context.form_errors
+            form_errors["exc"] = exc.message
+            redirect('./{uid}/edit'.format(uid=uid), tz_offset=tz_offset, **attrs)
+        else:
+            redirect('./{uid}/edit'.format(uid=uid), tz_offset=tz_offset)
 
 
 class OrderController(RestController):
@@ -161,6 +189,7 @@ class OrderController(RestController):
         self.main_menu = main_menu
         self.order_accessor = OrderAccessor()
 
+    # noinspection PyMethodMayBeStatic
     def _get_cat_dict(self):
         """
         :return: order categories grouped by category's group.
@@ -180,6 +209,9 @@ class OrderController(RestController):
     def index(self, uid=None, keyword=None):
         """
         Display the index page.
+
+        :param uid: Order UID
+        :param keyword: Search keyword.
         """
         return dict(main_menu=self.main_menu, uid=uid, keyword=keyword)
 
@@ -202,6 +234,7 @@ class OrderController(RestController):
         cat_label_dict = {order_cat.cat_name: order_cat.label
                           for order_cat in order_cat_list}
         # populate the lazy loaded order_phase_list for json result:
+        # noinspection PyUnusedLocal
         __ = order.order_phase_list
 
         return dict(order=order,
@@ -357,14 +390,14 @@ class OrderController(RestController):
                     missing_order_cat_label=self.MISSING_ORDER_CAT_LABEL,
                     form_errors=form_errors)
 
+    # noinspection PyUnusedLocal
     @validate({'order_ref': NotEmpty(),
                'project_cat': NotEmpty(),
                'creation_date': IsoDateConverter(not_empty=True),
                'close_date': IsoDateConverter(not_empty=False)},
               error_handler=edit)
     @expose()
-    def put(self, uid, order_ref, project_cat, creation_date, close_date,
-            **kw):
+    def put(self, uid, order_ref, project_cat, creation_date, close_date, **kw):
         """
         Update an existing record.
 
