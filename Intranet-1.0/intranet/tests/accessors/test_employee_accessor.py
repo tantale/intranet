@@ -91,7 +91,7 @@ class TestCalendarAccessor(unittest.TestCase):
         self.assertEqual(len(calendar_list), 1)
 
     def test_get_available_intervals(self):
-        today = datetime.date.today()
+        today = datetime.date(2016, 2, 13)  # Saturday
 
         employee_accessor = EmployeeAccessor(self.session)
         self.accessor.insert_employee(employee_name="Employee",

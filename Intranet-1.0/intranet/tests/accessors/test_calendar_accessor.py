@@ -228,7 +228,7 @@ class TestCalendarAccessor(unittest.TestCase):
         calendar_accessor = CalendarAccessor(self.session)
         calendar_list = calendar_accessor.get_calendar_list()
         calendar = calendar_list[0]
-        today = datetime.date.today()
+        today = datetime.date(2016, 2, 13)  # Saturday
 
         # I have some meeting today
         accessor = PlanningEventAccessor(self.session)
