@@ -275,8 +275,16 @@ import datetime
 			});
 
 			var ajaxFormProp = {
+				beforeSubmit: function(arr, $form, options) {
+					$("body").css("cursor", "progress");
+					return true;
+				},
+				error: function(responseText, statusText, xhr) {
+					$("body").css("cursor", "default");
+					$('#confirm_dialog_content').html('<p><span class="error">Échec de connexion au serveur</span></p>');
+				},
 				success: function(responseText, statusText, xhr) {
-					console.log("search for '<span class=\"error\">' tag...");
+					$("body").css("cursor", "default");
 					var error = $('<div/>').append(responseText).find('span.error');
 					if (error.length) {
 						$('#confirm_dialog_content').html(responseText);
