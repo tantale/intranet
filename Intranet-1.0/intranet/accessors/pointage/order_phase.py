@@ -5,7 +5,7 @@
 """
 import transaction
 
-from intranet.accessors import BasicAccessor, LOG
+from intranet.accessors import BasicAccessor
 from intranet.accessors.pointage.order import OrderAccessor
 from intranet.model.pointage.order_phase import OrderPhase
 
@@ -16,20 +16,15 @@ class OrderPhaseAccessor(BasicAccessor):
         self.order_accessor = OrderAccessor(session)
 
     def get_order(self, order_uid):
-        LOG.debug("get_order: {order_uid!r}".format(order_uid=order_uid))
         return self.order_accessor.get_order(order_uid)
 
     def get_order_phase(self, uid):
-        LOG.debug("get_order_phase: {uid!r}".format(uid=uid))
         return super(OrderPhaseAccessor, self)._get_record(uid)
 
     def get_order_phase_list(self, filter_cond=None, order_by_cond=None):
-        LOG.debug("get_order_phase_list")
         return super(OrderPhaseAccessor, self)._get_record_list(filter_cond, order_by_cond)
 
     def insert_order_phase(self, order_uid, **kwargs):
-        LOG.debug("insert_order_phase: {order_uid!r}"
-                  .format(order_uid=order_uid))
         with transaction.manager:
             order = self.get_order(order_uid)
             # -- calc the new position to place this phase at the end of the list
@@ -40,9 +35,7 @@ class OrderPhaseAccessor(BasicAccessor):
         return order_phase
 
     def update_order_phase(self, uid, **kwargs):
-        LOG.debug("update_order_phase: {uid!r}".format(uid=uid))
         return super(OrderPhaseAccessor, self)._update_record(uid, **kwargs)
 
     def delete_order_phase(self, uid):
-        LOG.debug("delete_order_phase: {uid!r}".format(uid=uid))
         return super(OrderPhaseAccessor, self)._delete_record(uid)
