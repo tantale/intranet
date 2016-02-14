@@ -83,7 +83,6 @@ class TestOrderAccessor(unittest.TestCase):
                         cal_event = CalEvent(event_start, event_end, comment=u"")
                         cal_event.employee = random.choice(employees)
                         cal_event.order_phase = order_phase
-                        # print(cal_event)
                         self.session.add(cal_event)
             transaction.commit()
         except:
@@ -96,7 +95,7 @@ class TestOrderAccessor(unittest.TestCase):
                                          creation_date=datetime.date(2016, 1, 21),
                                          close_date=None)
 
-        print("Estimate OrderPhase duration...")
+        LOG.info("Estimate OrderPhase duration...")
         new_order = self.order_accessor.get_order_list(Order.order_ref == "NewOrder")[0]
 
         order_uid = new_order.uid
@@ -104,4 +103,4 @@ class TestOrderAccessor(unittest.TestCase):
 
         new_order = self.order_accessor.get_order(order_uid)
         for order_phase in new_order.order_phase_list:
-            print("{label}: {duration}".format(label=order_phase.label, duration=order_phase.estimated_duration))
+            LOG.info("{label}: {duration}".format(label=order_phase.label, duration=order_phase.estimated_duration))

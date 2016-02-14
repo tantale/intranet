@@ -54,7 +54,8 @@ class OrderAccessor(BasicAccessor):
                           project_cat=new_project_cat,
                           creation_date=new_creation_date)
         new_order_phase_list = [OrderPhase(position=phase.position,
-                                           label=phase.label)
+                                           label=phase.label,
+                                           description=phase.description)
                                 for phase in actual_order.order_phase_list]
         new_order.order_phase_list.extend(new_order_phase_list)
         with transaction.manager:

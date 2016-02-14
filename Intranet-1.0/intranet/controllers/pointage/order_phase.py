@@ -49,6 +49,8 @@ class OrderPhaseController(RestController):
         GET /pointage/order_phase/?order_uid
 
         :param order_uid: Current order's UID
+        :param editable: ``True`` if the list is editable.
+        :param selectable: ``True``is the list is selectable.
         """
         asbool = lambda obj: str(obj).lower() in ('true', 'yes', 'on', 'y', 't', '1')  # @IgnorePep8
         editable = asbool(editable)
@@ -126,7 +128,7 @@ class OrderPhaseController(RestController):
 
         kw = {'pk': u'unused',
               'name': u'order_phase_label_2',
-              'value': u'Salut'}
+              'value': u'Hello'}
         """
         if LOG.isEnabledFor(logging.INFO):
             LOG.info(u"edit_in_place: {args!r}".format(args=kw))
@@ -135,6 +137,7 @@ class OrderPhaseController(RestController):
         accessor = OrderPhaseAccessor()
         return accessor.edit_label_in_place(uid, label)
 
+    # noinspection PyUnusedLocal
     @validate({'label': NotEmpty()}, error_handler=edit)
     @expose()
     def put(self, order_uid, uid, label, **kw):
@@ -144,7 +147,7 @@ class OrderPhaseController(RestController):
         POST /pointage/order_phase/1?_method=PUT
         PUT /pointage/order_phase/1
 
-        :param order_uid: Current order's UID
+        :param order_uid: Current order's UID (not used)
 
         :param uid: UID of the OrderPhase to update
 
@@ -189,6 +192,9 @@ class OrderPhaseController(RestController):
     def reorder(self, uids, delim=u'|'):
         """
         Re-order a list of phases.
+
+        :param uids: String representation of a UID list.
+        :param delim: UID delimiter.
         """
         msg_fmt = u"reorder: uids='{uids}', delim='{delim}'"
         LOG.info(msg_fmt.format(uids=uids, delim=delim))

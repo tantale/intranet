@@ -32,7 +32,7 @@ class TestOrder(ModelTest):
                  creation_date=datetime.date(2013, 8, 10),
                  close_date=datetime.date(2013, 9, 11))
 
-    label_list = ["first", "second", "third", "last"]
+    label_list = [u"first", u"second", u"third", u"last"]
 
     def setUp(self):
         super(TestOrder, self).setUp()
@@ -99,7 +99,7 @@ class TestOrder(ModelTest):
         try:
             self.obj = DBSession.query(model.Order).one()
             last_position = self.obj.order_phase_list[-1].position
-            order_phase = model.OrderPhase(last_position + 1, "New phase")
+            order_phase = model.OrderPhase(last_position + 1, u"New phase")
             self.obj.order_phase_list.append(order_phase)
             LOG.info("-- dirty: " + repr(DBSession.dirty))
             LOG.info("-- new: " + repr(DBSession.new))

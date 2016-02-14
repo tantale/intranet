@@ -30,7 +30,11 @@ class OrderPhaseAccessor(BasicAccessor):
             # -- calc the new position to place this phase at the end of the list
             order_phase_list = order.order_phase_list
             last_position = max(record.position for record in order_phase_list) if order_phase_list else 0
-            order_phase = OrderPhase(last_position + 1, kwargs['label'])
+            label = kwargs.pop("label")
+            order_phase = OrderPhase(last_position + 1, label)
+            # -- set extra attributes, like 'description'
+            for key, value in kwargs.iteritems():
+                setattr(order_phase, key, value)
             order.order_phase_list.append(order_phase)
         return order_phase
 

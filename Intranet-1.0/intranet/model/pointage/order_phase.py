@@ -27,6 +27,9 @@ class OrderPhase(DeclarativeBase):
     position = Column(Integer, nullable=False)
     label = Column(String(length=50), nullable=False)
 
+    # -- New 'description' field for order planning (since: 2.2.0)
+    description = Column(String(length=200), nullable=True)
+
     # -- Relationship(s)
     order = relationship('Order', back_populates="order_phase_list")
     cal_event_list = relationship('CalEvent',
@@ -43,7 +46,7 @@ class OrderPhase(DeclarativeBase):
                                     back_populates="order_phase",
                                     cascade='all,delete-orphan')
 
-    def __init__(self, position, label):
+    def __init__(self, position, label, description=None):
         """
         Initialize a phase for the given order.
 
@@ -54,6 +57,7 @@ class OrderPhase(DeclarativeBase):
         """
         self.position = position
         self.label = label
+        self.description = description
         self.estimated_duration = None
         self.remain_duration = None
         self.task_status = STATUS_PENDING
@@ -63,6 +67,7 @@ class OrderPhase(DeclarativeBase):
                     "order.uid={self.order_uid!r}, "
                     "position={self.position!r}, "
                     "label={self.label!r}, "
+                    "description={self.description!r}, "
                     "estimated_duration={self.estimated_duration!r}, "
                     "remain_duration={self.remain_duration!r}, "
                     "task_status={self.task_status!r})")
@@ -100,11 +105,3 @@ class OrderPhase(DeclarativeBase):
 
     def get_unassigned_employees(self, active_employees):
         return frozenset(active_employees) - self.assigned_employees
-
-    @property
-    def description(self):
-        return u""
-
-    @description.setter
-    def description(self, value):
-        pass
