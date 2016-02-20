@@ -16,17 +16,17 @@ obj_estimated_duration = values.get("estimated_duration") or task.estimated_dura
 obj_remain_duration = values.get("remain_duration") or task.remain_duration
 obj_task_status = values.get("task_status") or task.task_status
 %>
-<form id="${task_form_id}"
+<form id="${task_form_id}" class="ui-widget"
       action="${tg.url('./{task.order_uid}/tasks/{task.uid}'.format(task=task))}"
       method="post" enctype="multipart/form-data">
     <input type="hidden" name="_method" value="PUT"/>
     %for hidden_name, hidden_value in hidden.iteritems():
     <input type="hidden" name="${hidden_name}" value="${hidden_value}">
     %endfor
-    <fieldset class="task ui-widget">
+    <fieldset class="task ui-widget-content">
         <div class="row-xs">
             <div class="col-xs-12">
-                <input class="label" name="label" value="${obj_label}"
+                <input class="change label" name="label" value="${obj_label}"
                        title="Nom de la tâche"/>
                 %if 'label'in form_errors:
                 <p><span class="error">${form_errors['label']}</span></p>
@@ -36,7 +36,7 @@ obj_task_status = values.get("task_status") or task.task_status
         <div class="row-xs">
             <div class="col-xs-6">
                 <label class="description" for="${task_form_id}__description">Description&nbsp;:</label>
-                        <textarea class="description" id="${task_form_id}__description" name="description"
+                        <textarea class="change description" id="${task_form_id}__description" name="description"
                                   title="Description de la tâche à effectuer"
                                   rows="3" cols="30">${obj_description}</textarea>
                 %if 'description'in form_errors:
@@ -59,36 +59,42 @@ obj_task_status = values.get("task_status") or task.task_status
                         <th>Charge&nbsp;:</th>
                         <td>
                             %if obj_task_status in [STATUS_PENDING]:
-                            <input name="estimated_duration" type="number" value="${obj_estimated_duration}"
+                            <input class="change"
+                                   name="estimated_duration" type="number" value="${obj_estimated_duration}"
                                    min="0" max="999" step=".25" placeholder="(heures)"
                                    title="Durée estimée à partir des statistiques"/>
                             %else:
-                            <input name="estimated_duration" type="number" value="${obj_estimated_duration}"
+                            <input class="change"
+                                   name="estimated_duration" type="number" value="${obj_estimated_duration}"
                                    readonly="readonly"
                                    min="0" max="999" step=".25" placeholder="(heures)"
                                    title="Durée estimée à partir des statistiques"/>
                             %endif
                         </td>
                         <td>
-                            <input name="tracked_duration" type="number" value="${task.tracked_duration}"
+                            <input class="change"
+                                   name="tracked_duration" type="number" value="${task.tracked_duration}"
                                    readonly="readonly"
                                    min="0" max="999" step=".25" placeholder="(heures)"
                                    title="Durée déjà effectuée et pointée"/>
                         </td>
                         <td>
                             %if obj_task_status in [STATUS_PENDING, STATUS_IN_PROGRESS]:
-                            <input name="remain_duration" type="number" value="${obj_remain_duration}"
+                            <input class="change"
+                                   name="remain_duration" type="number" value="${obj_remain_duration}"
                                    min="0" max="999" step=".25" placeholder="(heures)"
                                    title="Durée restante estimée"/>
                             %else:
-                            <input name="remain_duration" type="number" value="${obj_remain_duration}"
+                            <input class="change"
+                                   name="remain_duration" type="number" value="${obj_remain_duration}"
                                    disabled="disabled"
                                    min="0" max="999" step=".25" placeholder="(heures)"
                                    title="Durée restante estimée"/>
                             %endif
                         </td>
                         <td>
-                            <input name="total_duration" type="number" value="$task.total_duration}"
+                            <input class="change"
+                                   name="total_duration" type="number" value="$task.total_duration}"
                                    disabled="disabled"
                                    min="0" max="999" step=".25" placeholder="(heures)"
                                    title="Durée totale : effectuée + restante"/>
@@ -100,11 +106,13 @@ obj_task_status = values.get("task_status") or task.task_status
                             <div class="task_status">
                                 %for status_info in task.all_status_info:
                                 %if status_info['checked']:
-                                <label title="${status_info['description']}"><input type="radio" checked="checked"
+                                <label title="${status_info['description']}"><input class="change"
+                                                                                    type="radio" checked="checked"
                                                                                     value="${status_info['value']}"
                                                                                     name="task_status"/>${status_info['label']}</label>
                                 %else:
-                                <label title="${status_info['description']}"><input type="radio"
+                                <label title="${status_info['description']}"><input class="change"
+                                                                                    type="radio"
                                                                                     value="${status_info['value']}"
                                                                                     name="task_status"/>${status_info['label']}</label>
                                 %endif
@@ -157,7 +165,9 @@ obj_task_status = values.get("task_status") or task.task_status
                     <button type="submit" class="refresh_button"
                             title="Met à jour la planificarion de la tâche">Réévaluaer</button>
                     <button type="submit" class="update_button"
-                            title="Modifier la tâche">Appliquer</button>
+                            title="Appliquer les modification sur la tâche">Appliquer</button>
+                    <button type="reset" class="cancel_button"
+                            title="Annuler les modifications">Annuler</button>
                 </nav>
             </div>
         </div>
@@ -171,16 +181,35 @@ obj_task_status = values.get("task_status") or task.task_status
         $('#${task_form_id}').ajaxForm({target: '#${task_id}'});
         $("#${task_form_id} .refresh_button").button({
             text : true,
+            disabled: false,
             icons : {
                 primary : "ui-icon-refresh"
             }
         });
         $("#${task_form_id} .update_button").button({
             text : true,
+            disabled: true,
             icons : {
                 primary : "ui-icon-pencil"
             }
         });
+        $("#${task_form_id} .cancel_button").button({
+            text : true,
+            disabled: true,
+            icons : {
+                primary : "ui-icon-cancel"
+            }
+        })
+        .click(function(event){
+            $(this).closest('form').get(0).reset();
+            $("#${task_form_id} .update_button").button("disable");
+            $("#${task_form_id} .cancel_button").button("disable");
+        });
+        $('#${task_form_id} .change').change(function(){
+            $("#${task_form_id} .update_button").button("enable");
+            $("#${task_form_id} .cancel_button").button("enable");
+        });
+
     });
 </script>
 </%def>
