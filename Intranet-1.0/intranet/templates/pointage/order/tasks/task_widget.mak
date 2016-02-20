@@ -87,7 +87,7 @@ obj_task_status = values.get("task_status") or task.task_status
                             %else:
                             <input class="change"
                                    name="remain_duration" type="number" value="${obj_remain_duration}"
-                                   disabled="disabled"
+                                   readonly="readonly"
                                    min="0" max="999" step=".25" placeholder="(heures)"
                                    title="Durée restante estimée"/>
                             %endif
@@ -95,7 +95,7 @@ obj_task_status = values.get("task_status") or task.task_status
                         <td>
                             <input class="change"
                                    name="total_duration" type="number" value="$task.total_duration}"
-                                   disabled="disabled"
+                                   readonly="readonly"
                                    min="0" max="999" step=".25" placeholder="(heures)"
                                    title="Durée totale : effectuée + restante"/>
                         </td>
