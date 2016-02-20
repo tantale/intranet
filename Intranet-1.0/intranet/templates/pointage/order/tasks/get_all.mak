@@ -49,7 +49,7 @@
     <div class="container-fluid">
         %for task in order.order_phase_list:
         <% task_id = "task_{0}".format(task.uid) %>
-        <article id="${task_id}" class="ui-state-default">${task_form(task, active_employees)}</article>
+        <article id="${task_id}" class="ui-state-default">${task_form(task, active_employees, **hidden)}</article>
         %endfor
     </div>
     <footer class="ui-state-default">

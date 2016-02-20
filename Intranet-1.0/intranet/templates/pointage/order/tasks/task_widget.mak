@@ -2,7 +2,7 @@
 ## Task form widget
 ## ================
 ##
-<%def name="task_form(task, active_employees, form_errors=None, values=None)">
+<%def name="task_form(task, active_employees, form_errors=None, values=None, **hidden)">
 <%
 STATUS_PENDING, STATUS_IN_PROGRESS, STATUS_DONE = "PENDING", "IN_PROGRESS", "DONE"
 task_id = "task_{0}".format(task.uid)
@@ -20,7 +20,9 @@ obj_task_status = values.get("task_status") or task.task_status
       action="${tg.url('./{task.order_uid}/tasks/{task.uid}'.format(task=task))}"
       method="post" enctype="multipart/form-data">
     <input type="hidden" name="_method" value="PUT"/>
-    <input type="hidden" name="tz_offset">
+    %for hidden_name, hidden_value in hidden.iteritems():
+    <input type="hidden" name="${hidden_name}" value="${hidden_value}">
+    %endfor
     <fieldset class="task ui-widget">
         <div class="row-xs">
             <div class="col-xs-12">

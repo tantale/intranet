@@ -29,9 +29,9 @@
         </span></p>
     </header>
     <form id="estimate_form" action="./${order.uid}/tasks/estimate_tasks" method="get">
-        <p style="display: none; visibility: hidden;">
-            <input name="tz_offset" type="hidden" value="${tz_offset}">
-        </p>
+        %for hidden_name, hidden_value in hidden.iteritems():
+        <input type="hidden" name="${hidden_name}" value="${hidden_value}">
+        %endfor
         <p><label class="tooltip"><b>Nombre de commandes à analyser&nbsp;:</b>
             <input name="max_count" type="number" min="32" max="128" value="${max_count}"></label>
             <span class="ui-icon ui-icon-help"></span></p>

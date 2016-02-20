@@ -72,7 +72,7 @@ class TasksController(RestController):
                     order=order,
                     closed=closed,
                     max_count=max_count,
-                    tz_offset=tz_offset,
+                    hidden=dict(tz_offset=tz_offset),
                     form_errors=form_errors)
 
     @validate({'closed': StringBool(),
@@ -86,7 +86,10 @@ class TasksController(RestController):
                   "max_count={max_count!r},"
                   "tz_offset={tz_offset!r}".format(**locals()))
         self.order_accessor.estimate_duration(self.order_uid, closed=closed, max_count=max_count)
-        redirect('./', tz_offset=tz_offset)
+        redirect('./',
+                 closed=closed,
+                 max_count=max_count,
+                 tz_offset=tz_offset, )
 
     @expose('json')
     def get_one(self, uid, **kwargs):
@@ -95,17 +98,24 @@ class TasksController(RestController):
 
     # noinspection PyUnusedLocal
     @expose('intranet.templates.pointage.order.tasks.get_all')
-    def get_all(self, tz_offset="0", **kwargs):
+    def get_all(self, **hidden):
+        tz_offset = hidden["tz_offset"]
         tz_delta = datetime.timedelta(minutes=int(tz_offset))
         start_date_utc = datetime.datetime.now() + tz_delta
         active_employees = self.employee_accessor.get_active_employees(start_date_utc)
         order = self.order_accessor.get_order(self.order_uid)
         title_fmt = u"Liste des tâches de la commande {order_ref}"
         return dict(title=title_fmt.format(order_ref=order.order_ref),
-                    order=order, active_employees=active_employees)
+                    order=order,
+                    active_employees=active_employees,
+                    hidden=hidden)
 
     @expose('intranet.templates.pointage.order.tasks.edit')
-    def edit(self, uid, tz_offset="0", **attrs):
+    def edit(self, uid, **kwargs):
+        keys = 'label', 'description', 'estimated_duration', 'remain_duration', 'task_status'
+        attrs = {k: v for k, v in kwargs.iteritems() if k in keys}
+        hidden = {k: v for k, v in kwargs.iteritems() if k not in keys}
+        tz_offset = hidden["tz_offset"]
         tz_delta = datetime.timedelta(minutes=int(tz_offset))
         start_date_utc = datetime.datetime.now() + tz_delta
         active_employees = self.employee_accessor.get_active_employees(start_date_utc)
@@ -117,26 +127,30 @@ class TasksController(RestController):
                       task_status=task.task_status)
         values.update(attrs)
         form_errors = pylons.tmpl_context.form_errors
-        return dict(task=task, active_employees=active_employees, form_errors=form_errors, values=values)
+        return dict(task=task,
+                    active_employees=active_employees,
+                    form_errors=form_errors,
+                    values=values,
+                    hidden=hidden)
 
     # noinspection PyUnusedLocal
     @validate({'uid': Int(not_empty=True),
-               'tz_offset': Int(not_empty=True),
                'label': UnicodeString(not_empty=True),
                'description': UnicodeString(if_empty=u""),
                'estimated_duration': Number(if_empty=0),
+               'tracked_duration': Number(if_empty=0),
                'remain_duration': Number(if_empty=0),
                'task_status': OneOf(ALL_TASK_STATUS, not_empty=True)},
               error_handler=edit)
     @expose()
     def put(self, uid,
-            tz_offset,
             label,
             description,
             estimated_duration,
+            tracked_duration,
             remain_duration,
             task_status,
-            **kwargs):
+            **hidden):
         u"""
         PUT /admin/order/index.html
 
@@ -149,13 +163,13 @@ class TasksController(RestController):
         - task_status = "PENDING"
 
         :param uid: OrderPhase UID
-        :param tz_offset: Timezone offset from UTC in minutes (tz_offset = utc_date - local_date).
         :param label: the order phase label (required)
         :param description: the order phase description (more a task description)
         :param estimated_duration: Estimated duration (calculated).
         :param remain_duration: Remain duration
+        :param tracked_duration: Tacked duration (not used)
         :param task_status: Task status: "PENDING", "IN_PROGRESS", "DONE".
-        :param kwargs: extra parameters (not used).
+        :param hidden: extra parameters (not used).
         """
         attrs = dict(label=label,
                      description=description,
@@ -169,9 +183,10 @@ class TasksController(RestController):
             LOG.warning(u"Trouble", exc_info=True)
             form_errors = pylons.tmpl_context.form_errors
             form_errors["exc"] = exc.message
-            redirect('./{uid}/edit'.format(uid=uid), tz_offset=tz_offset, **attrs)
+            attrs.update(hidden)
+            redirect('./{uid}/edit'.format(uid=uid), **attrs)
         else:
-            redirect('./{uid}/edit'.format(uid=uid), tz_offset=tz_offset)
+            redirect('./{uid}/edit'.format(uid=uid), **hidden)
 
 
 class OrderController(RestController):
