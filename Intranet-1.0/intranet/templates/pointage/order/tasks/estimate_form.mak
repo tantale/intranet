@@ -1,3 +1,7 @@
+<%!
+    def heures(text):
+        return unicode(text).replace(".", ",")
+%>
 <section id="estimate_section">
     <style scoped="scoped" type="text/css">
         #estimate_section label b {
@@ -7,17 +11,14 @@
         span.help-content {
             font-size: .9em;
         }
-        .ui-tooltip {
-            max-width: 400px;
-        }
         .ui-icon-help {
             display: inline-block;
         }
     </style>
     <header>
-        <h3 class="tooltip">Estimation de la durée des tâches pour ${order_uid}
+        <h3 class="tooltip">${title}
             <span class="ui-icon ui-icon-help"></span></h3>
-        <p class="help" hidden="hidden"><span class="help-content">Ce calcultateur permet d’estimer
+        <p class="ui-tooltip" hidden="hidden"><span class="ui-tooltip-content">Ce calcultateur permet d’estimer
             la durée des phases de production en analysant
             les heures déjà déjà pointées sur les commandes les plus récentes.
             L’analyse statistique est réalisée sur un échantillon représentatif
@@ -27,14 +28,14 @@
             (très grosses / très petites commandes).
         </span></p>
     </header>
-    <form id="estimate_form" action="./${order_uid}/tasks/estimate_tasks" method="get">
+    <form id="estimate_form" action="./${order.uid}/tasks/estimate_tasks" method="get">
         <p style="display: none; visibility: hidden;">
             <input name="tz_offset" type="hidden" value="${tz_offset}">
         </p>
         <p><label class="tooltip"><b>Nombre de commandes à analyser&nbsp;:</b>
             <input name="max_count" type="number" min="32" max="128" value="${max_count}"></label>
             <span class="ui-icon ui-icon-help"></span></p>
-        <p class="help" hidden="hidden"><span class="help-content">Ce paramètre permet de definir la taille de l’échantillon
+        <p class="ui-tooltip" hidden="hidden"><span class="ui-tooltip-content">Ce paramètre permet de definir la taille de l’échantillon
             pour les calculs statistiques. Plus l’échantillon est grand et plus le calcul sera précis.
             Cependant, le temps de calcul peut s’avérer plus long avec un grand nombre de commandes.</span></p>
         %if 'max_count'in form_errors:
@@ -58,7 +59,7 @@
                 %endfor
             </select></label>
             <span class="ui-icon ui-icon-help"></span></p>
-        <p class="help" hidden="hidden"><span class="help-content">L’estimation sera plus pertinente si l’on sélectionne
+        <p class="ui-tooltip" hidden="hidden"><span class="ui-tooltip-content">L’estimation sera plus pertinente si l’on sélectionne
             <mark>Clôturée</mark>, mais on peut aussi sélectionner <mark>Indifférent</mark>
             pour analyser l’intégralité des commandes&nbsp;;
             Si l’on sélectionne <mark>Non clôturée</mark>, on analysera les commandes en cours de pointage,
@@ -67,6 +68,12 @@
         <p><span class="error">${form_errors['closed']}</span></p>
         %endif
     </form>
+    <div>
+        %if order.estimated_duration:
+        <p class="ui-state-highlight">Cette commande est estimées à ${order.estimated_duration|heures}&#160;heures.
+            Voulez-vous vraiment recalculer la durée de toutes les tâches&#160;?</p>
+        %endif
+    </div>
     <script type="application/javascript" defer="defer">
     $(function() {
         $("#estimate_section").tooltip({
@@ -78,9 +85,9 @@
             content: function () {
                 var element = $(this).parent();
                 if (element.is("h3")) {
-                    return element.next(".help").html();
+                    return element.next(".ui-tooltip").html();
                 } else if (element.is("p")) {
-                    return element.next(".help").html();
+                    return element.next(".ui-tooltip").html();
                 } else {
                     return element.attr("title");
                 }

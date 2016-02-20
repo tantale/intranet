@@ -66,7 +66,10 @@ class TasksController(RestController):
         max_count = int(max_count) if max_count else 64  # default value
         tz_offset = int(tz_offset) if tz_offset else 0
         form_errors = pylons.tmpl_context.form_errors  # @UndefinedVariable
-        return dict(order_uid=self.order_uid,
+        order = self.order_accessor.get_order(self.order_uid)
+        title_fmt = u'Estimation de la durée des tâches pour "{order_ref}"'
+        return dict(title=title_fmt.format(order_ref=order.order_ref),
+                    order=order,
                     closed=closed,
                     max_count=max_count,
                     tz_offset=tz_offset,
