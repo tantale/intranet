@@ -51,24 +51,22 @@ class TasksController(RestController):
         """
         order/uid/tasks
         """
-        # http://127.0.0.1:8080/admin/order/160/tasks/estimate_form
         parts = request.url.split('/')
         order_index = parts.index("order")
         tasks_index = parts.index("tasks")
         uid_list = parts[order_index + 1:tasks_index]
         self.order_uid = int(uid_list[0]) if uid_list else None
 
-    @expose('intranet.templates.pointage.order.tasks.estimate_form')
-    def estimate_form(self, closed=False, max_count=64, tz_offset=0):
+    @expose('intranet.templates.pointage.order.tasks.estimate_all_form')
+    def estimate_all_form(self, closed=False, max_count=64, tz_offset=0):
         # In case of error, values are form values => need to convert
-        if closed in ("", "true", "false"):
-            closed = closed == "true" if closed else None
+        closed = {"": None, "true": True, "false": False}.get(closed)
         max_count = int(max_count) if max_count else 64  # default value
         tz_offset = int(tz_offset) if tz_offset else 0
         form_errors = pylons.tmpl_context.form_errors  # @UndefinedVariable
         order = self.order_accessor.get_order(self.order_uid)
-        title_fmt = u'Estimation de la durée des tâches pour "{order_ref}"'
-        return dict(title=title_fmt.format(order_ref=order.order_ref),
+        title_fmt = u'Estimation de la durée des tâches pour "{order.order_ref}"'
+        return dict(title=title_fmt.format(order=order),
                     order=order,
                     closed=closed,
                     max_count=max_count,
@@ -78,15 +76,49 @@ class TasksController(RestController):
     @validate({'closed': StringBool(),
                'max_count': Int(min=32, max=128, not_empty=True),
                'tz_offset': Int(not_empty=True)},
-              error_handler=estimate_form)
+              error_handler=estimate_all_form)
     @expose()
-    def estimate_tasks(self, closed=True, max_count=64, tz_offset=0):
-        LOG.debug("estimate_tasks: "
+    def estimate_all(self, closed=True, max_count=64, tz_offset=0):
+        LOG.debug("estimate_all: "
                   "closed={closed!r},"
                   "max_count={max_count!r},"
                   "tz_offset={tz_offset!r}".format(**locals()))
         self.order_accessor.estimate_duration(self.order_uid, closed=closed, max_count=max_count)
         redirect('./',
+                 closed=closed,
+                 max_count=max_count,
+                 tz_offset=tz_offset, )
+
+    @expose('intranet.templates.pointage.order.tasks.estimate_one_form')
+    def estimate_one_form(self, uid, closed=False, max_count=64, tz_offset=0):
+        # In case of error, values are form values => need to convert
+        closed = {"": None, "true": True, "false": False}.get(closed)
+        max_count = int(max_count) if max_count else 64  # default value
+        tz_offset = int(tz_offset) if tz_offset else 0
+        form_errors = pylons.tmpl_context.form_errors  # @UndefinedVariable
+        task = self.order_phase_accessor.get_order_phase(uid)
+        title_fmt = u'Estimation de la durée de la tâche "{task.label}"'
+        return dict(title=title_fmt.format(task=task),
+                    task=task,
+                    closed=closed,
+                    max_count=max_count,
+                    hidden=dict(tz_offset=tz_offset),
+                    form_errors=form_errors)
+
+    @validate({'uid': Int(min=1, not_empty=True),
+               'closed': StringBool(),
+               'max_count': Int(min=32, max=128, not_empty=True),
+               'tz_offset': Int(not_empty=True)},
+              error_handler=estimate_one_form)
+    @expose()
+    def estimate_one(self, uid, closed=True, max_count=64, tz_offset=0):
+        LOG.debug("estimate_one: "
+                  "closed={closed!r},"
+                  "max_count={max_count!r},"
+                  "tz_offset={tz_offset!r}".format(**locals()))
+        self.order_accessor.estimate_duration(self.order_uid, order_phase_uid=uid, closed=closed, max_count=max_count)
+        redirect('./edit',
+                 uid=uid,
                  closed=closed,
                  max_count=max_count,
                  tz_offset=tz_offset, )

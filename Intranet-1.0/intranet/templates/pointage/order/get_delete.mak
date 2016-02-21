@@ -28,7 +28,7 @@
 		},
 		title: ${confirm_dialog_title_json|n},
 		close: function() {
-			console.log("empty #order_content...");
+			// console.log("empty #order_content...");
 			$('#order_content').empty();
 		}
 	}).dialog("open");

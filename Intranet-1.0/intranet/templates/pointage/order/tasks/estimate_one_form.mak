@@ -19,7 +19,7 @@
         <h3 class="tooltip">${title}
             <span class="ui-icon ui-icon-help"></span></h3>
         <p class="ui-tooltip" hidden="hidden"><span class="ui-tooltip-content">Ce calcultateur permet d’estimer
-            la durée des phases de production en analysant
+            la durée de la tâche de production en analysant
             les heures déjà déjà pointées sur les commandes les plus récentes.
             L’analyse statistique est réalisée sur un échantillon représentatif
             sélectionné selon les paramètres ci-dessous (<mark>nombre de commandes</mark> et
@@ -28,15 +28,17 @@
             (très grosses / très petites commandes).
         </span></p>
     </header>
-    <form id="estimate_form" action="./${order.uid}/tasks/estimate_tasks" method="get">
+    <form id="estimate_one_form" action="./${task.order_uid}/tasks/estimate_one" method="get">
+        <input type="hidden" name="uid" value="${task.uid}">
         %for hidden_name, hidden_value in hidden.iteritems():
         <input type="hidden" name="${hidden_name}" value="${hidden_value}">
         %endfor
         <p><label class="tooltip"><b>Nombre de commandes à analyser&nbsp;:</b>
             <input name="max_count" type="number" min="32" max="128" value="${max_count}"></label>
             <span class="ui-icon ui-icon-help"></span></p>
-        <p class="ui-tooltip" hidden="hidden"><span class="ui-tooltip-content">Ce paramètre permet de definir la taille de l’échantillon
-            pour les calculs statistiques. Plus l’échantillon est grand et plus le calcul sera précis.
+        <p class="ui-tooltip" hidden="hidden"><span class="ui-tooltip-content">Ce paramètre permet de definir
+            la taille de l’échantillon pour les calculs statistiques.
+            Plus l’échantillon est grand et plus le calcul sera précis.
             Cependant, le temps de calcul peut s’avérer plus long avec un grand nombre de commandes.</span></p>
         %if 'max_count'in form_errors:
         <p><span class="error">${form_errors['max_count']}</span></p>
@@ -59,8 +61,8 @@
                 %endfor
             </select></label>
             <span class="ui-icon ui-icon-help"></span></p>
-        <p class="ui-tooltip" hidden="hidden"><span class="ui-tooltip-content">L’estimation sera plus pertinente si l’on sélectionne
-            <mark>Clôturée</mark>, mais on peut aussi sélectionner <mark>Indifférent</mark>
+        <p class="ui-tooltip" hidden="hidden"><span class="ui-tooltip-content">L’estimation sera plus pertinente
+            si l’on sélectionne <mark>Clôturée</mark>, mais on peut aussi sélectionner <mark>Indifférent</mark>
             pour analyser l’intégralité des commandes&nbsp;;
             Si l’on sélectionne <mark>Non clôturée</mark>, on analysera les commandes en cours de pointage,
             la mesure sera moins pertinente, car certaines phases ne seront pas terminées.</span></p>
@@ -69,9 +71,9 @@
         %endif
     </form>
     <div>
-        %if order.estimated_duration:
-        <p class="ui-state-highlight">Cette commande est estimées à ${order.estimated_duration|heures}&#160;heures.
-            Voulez-vous vraiment recalculer la durée de toutes les tâches&#160;?</p>
+        %if task.estimated_duration:
+        <p class="ui-state-highlight">Cette tâche est estimées à ${task.estimated_duration|heures}&#160;heures.
+            Voulez-vous vraiment recalculer la durée de cette tâche&#160;?</p>
         %endif
     </div>
     <script type="application/javascript" defer="defer">
@@ -97,7 +99,7 @@
 
         var today = new Date();
         var tz_offset = today.getTimezoneOffset();
-        $('#estimate_form').find('input[name=tz_offset]').val(tz_offset);
+        $('#estimate_one_form').find('input[name=tz_offset]').val(tz_offset);
     });
     </script>
 </section>

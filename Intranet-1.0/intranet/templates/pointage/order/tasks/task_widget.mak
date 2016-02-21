@@ -162,7 +162,7 @@ obj_task_status = values.get("task_status") or task.task_status
         <div class="row-xs">
             <div class="col-xs-12">
                 <nav>
-                    <button type="submit" class="refresh_button"
+                    <button type="button" class="refresh_button"
                             title="Met à jour la planificarion de la tâche">Réévaluaer</button>
                     <button type="submit" class="update_button"
                             title="Appliquer les modification sur la tâche">Appliquer</button>
@@ -178,22 +178,105 @@ obj_task_status = values.get("task_status") or task.task_status
         var today = new Date();
         var tz_offset = today.getTimezoneOffset();
         $('#${task_form_id}').find('input[name=tz_offset]').val(tz_offset);
+
         $('#${task_form_id}').ajaxForm({target: '#${task_id}'});
-        $("#${task_form_id} .refresh_button").button({
+
+        $('#${task_form_id} .refresh_button').button({
             text : true,
             disabled: false,
             icons : {
                 primary : "ui-icon-refresh"
             }
+        })
+        .click(function(event){
+            var error = function(response, status, xhr) {
+                var msg =
+                    "Désolé mais il y a eu une erreur. " +
+                    "status : " + xhr.status + ", " +
+                    "message : \"" + xhr.statusText + "\".";
+                $('#confirm_dialog_content').html(msg);
+                $('#confirm_dialog').dialog({
+                    width: 500,
+                    height: 200,
+                    buttons: {
+                        "Annuler": function() {
+                            $(this).dialog("close");
+                        }
+                    },
+                    title: "Réévaluer la tâche \"${task.label}\""
+                }).dialog("open");
+            }
+
+            var success = function(response, status, xhr) {
+                var thisDialog = $('#confirm_dialog').dialog({
+                    width: 500,
+                    height: 300,
+                    buttons: {
+                        "Réévaluer" : function() {
+                            $('#estimate_one_form').submit();
+                        },
+                        "Annuler": function() {
+                            $(this).dialog("close");
+                        }
+                    },
+                    title: "Réévaluer la tâche \"${task.label}\""
+                });
+
+                var ajaxFormProp = {
+                    beforeSubmit: function(arr, form, options) {
+                        $("body").css("cursor", "progress");
+                        return true;
+                    },
+                    error: function(responseText, statusText, xhr) {
+                        $("body").css("cursor", "default");
+                        $('#confirm_dialog_content').html('<p><span class="error">Échec de connexion au serveur</span></p>');
+                    },
+                    success: function(responseText, statusText, xhr) {
+                        $("body").css("cursor", "default");
+                        var error = $('<div/>').append(responseText).find('span.error');
+                        if (error.length) {
+                            $('#confirm_dialog_content').html(responseText);
+                            $('#estimate_one_form').ajaxForm(ajaxFormProp);
+                        } else {
+                            $('#${task_id}').html(responseText);
+                            thisDialog.dialog("close");
+                        }
+                    }
+                };
+
+                $('#estimate_one_form').ajaxForm(ajaxFormProp);
+
+                thisDialog.dialog("open");
+            }
+
+            var url = "${tg.url('./{task.order_uid}/tasks/estimate_one_form'.format(task=task))|n}";
+
+            $('#confirm_dialog_content').load(url,
+                {
+                    uid: ${task.uid},
+                    closed: $('#${task_form_id} input[name=closed]').val(),
+                    max_count: $('#${task_form_id} input[name=max_count]').val(),
+                    tz_offset: $('#${task_form_id} input[name=tz_offset]').val()
+                },
+                function(response, status, xhr){
+                    if (status == "error") {
+                        error(response, status, xhr);
+                    } else {
+                        success(response, status, xhr);
+                    }
+                });
+
         });
-        $("#${task_form_id} .update_button").button({
+
+        $('#${task_form_id} .update_button').button({
             text : true,
             disabled: true,
             icons : {
                 primary : "ui-icon-pencil"
             }
         });
-        $("#${task_form_id} .cancel_button").button({
+
+        $('#${task_form_id} .cancel_button').button({
             text : true,
             disabled: true,
             icons : {
@@ -202,12 +285,13 @@ obj_task_status = values.get("task_status") or task.task_status
         })
         .click(function(event){
             $(this).closest('form').get(0).reset();
-            $("#${task_form_id} .update_button").button("disable");
-            $("#${task_form_id} .cancel_button").button("disable");
+            $('#${task_form_id} .update_button').button("disable");
+            $('#${task_form_id} .cancel_button').button("disable");
         });
+
         $('#${task_form_id} .change').change(function(){
-            $("#${task_form_id} .update_button").button("enable");
-            $("#${task_form_id} .cancel_button").button("enable");
+            $('#${task_form_id} .update_button').button("enable");
+            $('#${task_form_id} .cancel_button').button("enable");
         });
 
     });

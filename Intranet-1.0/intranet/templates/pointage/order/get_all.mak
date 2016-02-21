@@ -24,16 +24,16 @@
 		var div_phases = header.next();
 		if (div_phases.find('em.loading').length != 0) {
 			var url = header.children('a').attr('href');
-			console.log('Load phases list from URL: ' + url);
+			// console.log('Load phases list from URL: ' + url);
 			div_phases.load(url);
 		} else {
-			console.log('Phases list is already loaded.');
+			// console.log('Phases list is already loaded.');
 		}
 	}
 	function load_order_content(header) {
 		var uid = header.attr('id').split('_')[1];
 		var url = './' + uid + '/edit';
-		console.log('Load order content from URL: ' + url);
+		// console.log('Load order content from URL: ' + url);
 		$('#order_content').load(url);
 		$('#order_get_all input[name=uid]').val(uid);
 		$('#order_get_all input[name=order_ref]').val("");
@@ -56,7 +56,7 @@
 			if (ui.newHeader.attr('id')) {
 				load_phase_list(ui.newHeader);
 			} else if (ui.oldHeader.attr('id')) {
-				console.log("empty #order_content...");
+				// console.log("empty #order_content...");
 				$('#order_content').empty();
 			}
 		},

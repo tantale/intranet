@@ -3,11 +3,15 @@
 :date: 2013-09-07
 :author: Laurent LAPORTE <sandlol2009@gmail.com>
 """
+import collections
+
 import transaction
 
 from intranet.accessors import BasicAccessor
 from intranet.accessors.pointage.order import OrderAccessor
-from intranet.model.pointage.order_phase import OrderPhase
+from intranet.accessors.statistics import gauss_filter, mean
+from intranet.model import Order
+from intranet.model.pointage.order_phase import OrderPhase, STATUS_PENDING
 
 
 class OrderPhaseAccessor(BasicAccessor):

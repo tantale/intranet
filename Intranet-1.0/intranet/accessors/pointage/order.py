@@ -87,10 +87,29 @@ class OrderAccessor(BasicAccessor):
     def delete_order(self, uid):
         return super(OrderAccessor, self)._delete_record(uid)
 
-    def estimate_duration(self, uid, closed=True, max_count=64):
+    def estimate_duration(self, order_uid, order_phase_uid=None, closed=True, max_count=64):
+        """
+        Estimate the duration of ALL tasks of a given order.
+
+        :type order_uid: int | unicode
+        :param order_uid: UID of the order.
+        :type order_phase_uid: int | unicode | None
+        :param order_phase_uid: UID of the order phase to update, or ``None`` to update all phases.
+        :type closed: bool | None
+        :param closed: 3-state close flag:
+
+            * ``True``:  select only closed orders,
+            * ``False``: select only opened orders,
+            * ``None``:  select all orders (opened and closed).
+
+        :type max_count: int
+        :param max_count: Limit the number of orders used for statistics.
+        """
+        order_uid = int(order_uid) if order_uid else None
+        order_phase_uid = int(order_phase_uid) if order_phase_uid else None
         with transaction.manager:
-            new_order = self.get_order(uid)
-            criterion = [Order.project_cat == new_order.project_cat]
+            curr_order = self.get_order(order_uid)
+            criterion = [Order.project_cat == curr_order.project_cat]
             if closed is True:
                 # noinspection PyComparisonWithNone
                 criterion.append(Order.close_date != None)
@@ -104,14 +123,15 @@ class OrderAccessor(BasicAccessor):
             tracked_time_by_label = collections.defaultdict(list)
             for order in order_list:
                 statistics = order.statistics
-                for order_phase in new_order.order_phase_list:
+                for order_phase in curr_order.order_phase_list:
                     tracked_time = statistics.get(order_phase.label, 0)
                     if tracked_time:
                         tracked_time_by_label[order_phase].append(tracked_time)
 
             for order_phase, tracked_times in tracked_time_by_label.iteritems():
-                pertinents = gauss_filter(tracked_times) if tracked_times else []
-                mean_time = int(mean(pertinents) * 4) / 4.0 if pertinents else 0
-                order_phase.estimated_duration = mean_time or None
-                order_phase.remain_duration = max(0, order_phase.estimated_duration - order_phase.tracked_duration)
-                order_phase.task_status = STATUS_PENDING
+                if order_phase_uid is None or order_phase.uid == order_phase_uid:
+                    pertinents = gauss_filter(tracked_times) if tracked_times else []
+                    mean_time = int(mean(pertinents) * 4) / 4.0 if pertinents else 0
+                    order_phase.estimated_duration = mean_time or None
+                    order_phase.remain_duration = max(0, order_phase.estimated_duration - order_phase.tracked_duration)
+                    order_phase.task_status = STATUS_PENDING
