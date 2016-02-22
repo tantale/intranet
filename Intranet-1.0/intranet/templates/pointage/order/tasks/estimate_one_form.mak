@@ -20,7 +20,7 @@
             <span class="ui-icon ui-icon-help"></span></h3>
         <p class="ui-tooltip" hidden="hidden"><span class="ui-tooltip-content">Ce calcultateur permet d’estimer
             la durée de la tâche de production en analysant
-            les heures déjà déjà pointées sur les commandes les plus récentes.
+            les heures déjà pointées sur les commandes les plus récentes.
             L’analyse statistique est réalisée sur un échantillon représentatif
             sélectionné selon les paramètres ci-dessous (<mark>nombre de commandes</mark> et
             <mark>statut de la commande</mark>).
@@ -72,7 +72,7 @@
     </form>
     <div>
         %if task.estimated_duration:
-        <p class="ui-state-highlight">Cette tâche est estimées à ${task.estimated_duration|heures}&#160;heures.
+        <p class="ui-state-highlight">Cette tâche est estimée à ${task.estimated_duration|heures}&#160;heures.
             Voulez-vous vraiment recalculer la durée de cette tâche&#160;?</p>
         %endif
     </div>

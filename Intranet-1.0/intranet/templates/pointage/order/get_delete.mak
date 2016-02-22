@@ -44,10 +44,10 @@
 		<p>Cette commande ne comporte aucune phase (ni aucun pointage).</p>
 	%elif order_phase_count == 1:
 		<p>Cette commande comporte 1 phase qui sera supprimée.</p>
-		<p><strong>NB :</strong> tous les pointages associées à cette commande seront supprimés.</p>
+		<p><strong>NB :</strong> tous les pointages associés à cette commande seront supprimés.</p>
 	%else:
 		<p>Cette commande comporte ${order_phase_count} phase(s) qui seront supprimées.</p>
-		<p><strong>NB :</strong> tous les pointages associées à cette commande seront supprimés.</p>
+		<p><strong>NB :</strong> tous les pointages associés à cette commande seront supprimés.</p>
 	%endif
 	<input type="hidden" name="_method" value="DELETE" />
 </form>
@@ -91,7 +91,7 @@ confirm_dialog_title_json = json.dumps(confirm_dialog_title)
 				input_order_ref.val("");
 				order_get_all.submit();
 			} else {
-				console.log("ERROR: don't update the order list.");
+				// console.log("ERROR: don't update the order list.");
 			}
 		}
 	});

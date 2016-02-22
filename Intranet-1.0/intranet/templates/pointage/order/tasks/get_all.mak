@@ -59,10 +59,10 @@
                     <div class="col-xs-12">
                         <nav>
                             <button type="submit" class="refresh_button"
-                                    title="Met à jour la planificarion des tâches">Planifier tout
+                                    title="Met à jour la planification des tâches">Planifier tout
                             </button>
                             <button type="submit" class="calendar_button"
-                                    title="Afficher le planning des événements">Afficher le planning
+                                    title="Affiche le planning des événements">Afficher le planning
                             </button>
                         </nav>
                     </div>

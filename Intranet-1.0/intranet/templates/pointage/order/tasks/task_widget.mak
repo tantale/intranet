@@ -148,7 +148,7 @@ obj_task_status = values.get("task_status") or task.task_status
                             <select name="employee_uid" class="add ui-widget ui-state-default ui-corner-all"
                                     form="${new_affectation_form_id}"
                                     title="Liste des employés">
-                                <option value="" selected="selected">&lt;Ajoutez&gt;</option>
+                                <option value="" selected="selected">&lt;Ajouter&gt;</option>
                                 %for employee in task.get_unassigned_employees(active_employees):
                                 <option value="${employee.uid}">${employee.employee_name}</option>
                                 %endfor
@@ -163,9 +163,9 @@ obj_task_status = values.get("task_status") or task.task_status
             <div class="col-xs-12">
                 <nav>
                     <button type="button" class="refresh_button"
-                            title="Met à jour la planificarion de la tâche">Réévaluaer</button>
+                            title="Met à jour la planification de la tâche">Réévaluer</button>
                     <button type="submit" class="update_button"
-                            title="Appliquer les modification sur la tâche">Appliquer</button>
+                            title="Appliquer les modifications sur la tâche">Appliquer</button>
                     <button type="reset" class="cancel_button"
                             title="Annuler les modifications">Annuler</button>
                 </nav>
@@ -191,9 +191,9 @@ obj_task_status = values.get("task_status") or task.task_status
         .click(function(event){
             var error = function(response, status, xhr) {
                 var msg =
-                    "Désolé mais il y a eu une erreur. " +
-                    "status : " + xhr.status + ", " +
-                    "message : \"" + xhr.statusText + "\".";
+                    "<p><span class="error">Désolé mais il y a eu une erreur. " +
+                    "statut : " + xhr.status + ", " +
+                    "message : \"" + xhr.statusText + "\".</span></p>";
                 $('#confirm_dialog_content').html(msg);
                 $('#confirm_dialog').dialog({
                     width: 500,

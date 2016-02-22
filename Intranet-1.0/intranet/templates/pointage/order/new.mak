@@ -78,7 +78,7 @@
 				<td><p><label for="order_create__creation_date">Date de création :</label>
 						<input id="order_create__creation_date" type="date" name="creation_date"
 							value="${values.get('creation_date')}"
-							title="Date de création de la commande (requis)" />
+							title="Date de création de la commande (requise)" />
 					%if 'creation_date' in form_errors:
 					<span class="error">${form_errors['creation_date']}</span>
 					%endif
@@ -89,7 +89,7 @@
 				<td><p><label for="order_create__close_date">Date de clôture :</label>
 						<input id="order_create__close_date" type="date" name="close_date"
 							value="${values.get('close_date')}"
-							title="Date de clôture de la commande (optionnel)" />
+							title="Date de clôture de la commande (optionnelle)" />
 					%if 'close_date' in form_errors:
 					<span class="error">${form_errors['close_date']}</span>
 					%endif

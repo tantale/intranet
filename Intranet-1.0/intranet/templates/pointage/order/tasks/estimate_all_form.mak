@@ -20,11 +20,11 @@
             <span class="ui-icon ui-icon-help"></span></h3>
         <p class="ui-tooltip" hidden="hidden"><span class="ui-tooltip-content">Ce calcultateur permet d’estimer
             la durée des phases de production en analysant
-            les heures déjà déjà pointées sur les commandes les plus récentes.
+            les heures déjà pointées sur les commandes les plus récentes.
             L’analyse statistique est réalisée sur un échantillon représentatif
             sélectionné selon les paramètres ci-dessous (<mark>nombre de commandes</mark> et
             <mark>statut de la commande</mark>).
-            Les estimations de durées sont calculée en excluant les cas extrêmes
+            Les estimations de durées sont calculées en excluant les cas extrêmes
             (très grosses / très petites commandes).
         </span></p>
     </header>
@@ -70,7 +70,7 @@
     </form>
     <div>
         %if order.estimated_duration:
-        <p class="ui-state-highlight">Cette commande est estimées à ${order.estimated_duration|heures}&#160;heures.
+        <p class="ui-state-highlight">Cette commande est estimée à ${order.estimated_duration|heures}&#160;heures.
             Voulez-vous vraiment recalculer la durée de toutes les tâches&#160;?</p>
         %endif
     </div>

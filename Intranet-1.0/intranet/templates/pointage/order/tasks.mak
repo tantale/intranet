@@ -152,7 +152,7 @@
                             </span>
                             <span class="badge ui-widget ui-state-default ui-corner-all">
                                 <select name="employee_uid" class="add ui-widget ui-state-default ui-corner-all" title="Liste des employés">
-                                    <option value="" selected="selected">&lt;Ajoutez&gt;</option>
+                                    <option value="" selected="selected">&lt;Ajouter&gt;</option>
                                     <option value="6">CLERET Thierry</option>
                                     <option value="4">LANOE Fabrice</option>
                                     <option value="1">LEVEQUE Bernard</option>
@@ -169,7 +169,7 @@
                     <div class="row-xs">
                         <div class="col-xs-12">
                             <nav>
-                                <button type="submit" class="refresh_button" title="Met à jour la planificarion de la tâche">Planifier</button>
+                                <button type="submit" class="refresh_button" title="Met à jour la planification de la tâche">Planifier</button>
                                 <button type="submit" class="update_button" title="Modifier la tâche">Modifier</button>
                                 <button type="submit" class="delete_button" title="Supprimer la tâche">Supprimer</button>
                             </nav>
@@ -288,7 +288,7 @@
                             </span>
                             <span class="badge ui-widget ui-state-default ui-corner-all">
                                 <select name="employee_uid" class="add ui-widget ui-state-default ui-corner-all" title="Liste des employés">
-                                    <option value="" selected="selected">&lt;Ajoutez&gt;</option>
+                                    <option value="" selected="selected">&lt;Ajouter&gt;</option>
                                     <option value="6">CLERET Thierry</option>
                                     <option value="4">LANOE Fabrice</option>
                                     <option value="1">LEVEQUE Bernard</option>
@@ -305,7 +305,7 @@
                     <div class="row-xs">
                         <div class="col-xs-12">
                             <nav>
-                                <button type="submit" class="refresh_button" title="Met à jour la planificarion de la tâche">Planifier</button>
+                                <button type="submit" class="refresh_button" title="Met à jour la planification de la tâche">Planifier</button>
                                 <button type="submit" class="update_button" title="Modifier la tâche">Modifier</button>
                                 <button type="submit" class="delete_button" title="Supprimer la tâche">Supprimer</button>
                             </nav>
@@ -395,7 +395,7 @@
                             <div class="assignment">
                             <span class="badge ui-widget ui-state-default ui-corner-all">
                                 <select name="employee_uid" class="add ui-widget ui-state-default ui-corner-all" title="Liste des employés">
-                                    <option value="" selected="selected">&lt;Ajoutez&gt;</option>
+                                    <option value="" selected="selected">&lt;Ajouter&gt;</option>
                                     <option value="6">CLERET Thierry</option>
                                     <option value="4">LANOE Fabrice</option>
                                     <option value="1">LEVEQUE Bernard</option>
@@ -412,7 +412,7 @@
                     <div class="row-xs">
                         <div class="col-xs-12">
                             <nav>
-                                <button type="submit" class="refresh_button" title="Met à jour la planificarion de la tâche">Planifier</button>
+                                <button type="submit" class="refresh_button" title="Met à jour la planification de la tâche">Planifier</button>
                                 <button type="submit" class="update_button"  title="Modifier la tâche">Modifier</button>
                                 <button type="submit" class="delete_button"  title="Supprimer la tâche">Supprimer</button>
                             </nav>
@@ -429,7 +429,7 @@
                 <div class="row-xs">
                     <div class="col-xs-12">
                         <nav>
-                            <button type="submit" class="refresh_button" title="Met à jour la planificarion des tâches">Planifier tout</button>
+                            <button type="submit" class="refresh_button" title="Met à jour la planification des tâches">Planifier tout</button>
                             <button type="submit" class="new_button" title="Ajouter une nouvelle tâche">Ajouter une tâche</button>
                             <button type="submit" class="calendar_button" title="Afficher le planning des événements">Afficher le planning</button>
                         </nav>

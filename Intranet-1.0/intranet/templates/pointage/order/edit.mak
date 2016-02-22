@@ -84,7 +84,7 @@ import datetime
 				<td><p><label for="order_update__creation_date">Date de création :</label>
 						<input id="order_update__creation_date" type="date" name="creation_date"
 							value="${values.get('creation_date')}"
-							title="Date de création de la commande (requis)" />
+							title="Date de création de la commande (requise)" />
 					%if 'creation_date' in form_errors:
 					<span class="error">${form_errors['creation_date']}</span>
 					%endif
@@ -95,7 +95,7 @@ import datetime
 				<td><p><label for="order_update__close_date">Date de clôture :</label>
 						<input id="order_update__close_date" type="date" name="close_date"
 							value="${values.get('close_date')}"
-							title="Date de clôture de la commande (optionnel)" />
+							title="Date de clôture de la commande (optionnelle)" />
 					%if 'close_date' in form_errors:
 					<span class="error">${form_errors['close_date']}</span>
 					%endif
@@ -140,7 +140,7 @@ import datetime
 	method="get">
 	<p>
 		<button id="order_chart_detail__display" type="submit" class="display_button"
-			title="Afficher les statistiques de pointages de la commande ${values.get('order_ref')}">Statistiques</button>
+			title="Afficher les statistiques de pointage de la commande ${values.get('order_ref')}">Statistiques</button>
 	</p>
 </form>
 <form id="order_estimate_all_form" class="inline_form"
