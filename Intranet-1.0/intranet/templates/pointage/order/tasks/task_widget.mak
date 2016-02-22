@@ -190,10 +190,9 @@ obj_task_status = values.get("task_status") or task.task_status
         })
         .click(function(event){
             var error = function(response, status, xhr) {
-                var msg =
-                    "<p><span class="error">Désolé mais il y a eu une erreur. " +
-                    "statut : " + xhr.status + ", " +
-                    "message : \"" + xhr.statusText + "\".</span></p>";
+                var msg = '<p><span class="error">Désolé mais il y a eu une erreur. ' +
+                'statut : ' + xhr.status + ', ' +
+                'message : "' + xhr.statusText + '".</span></p>';
                 $('#confirm_dialog_content').html(msg);
                 $('#confirm_dialog').dialog({
                     width: 500,
