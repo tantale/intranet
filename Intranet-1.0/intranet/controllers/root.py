@@ -6,7 +6,6 @@ from intranet.accessors.pointage.menu_item import MenuItemAccessor
 from intranet.controllers.admin import AdminController
 from intranet.controllers.error import ErrorController
 from intranet.controllers.pointage import PointageControoler
-from intranet.controllers.tools import ToolsController
 from intranet.lib.base import BaseController
 
 
@@ -38,7 +37,6 @@ class RootController(BaseController):
     error = ErrorController()
     admin = AdminController()
     pointage = PointageControoler()
-    tools = ToolsController()
 
     # noinspection PyMethodMayBeStatic
     def _before(self, *args, **kw):
