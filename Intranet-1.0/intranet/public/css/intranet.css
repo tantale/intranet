@@ -267,7 +267,7 @@ td.record-table-label {
  * Currently for Order task list...
  */
 .container-fluid {padding: 5px; width: 100%;}
-.row-xs {display: block; clear: left;}
+.row-xs {display: block; clear: left; overflow: hidden;}
 .col-xs-1  {display: inline-block; vertical-align: middle; min-width:   3em; width:   8.33%; float: left; padding: 5px;}
 .col-xs-2  {display: inline-block; vertical-align: middle; min-width:   7em; width:  16.66%; float: left; padding: 5px;}
 .col-xs-4  {display: inline-block; vertical-align: middle; min-width:  14em; width:  33.00%; float: left; padding: 5px;}

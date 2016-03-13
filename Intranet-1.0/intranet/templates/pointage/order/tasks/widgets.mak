@@ -1,3 +1,4 @@
+<%namespace file="intranet.templates.pointage.order.tasks.assignations.widgets" import="new_assignation_form, assignation_form"/>
 ##
 ## Task form widget
 ## ================
@@ -7,7 +8,7 @@
 STATUS_PENDING, STATUS_IN_PROGRESS, STATUS_DONE = "PENDING", "IN_PROGRESS", "DONE"
 task_id = "task_{0}".format(task.uid)
 task_form_id = "task_form_{0}".format(task.uid)
-new_affectation_form_id = "new_affectation_form_{0}".format(task.uid)
+new_assignation_form_id = "new_assignation_form_{0}".format(task.uid)
 form_errors = form_errors or dict()
 values = values or dict()
 obj_label = values.get("label") or task.label
@@ -132,34 +133,6 @@ obj_task_status = values.get("task_status") or task.task_status
         </div>
         %endif
         <div class="row-xs">
-            <div class="col-xs-2">
-                <label class="assignment">Affectation(s)&nbsp;:</label>
-            </div>
-            <div class="col-xs-10">
-                <div class="assignment">
-                    <%
-                    unassigned_employees = list(task.get_unassigned_employees(active_employees))
-                    unassigned_employees.sort(key=lambda e: e.employee_name)
-                    %>
-                    %if unassigned_employees:
-                    <div class="badge ui-widget ui-state-default ui-corner-all">
-                        <form id="${new_affectation_form_id}"
-                              action="#" method="post" enctype="multipart/form-data">
-                            <select name="employee_uid" class="add ui-widget ui-state-default ui-corner-all"
-                                    form="${new_affectation_form_id}"
-                                    title="Liste des employés">
-                                <option value="" selected="selected">&lt;Ajouter&gt;</option>
-                                %for employee in task.get_unassigned_employees(active_employees):
-                                <option value="${employee.uid}">${employee.employee_name}</option>
-                                %endfor
-                            </select>
-                        </form>
-                    </div>
-                    %endif
-                </div>
-            </div>
-        </div>
-        <div class="row-xs">
             <div class="col-xs-12">
                 <nav>
                     <button type="button" class="refresh_button"
@@ -173,6 +146,20 @@ obj_task_status = values.get("task_status") or task.task_status
         </div>
     </fieldset>
 </form>
+<div>
+    <div class="row-xs">
+        <div class="col-xs-2">
+            <label class="assignment">Affectation(s)&nbsp;:</label>
+        </div>
+        <div class="col-xs-10">
+            <div class="assignment">
+            %for assignation in task.assignation_list:
+            ${assignation_form(assignation, **hidden)}
+            %endfor
+            ${new_assignation_form(task, active_employees, **hidden)}</div>
+        </div>
+    </div>
+</div>
 <script type="application/javascript" defer="defer">
     $(function() {
         var today = new Date();
@@ -292,7 +279,6 @@ obj_task_status = values.get("task_status") or task.task_status
             $('#${task_form_id} .update_button').button("enable");
             $('#${task_form_id} .cancel_button').button("enable");
         });
-
     });
 </script>
 </%def>

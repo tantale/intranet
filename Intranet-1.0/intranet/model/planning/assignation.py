@@ -9,6 +9,10 @@ Author: Laurent LAPORTE <tantale.solutions@gmail.com>
 """
 from __future__ import unicode_literals
 
+import datetime
+
+from babel.dates import format_date
+from babel.numbers import format_percent
 from sqlalchemy.orm import relationship
 from sqlalchemy.schema import Column, CheckConstraint, ForeignKey, UniqueConstraint
 from sqlalchemy.types import Integer, DateTime, Float
@@ -53,4 +57,27 @@ class Assignation(DeclarativeBase):
 
     @property
     def total_duration(self):
-        return sum(pe.event_duration for pe in self.planning_event_list)
+        return sum(pe.event_duration for pe in self.planning_event_list) if self.planning_event_list else None
+
+    @property
+    def start_planning_date(self):
+        return min(pe.event_start for pe in self.planning_event_list) if self.planning_event_list else None
+
+    @property
+    def end_planning_date(self):
+        return max(pe.event_end for pe in self.planning_event_list) if self.planning_event_list else None
+
+    def get_assignation(self, tz_offset, locale='fr_FR'):
+        tz_delta = datetime.timedelta(minutes=int(tz_offset))
+        start_date = (self.start_date - tz_delta).date()
+        if self.end_date:
+            end_date = (self.end_date - tz_delta).date()
+            fmt = u'{employee.employee_name} assigné à {rate_percent} du {start_date} au {end_date}'
+            return fmt.format(employee=self.employee,
+                              rate_percent=format_percent(self.rate_percent / 100.0, locale=locale),
+                              start_date=format_date(start_date, format='short', locale=locale),
+                              end_date=format_date(end_date, format='short', locale=locale))
+        fmt = u'{employee.employee_name} assigné à {rate_percent} à partir du {start_date}'
+        return fmt.format(employee=self.employee,
+                          rate_percent=format_percent(self.rate_percent / 100.0, locale=locale),
+                          start_date=format_date(start_date, format='short', locale=locale))

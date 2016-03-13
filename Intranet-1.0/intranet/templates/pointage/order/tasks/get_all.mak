@@ -1,10 +1,11 @@
-<%namespace file="intranet.templates.pointage.order.tasks.task_widget" import="task_form"/>
+<%namespace file="intranet.templates.pointage.order.tasks.widgets" import="task_form"/>
 %if order and order.estimated_duration:
 <% tasks_id = "tasks_{0}".format(order.uid) %>
 <section id="${tasks_id}">
     <style type="text/css" scoped="scoped">
+        #${tasks_id} article      {display: block; margin: 10px 0 10px 0;}
         #${tasks_id} article nav  {float: right;}
-        #${tasks_id} footer nav {float: left;}
+        #${tasks_id} footer nav   {float: left;}
 
         #${tasks_id} fieldsets.task { border: none; }
 
@@ -40,7 +41,7 @@
         #${tasks_id} div.badge table.planning td    {padding: 0px;}
         #${tasks_id} div.badge input[type="number"]     {text-align: right; width:  4em;}
         #${tasks_id} div.badge input[type="date"]       {text-align: left;  width: 10em;}
-        #${tasks_id} div.badge select.add   {margin-top: 1.2em; width: 8em;}
+        #${tasks_id} div.badge select.add   {margin-top: .8em; width: 8em;}
     </style>
 
     <header>
