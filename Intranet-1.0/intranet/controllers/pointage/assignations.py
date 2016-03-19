@@ -45,6 +45,21 @@ class AssignationsController(RestController):
         uid_list = parts[tasks_index + 1:assignations_index]
         self.order_phase_uid = int(uid_list[0]) if uid_list else None
 
+    @expose('intranet.templates.pointage.order.tasks.assignations.get_all')
+    def get_all(self, **hidden):
+        """
+        Display all Assignations.
+        """
+        tz_offset = hidden["tz_offset"]
+        tz_delta = datetime.timedelta(minutes=int(tz_offset))
+        start_date_utc = datetime.datetime.now() + tz_delta
+        active_employees = self.employee_accessor.get_active_employees(start_date_utc)
+        task = self.order_phase_accessor.get_order_phase(self.order_phase_uid)
+        return dict(task=task,
+                    active_employees=active_employees,
+                    hidden=hidden)
+
+
     @expose('intranet.templates.pointage.order.tasks.assignations.new')
     def new(self, employee_uid, **kwargs):
         """

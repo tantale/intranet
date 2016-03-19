@@ -1,6 +1,17 @@
 ##
-## Task assignation widget
-## =======================
+## All assignations of a given task
+## ================================
+##
+<%def name="assignations(task, active_employees, **hidden)">
+%for assignation in task.assignation_list:
+${assignation_form(assignation, **hidden)}
+%endfor
+${new_assignation_form(task, active_employees, **hidden)}
+</%def>
+
+##
+## New Assignation form
+## ====================
 ##
 <%def name="new_assignation_form(task, active_employees, **hidden)">
 <%
@@ -37,6 +48,10 @@ unassigned_employees.sort(key=lambda e: e.employee_name)
 %endif
 </%def>
 
+##
+## Assignation form
+## ================
+##
 <%def name="assignation_form(assignation, **hidden)">
 <%
 assignation_id = "assignation_{0}".format(assignation.uid)
@@ -92,9 +107,14 @@ assignation_form_id = "assignation_form_{0}".format(assignation.uid)
             }
         });
     });
+
 </script>
 </%def>
 
+##
+## new/edit/delete Assignation form(s)
+## ===================================
+##
 <%def name="assignation_section(actions,
                                 title,
                                 question,
@@ -105,6 +125,13 @@ assignation_form_id = "assignation_form_{0}".format(assignation.uid)
                                 form_errors,
                                 values,
                                 **hidden)">
+<%
+assignations_id = "assignations_{0}".format(task.uid)
+if assignation:
+    action_url = tg.url('./{task.order_uid}/tasks/{task.uid}/assignations/{assignation.uid}/'.format(task=task, assignation=assignation))
+else:
+    action_url = tg.url('./{task.order_uid}/tasks/{task.uid}/assignations/'.format(task=task))
+%>
 <section id="assignation_section" title="${title}">
     <style scoped="scoped" type="text/css">
         #assignation_section label b {
@@ -121,12 +148,6 @@ assignation_form_id = "assignation_form_{0}".format(assignation.uid)
             display: inline-block;
         }
     </style>
-    <%
-    if assignation:
-        action_url = tg.url('./{task.order_uid}/tasks/{task.uid}/assignations/{assignation.uid}/'.format(task=task, assignation=assignation))
-    else:
-        action_url = tg.url('./{task.order_uid}/tasks/{task.uid}/assignations/'.format(task=task))
-    %>
     <form action="${action_url}" method="post" class="new_or_edit ui-widget">
         %if actions == "edit_or_delete":
         <input type="hidden" name="_method" value="PUT"/>
@@ -187,7 +208,7 @@ assignation_form_id = "assignation_form_{0}".format(assignation.uid)
         %endif
     </form>
     <form action="${action_url}" method="post" class="delete ui-helper-hidden">
-        <input type="hidden" name="_method" value="DELETE" />
+        <input type="hidden" name="_method" value="DELETE"/>
     </form>
     <script type="application/javascript" defer="defer">
     $(function() {
@@ -247,6 +268,8 @@ assignation_form_id = "assignation_form_{0}".format(assignation.uid)
                 if (error.length) {
                     $('#confirm_dialog_content').html(responseText);
                 } else {
+                    var url = "${tg.url('./{task.order_uid}/tasks/{task.uid}/assignations/'.format(task=task))|n}";
+                    $('#${assignations_id}').load(url, "tz_offset=" + ${hidden['tz_offset']|n});
                     thisDialog.dialog("close");
                 }
             }
