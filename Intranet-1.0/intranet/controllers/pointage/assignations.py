@@ -171,6 +171,7 @@ class AssignationsController(RestController):
                     error_message=error_message,
                     employee=employee,
                     task=task,
+                    assignation=assignation,
                     form_errors=form_errors,
                     values=values,
                     hidden=hidden)

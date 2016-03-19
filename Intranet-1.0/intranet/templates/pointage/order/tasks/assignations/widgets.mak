@@ -28,6 +28,7 @@ unassigned_employees.sort(key=lambda e: e.employee_name)
 </div>
 <script type="application/javascript" defer="defer">
     $(function() {
+        $('#${new_assignation_form_id}').ajaxForm({target: '#confirm_dialog_content'});
         $('#${new_assignation_form_id} select').change(function(){
             $(this).closest('form').submit();
         });
@@ -77,6 +78,7 @@ assignation_form_id = "assignation_form_{0}".format(assignation.uid)
 </div>
 <script type="application/javascript" defer="defer">
     $(function() {
+        $('#${assignation_form_id}').ajaxForm({target: '#confirm_dialog_content'});
         $("#${assignation_form_id} .edit_button_icon").button({
             text : false,
             icons : {
@@ -99,18 +101,18 @@ assignation_form_id = "assignation_form_{0}".format(assignation.uid)
                                 error_message,
                                 employee,
                                 task,
+                                assignation,
                                 form_errors,
                                 values,
                                 **hidden)">
-<script src="https://code.jquery.com/jquery-1.12.1.min.js"></script>
-<script src="https://code.jquery.com/ui/1.10.4/jquery-ui.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.form/3.51/jquery.form.min.js"></script>
-<link rel="stylesheet" href="https://code.jquery.com/ui/1.10.4/themes/le-frog/jquery-ui.css">
 <section id="assignation_section" title="${title}">
     <style scoped="scoped" type="text/css">
         #assignation_section label b {
             display: inline-block;
             width: 8em;
+        }
+        #assignation_section form p {
+            margin-bottom: .5em;
         }
         span.help-content {
             font-size: .9em;
@@ -119,7 +121,13 @@ assignation_form_id = "assignation_form_{0}".format(assignation.uid)
             display: inline-block;
         }
     </style>
-    <form action="./" method="post" class="new_or_edit ui-widget">
+    <%
+    if assignation:
+        action_url = tg.url('./{task.order_uid}/tasks/{task.uid}/assignations/{assignation.uid}/'.format(task=task, assignation=assignation))
+    else:
+        action_url = tg.url('./{task.order_uid}/tasks/{task.uid}/assignations/'.format(task=task))
+    %>
+    <form action="${action_url}" method="post" class="new_or_edit ui-widget">
         %if actions == "edit_or_delete":
         <input type="hidden" name="_method" value="PUT"/>
         %endif
@@ -178,36 +186,76 @@ assignation_form_id = "assignation_form_{0}".format(assignation.uid)
         <p>Aucune assignation</p>
         %endif
     </form>
-    <form action="./" method="post" class="delete ui-helper-hidden">
+    <form action="${action_url}" method="post" class="delete ui-helper-hidden">
         <input type="hidden" name="_method" value="DELETE" />
     </form>
     <script type="application/javascript" defer="defer">
     $(function() {
-        $("#assignation_section form.new_or_edit").ajaxForm({target: '#assignation_section'});;
-        $("#assignation_section form.delete").ajaxForm({target: '#assignation_section'});;
-
-        $("#assignation_section").dialog({
-            width: 600,
-            height: 400,
+%if actions == "new":
+        var thisDialog = $('#confirm_dialog').dialog({
+            width: 550,
+            height: 350,
             modal: true,
             buttons: {
-%if actions == "new":
                 "Ajouter": function() {
                     $("#assignation_section form.new_or_edit").submit();
                 },
+                "Annuler": function() {
+                    $(this).dialog("close");
+                }
+            },
+            title: "${title|n}"
+        });
 %elif actions == "edit_or_delete":
+        var thisDialog = $('#confirm_dialog').dialog({
+            width: 550,
+            height: 350,
+            modal: true,
+            buttons: {
                 "Modifier": function() {
                     $("#assignation_section form.new_or_edit").submit();
                 },
                 "Supprimer": function() {
                     $("#assignation_section form.delete").submit();
                 },
-%endif
                 "Annuler": function() {
                     $(this).dialog("close");
                 }
-            }
+            },
+            title: "${title|n}"
         });
+%endif
+
+        var ajaxFormProp = {
+            target: '#assignation_section',
+            beforeSubmit: function(arr, form, options) {
+                $("body").css("cursor", "progress");
+                return true;
+            },
+            error: function(responseText, statusText, xhr) {
+                var errorMsg = "Échec de connexion au serveur";
+                if (responseText != null && typeof responseText === 'object') {
+                    errorMsg += " : " + responseText.status + " \u2013 " + responseText.statusText;
+                }
+                $("body").css("cursor", "default");
+                $('#confirm_dialog_content').html('<p><span class="error">' + errorMsg + '</span></p>');
+                console.log(xhr);
+            },
+            success: function(responseText, statusText, xhr) {
+                $("body").css("cursor", "default");
+                var error = $('<div/>').append(responseText).find('span.error');
+                if (error.length) {
+                    $('#confirm_dialog_content').html(responseText);
+                } else {
+                    thisDialog.dialog("close");
+                }
+            }
+        };
+
+        $("#assignation_section form.new_or_edit").ajaxForm(ajaxFormProp);
+        $("#assignation_section form.delete").ajaxForm(ajaxFormProp);
+
+        thisDialog.dialog("open");
 
         $("#assignation_section").tooltip({
             track: true,

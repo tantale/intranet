@@ -5,6 +5,7 @@ ${assignation_section(actions="new",
                       error_message=error_message,
                       employee=employee,
                       task=task,
+                      assignation=None,
                       form_errors=form_errors,
                       values=values,
                       **hidden)}
