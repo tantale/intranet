@@ -151,15 +151,6 @@ import datetime
 			title="${_(u'Estimer les tâches de la commande {ref}').format(ref=values.get('order_ref'))}">${_(u"Estimer les tâches")}</button>
 	</p>
 </form>
-
-<form id="order_plan" class="inline_form"
-	action="${tg.url('./{uid}/tasks'.format(uid=values['uid']))}"
-	method="get">
-	<p>
-		<button id="order_plan__display" type="submit" class="display_button"
-			title="${_(u'Planifier la commande {ref}').format(ref=values.get('order_ref'))}">${_(u"Planifier")}</button>
-	</p>
-</form>
 </div>
 <div id="order_tasks"></div>
 
@@ -299,16 +290,6 @@ import datetime
 			thisDialog.dialog("open");
 		}
 	});
-	$('#order_plan .display_button').button({
-		text: true,
-		icons: {
-			primary : "ui-icon-calendar"
-		}
-	});
-	$('#order_plan').ajaxForm({
-		target: '#order_tasks'
-	});
-
 	var today = new Date();
 	var tz_offset = today.getTimezoneOffset();
 	var order_tasks_url = "${tg.url('./{uid}/tasks/'.format(uid=values['uid']))|n}" + "?&tz_offset=" + tz_offset;
