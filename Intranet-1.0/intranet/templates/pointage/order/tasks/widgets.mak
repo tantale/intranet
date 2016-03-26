@@ -95,7 +95,7 @@ obj_task_status = values.get("task_status") or task.task_status
                         </td>
                         <td>
                             <input class="change"
-                                   name="total_duration" type="number" value="$task.total_duration}"
+                                   name="total_duration" type="number" value="${task.total_duration}"
                                    readonly="readonly"
                                    min="0" max="999" step=".25" placeholder="(heures)"
                                    title="Durée totale : effectuée + restante"/>
