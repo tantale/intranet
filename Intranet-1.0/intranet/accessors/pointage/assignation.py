@@ -35,7 +35,7 @@ class AssignationAccessor(BasicAccessor):
         """
         return super(AssignationAccessor, self)._get_record(uid)
 
-    def insert_assignation(self, employee_uid, order_phase_uid, rate_percent, start_date_utc, end_date_utc):
+    def insert_assignation(self, employee_uid, order_phase_uid, assigned_hours, rate_percent, start_date_utc, end_date_utc):
         """
         Assign a employee to a task (order phase).
 
@@ -43,8 +43,10 @@ class AssignationAccessor(BasicAccessor):
         :param employee_uid: Selected employee UID.
         :type order_phase_uid: int
         :param order_phase_uid: Current Task UID.
+        :type assigned_hours: float
+        :param assigned_hours: Number of estimated work hours assigned to the employee to accomplish this task.
         :type rate_percent: float
-        :param rate_percent: Current rate: 0.5 <= rate_percent <= 100.0
+        :param rate_percent: Current rate: 0.005 <= rate_percent <= 1.0
         :type start_date_utc: datetime.datetime
         :param start_date_utc: Start date UTC.
         :type end_date_utc: datetime.datetime
@@ -53,7 +55,7 @@ class AssignationAccessor(BasicAccessor):
         """
         try:
             with transaction.manager:
-                assignation = Assignation(rate_percent, start_date_utc, end_date_utc)
+                assignation = Assignation(assigned_hours, rate_percent, start_date_utc, end_date_utc)
                 assignation.employee_uid = employee_uid
                 assignation.order_phase_uid = order_phase_uid
                 self.session.add(assignation)
@@ -61,14 +63,16 @@ class AssignationAccessor(BasicAccessor):
             transaction.abort()
             raise
 
-    def update_assignation(self, uid, rate_percent, start_date_utc, end_date_utc):
+    def update_assignation(self, uid, assigned_hours, rate_percent, start_date_utc, end_date_utc):
         """
         Update the assignation of an employee.
 
         :type uid: int | str | unicode
         :param uid: Assignation UID.
+        :type assigned_hours: float
+        :param assigned_hours: Number of estimated work hours assigned to the employee to accomplish this task.
         :type rate_percent: float
-        :param rate_percent: Current rate: 0.5 <= rate_percent <= 100.0
+        :param rate_percent: Current rate: 0.005 <= rate_percent <= 1.0
         :type start_date_utc: datetime.datetime
         :param start_date_utc: Start date UTC.
         :type end_date_utc: datetime.datetime
@@ -76,6 +80,7 @@ class AssignationAccessor(BasicAccessor):
         :raise sqlalchemy.exc.IntegrityError: If an error occurs.
         """
         super(AssignationAccessor, self)._update_record(uid,
+                                                        assigned_hours=assigned_hours,
                                                         rate_percent=rate_percent,
                                                         start_date=start_date_utc,
                                                         end_date=end_date_utc)

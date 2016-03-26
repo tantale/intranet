@@ -72,7 +72,7 @@ class AssignationsController(RestController):
         :param employee_uid: Selected employee UID.
         """
         LOG.info(u"new:\n{0}".format(pprint.pformat(locals())))
-        keys = 'rate_percent', 'start_date', 'end_date'
+        keys = 'assigned_hours', 'rate_percent', 'start_date', 'end_date'
         attrs = {k: v for k, v in kwargs.iteritems() if k in keys}
         hidden = {k: v for k, v in kwargs.iteritems() if k not in keys}
         # -- default values (first display of the form) + extra values
@@ -83,13 +83,14 @@ class AssignationsController(RestController):
         else:
             # should never go here since tz_offset must be defined in the previous form.
             start_date = datetime.date.today()
-        values = dict(rate_percent=80.0,
-                      start_date=start_date,
-                      end_date=None)
-        values.update(attrs)
         form_errors = pylons.tmpl_context.form_errors
         employee = self.employee_accessor.get_employee(employee_uid)
         task = self.order_phase_accessor.get_order_phase(self.order_phase_uid)
+        values = dict(assigned_hours=task.estimated_duration,
+                      rate_percent=80.0,
+                      start_date=start_date,
+                      end_date=None)
+        values.update(attrs)
         fmt = u'Assigner {employee.employee_name}'
         title = fmt.format(employee=employee, task=task)
         fmt = u'Voulez-vous assigner {employee.employee_name} à la tâche "{task.label}"\xa0?'
@@ -107,12 +108,13 @@ class AssignationsController(RestController):
                     hidden=hidden)
 
     @validate({'employee_uid': Number(min=1, not_empty=True),
+               'assigned_hours': Number(min=0.25, not_empty=True),
                'rate_percent': Number(min=5.0, max=100.0, not_empty=True),
                'start_date': IsoDateConverter(not_empty=True),
                'end_date': IsoDateConverter(not_empty=False)},
               error_handler=new)
     @expose()
-    def post(self, employee_uid, rate_percent, start_date, end_date, **hidden):
+    def post(self, employee_uid, assigned_hours, rate_percent, start_date, end_date, **hidden):
         """
         Create a new Assignation record.
 
@@ -120,6 +122,8 @@ class AssignationsController(RestController):
 
         :type employee_uid: int
         :param employee_uid: Selected employee UID.
+        :type assigned_hours: float
+        :param assigned_hours: Number of estimated work hours assigned to the employee to accomplish this task.
         :type rate_percent: float
         :param rate_percent: Current rate: 0.5 <= rate_percent <= 100.0
         :type start_date: datetime.date
@@ -138,13 +142,15 @@ class AssignationsController(RestController):
         try:
             self.assignation_accessor.insert_assignation(employee_uid,
                                                          self.order_phase_uid,
-                                                         rate_percent,
+                                                         assigned_hours,
+                                                         rate_percent / 100.0,
                                                          start_date_utc,
                                                          end_date_utc)
         except sqlalchemy.exc.IntegrityError as exc:
             hidden["IntegrityError"] = exc.message
             redirect('./new',
                      employee_uid=employee_uid,
+                     assigned_hours=assigned_hours,
                      rate_percent=rate_percent,
                      start_date=start_date.date(),
                      end_date=end_date.date() if end_date else None,
@@ -163,7 +169,7 @@ class AssignationsController(RestController):
         :param assignation_uid: Selected employee UID.
         """
         LOG.info(u"edit:\n{0}".format(pprint.pformat(locals())))
-        keys = 'rate_percent', 'start_date', 'end_date'
+        keys = 'assigned_hours', 'rate_percent', 'start_date', 'end_date'
         attrs = {k: v for k, v in kwargs.iteritems() if k in keys}
         hidden = {k: v for k, v in kwargs.iteritems() if k not in keys}
         assignation = self.assignation_accessor.get_assignation(assignation_uid)
@@ -171,7 +177,8 @@ class AssignationsController(RestController):
         tz_delta = datetime.timedelta(minutes=int(tz_offset))
         start_date_local = (assignation.start_date - tz_delta).date()
         end_date_local = None if assignation.end_date is None else (assignation.end_date - tz_delta).date()
-        values = dict(rate_percent=assignation.rate_percent,
+        values = dict(assigned_hours=assignation.assigned_hours,
+                      rate_percent=assignation.rate_percent * 100.0,
                       start_date=start_date_local,
                       end_date=end_date_local)
         values.update(attrs)
@@ -195,12 +202,13 @@ class AssignationsController(RestController):
                     values=values,
                     hidden=hidden)
 
-    @validate({'rate_percent': Number(min=5.0, max=100.0, not_empty=True),
+    @validate({'assigned_hours': Number(min=0.25, not_empty=True),
+               'rate_percent': Number(min=5.0, max=100.0, not_empty=True),
                'start_date': IsoDateConverter(not_empty=True),
                'end_date': IsoDateConverter(not_empty=False)},
-              error_handler=new)
+              error_handler=edit)
     @expose()
-    def put(self, assignation_uid, rate_percent, start_date, end_date, **hidden):
+    def put(self, assignation_uid, assigned_hours, rate_percent, start_date, end_date, **hidden):
         """
         Create a new Assignation record.
 
@@ -208,6 +216,8 @@ class AssignationsController(RestController):
 
         :type assignation_uid: int
         :param assignation_uid: Selected assignation UID.
+        :type assigned_hours: float
+        :param assigned_hours: Number of estimated work hours assigned to the employee to accomplish this task.
         :type rate_percent: float
         :param rate_percent: Current rate: 0.5 <= rate_percent <= 100.0
         :type start_date: datetime.date
@@ -225,12 +235,14 @@ class AssignationsController(RestController):
         end_date_utc = end_date + tz_delta if end_date else None
         try:
             self.assignation_accessor.update_assignation(assignation_uid,
-                                                         rate_percent,
+                                                         assigned_hours,
+                                                         rate_percent / 100.0,
                                                          start_date_utc,
                                                          end_date_utc)
         except sqlalchemy.exc.IntegrityError as exc:
             hidden["IntegrityError"] = exc.message
             redirect('./edit',
+                     assigned_hours=assigned_hours,
                      rate_percent=rate_percent,
                      start_date=start_date.date(),
                      end_date=end_date.date() if end_date else None,

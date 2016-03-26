@@ -27,13 +27,16 @@ def upgrade():
                                                                       ondelete='CASCADE',
                                                                       onupdate='CASCADE'),
                          nullable=True, index=True),
+               sa.Column("assigned_hours", sa.Float, nullable=False),
                sa.Column("rate_percent", sa.Float, nullable=False),
                sa.Column("start_date", sa.DateTime, nullable=False),
-               sa.Column("end_date", sa.DateTime, nullable=False),
+               sa.Column("end_date", sa.DateTime, nullable=True),
 
                sa.UniqueConstraint('employee_uid', 'order_phase_uid',
                                    name="order_phase_employee_unique"),
-               sa.CheckConstraint("0.0 <= rate_percent AND rate_percent <= 100.0",
+               sa.CheckConstraint("0.0 <= assigned_hours",
+                                  name="assigned_hours_check"),
+               sa.CheckConstraint("0.0 <= rate_percent AND rate_percent <= 1.0",
                                   name="rate_interval_check")
                ]
 

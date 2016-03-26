@@ -41,7 +41,9 @@ unassigned_employees.sort(key=lambda e: e.employee_name)
     $(function() {
         $('#${new_assignation_form_id}').ajaxForm({target: '#confirm_dialog_content'});
         $('#${new_assignation_form_id} select').change(function(){
-            $(this).closest('form').submit();
+            if ($(this).val()) {
+                $(this).closest('form').submit();
+            }
         });
     });
 </script>
@@ -71,8 +73,12 @@ assignation_form_id = "assignation_form_{0}".format(assignation.uid)
                 <td rowspan="2"><img class="valignMiddle picture_box_inner_min"
                                      alt="${assignation.employee.employee_name}"
                                      src="${img_src}"></td>
-                <td><label class="tooltip"><b>Taux&nbsp;:</b>
-                    <input name="rate_percent" value="${assignation.rate_percent}" type="number"
+                <td><label class="tooltip"><b>Heures&nbsp;:</b>
+                    <input name="assigned_hours" value="${assignation.assigned_hours}" type="number"
+                           disabled="disabled"
+                           min="0.25" step="0.25">&nbsp;h</label></td>
+                <td><label class="tooltip"><b>à&nbsp;:</b>
+                    <input name="rate_percent" value="${assignation.rate_percent * 100.0}" type="number"
                            disabled="disabled"
                            min="5.0" max="100.0" step="5.0">&nbsp;%</label></td>
                 <td>
@@ -80,7 +86,10 @@ assignation_form_id = "assignation_form_{0}".format(assignation.uid)
                 </td>
             </tr>
             <tr>
-                <td><label class="tooltip"><b>Date&nbsp;:</b>
+                <td><label class="tooltip"><b>Du&nbsp;:</b>
+                    <input name="end_planning_date" value="${assignation.end_planning_date}" type="date"
+                    disabled="disabled"></label></td>
+                <td><label class="tooltip"><b>au&nbsp;:</b>
                     <input name="start_planning_date" value="${assignation.start_planning_date}" type="date"
                     disabled="disabled"></label></td>
                 <td>
@@ -161,6 +170,19 @@ else:
 
         %if error_message:
         <p><span class="error">${error_message}</span></p>
+        %endif
+
+        <p><label class="tooltip"><b>Heures&nbsp;:</b>
+            <input name="assigned_hours" value="${values['assigned_hours']}" type="number"
+                   min="0.25" step="0.25">&nbsp;h</label>
+            <span class="ui-icon ui-icon-help"></span></p>
+        <p class="ui-tooltip" hidden="hidden"><span class="ui-tooltip-content">
+            Nombre d’heures de travail affectées à ${employee.employee_name} pour cette tâche.
+            Par défaut, le nombre d’heures est égal au nombre d’heures estimées de la tâche.
+            Affectez un nombre d’heures moindre si plusieurs personnes travaillent sur la même tâche.
+        </span></p>
+        %if 'assigned_hours'in form_errors:
+        <p><span class="error">${form_errors['assigned_hours']}</span></p>
         %endif
 
         <p><label class="tooltip"><b>Taux&nbsp;:</b>

@@ -27,8 +27,11 @@ class Assignation(DeclarativeBase):
     __tablename__ = 'Assignation'
     __table_args__ = (UniqueConstraint('employee_uid', 'order_phase_uid',
                                        name="order_phase_employee_unique"),
-                      CheckConstraint("0.0 <= rate_percent AND rate_percent <= 100.0",
+                      CheckConstraint("0.0 <= assigned_hours",
+                                      name="assigned_hours_check"),
+                      CheckConstraint("0.0 <= rate_percent AND rate_percent <= 1.0",
                                       name="rate_interval_check"),
+
                       {'mysql_engine': 'InnoDB'})
 
     uid = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
@@ -40,9 +43,10 @@ class Assignation(DeclarativeBase):
                                                  ondelete='CASCADE',
                                                  onupdate='CASCADE'),
                              nullable=True, index=True)
+    assigned_hours = Column(Float, nullable=False)
     rate_percent = Column(Float, nullable=False)
     start_date = Column(DateTime, nullable=False)
-    end_date = Column(DateTime, nullable=False)
+    end_date = Column(DateTime, nullable=True)
 
     employee = relationship('Employee', back_populates='assignation_list')
     order_phase = relationship('OrderPhase', back_populates='assignation_list')
@@ -50,7 +54,8 @@ class Assignation(DeclarativeBase):
                                        back_populates="assignation",
                                        cascade='all,delete-orphan')
 
-    def __init__(self, rate_percent, start_date=None, end_date=None):
+    def __init__(self, assigned_hours, rate_percent, start_date=None, end_date=None):
+        self.assigned_hours = assigned_hours
         self.rate_percent = rate_percent
         self.start_date = start_date
         self.end_date = end_date
@@ -72,12 +77,12 @@ class Assignation(DeclarativeBase):
         start_date = (self.start_date - tz_delta).date()
         if self.end_date:
             end_date = (self.end_date - tz_delta).date()
-            fmt = u'{employee.employee_name} assigné à {rate_percent} du {start_date} au {end_date}'
+            fmt = u'{employee.employee_name} assigné à {rate_percent:%} du {start_date} au {end_date}'
             return fmt.format(employee=self.employee,
-                              rate_percent=format_percent(self.rate_percent / 100.0, locale=locale),
+                              rate_percent=format_percent(self.rate_percent, locale=locale),
                               start_date=format_date(start_date, format='short', locale=locale),
                               end_date=format_date(end_date, format='short', locale=locale))
         fmt = u'{employee.employee_name} assigné à {rate_percent} à partir du {start_date}'
         return fmt.format(employee=self.employee,
-                          rate_percent=format_percent(self.rate_percent / 100.0, locale=locale),
+                          rate_percent=format_percent(self.rate_percent, locale=locale),
                           start_date=format_date(start_date, format='short', locale=locale))
