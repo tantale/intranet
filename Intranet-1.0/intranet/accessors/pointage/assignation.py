@@ -59,6 +59,7 @@ class AssignationAccessor(BasicAccessor):
                 self.session.add(assignation)
         except sqlalchemy.exc.IntegrityError:
             transaction.abort()
+            raise
 
     def update_assignation(self, uid, rate_percent, start_date_utc, end_date_utc):
         """
