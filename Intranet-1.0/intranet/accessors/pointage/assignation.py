@@ -79,11 +79,15 @@ class AssignationAccessor(BasicAccessor):
         :param end_date_utc: End date UTC.
         :raise sqlalchemy.exc.IntegrityError: If an error occurs.
         """
-        super(AssignationAccessor, self)._update_record(uid,
-                                                        assigned_hours=assigned_hours,
-                                                        rate_percent=rate_percent,
-                                                        start_date=start_date_utc,
-                                                        end_date=end_date_utc)
+        try:
+            super(AssignationAccessor, self)._update_record(uid,
+                                                            assigned_hours=assigned_hours,
+                                                            rate_percent=rate_percent,
+                                                            start_date=start_date_utc,
+                                                            end_date=end_date_utc)
+        except sqlalchemy.exc.IntegrityError:
+            transaction.abort()
+            raise
 
     def delete_assignation(self, assignation_uid):
         super(AssignationAccessor, self)._delete_record(assignation_uid)
