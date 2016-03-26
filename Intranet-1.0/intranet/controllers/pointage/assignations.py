@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import datetime
 import logging
+import pprint
 
 import pylons
 import sqlalchemy.exc
@@ -50,6 +51,7 @@ class AssignationsController(RestController):
         """
         Display all Assignations.
         """
+        LOG.info(u"get_all:\n{0}".format(pprint.pformat(locals())))
         tz_offset = hidden["tz_offset"]
         tz_delta = datetime.timedelta(minutes=int(tz_offset))
         start_date_utc = datetime.datetime.now() + tz_delta
@@ -58,7 +60,6 @@ class AssignationsController(RestController):
         return dict(task=task,
                     active_employees=active_employees,
                     hidden=hidden)
-
 
     @expose('intranet.templates.pointage.order.tasks.assignations.new')
     def new(self, employee_uid, **kwargs):
@@ -70,6 +71,7 @@ class AssignationsController(RestController):
         :type employee_uid: unicode
         :param employee_uid: Selected employee UID.
         """
+        LOG.info(u"new:\n{0}".format(pprint.pformat(locals())))
         keys = 'rate_percent', 'start_date', 'end_date'
         attrs = {k: v for k, v in kwargs.iteritems() if k in keys}
         hidden = {k: v for k, v in kwargs.iteritems() if k not in keys}
@@ -125,6 +127,7 @@ class AssignationsController(RestController):
         :type end_date: datetime.date
         :param end_date: End date in local time.
         """
+        LOG.info(u"post:\n{0}".format(pprint.pformat(locals())))
         # We must have datetime instance to compute timezone shifting
         start_date = datetime.datetime.combine(start_date, datetime.time())
         end_date = datetime.datetime.combine(end_date, datetime.time()) if end_date else None
@@ -143,8 +146,8 @@ class AssignationsController(RestController):
             redirect('./new',
                      employee_uid=employee_uid,
                      rate_percent=rate_percent,
-                     start_date=start_date,
-                     end_date=end_date,
+                     start_date=start_date.date(),
+                     end_date=end_date.date() if end_date else None,
                      **hidden)
         else:
             redirect('./new', employee_uid=employee_uid, **hidden)
@@ -159,6 +162,7 @@ class AssignationsController(RestController):
         :type assignation_uid: unicode
         :param assignation_uid: Selected employee UID.
         """
+        LOG.info(u"edit:\n{0}".format(pprint.pformat(locals())))
         keys = 'rate_percent', 'start_date', 'end_date'
         attrs = {k: v for k, v in kwargs.iteritems() if k in keys}
         hidden = {k: v for k, v in kwargs.iteritems() if k not in keys}
@@ -211,6 +215,7 @@ class AssignationsController(RestController):
         :type end_date: datetime.date
         :param end_date: End date in local time.
         """
+        LOG.info(u"put:\n{0}".format(pprint.pformat(locals())))
         # We must have datetime instance to compute timezone shifting
         start_date = datetime.datetime.combine(start_date, datetime.time())
         end_date = datetime.datetime.combine(end_date, datetime.time()) if end_date else None
@@ -227,8 +232,8 @@ class AssignationsController(RestController):
             hidden["IntegrityError"] = exc.message
             redirect('./edit',
                      rate_percent=rate_percent,
-                     start_date=start_date,
-                     end_date=end_date,
+                     start_date=start_date.date(),
+                     end_date=end_date.date() if end_date else None,
                      **hidden)
         else:
             redirect('./edit', **hidden)
@@ -241,5 +246,6 @@ class AssignationsController(RestController):
         :type assignation_uid: int
         :param assignation_uid: Selected assignation UID.
         """
+        LOG.info(u"post_delete:\n{0}".format(pprint.pformat(locals())))
         self.assignation_accessor.delete_assignation(assignation_uid)
         return dict()
