@@ -76,9 +76,11 @@ assignation_form_id = "assignation_form_{0}".format(assignation.uid)
                 <td><label class="tooltip"><b>Heures&nbsp;:</b>
                     <input name="assigned_hours" value="${assignation.assigned_hours}" type="number"
                            disabled="disabled"
+                           style="width: 5em;"
                            min="0.25" step="0.25">&nbsp;h</label></td>
                 <td><label class="tooltip"><b>à&nbsp;:</b>
                     <input name="rate_percent" value="${assignation.rate_percent * 100.0}" type="number"
+                           style="width: 5em;"
                            disabled="disabled"
                            min="5.0" max="100.0" step="5.0">&nbsp;%</label></td>
                 <td>
@@ -174,6 +176,7 @@ else:
 
         <p><label class="tooltip"><b>Heures&nbsp;:</b>
             <input name="assigned_hours" value="${values['assigned_hours']}" type="number"
+                   style="width: 5em;"
                    min="0.25" step="0.25">&nbsp;h</label>
             <span class="ui-icon ui-icon-help"></span></p>
         <p class="ui-tooltip" hidden="hidden"><span class="ui-tooltip-content">
@@ -187,6 +190,7 @@ else:
 
         <p><label class="tooltip"><b>Taux&nbsp;:</b>
             <input name="rate_percent" value="${values['rate_percent']}" type="number"
+                   style="width: 5em;"
                    min="5.0" max="100.0" step="5.0">&nbsp;%</label>
             <span class="ui-icon ui-icon-help"></span></p>
         <p class="ui-tooltip" hidden="hidden"><span class="ui-tooltip-content">

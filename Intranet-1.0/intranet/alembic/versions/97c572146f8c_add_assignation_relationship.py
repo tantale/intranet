@@ -37,7 +37,10 @@ def upgrade():
                sa.CheckConstraint("0.0 <= assigned_hours",
                                   name="assigned_hours_check"),
                sa.CheckConstraint("0.0 <= rate_percent AND rate_percent <= 1.0",
-                                  name="rate_interval_check")
+                                  name="rate_interval_check"),
+               sa.CheckConstraint("end_date IS NULL OR (start_date <= end_date)",
+                                  name="date_interval_check")
+
                ]
 
     op.create_table('Assignation', *columns)

@@ -31,7 +31,8 @@ class Assignation(DeclarativeBase):
                                       name="assigned_hours_check"),
                       CheckConstraint("0.0 <= rate_percent AND rate_percent <= 1.0",
                                       name="rate_interval_check"),
-
+                      CheckConstraint("end_date IS NULL OR (start_date <= end_date)",
+                                      name="date_interval_check"),
                       {'mysql_engine': 'InnoDB'})
 
     uid = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
@@ -77,7 +78,7 @@ class Assignation(DeclarativeBase):
         start_date = (self.start_date - tz_delta).date()
         if self.end_date:
             end_date = (self.end_date - tz_delta).date()
-            fmt = u'{employee.employee_name} assigné à {rate_percent:%} du {start_date} au {end_date}'
+            fmt = u'{employee.employee_name} assigné à {rate_percent} du {start_date} au {end_date}'
             return fmt.format(employee=self.employee,
                               rate_percent=format_percent(self.rate_percent, locale=locale),
                               start_date=format_date(start_date, format='short', locale=locale),
