@@ -243,7 +243,9 @@ class OrderController(RestController):
                       close_date=close_date)
         values.update(kw)
         cat_dict = self._get_cat_dict()
-        return dict(values=values, cat_dict=cat_dict,
+        return dict(order=order,
+                    values=values,
+                    cat_dict=cat_dict,
                     missing_order_cat_label=self.MISSING_ORDER_CAT_LABEL,
                     form_errors=form_errors)
 

@@ -16,14 +16,6 @@
 	font-weight: bold;
 }
 
-#order_update label {
-	width: 10em;
-	display: inline-block;
-	text-align: left;
-	font-size: .9em;
-	font-weight: bold;
-}
-
 #order_create label {
 	width: 10em;
 	display: inline-block;

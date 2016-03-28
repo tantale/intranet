@@ -1,3 +1,4 @@
+# coding=utf-8
 """
 :module: intranet.model.pointage.order
 :date: 2013-08-09
@@ -10,6 +11,7 @@ from sqlalchemy.schema import Column
 from sqlalchemy.types import Integer, String, Date
 
 from intranet.model import DeclarativeBase
+from intranet.model.pointage.order_phase import STATUS_PENDING, STATUS_IN_PROGRESS, STATUS_DONE
 
 
 class Order(DeclarativeBase):
@@ -80,3 +82,49 @@ class Order(DeclarativeBase):
     def estimated_duration(self):
         estimated_durations = filter(None, [order_phase.estimated_duration for order_phase in self.order_phase_list])
         return sum(estimated_durations)
+
+    @property
+    def tracked_duration(self):
+        tracked_durations = filter(None, [order_phase.tracked_duration for order_phase in self.order_phase_list])
+        return sum(tracked_durations)
+
+    @property
+    def remain_duration(self):
+        remain_durations = filter(None, [order_phase.remain_duration for order_phase in self.order_phase_list])
+        return sum(remain_durations)
+
+    @property
+    def total_duration(self):
+        total_durations = filter(None, [order_phase.total_duration for order_phase in self.order_phase_list])
+        return sum(total_durations)
+
+    @property
+    def all_status_info(self):
+        task_status_list = [order_phase.task_status for order_phase in self.order_phase_list]
+        # noinspection PyArgumentList
+        count_status = collections.Counter(task_status_list)
+        if STATUS_PENDING in count_status:
+            if STATUS_IN_PROGRESS in count_status or STATUS_DONE in count_status:
+                task_status = STATUS_IN_PROGRESS
+            else:
+                task_status = STATUS_PENDING
+        elif STATUS_DONE in count_status:
+            if STATUS_IN_PROGRESS in count_status or STATUS_PENDING in count_status:
+                task_status = STATUS_IN_PROGRESS
+            else:
+                task_status = STATUS_DONE
+        else:
+            task_status = STATUS_IN_PROGRESS
+        return [dict(value=STATUS_PENDING,
+                     label=u"Attente",
+                     description=u"La tâche est estimée et en attente de planification",
+                     checked=task_status == STATUS_PENDING),
+                dict(value=STATUS_IN_PROGRESS,
+                     label=u"En cours",
+                     description=u"La tâche est cours de planification, "
+                                 u"il est encore possible d’ajuster le reste à faire",
+                     checked=task_status == STATUS_IN_PROGRESS),
+                dict(value=STATUS_DONE,
+                     label=u"Terminée",
+                     description=u"La tâche est terminée.",
+                     checked=task_status == STATUS_DONE)]

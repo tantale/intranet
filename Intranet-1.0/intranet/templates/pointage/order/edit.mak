@@ -9,111 +9,205 @@ import datetime
 %if flash:
 	${flash | n}
 %endif
+<style scoped="scoped">
+    #order_update label {
+        display: inline-block;
+        text-align: left;
+        font-weight: bold;
+    }
+    #order_update input.label             {font-weight: bold; width: 18em;}
+    #order_update table.dates label       {width: 9em;}
+    #order_update table.charge            {margin: 0 auto 0 auto;}
+    #order_update table.charge th         {font-size: .8em;}
+    #order_update table.charge input[type="number"] {text-align: right;}
+</style>
 <form id="order_update" class="ui-widget"
 	action="${tg.url('./{uid}'.format(uid=values['uid']))}"
 	method="post" enctype="multipart/form-data">
 	<fieldset>
 		<legend class="ui-widget-header">Modifier les informations concernant la commande ${values.get('order_ref')}</legend>
-		<table>
-			<tr>
-				<td><p><label for="order_update__uid">N° commande :</label>
-						<input id="order_update__uid" type="number" name="uid"
-							value="${values['uid']}"
-							disabled="disabled"
-							title="Numéro de la commande (non modifiable)" /></p></td>
-			</tr>
-			<tr>
-				<td><p><label for="order_update__order_ref">Ref. commande :</label>
-						<input id="order_update__order_ref" type="text" name="order_ref"
-							value="${values.get('order_ref')}"
-							placeholder="Référence"
-							title="Référence de la commande (requis)" />
-					%if 'order_ref' in form_errors:
-					<span class="error">${form_errors['order_ref']}</span>
-					%endif
-					</p>
-				</td>
-			</tr>
-			<tr>
-				<td><p><label for="order_update__project_cat">Catégorie :</label>
-					<!--<%
-						project_cat_list = [cat for cat_list in cat_dict.itervalues()
-											for cat in cat_list]
-						default_cat = project_cat_list[0].cat_name if project_cat_list else None
-						curr_project_cat = values.get('project_cat', default_cat)
-						found_list = filter(lambda cat: cat.cat_name == curr_project_cat, project_cat_list)
-					%>-->
-						<select id="order_update__project_cat" name="project_cat"
-							class="${curr_project_cat}"
-							title="Catégorie de projet">
-                            %if cat_dict:
-                                %for cat_group, order_cat_list in cat_dict.iteritems():
-                                <optgroup label="${cat_group}" class="noColor">
-                                    %for order_cat in order_cat_list:
-                                    %if order_cat.cat_name == curr_project_cat:
-                                    <option selected="selected"
-                                        class="${order_cat.cat_name}"
-                                        value="${order_cat.cat_name}">${order_cat.label}</option>
-                                    %else:
-                                    <option
-                                        class="${order_cat.cat_name}"
-                                        value="${order_cat.cat_name}">${order_cat.label}</option>
-                                    %endif
-                                    %endfor
-                                </optgroup>
-                                %endfor
-                                %if not found_list:
-                                <optgroup label="${_(u'Sans catégorie')}" class="noColor">
-                                    <option selected="selected"
-                                        class="${curr_project_cat}"
-                                        value="${curr_project_cat}">${curr_project_cat[5:]}</option>
-                                </optgroup>
-                                %endif
-                            %else:
-                                <!-- not cat_dict ==> use missing_order_cat_label -->
-                                <option selected="selected">${missing_order_cat_label}</option>
+        ##
+        ## Commande: uid + order_ref
+        ##
+        <div class="row-xs">
+            <div class="col-xs-2">
+                <label for="order_update__uid">Commande :</label>
+            </div>
+            <div class="col-xs-10">
+                <input id="order_update__uid" type="number" name="uid"
+                       value="${values['uid']}"
+                       disabled="disabled"
+                       style="width: 5em;"
+                       title="Numéro de la commande (non modifiable)"/>
+                <input id="order_update__order_ref" type="text" name="order_ref" class="label"
+                       value="${values.get('order_ref')}"
+                       style="width: 20em;"
+                       placeholder="Référence"
+                       title="Référence de la commande (requis)"/>
+                %if 'order_ref' in form_errors:
+                <p><span class="error">${form_errors['order_ref']}</span></p>
+                %endif
+            </div>
+        </div>
+        <div class="row-xs">
+            <div class="col-xs-2">
+                <label for="order_update__project_cat">Catégorie :</label>
+            </div>
+            <div class="col-xs-10">
+                <%
+                project_cat_list = [cat for cat_list in cat_dict.itervalues()
+                for cat in cat_list]
+                default_cat = project_cat_list[0].cat_name if project_cat_list else None
+                curr_project_cat = values.get('project_cat', default_cat)
+                found_list = filter(lambda cat: cat.cat_name == curr_project_cat, project_cat_list)
+                %>
+                <select id="order_update__project_cat" name="project_cat"
+                        class="${curr_project_cat}"
+                        title="Catégorie de projet">
+                    %if cat_dict:
+                    %for cat_group, order_cat_list in cat_dict.iteritems():
+                    <optgroup label="${cat_group}" class="noColor">
+                        %for order_cat in order_cat_list:
+                        %if order_cat.cat_name == curr_project_cat:
+                        <option selected="selected"
+                                class="${order_cat.cat_name}"
+                                value="${order_cat.cat_name}">${order_cat.label}
+                        </option>
+                        %else:
+                        <option
+                                class="${order_cat.cat_name}"
+                                value="${order_cat.cat_name}">${order_cat.label}
+                        </option>
+                        %endif
+                        %endfor
+                    </optgroup>
+                    %endfor
+                    %if not found_list:
+                    <optgroup label="${_(u'Sans catégorie')}" class="noColor">
+                        <option selected="selected"
+                                class="${curr_project_cat}"
+                                value="${curr_project_cat}">${curr_project_cat[5:]}
+                        </option>
+                    </optgroup>
+                    %endif
+                    %else:
+                    <!-- not cat_dict ==> use missing_order_cat_label -->
+                    <option selected="selected">${missing_order_cat_label}</option>
+                    %endif
+                </select>
+                %if 'project_cat' in form_errors:
+                <p><span class="error">${form_errors['project_cat']}</span></p>
+                %endif
+            </div>
+        </div>
+        <div class="row-xs">
+            <div class="col-xs-6">
+                <table class="dates">
+                    <tr>
+                        <td><label for="order_update__creation_date">Date de création :</label>
+                            <input id="order_update__creation_date" type="date" name="creation_date"
+                                   value="${values.get('creation_date')}"
+                                   title="Date de création de la commande (requise)"/>
+                            %if 'creation_date' in form_errors:
+                            <span class="error">${form_errors['creation_date']}</span>
                             %endif
-						</select>
-					%if 'project_cat' in form_errors:
-					<span class="error">${form_errors['project_cat']}</span>
-					%endif
-					</p>
-				</td>
-			</tr>
-			<tr>
-				<td><p><label for="order_update__creation_date">Date de création :</label>
-						<input id="order_update__creation_date" type="date" name="creation_date"
-							value="${values.get('creation_date')}"
-							title="Date de création de la commande (requise)" />
-					%if 'creation_date' in form_errors:
-					<span class="error">${form_errors['creation_date']}</span>
-					%endif
-					</p>
-				</td>
-			</tr>
-			<tr>
-				<td><p><label for="order_update__close_date">Date de clôture :</label>
-						<input id="order_update__close_date" type="date" name="close_date"
-							value="${values.get('close_date')}"
-							title="Date de clôture de la commande (optionnelle)" />
-					%if 'close_date' in form_errors:
-					<span class="error">${form_errors['close_date']}</span>
-					%endif
-					</p>
-				</td>
-			</tr>
-			<tr>
-				<td class="alignRight">
-				<input type="hidden" name="_method" value="PUT" />
-				<button id="order_update__update" type="submit" class="update_button"
-					title="Modifier les informations concernant la commande">Modifier</button>
-				%if not values.get('close_date'):
-				<button id="order_update__close" type="submit" class="close_button"
-					title="Clôturer la commande à la date du jour">Clôturer</button>
-				%endif
-				</td>
-			</tr>
-		</table>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><label for="order_update__close_date">Date de clôture :</label>
+                            <input id="order_update__close_date" type="date" name="close_date"
+                                   value="${values.get('close_date')}"
+                                   title="Date de clôture de la commande (optionnelle)"/>
+                            %if 'close_date' in form_errors:
+                            <span class="error">${form_errors['close_date']}</span>
+                            %endif
+                        </td>
+                    </tr>
+
+                </table>
+            </div>
+            <div class="col-xs-6">
+                <table class="charge">
+                    <thead>
+                    <tr>
+                        <th></th>
+                        <th>Estimée</th>
+                        <th>Effectuée</th>
+                        <th>Restante</th>
+                        <th>Totale</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <th>Charge&nbsp;:</th>
+                        <td>
+                            <input class="change"
+                                   name="estimated_duration" type="number" value="${order.estimated_duration}"
+                                   readonly="readonly"
+                                   min="0" max="999" step=".25" placeholder="(heures)"
+                                   title="Durée estimée à partir des statistiques"/>
+                        </td>
+                        <td>
+                            <input class="change"
+                                   name="tracked_duration" type="number" value="${order.tracked_duration}"
+                                   readonly="readonly"
+                                   min="0" max="999" step=".25" placeholder="(heures)"
+                                   title="Durée déjà effectuée et pointée"/>
+                        </td>
+                        <td>
+                            <input class="change"
+                                   name="remain_duration" type="number" value="${order.remain_duration}"
+                                   readonly="readonly"
+                                   min="0" max="999" step=".25" placeholder="(heures)"
+                                   title="Durée restante estimée"/>
+                        </td>
+                        <td>
+                            <input class="change"
+                                   name="total_duration" type="number" value="${order.total_duration}"
+                                   readonly="readonly"
+                                   min="0" max="999" step=".25" placeholder="(heures)"
+                                   title="Durée totale : effectuée + restante"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Statut&nbsp;:</th>
+                        <td colspan="4">
+                            <div class="task_status">
+                                %for status_info in order.all_status_info:
+                                %if status_info['checked']:
+                                <label title="${status_info['description']}"><input class="change"
+                                                                                    type="radio" checked="checked"
+                                                                                    value="${status_info['value']}"
+                                                                                    name="task_status"/>${status_info['label']}</label>
+                                %else:
+                                <label title="${status_info['description']}"><input class="change"
+                                                                                    type="radio"
+                                                                                    value="${status_info['value']}"
+                                                                                    name="task_status"/>${status_info['label']}</label>
+                                %endif
+                                %endfor
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="row-xs">
+            <div class="col-xs-12">
+                <nav>
+                    <input type="hidden" name="_method" value="PUT"/>
+                    <button id="order_update__update" type="submit" class="update_button"
+                            title="Modifier les informations concernant la commande">Modifier
+                    </button>
+                    %if not values.get('close_date'):
+                    <button id="order_update__close" type="submit" class="close_button"
+                            title="Clôturer la commande à la date du jour">Clôturer
+                    </button>
+                    %endif
+                </nav>
+            </div>
+        </div>
 	</fieldset>
 </form>
 
