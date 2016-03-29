@@ -7,12 +7,12 @@ Gap fill
 :Author: Laurent LAPORTE
 """
 
-import collections
 import itertools
 
 
-class GapFill(collections.OrderedDict):
-    """
+# noinspection PyMethodOverriding
+class GapFill(dict):
+    u"""
     A GapFill is a collection of colored slots.
     A slots in a ordered list of items; a color is a label.
 
@@ -46,6 +46,32 @@ class GapFill(collections.OrderedDict):
         """
         super(GapFill, self).__init__()
         self.colored_slots = colored_slots
+
+    def keys(self):
+        return sorted(super(GapFill, self).keys())
+
+    def items(self):
+        return sorted(super(GapFill, self).items())
+
+    def values(self):
+        return [self[k] for k in self.keys()]
+
+    def iterkeys(self):
+        return (k for k in self.keys())
+
+    def iteritems(self):
+        return (i for i in self.items())
+
+    def itervalues(self):
+        return (v for v in self.values())
+
+    def __iter__(self):
+        keys = sorted(super(GapFill, self).keys())
+        return (k for k in keys)
+
+    def __reversed__(self):
+        reversed_keys = sorted(super(GapFill, self).keys(), reverse=True)
+        return (k for k in reversed_keys)
 
     @property
     def colored_slots(self):
