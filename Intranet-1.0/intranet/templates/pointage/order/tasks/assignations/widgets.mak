@@ -1,3 +1,5 @@
+<%! import json %>
+
 ##
 ## All assignations of a given task
 ## ================================
@@ -10,8 +12,8 @@ ${new_assignation_form(task, active_employees, **hidden)}
 </%def>
 
 ##
-## New Assignation form
-## ====================
+## New Assignation form : "badge" button used to add a new assignation
+## ===================================================================
 ##
 <%def name="new_assignation_form(task, active_employees, **hidden)">
 <%
@@ -51,80 +53,77 @@ unassigned_employees.sort(key=lambda e: e.employee_name)
 </%def>
 
 ##
-## Assignation form
-## ================
+## Assignation form : "badge" form use to edit an assignation or plan it
+## =====================================================================
 ##
 <%def name="assignation_form(assignation, **hidden)">
 <%
 assignation_id = "assignation_{0}".format(assignation.uid)
-assignation_form_id = "assignation_form_{0}".format(assignation.uid)
+assignation_badge_id = "assignation_form_{0}".format(assignation.uid)
 %>
-<div class="badge ui-widget ui-state-default ui-corner-all">
-    <form id="${assignation_form_id}" class="ui-widget"
-          action="${tg.url('./{assignation.order_phase.order_uid}/tasks/{assignation.order_phase.uid}/assignations/{assignation.uid}/edit'.format(assignation=assignation))}"
-          method="get">
-        %for hidden_name, hidden_value in hidden.iteritems():
-        <input type="hidden" name="${hidden_name}" value="${hidden_value}">
-        %endfor
-        <%img_src = assignation.employee.photo_path if assignation.employee.photo_path else tg.url('/images/silhouette.min.png')%>
-        <table class="planning">
-            <tbody>
-            <tr>
-                <td rowspan="2"><img class="valignMiddle picture_box_inner_min"
-                                     alt="${assignation.employee.employee_name}"
-                                     src="${img_src}"></td>
-                <td><label class="tooltip"><b>Heures&nbsp;:</b>
-                    <input name="assigned_hours" value="${assignation.assigned_hours}" type="number"
-                           disabled="disabled"
-                           style="width: 5em;"
-                           min="0.25" step="0.25">&nbsp;h</label></td>
-                <td><label class="tooltip"><b>à&nbsp;:</b>
-                    <input name="rate_percent" value="${assignation.rate_percent * 100.0}" type="number"
-                           style="width: 5em;"
-                           disabled="disabled"
-                           min="5.0" max="100.0" step="5.0">&nbsp;%</label></td>
-                <td>
-                    <button type="submit" class="edit_button_icon" title="Modifier l‘affectation">!</button>
-                </td>
-            </tr>
-            <tr>
-                <td><label class="tooltip"><b>Du&nbsp;:</b>
-                    <input name="end_planning_date" value="${assignation.end_planning_date}" type="date"
-                    disabled="disabled"></label></td>
-                <td><label class="tooltip"><b>au&nbsp;:</b>
-                    <input name="start_planning_date" value="${assignation.start_planning_date}" type="date"
-                    disabled="disabled"></label></td>
-                <td>
-                    <button type="button" class="calendar_button_icon" title="Planifier l‘affectation">#</button>
-                </td>
-            </tr>
-            </tbody>
-        </table>
-    </form>
+<div id="${assignation_badge_id}" class="badge ui-widget ui-state-default ui-corner-all">
+    <%img_src = assignation.employee.photo_path if assignation.employee.photo_path else tg.url('/images/silhouette.min.png')%>
+    <table class="planning">
+        <tbody>
+        <tr>
+            <td rowspan="2"><img class="valignMiddle picture_box_inner_min"
+                                 alt="${assignation.employee.employee_name}"
+                                 src="${img_src}"></td>
+            <td><label class="tooltip"><b>Heures&nbsp;:</b>
+                <input name="assigned_hours" value="${assignation.assigned_hours}" type="number"
+                       disabled="disabled"
+                       style="width: 5em;"
+                       min="0.25" step="0.25">&nbsp;h</label></td>
+            <td><label class="tooltip"><b>à&nbsp;:</b>
+                <input name="rate_percent" value="${assignation.rate_percent * 100.0}" type="number"
+                       style="width: 5em;"
+                       disabled="disabled"
+                       min="5.0" max="100.0" step="5.0">&nbsp;%</label></td>
+            <td>
+                <button type="submit" class="edit_button_icon" title="Modifier l‘affectation">!</button>
+            </td>
+        </tr>
+        <tr>
+            <td><label class="tooltip"><b>Du&nbsp;:</b>
+                <input name="end_planning_date" value="${assignation.end_planning_date}" type="date"
+                disabled="disabled"></label></td>
+            <td><label class="tooltip"><b>au&nbsp;:</b>
+                <input name="start_planning_date" value="${assignation.start_planning_date}" type="date"
+                disabled="disabled"></label></td>
+            <td>
+                <button type="button" class="calendar_button_icon" title="Planifier l‘affectation">#</button>
+            </td>
+        </tr>
+        </tbody>
+    </table>
 </div>
 <script type="application/javascript" defer="defer">
     $(function() {
-        $('#${assignation_form_id}').ajaxForm({target: '#confirm_dialog_content'});
-        $("#${assignation_form_id} .edit_button_icon").button({
+        $("#${assignation_badge_id} .edit_button_icon").button({
             text : false,
             icons : {
                 primary : "ui-icon-pencil"
             }
+        }).click(function() {
+            var data = ${json.dumps(hidden)|n};
+            var url = "${tg.url('./{assignation.order_phase.order_uid}/tasks/{assignation.order_phase.uid}/assignations/{assignation.uid}/edit'.format(assignation=assignation))|n}";
+            url += "?" + jQuery.param(data);
+            console.log({url: url});
+            $('#confirm_dialog_content').load(url);  // GET method
         });
-        $("#${assignation_form_id} .calendar_button_icon").button({
+        $("#${assignation_badge_id} .calendar_button_icon").button({
             text : false,
             icons : {
                 primary : "ui-icon-calendar"
             }
         });
     });
-
 </script>
 </%def>
 
 ##
-## new/edit/delete Assignation form(s)
-## ===================================
+## new/edit/delete Assignation form(s) : dialog boxes
+## ==================================================
 ##
 <%def name="assignation_section(actions,
                                 title,
