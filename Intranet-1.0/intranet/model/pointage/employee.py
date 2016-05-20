@@ -126,6 +126,7 @@ class Employee(DeclarativeBase):
         :rtype: list[(datetime.time, datetime.time)]
         :return: An list of time intervals representing the time intervals for this day.
         """
+        # fixme: day should be a datetime
         day_start_local = datetime.datetime.combine(day, datetime.time.min)
         day_start_utc = day_start_local + tz_delta
         day_end_utc = day_start_utc + datetime.timedelta(days=1)

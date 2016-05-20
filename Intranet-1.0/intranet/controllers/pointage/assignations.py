@@ -261,3 +261,45 @@ class AssignationsController(RestController):
         LOG.info(u"post_delete:\n{0}".format(pprint.pformat(locals())))
         self.assignation_accessor.delete_assignation(assignation_uid)
         return dict()
+
+    @expose('intranet.templates.pointage.order.tasks.assignations.plan_one')
+    def plan_one(self, assignation_uid, **hidden):
+        """
+        Display a page to prompt the User for new plan.
+
+        GET: /admin/order/159/tasks/792/assignations/1/plan_one?tz_offset=-120
+
+        :type assignation_uid: unicode
+        :param assignation_uid: Selected assignation UID.
+        """
+        LOG.info(u"plan_one:\n{0}".format(pprint.pformat(locals())))
+        assignation = self.assignation_accessor.get_assignation(assignation_uid)
+        employee = assignation.employee
+        task = assignation.order_phase
+        fmt = u'Planifier l’affectation de {employee.employee_name}'
+        title = fmt.format(employee=employee, task=task)
+        fmt = u'Voulez-vous planifier l’affectation de {employee.employee_name} à la tâche "{task.label}"\xa0?'
+        question = fmt.format(employee=employee, task=task)
+        return dict(title=title,
+                    question=question,
+                    assignation=assignation,
+                    hidden=hidden)
+
+    @expose()
+    def plan(self, assignation_uid, **hidden):
+        """
+        Add new planning dates for the current assignation.
+
+        :type assignation_uid: int
+        :param assignation_uid: Selected assignation UID.
+        """
+        LOG.info(u"plan:\n{0}".format(pprint.pformat(locals())))
+        tz_offset = hidden["tz_offset"]
+        tz_delta = datetime.timedelta(minutes=int(tz_offset))
+        minutes = 15
+        max_months = 4
+        event_start, event_end = self.assignation_accessor.plan_assignation(assignation_uid,
+                                                                            tz_delta,
+                                                                            minutes=minutes,
+                                                                            max_months=max_months)
+        return dict(event_start=event_start, event_end=event_end)

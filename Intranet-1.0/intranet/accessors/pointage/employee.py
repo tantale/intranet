@@ -58,6 +58,12 @@ class EmployeeAccessor(BasicAccessor):
         return super(EmployeeAccessor, self)._get_record(uid)
 
     def get_last_employee(self):
+        """
+        Get the last inserted employee.
+
+        :rtype: Employee
+        :return: Employee
+        """
         return self.session.query(Employee).order_by(Employee.uid.desc()).first()
 
     def get_employee_list(self, filter_cond=None, order_by_cond=None):

@@ -116,6 +116,12 @@ assignation_badge_id = "assignation_form_{0}".format(assignation.uid)
             icons : {
                 primary : "ui-icon-calendar"
             }
+        }).click(function() {
+            var data = ${json.dumps(hidden)|n};
+            var url = "${tg.url('./{assignation.order_phase.order_uid}/tasks/{assignation.order_phase.uid}/assignations/{assignation.uid}/plan_one'.format(assignation=assignation))|n}";
+            url += "?" + jQuery.param(data);
+            console.log({url: url});
+            $('#confirm_dialog_content').load(url);  // GET method
         });
     });
 </script>
@@ -125,30 +131,32 @@ assignation_badge_id = "assignation_form_{0}".format(assignation.uid)
 ## new/edit/delete Assignation form(s) : dialog boxes
 ## ==================================================
 ##
-<%def name="assignation_section(actions,
-                                title,
-                                question,
-                                error_message,
-                                employee,
-                                task,
-                                assignation,
-                                form_errors,
-                                values,
-                                **hidden)">
+<%def name="assignation_dialog(actions,
+                               title,
+                               question,
+                               error_message,
+                               employee,
+                               task,
+                               assignation,
+                               form_errors,
+                               values,
+                               **hidden)">
 <%
 assignations_id = "assignations_{0}".format(task.uid)
 if assignation:
     action_url = tg.url('./{task.order_uid}/tasks/{task.uid}/assignations/{assignation.uid}/'.format(task=task, assignation=assignation))
 else:
     action_url = tg.url('./{task.order_uid}/tasks/{task.uid}/assignations/'.format(task=task))
+assignation_list = [assigned for assigned in task.assignation_list
+                    if not assignation or assignation.uid != assigned.uid]
 %>
-<section id="assignation_section" title="${title}">
+<section id="assignation_dialog" title="${title}">
     <style scoped="scoped" type="text/css">
-        #assignation_section label b {
+        #assignation_dialog label b {
             display: inline-block;
             width: 8em;
         }
-        #assignation_section form p {
+        #assignation_dialog form p {
             margin-bottom: .5em;
         }
         span.help-content {
@@ -219,12 +227,12 @@ else:
         <p><span class="error">${form_errors['end_date']}</span></p>
         %endif
 
-        %if task.assignation_list:
+        %if assignation_list:
         <details>
             <summary>Personnes déjà assignées</summary>
             <ol>
-                %for assignation in task.assignation_list:
-                <li>${assignation.get_assignation(tz_offset=hidden['tz_offset'])}</li>
+                %for assigned in assignation_list:
+                <li>${assigned.get_assignation(tz_offset=hidden['tz_offset'])}</li>
                 %endfor
             </ol>
         </details>
@@ -244,7 +252,7 @@ else:
             modal: true,
             buttons: {
                 "Ajouter": function() {
-                    $("#assignation_section form.new_or_edit").submit();
+                    $("#assignation_dialog form.new_or_edit").submit();
                 },
                 "Annuler": function() {
                     $(this).dialog("close");
@@ -259,10 +267,10 @@ else:
             modal: true,
             buttons: {
                 "Modifier": function() {
-                    $("#assignation_section form.new_or_edit").submit();
+                    $("#assignation_dialog form.new_or_edit").submit();
                 },
                 "Supprimer": function() {
-                    $("#assignation_section form.delete").submit();
+                    $("#assignation_dialog form.delete").submit();
                 },
                 "Annuler": function() {
                     $(this).dialog("close");
@@ -273,7 +281,7 @@ else:
 %endif
 
         var ajaxFormProp = {
-            target: '#assignation_section',
+            target: '#assignation_dialog',
             beforeSubmit: function(arr, form, options) {
                 $("body").css("cursor", "progress");
                 return true;
@@ -300,12 +308,12 @@ else:
             }
         };
 
-        $("#assignation_section form.new_or_edit").ajaxForm(ajaxFormProp);
-        $("#assignation_section form.delete").ajaxForm(ajaxFormProp);
+        $("#assignation_dialog form.new_or_edit").ajaxForm(ajaxFormProp);
+        $("#assignation_dialog form.delete").ajaxForm(ajaxFormProp);
 
         thisDialog.dialog("open");
 
-        $("#assignation_section").tooltip({
+        $("#assignation_dialog").tooltip({
             track: true,
             items: ".ui-icon-help",
             show: {
@@ -323,6 +331,85 @@ else:
             },
             tooltipClass: "info"
         });
+    });
+    </script>
+</section>
+</%def>
+
+
+##
+## Plan form : dialog box
+## ======================
+##
+<%def name="plan_dialog(title,
+                        question,
+                        assignation,
+                        **hidden)">
+<%
+task = assignation.order_phase
+assignations_id = "assignations_{0}".format(task.uid)
+action_url = tg.url('./{task.order_uid}/tasks/{task.uid}/assignations/{assignation.uid}/plan'.format(task=task, assignation=assignation))
+%>
+<section id="plan_dialog" title="${title}">
+    <style scoped="scoped" type="text/css">
+        #plan_dialog form p {
+            margin-bottom: .5em;
+        }
+    </style>
+    <form action="${action_url}" method="get" class="plan ui-widget">
+        %for k, v in hidden.iteritems():
+        <input type="hidden" name="${k}" value="${v}">
+        %endfor
+        <p>${question}</p>
+    </form>
+    <script type="application/javascript" defer="defer">
+    $(function() {
+        var thisDialog = $('#confirm_dialog').dialog({
+            width: 550,
+            height: 250,
+            modal: true,
+            buttons: {
+                "Planifier": function() {
+                    $("#plan_dialog form.plan").submit();
+                },
+                "Annuler": function() {
+                    $(this).dialog("close");
+                }
+            },
+            title: "${title|n}"
+        });
+
+        var ajaxFormProp = {
+            target: '#plan_dialog',
+            beforeSubmit: function(arr, form, options) {
+                $("body").css("cursor", "progress");
+                return true;
+            },
+            error: function(responseText, statusText, xhr) {
+                var errorMsg = "Échec de connexion au serveur";
+                if (responseText != null && typeof responseText === 'object') {
+                    errorMsg += " : " + responseText.status + " \u2013 " + responseText.statusText;
+                }
+                $("body").css("cursor", "default");
+                $('#confirm_dialog_content').html('<p><span class="error">' + errorMsg + '</span></p>');
+                console.log(xhr);
+            },
+            success: function(responseText, statusText, xhr) {
+                $("body").css("cursor", "default");
+                var error = $('<div/>').append(responseText).find('span.error');
+                if (error.length) {
+                    $('#confirm_dialog_content').html(responseText);
+                } else {
+                    var url = "${tg.url('./{task.order_uid}/tasks/{task.uid}/assignations/'.format(task=task))|n}";
+                    $('#${assignations_id}').load(url, "tz_offset=" + ${hidden['tz_offset']|n});
+                    thisDialog.dialog("close");
+                }
+            }
+        };
+
+        $("#plan_dialog form.plan").ajaxForm(ajaxFormProp);
+
+        thisDialog.dialog("open");
     });
     </script>
 </section>
