@@ -10,6 +10,7 @@ Created on: 2015-08-28
 from __future__ import unicode_literals
 
 import datetime
+import math
 import re
 
 from sqlalchemy.orm import relationship
@@ -214,3 +215,67 @@ class Calendar(DeclarativeBase):
         gap_fill = GapFill(day_slots, free_slots, busy_slots)
         available_slots = [slot for slot in gap_fill.colored_slots if slot[1] == FREE_SLOT]
         return filter(None, [create_time_interval(slot, minutes=minutes) for slot in available_slots])
+
+    def find_assignable_interval(self, day, tz_delta, assigned_hours, rate_percent, minutes=15):
+        # -- Il nous faut trouver un intervalle de dates dont la durée soit supérieure (ou égale)
+        #    à la durée de la tâche.
+        intervals = self.get_available_intervals(day, tz_delta, minutes=minutes)
+
+        # -- Pour rechercher un intervalle de temps qui correspond,
+        #    nous allons majorer la durée assigned_hours par le taux rate_percent
+        required_hours = assigned_hours / rate_percent
+
+        # -- Le plus petit intervalle de temps est de 15 minutes,
+        #    il faut donc arrondir la durée en heures à 15 minutes près par excès.
+        required_minutes = math.ceil(required_hours * 60.0 / minutes) * minutes
+
+        for start, end in intervals:
+            event_start = datetime.datetime.combine(day, start)
+            event_end = datetime.datetime.combine(day, end)
+            duration = event_end - event_start
+            total_minutes = duration.total_seconds() / 60.0
+            if required_minutes <= total_minutes:
+                # -- OK, on a trouvé un intervalle assez large.
+                #    On peut plannifier la tâche avec la durée assignée (sans taux rate_percent).
+                return event_start, event_start + datetime.timedelta(hours=assigned_hours)
+
+        # -- not found
+        return None
+
+    def find_assignable_event(self, start_date, end_date, tz_delta, assigned_hours, rate_percent, minutes=15):
+        # -- On recherche un jour qui permet d'assigner toutes les heures ensembles
+        nbr_days = (end_date - start_date).days
+        for days in xrange(nbr_days):
+            day = (start_date + datetime.timedelta(days=days)).date()
+            # -- Il nous faut trouver un intervalle de dates dont la durée soit supérieure (ou égale)
+            #    à la durée de la tâche.
+            found = self.find_assignable_interval(day, tz_delta, assigned_hours, rate_percent, minutes=minutes)
+            if found:
+                return [found]
+
+        # -- On recherche des jours "libre" et on assigne morceau par morceau en gardant un peu de temps libre
+        found_list = []
+        for days in xrange(nbr_days):
+            day = (start_date + datetime.timedelta(days=days)).date()
+            busy_intervals = self.get_busy_intervals(day, tz_delta)
+            if busy_intervals:
+                continue
+            intervals = self.get_free_intervals(day)
+            for start, end in intervals:
+                event_start = datetime.datetime.combine(day, start)
+                event_end = datetime.datetime.combine(day, end)
+                duration = event_end - event_start
+                total_minutes = duration.total_seconds() / 60.0
+                assignable_minutes = math.floor(total_minutes * rate_percent / minutes) * minutes
+                if assignable_minutes == 0:
+                    # peu probable, mais on préfère éviter les intervalles vides.
+                    continue
+                consumed_hours = min(assignable_minutes / 60.0, assigned_hours)
+                found_list.append((event_start, event_start + datetime.timedelta(hours=consumed_hours)))
+                assigned_hours -= consumed_hours
+                if assigned_hours == 0:
+                    return found_list
+
+        # -- Planification impossible ou incomplète.
+        #    On retourne une liste vide même si on a une planification incomplète
+        return []

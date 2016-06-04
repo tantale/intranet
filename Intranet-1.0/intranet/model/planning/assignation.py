@@ -18,6 +18,8 @@ from sqlalchemy.schema import Column, CheckConstraint, ForeignKey, UniqueConstra
 from sqlalchemy.types import Integer, DateTime, Float
 
 from intranet.model import DeclarativeBase
+from intranet.model.planning.calendar import Calendar
+from intranet.model.planning.planning_event import PlanningEvent
 
 
 class Assignation(DeclarativeBase):
@@ -87,3 +89,53 @@ class Assignation(DeclarativeBase):
         return fmt.format(employee=self.employee,
                           rate_percent=format_percent(self.rate_percent, locale=locale),
                           start_date=format_date(start_date, format='short', locale=locale))
+
+    def append_planning_event(self, event_start, event_end, tz_delta):
+        """
+        Append a new event in the assignation planning.
+
+        :type event_start: datetime.datetime
+        :param event_start: Start date/time of the event (local time).
+        :type event_end: datetime.datetime
+        :param event_end: End date/time of the event (local time).
+        :type tz_delta: datetime.timedelta
+        :param tz_delta: time-zone delta from UTC (tz_delta = utc_date - local_date).
+        """
+        # Les dates de planification sont en dates/heures UTC.
+        event_start_utc = event_start + tz_delta
+        event_end_utc = event_end + tz_delta
+
+        # Nous construisons un évènement à partir des dates et des propriétés de la tâche.
+        order_phase = self.order_phase
+        order = order_phase.order
+        fmt = u"{order_uid} – {order_ref}\xa0: {label}"
+        label = fmt.format(order_uid=order.uid, order_ref=order.order_ref, label=order_phase.label)
+        planning_event = PlanningEvent(label=label,
+                                       description=order_phase.description,
+                                       event_start=event_start_utc,
+                                       event_end=event_end_utc)
+        planning_event.calendar = self.employee.calendar
+        self.planning_event_list.append(planning_event)
+
+    def plan_assignation(self, tz_delta, minutes=15, max_months=4):
+        # -- Si la date de fin n'est pas défini, on fera une exploration sur 4 mois
+        #    Les dates sont exprimées en date/heures UTC.
+        start_date_utc = self.start_date
+        end_date_utc = self.end_date or (start_date_utc + datetime.timedelta(days=max_months * 30.5))
+
+        # -- Attention, les calculs se font sur des dates/heures locales (et non pas UTC).
+        start_date = start_date_utc - tz_delta
+        end_date = end_date_utc - tz_delta
+
+        # -- La recherche d'un intervalle se fait sur les heures de disponibilité de l'employé.
+        #    Le calendrier est celui associé à l'employé.
+        calendar = self.employee.calendar
+        isinstance(calendar, Calendar)
+
+        # -- La recherche d'un intervalle se fait jour après jour.
+        intervals = calendar.find_assignable_event(start_date, end_date, tz_delta,
+                                                   self.assigned_hours, self.rate_percent, minutes=minutes)
+        for interval in intervals:
+            event_start, event_end = interval
+            self.append_planning_event(event_start, event_end, tz_delta)
+        return intervals

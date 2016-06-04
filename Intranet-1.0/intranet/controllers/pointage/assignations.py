@@ -298,8 +298,8 @@ class AssignationsController(RestController):
         tz_delta = datetime.timedelta(minutes=int(tz_offset))
         minutes = 15
         max_months = 4
-        event_start, event_end = self.assignation_accessor.plan_assignation(assignation_uid,
-                                                                            tz_delta,
-                                                                            minutes=minutes,
-                                                                            max_months=max_months)
-        return dict(event_start=event_start, event_end=event_end)
+        intervals = self.assignation_accessor.plan_assignation(assignation_uid,
+                                                                tz_delta,
+                                                                minutes=minutes,
+                                                                max_months=max_months)
+        return dict(event_intervals=intervals)

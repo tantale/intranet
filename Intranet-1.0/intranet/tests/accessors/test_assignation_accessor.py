@@ -131,7 +131,8 @@ class TestAssignationAccessor(unittest.TestCase):
         self.assertEqual(assignation.end_date, end_date_utc)
 
         # -- We want to plan it today
-        event_start, event_end = self.assignation_accessor.plan_assignation(assignation.uid, tz_delta=tz_delta)
+        event_list = self.assignation_accessor.plan_assignation(assignation.uid, tz_delta=tz_delta)
+        event_start, event_end = event_list[0]
         self.assertEqual(event_start, datetime.datetime.combine(today, datetime.time(10, 30)))
         self.assertEqual(event_end, datetime.datetime.combine(today, datetime.time(12, 0)))
 
@@ -175,7 +176,8 @@ class TestAssignationAccessor(unittest.TestCase):
         assignation = assignation_list[0]
 
         # -- We want to plan it today
-        event_start, event_end = self.assignation_accessor.plan_assignation(assignation.uid, tz_delta=tz_delta)
+        event_list = self.assignation_accessor.plan_assignation(assignation.uid, tz_delta=tz_delta)
+        event_start, event_end = event_list[0]
         self.assertEqual(event_start, datetime.datetime.combine(today, datetime.time(14, 0)))
         self.assertEqual(event_end, datetime.datetime.combine(today, datetime.time(17, 15)))
 
@@ -229,7 +231,8 @@ class TestAssignationAccessor(unittest.TestCase):
         assignation = assignation_list[0]
 
         # -- We want to plan it today, we got it tomorrow
-        event_start, event_end = self.assignation_accessor.plan_assignation(assignation.uid, tz_delta=tz_delta)
+        event_list = self.assignation_accessor.plan_assignation(assignation.uid, tz_delta=tz_delta)
+        event_start, event_end = event_list[0]
         tomorrow = today + datetime.timedelta(days=1)
         self.assertEqual(event_start, datetime.datetime.combine(tomorrow, datetime.time(8, 30)))
         self.assertEqual(event_end, datetime.datetime.combine(tomorrow, datetime.time(11, 45)))
@@ -281,15 +284,13 @@ class TestAssignationAccessor(unittest.TestCase):
         self.assertEqual(len(assignation_list), 1)
         assignation = assignation_list[0]
 
-        # -- We want to plan it today
-        event_start, event_end = self.assignation_accessor.plan_assignation(assignation.uid, tz_delta=tz_delta)
-        self.assertEqual(event_start, datetime.datetime.combine(today, datetime.time(14, 0)))
-        self.assertEqual(event_end, datetime.datetime.combine(today, datetime.time(17, 15)))
-
-        # -- Check available intervals
-        employee = self.employee_accessor.get_last_employee()
-        intervals = employee.calendar.get_available_intervals(today, tz_delta)
-        expected = [(datetime.time(8, 30), datetime.time(9, 0)),
-                    (datetime.time(10, 30), datetime.time(12, 30)),
-                    (datetime.time(17, 15), datetime.time(17, 45))]
-        self.assertEqual(intervals, expected)
+        # -- We want to plan it today, but we got it for tomorrow
+        event_list = self.assignation_accessor.plan_assignation(assignation.uid, tz_delta=tz_delta)
+        expected = [(datetime.datetime(2016, 5, 25, 8, 30), datetime.datetime(2016, 5, 25, 10, 30)),
+                    (datetime.datetime(2016, 5, 25, 14, 0), datetime.datetime(2016, 5, 25, 15, 45)),
+                    (datetime.datetime(2016, 5, 26, 8, 30), datetime.datetime(2016, 5, 26, 10, 30)),
+                    (datetime.datetime(2016, 5, 26, 14, 0), datetime.datetime(2016, 5, 26, 15, 45)),
+                    (datetime.datetime(2016, 5, 27, 8, 30), datetime.datetime(2016, 5, 27, 10, 30)),
+                    (datetime.datetime(2016, 5, 27, 14, 0), datetime.datetime(2016, 5, 27, 15, 45)),
+                    (datetime.datetime(2016, 5, 28, 8, 30), datetime.datetime(2016, 5, 28, 9, 15))]
+        self.assertEqual(event_list, expected)
