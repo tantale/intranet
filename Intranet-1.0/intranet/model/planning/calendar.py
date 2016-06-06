@@ -257,11 +257,12 @@ class Calendar(DeclarativeBase):
         found_list = []
         for days in xrange(nbr_days):
             day = (start_date + datetime.timedelta(days=days)).date()
+            free_intervals = self.get_free_intervals(day)
             busy_intervals = self.get_busy_intervals(day, tz_delta)
-            if busy_intervals:
-                continue
-            intervals = self.get_free_intervals(day)
-            for start, end in intervals:
+            for start, end in free_intervals:
+                if any(start <= busy_start <= end or start <= busy_end <= end
+                       for busy_start, busy_end in busy_intervals):
+                    continue
                 event_start = datetime.datetime.combine(day, start)
                 event_end = datetime.datetime.combine(day, end)
                 duration = event_end - event_start

@@ -4,6 +4,7 @@ from __future__ import unicode_literals, print_function
 
 import datetime
 import logging
+import pprint
 import unittest
 
 from sqlalchemy import create_engine
@@ -32,6 +33,7 @@ class TestAssignationAccessor(unittest.TestCase):
     def setUpClass(cls):
         super(TestAssignationAccessor, cls).setUpClass()
         logging.basicConfig(level=logging.DEBUG if cls.DEBUG else logging.FATAL)
+        logging.getLogger("txn").setLevel(logging.INFO)
 
     def setUp(self):
         super(TestAssignationAccessor, self).setUp()
@@ -253,6 +255,13 @@ class TestAssignationAccessor(unittest.TestCase):
                     (datetime.time(14, 0), datetime.time(17, 45))]
         self.assertEqual(intervals, expected)
 
+    def _check_total_hours(self, intervals, assigned_hours):
+        total_sec = 0
+        for start_time, end_time in intervals:
+            delay = end_time - start_time
+            total_sec += delay.total_seconds()
+        self.assertEqual(total_sec / 3600, assigned_hours)
+
     def test_big_plan(self):
         # -- start date is Tuesdays
         tz_delta = datetime.timedelta(hours=2)  # UTC+2
@@ -284,13 +293,16 @@ class TestAssignationAccessor(unittest.TestCase):
         self.assertEqual(len(assignation_list), 1)
         assignation = assignation_list[0]
 
-        # -- We want to plan it today, but we got it for tomorrow
-        event_list = self.assignation_accessor.plan_assignation(assignation.uid, tz_delta=tz_delta)
-        expected = [(datetime.datetime(2016, 5, 25, 8, 30), datetime.datetime(2016, 5, 25, 10, 30)),
+        # -- We want to plan it today, but it is shifted to this afternoon
+        expected = [(datetime.datetime(2016, 5, 24, 14, 0), datetime.datetime(2016, 5, 24, 15, 45)),
+                    (datetime.datetime(2016, 5, 25, 8, 30), datetime.datetime(2016, 5, 25, 10, 30)),
                     (datetime.datetime(2016, 5, 25, 14, 0), datetime.datetime(2016, 5, 25, 15, 45)),
                     (datetime.datetime(2016, 5, 26, 8, 30), datetime.datetime(2016, 5, 26, 10, 30)),
                     (datetime.datetime(2016, 5, 26, 14, 0), datetime.datetime(2016, 5, 26, 15, 45)),
                     (datetime.datetime(2016, 5, 27, 8, 30), datetime.datetime(2016, 5, 27, 10, 30)),
-                    (datetime.datetime(2016, 5, 27, 14, 0), datetime.datetime(2016, 5, 27, 15, 45)),
-                    (datetime.datetime(2016, 5, 28, 8, 30), datetime.datetime(2016, 5, 28, 9, 15))]
-        self.assertEqual(event_list, expected)
+                    (datetime.datetime(2016, 5, 27, 14, 0), datetime.datetime(2016, 5, 27, 14, 45))]
+        self._check_total_hours(expected, assigned_hours)
+        intervals = self.assignation_accessor.plan_assignation(assignation.uid, tz_delta=tz_delta)
+        self._check_total_hours(intervals, assigned_hours)
+        LOG.debug("intervals:\n" + pprint.pformat(intervals, width=120))
+        self.assertEqual(intervals, expected)

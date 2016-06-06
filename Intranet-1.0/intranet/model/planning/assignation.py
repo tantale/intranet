@@ -135,7 +135,6 @@ class Assignation(DeclarativeBase):
         # -- La recherche d'un intervalle se fait jour après jour.
         intervals = calendar.find_assignable_event(start_date, end_date, tz_delta,
                                                    self.assigned_hours, self.rate_percent, minutes=minutes)
-        for interval in intervals:
-            event_start, event_end = interval
-            self.append_planning_event(event_start, event_end, tz_delta)
+        for start_time, end_time in intervals:
+            self.append_planning_event(start_time, end_time, tz_delta)
         return intervals
