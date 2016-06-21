@@ -2,3 +2,21 @@ recursive-include intranet/public *
 include intranet/public/favicon.ico
 recursive-include intranet/i18n *
 recursive-include intranet/templates *
+
+include *.txt
+include .bumpversion.cfg
+include alembic.ini
+include development.ini
+include test.ini
+include tox.ini
+recursive-include ez_setup *.py
+recursive-include ez_setup *.txt
+recursive-include install *.conf
+recursive-include install *.db
+recursive-include install *.ini
+recursive-include install *.txt
+recursive-include install *.wsgi
+recursive-include intranet *.ini_tmpl
+recursive-include intranet *.json
+recursive-include intranet *.mako
+recursive-include intranet *.rst
