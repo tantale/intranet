@@ -10,7 +10,8 @@ from intranet.model.planning.week_day import WeekDay
 try:
     _("")
 except TypeError:
-    _ = lambda x: x
+    def _(x):
+        return x
 
 
 class WeekDayAccessor(BasicAccessor):

@@ -8,15 +8,15 @@ import collections
 import logging
 from pprint import pformat
 
-import transaction
-from tg.i18n import ugettext as _
-from formencode.validators import NotEmpty, Regex
 import pylons
+import sqlalchemy.exc
+import transaction
+from formencode.validators import NotEmpty, Regex
 from tg.controllers.restcontroller import RestController
 from tg.controllers.util import redirect
 from tg.decorators import expose, with_trailing_slash, validate, without_trailing_slash
 from tg.flash import flash
-import sqlalchemy.exc
+from tg.i18n import ugettext as _
 
 from intranet.accessors import RecordNotFoundError
 from intranet.accessors.pointage.order import OrderAccessor
@@ -200,8 +200,11 @@ class OrderCatController(RestController):
         if not pk or pk == "unused":
             # -- CASE: edit in place (editable plugin)
             uid = int(name.rsplit("__", 1)[-1])
+
             # -- find the order_cat list that match the given uid
-            match_order_cat_uid = lambda x: x[0].uid == uid
+            def match_order_cat_uid(x):
+                return x[0].uid == uid
+
             filtered_list = filter(match_order_cat_uid, self.cat_group_index.values())
             assert len(filtered_list) == 1, b"uid: {0}, filtered_list: {1!r}".format(uid, filtered_list)
             order_cat_list = filtered_list[0]

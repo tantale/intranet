@@ -6,12 +6,12 @@
 """
 import logging
 
+import pylons
 from formencode.validators import NotEmpty
 from tg.controllers.restcontroller import RestController
 from tg.controllers.util import redirect
 from tg.decorators import with_trailing_slash, expose, validate
 from tg.flash import flash
-import pylons
 
 from intranet.accessors.pointage.order_phase import OrderPhaseAccessor
 
@@ -52,7 +52,10 @@ class OrderPhaseController(RestController):
         :param editable: ``True`` if the list is editable.
         :param selectable: ``True``is the list is selectable.
         """
-        asbool = lambda obj: str(obj).lower() in ('true', 'yes', 'on', 'y', 't', '1')  # @IgnorePep8
+
+        def asbool(obj):
+            return str(obj).lower() in ('true', 'yes', 'on', 'y', 't', '1')
+
         editable = asbool(editable)
         selectable = asbool(selectable)
 

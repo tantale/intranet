@@ -8,13 +8,13 @@ Date: 2015-03-31
 Author: Laurent LAPORTE <sandlol2009@gmail.com>
 """
 from __future__ import unicode_literals
+
 import logging
 
 import tg
 
 from intranet.accessors import BasicAccessor
 from intranet.model.pointage.menu_item import MenuItem, MenuHeader, MenuSeparator
-
 
 LOG = logging.getLogger(__name__)
 
@@ -37,7 +37,7 @@ class MenuItemAccessor(BasicAccessor):
                  target_page=tg.url('/admin/trcal/index.html')),
         # ADD: New feature: "planning"
         MenuItem("Planning", "Planning des événements", "ui-icon-calendar",
-                  target_page=tg.url('/admin/planning/index.html')),
+                 target_page=tg.url('/admin/planning/index.html')),
         MenuItem("Statistiques", "Statistiques de pointages", "ui-icon-calculator",
                  target_page=tg.url('/admin/chart/index.html')),
         MenuSeparator(),

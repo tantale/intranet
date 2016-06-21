@@ -7,20 +7,13 @@ Date: 2016-02-23
 
 Author: Laurent LAPORTE <tantale.solutions@gmail.com>
 """
-import datetime
 import logging
-import math
 
 import sqlalchemy.exc
 import transaction
 
 from intranet.accessors import BasicAccessor
 from intranet.model import Assignation
-from intranet.model.planning.calendar import Calendar
-from intranet.model.planning.planning_event import PlanningEvent
-from intranet.model.pointage.employee import Employee
-from intranet.model.pointage.order import Order
-from intranet.model.pointage.order_phase import OrderPhase
 
 LOG = logging.getLogger(__name__)
 

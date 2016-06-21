@@ -299,4 +299,3 @@ class PlanningEventController(RestController):
         minute_delta = int(minute_delta)
         delta = datetime.timedelta(days=day_delta, minutes=minute_delta)
         self.accessor.increase_duration(uid, delta)
-

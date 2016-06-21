@@ -21,7 +21,8 @@ from intranet.model.planning.year_period import YearPeriod
 try:
     _("")
 except TypeError:
-    _ = lambda x: x
+    def _(x):
+        return x
 
 
 class YearPeriodAccessor(BasicAccessor):

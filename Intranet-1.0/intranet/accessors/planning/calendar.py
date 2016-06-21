@@ -22,7 +22,8 @@ from intranet.model.planning.calendar import Calendar
 try:
     _("")
 except TypeError:
-    _ = lambda x: x
+    def _(x):
+        return x
 
 
 def convert_value(field, value):

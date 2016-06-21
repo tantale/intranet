@@ -11,7 +11,8 @@ from intranet.model.planning.frequency import Frequency
 try:
     _("")
 except TypeError:
-    _ = lambda x: x
+    def _(x):
+        return x
 
 
 class FrequencyAccessor(BasicAccessor):

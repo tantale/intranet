@@ -8,8 +8,6 @@ from intranet.controllers.error import ErrorController
 from intranet.controllers.pointage import PointageControoler
 from intranet.lib.base import BaseController
 
-
-
 # from intranet.model import DBSession, metadata
 # from tg import flash, require, url, lurl, redirect
 # from tg.i18n import ugettext as _, lazy_ugettext as l_

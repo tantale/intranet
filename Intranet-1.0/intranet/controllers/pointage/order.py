@@ -93,6 +93,7 @@ class OrderController(RestController):
         # populate the lazy loaded order_phase_list for json result:
         # noinspection PyUnusedLocal
         __ = order.order_phase_list
+        __ = __
 
         return dict(order=order,
                     order_cat_label=cat_label_dict.get(order.project_cat, self.MISSING_ORDER_CAT_LABEL))

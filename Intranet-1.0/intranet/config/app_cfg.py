@@ -11,13 +11,19 @@ convert them into boolean, for example, you should use the
     from paste.deploy.converters import asbool
     setting = asbool(global_conf.get('the_setting'))
 """
-from intranet import model  # @UnusedImport
-from intranet.lib import app_globals, helpers  # @UnusedImport
-from paste.cascade import Cascade  # @UnresolvedImport
-from paste.urlparser import StaticURLParser  # @UnresolvedImport
+from paste.cascade import Cascade
+from paste.urlparser import StaticURLParser
 from pylons.configuration import config
 from tg.configuration import AppConfig
+
 import intranet
+from intranet import model
+from intranet.lib import app_globals, helpers
+
+# intranet/config/app_cfg.py:14:1: F401 'intranet.model' imported but unused
+# intranet/config/app_cfg.py:15:1: F401 'intranet.lib.app_globals' imported but unused
+# intranet/config/app_cfg.py:15:1: F401 'intranet.lib.helpers' imported but unused
+assert model and app_globals and helpers
 
 
 class IntranetAppConfig(AppConfig):

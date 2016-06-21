@@ -299,7 +299,7 @@ class AssignationsController(RestController):
         minutes = 15
         max_months = 4
         intervals = self.assignation_accessor.plan_assignation(assignation_uid,
-                                                                tz_delta,
-                                                                minutes=minutes,
-                                                                max_months=max_months)
+                                                               tz_delta,
+                                                               minutes=minutes,
+                                                               max_months=max_months)
         return dict(event_intervals=intervals)

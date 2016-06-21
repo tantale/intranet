@@ -7,13 +7,13 @@
 #
 #
 
-# This is just a work-around for a Python2.7 issue causing
-# interpreter crash at exit when trying to log an info message.
-try:
-    import logging  # @UnusedImport
-    import multiprocessing  # @UnusedImport
-except:
-    pass
+# # This is just a work-around for a Python2.7 issue causing
+# # interpreter crash at exit when trying to log an info message.
+# try:
+#     import logging  # @UnusedImport
+#     import multiprocessing  # @UnusedImport
+# except:
+#     pass
 
 try:
     from setuptools import setup, find_packages

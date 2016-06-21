@@ -12,7 +12,8 @@ from intranet.model.planning.week_hours import WeekHours
 try:
     _("")
 except TypeError:
-    _ = lambda x: x
+    def _(x):
+        return x
 
 
 class WeekHoursAccessor(BasicAccessor):

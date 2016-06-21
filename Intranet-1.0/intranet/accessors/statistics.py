@@ -114,7 +114,8 @@ def gauss_filter(items, r=1.6449, key=None):
     :return:
     """
     if key is None:
-        key = lambda x1: x1
+        def key(x1):
+            return x1
     data = [key(x) for x in items]
     mu = mean(data)
     sigma = math.sqrt(pvariance(data, mu))

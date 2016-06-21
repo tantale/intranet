@@ -16,7 +16,8 @@ from intranet.model.pointage.order_cat import OrderCat
 try:
     _("")
 except TypeError:
-    _ = lambda x: x
+    def _(x):
+        return x
 
 _ORDER_CAT_LIST = [
     {
