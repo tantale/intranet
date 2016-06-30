@@ -69,26 +69,20 @@ assignation_badge_id = "assignation_form_{0}".format(assignation.uid)
             <td rowspan="2"><img class="valignMiddle picture_box_inner_min"
                                  alt="${assignation.employee.employee_name}"
                                  src="${img_src}"></td>
-            <td><label class="tooltip"><b>Heures&nbsp;:</b>
-                <input name="assigned_hours" value="${assignation.assigned_hours}" type="number"
-                       disabled="disabled"
-                       style="width: 5em;"
-                       min="0.25" step="0.25">&nbsp;h</label></td>
-            <td><label class="tooltip"><b>à&nbsp;:</b>
-                <input name="rate_percent" value="${assignation.rate_percent * 100.0}" type="number"
-                       style="width: 5em;"
-                       disabled="disabled"
-                       min="5.0" max="100.0" step="5.0">&nbsp;%</label></td>
+            <td><label class="tooltip"><b>du&nbsp;:</b>
+                <input name="end_planning_date"
+                       value="${assignation.end_planning_date.isoformat() if assignation.end_planning_date else ''}"
+                       type="datetime-local"
+                disabled="disabled"></label></td>
             <td>
                 <button type="submit" class="edit_button_icon" title="Modifier l‘affectation">!</button>
             </td>
         </tr>
         <tr>
-            <td><label class="tooltip"><b>Du&nbsp;:</b>
-                <input name="end_planning_date" value="${assignation.end_planning_date}" type="date"
-                disabled="disabled"></label></td>
             <td><label class="tooltip"><b>au&nbsp;:</b>
-                <input name="start_planning_date" value="${assignation.start_planning_date}" type="date"
+                <input name="start_planning_date"
+                       value="${assignation.start_planning_date.isoformat() if assignation.start_planning_date else ''}"
+                       type="datetime-local"
                 disabled="disabled"></label></td>
             <td>
                 <button type="button" class="calendar_button_icon" title="Planifier l‘affectation">#</button>
