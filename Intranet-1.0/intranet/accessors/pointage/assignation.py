@@ -96,6 +96,8 @@ class AssignationAccessor(BasicAccessor):
         try:
             with transaction.manager:
                 assignation = self.get_assignation(assignation_uid)
+                assignation.planning_event_list[:] = []
+                self.session.flush()
                 return assignation.plan_assignation(tz_delta, minutes, max_months)
         except sqlalchemy.exc.IntegrityError:
             transaction.abort()

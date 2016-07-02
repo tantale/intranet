@@ -130,7 +130,6 @@ class Assignation(DeclarativeBase):
         # -- La recherche d'un intervalle se fait sur les heures de disponibilité de l'employé.
         #    Le calendrier est celui associé à l'employé.
         calendar = self.employee.calendar
-        isinstance(calendar, Calendar)
 
         # -- La recherche d'un intervalle se fait jour après jour.
         intervals = calendar.find_assignable_event(start_date, end_date, tz_delta,
