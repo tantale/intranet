@@ -70,8 +70,11 @@
     </form>
     <div>
         %if order.estimated_duration:
-        <p class="ui-state-highlight">Cette commande est estimée à ${order.estimated_duration|heures}&#160;heures.
-            Voulez-vous vraiment recalculer la durée de toutes les tâches&#160;?</p>
+        <div class="ui-state-highlight ui-corner-all" style="padding: 0 .7em;">
+                <p style="margin: 0.5em 0;"><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span>
+                    Cette commande est estimée à ${order.estimated_duration|heures}&#160;heures.
+                    Voulez-vous vraiment recalculer la durée de toutes les tâches&#160;?</p>
+        </div>
         %endif
     </div>
     <script type="application/javascript" defer="defer">

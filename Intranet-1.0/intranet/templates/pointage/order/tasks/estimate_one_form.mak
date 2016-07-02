@@ -72,8 +72,13 @@
     </form>
     <div>
         %if task.estimated_duration:
-        <p class="ui-state-highlight">Cette tâche est estimée à ${task.estimated_duration|heures}&#160;heures.
-            Voulez-vous vraiment recalculer la durée de cette tâche&#160;?</p>
+        <div class="ui-widget">
+            <div class="ui-state-highlight ui-corner-all" style="padding: 0 .7em;">
+                <p style="margin: 0.5em 0;"><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span>
+                    Cette tâche est estimée à ${task.estimated_duration|heures}&#160;heures.
+                    Voulez-vous vraiment recalculer la durée de cette tâche&#160;?</p>
+            </div>
+        </div>
         %endif
     </div>
     <script type="application/javascript" defer="defer">
