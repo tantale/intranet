@@ -355,6 +355,17 @@ action_url = tg.url('./{task.order_uid}/tasks/{task.uid}/assignations/{assignati
         <input type="hidden" name="${k}" value="${v}">
         %endfor
         <p>${question}</p>
+        <p>${assignation.get_assignation(hidden["tz_offset"])}</p>
+        %if assignation.planning_event_list:
+        <div class="ui-widget">
+            <div class="ui-state-highlight ui-corner-all" style="padding: 0 .7em;">
+                <p style="margin: 0.5em 0;"><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span>
+                    L’affectation est déjà planifiée.
+                    Cliquer sur «&#160;Planifier&#160;» pour recommancer la planification,
+                    ou sur «&#160;Annuler&#160;» pour abandonner.</p>
+            </div>
+        </div>
+        %endif
     </form>
     <script type="application/javascript" defer="defer">
     $(function() {
