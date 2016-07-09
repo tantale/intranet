@@ -64,7 +64,7 @@
             pour analyser l’intégralité des commandes&nbsp;;
             Si l’on sélectionne <mark>Non clôturée</mark>, on analysera les commandes en cours de pointage,
             la mesure sera moins pertinente, car certaines phases ne seront pas terminées.</span></p>
-        %if 'closed'in form_errors:
+        %if 'closed' in form_errors:
         <p><span class="error">${form_errors['closed']}</span></p>
         %endif
     </form>

@@ -105,3 +105,45 @@ class OrderPhase(DeclarativeBase):
 
     def get_unassigned_employees(self, active_employees):
         return frozenset(active_employees) - self.assigned_employees
+
+    @property
+    def plan_status_info(self):
+        count = len(self.assignation_list)
+        can_plan = any([assignation.plan_status_info["can_plan"] for assignation in self.assignation_list])
+        if self.task_status == STATUS_DONE:
+            return dict(can_plan=False,
+                        label=u"Terminée",
+                        description=u"La tâche ne peut pas être planifiée "
+                                    u"car elle est terminée.")
+        elif self.estimated_duration == 0:
+            return dict(can_plan=False,
+                        label=u"Non estimée",
+                        description=u"La tâche ne peut pas être planifiée "
+                                    u"car la durée estimée est nulle.")
+        elif count == 0:
+            return dict(can_plan=False,
+                        label=u"Non affectée",
+                        description=u"La tâche ne peut pas être planifiée "
+                                    u"car personne n’est affecté.")
+        elif count == 1:
+            if can_plan:
+                return dict(can_plan=True,
+                            label=u"À planifier",
+                            description=u"La tâche comporte une affectation "
+                                        u"restante à planifier.")
+            else:
+                return dict(can_plan=False,
+                            label=u"Déjà planifiée",
+                            description=u"La tâche ne peut pas être planifiée "
+                                        u"car l’affectation est déjà planifiée.")
+        else:
+            if can_plan:
+                return dict(can_plan=True,
+                            label=u"Partiellement planifiée",
+                            description=u"La tâche comporte une (ou plusieurs) affectation(s) "
+                                        u"restant à planifier.")
+            else:
+                return dict(can_plan=False,
+                            label=u"Déjà planifiée",
+                            description=u"La tâche ne peut pas être planifiée "
+                                        u"car toutes les affectations sont déjà planifiées.")

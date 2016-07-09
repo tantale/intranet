@@ -18,7 +18,6 @@ from sqlalchemy.schema import Column, CheckConstraint, ForeignKey, UniqueConstra
 from sqlalchemy.types import Integer, DateTime, Float
 
 from intranet.model import DeclarativeBase
-from intranet.model.planning.calendar import Calendar
 from intranet.model.planning.planning_event import PlanningEvent
 
 
@@ -137,3 +136,14 @@ class Assignation(DeclarativeBase):
         for start_time, end_time in intervals:
             self.append_planning_event(start_time, end_time, tz_delta)
         return intervals
+
+    @property
+    def plan_status_info(self):
+        if self.planning_event_list:
+            return dict(can_plan=False,
+                        label=u"Planifiée",
+                        description=u"L’assignation est planifiée.")
+        else:
+            return dict(can_plan=True,
+                        label=u"Non planifiée",
+                        description=u"L’assignation n’est pas planifiée.")

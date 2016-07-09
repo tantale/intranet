@@ -54,22 +54,16 @@
         %endfor
     </div>
     <footer class="ui-state-default">
-        <form id="new_task__form">
-            <fieldset id="new_task" class="task ui-widget">
-                <div class="row-xs">
-                    <div class="col-xs-12">
-                        <nav>
-                            <button type="submit" class="refresh_button"
-                                    title="Met à jour la planification des tâches">Planifier tout
-                            </button>
-                            <button type="submit" class="calendar_button"
-                                    title="Affiche le planning des événements">Afficher le planning
-                            </button>
-                        </nav>
-                    </div>
-                </div>
-            </fieldset>
-        </form>
+        <div class="row-xs">
+            <div class="col-xs-12">
+                <nav>
+                    <button type="button" class="refresh_button"
+                            title="Met à jour la planification des tâches">Planifier tout</button>
+                    <button type="button" class="calendar_button"
+                            title="Affiche le planning des événements">Afficher le planning</button>
+                </nav>
+            </div>
+        </div>
     </footer>
 </section>
 <script type="application/javascript" defer="defer">
@@ -79,7 +73,85 @@
             icons : {
                 primary : "ui-icon-refresh"
             }
+        })
+        .click(function(event){
+            var error = function(response, status, xhr) {
+                var msg = '<p><span class="error">Désolé mais il y a eu une erreur. ' +
+                'statut : ' + xhr.status + ', ' +
+                'message : "' + xhr.statusText + '".</span></p>';
+                $('#confirm_dialog_content').html(msg);
+                $('#confirm_dialog').dialog({
+                    width: 500,
+                    height: 200,
+                    buttons: {
+                        "Annuler": function() {
+                            $(this).dialog("close");
+                        }
+                    },
+                    title: "Planifier toutes les tâches"
+                }).dialog("open");
+            }
+
+            var success = function(response, status, xhr) {
+                var thisDialog = $('#confirm_dialog').dialog({
+                    width: 550,
+                    height: 350,
+                    buttons: {
+                        "Planifier tout" : function() {
+                            $('#plan_all_form').submit();
+                        },
+                        "Annuler": function() {
+                            $(this).dialog("close");
+                        }
+                    },
+                    title: "Planifier toutes les tâches"
+                });
+
+                var ajaxFormProp = {
+                    beforeSubmit: function(arr, form, options) {
+                        $("body").css("cursor", "progress");
+                        return true;
+                    },
+                    error: function(responseText, statusText, xhr) {
+                        $("body").css("cursor", "default");
+                        $('#confirm_dialog_content').html('<p><span class="error">Échec de connexion au serveur</span></p>');
+                    },
+                    success: function(responseText, statusText, xhr) {
+                        $("body").css("cursor", "default");
+                        var error = $('<div/>').append(responseText).find('span.error');
+                        if (error.length) {
+                            $('#confirm_dialog_content').html(responseText);
+                            $('#plan_all_form').ajaxForm(ajaxFormProp);
+                        } else {
+                            $('#${tasks_id}').html(responseText);
+                            thisDialog.dialog("close");
+                        }
+                    }
+                };
+
+                $('#plan_all_form').ajaxForm(ajaxFormProp);
+
+                thisDialog.dialog("open");
+            }
+
+            var url = "${tg.url('./{order.uid}/tasks/plan_all_form'.format(order=order))|n}";
+            var today = new Date();
+            var tz_offset = today.getTimezoneOffset();
+
+            $('#confirm_dialog_content').load(url,
+                {
+                    tz_offset: tz_offset
+                },
+                function(response, status, xhr){
+                    if (status == "error") {
+                        error(response, status, xhr);
+                    } else {
+                        success(response, status, xhr);
+                    }
+                });
+
         });
+
         $("#${tasks_id} .calendar_button").button({
             text : true,
             icons : {

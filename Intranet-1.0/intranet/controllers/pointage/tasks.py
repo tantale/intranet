@@ -76,7 +76,7 @@ class TasksController(RestController):
         redirect('./',
                  closed=closed,
                  max_count=max_count,
-                 tz_offset=tz_offset, )
+                 tz_offset=tz_offset)
 
     @expose('intranet.templates.pointage.order.tasks.estimate_one_form')
     def estimate_one_form(self, uid, closed=False, max_count=64, tz_offset=0):
@@ -110,7 +110,30 @@ class TasksController(RestController):
                  uid=uid,
                  closed=closed,
                  max_count=max_count,
-                 tz_offset=tz_offset, )
+                 tz_offset=tz_offset)
+
+    @expose('intranet.templates.pointage.order.tasks.plan_all_form')
+    def plan_all_form(self, tz_offset=0):
+        # In case of error, values are form values => need to convert
+        tz_offset = int(tz_offset) if tz_offset else 0
+        form_errors = pylons.tmpl_context.form_errors  # @UndefinedVariable
+        order = self.order_accessor.get_order(self.order_uid)
+        title_fmt = u'Planification des tâches pour "{order.order_ref}"'
+        return dict(title=title_fmt.format(order=order),
+                    order=order,
+                    hidden=dict(tz_offset=tz_offset),
+                    form_errors=form_errors)
+
+    @validate({'tz_offset': Int(not_empty=True)},
+              error_handler=plan_all_form)
+    @expose()
+    def plan_all(self, tz_offset=0):
+        LOG.debug("plan_all: "
+                  "tz_offset={tz_offset!r}".format(**locals()))
+        # fixme: implémenter plan_all => planifier toutes les tâches
+        self.order_accessor.plan_all(self.order_uid, tz_offset=tz_offset)
+        redirect('./',
+                 tz_offset=tz_offset)
 
     @expose('json')
     def get_one(self, uid, **kwargs):
