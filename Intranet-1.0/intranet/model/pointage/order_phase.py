@@ -147,3 +147,36 @@ class OrderPhase(DeclarativeBase):
                             label=u"Déjà planifiée",
                             description=u"La tâche ne peut pas être planifiée "
                                         u"car toutes les affectations sont déjà planifiées.")
+
+    def plan_task(self, tz_delta, minutes, max_months, min_date_utc=None):
+        """
+        Plan a single task (if possible).
+
+        :type tz_delta: datetime.timedelta
+        :param tz_delta: time-zone delta from UTC (tz_delta = utc_date - local_date).
+        :type minutes: int
+        :param minutes: Minimal number of assignable duration.
+        :type max_months: int
+        :param max_months: Maximal number of months.
+        :type min_date_utc: datetime.datetime or None
+        :param min_date_utc: Start date/time (UTC).
+        :rtype: datetime.datetime
+        :rtype: list[(datetime.datetime, datetime.datetime)]
+        :return: List of hours shifts or empty list if not assignable.
+            The couple (event_start, event_end) use date/time (local time).
+        """
+        if not min_date_utc:
+            min_date_utc = min([assignation.start_date for assignation in self.assignation_list
+                                if assignation.plan_status_info["can_plan"]])
+        shifts = []
+        for assignation in self.assignation_list:
+            if assignation.plan_status_info["can_plan"]:
+                assignation_shifts = assignation.plan_assignation(tz_delta,
+                                                                  minutes=minutes,
+                                                                  max_months=max_months,
+                                                                  min_date_utc=min_date_utc)
+                if assignation_shifts:
+                    start_date = min([shift[0] for shift in assignation_shifts])
+                    end_date = max([shift[1] for shift in assignation_shifts])
+                    shifts.append((start_date, end_date))
+        return shifts

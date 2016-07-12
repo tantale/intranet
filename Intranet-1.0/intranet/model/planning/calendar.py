@@ -216,7 +216,24 @@ class Calendar(DeclarativeBase):
         available_slots = [slot for slot in gap_fill.colored_slots if slot[1] == FREE_SLOT]
         return filter(None, [create_time_interval(slot, minutes=minutes) for slot in available_slots])
 
-    def find_assignable_interval(self, day, tz_delta, assigned_hours, rate_percent, minutes=15):
+    def find_shift_in_day(self, day, tz_delta, assigned_hours, rate_percent, minutes=15):
+        """
+        Find assignable shift in the day.
+
+        :type day: datetime.date
+        :param day: The day to search for an available shift.
+        :type tz_delta: datetime.timedelta
+        :param tz_delta: time-zone delta from UTC (tz_delta = utc_date - local_date).
+        :type assigned_hours: float
+        :param assigned_hours: Number of assigned hours to the task.
+        :type rate_percent: float
+        :param rate_percent: Assignation rate in percent: 0 < rate_percent <= 1 (not nul).
+        :type minutes: int
+        :param minutes: Minimal number of assignable duration.
+        :rtype: (datetime.datetime, datetime.datetime)
+        :return: A single hours shift or ``None`` if not assignable.
+            The couple (event_start, event_end) use date/time (local time).
+        """
         # -- Il nous faut trouver un intervalle de dates dont la durée soit supérieure (ou égale)
         #    à la durée de la tâche.
         intervals = self.get_available_intervals(day, tz_delta, minutes=minutes)
@@ -242,19 +259,38 @@ class Calendar(DeclarativeBase):
         # -- not found
         return None
 
-    def find_assignable_event(self, start_date, end_date, tz_delta, assigned_hours, rate_percent, minutes=15):
+    def find_shifts_in_interval(self, start_date, end_date, tz_delta, assigned_hours, rate_percent, minutes=15):
+        """
+        Find assignable shifts in the (start_date, end_date) interval.
+
+        :type start_date: datetime.datetime
+        :param start_date: Start date/time (local time) of the interval (inclusive).
+        :type end_date: datetime.datetime
+        :param end_date: Start date/time (local time) of the interval (exclusive).
+        :type tz_delta: datetime.timedelta
+        :param tz_delta: time-zone delta from UTC (tz_delta = utc_date - local_date).
+        :type assigned_hours: float
+        :param assigned_hours: Number of assigned hours to the task.
+        :type rate_percent: float
+        :param rate_percent: Assignation rate in percent: 0 < rate_percent <= 1 (not nul).
+        :type minutes: int
+        :param minutes: Minimal number of assignable duration.
+        :rtype: list[(datetime.datetime, datetime.datetime)]
+        :return: List of hours shifts or empty list if not assignable.
+            The couple (event_start, event_end) use date/time (local time).
+        """
         # -- On recherche un jour qui permet d'assigner toutes les heures ensembles
         nbr_days = (end_date - start_date).days
         for days in xrange(nbr_days):
             day = (start_date + datetime.timedelta(days=days)).date()
             # -- Il nous faut trouver un intervalle de dates dont la durée soit supérieure (ou égale)
             #    à la durée de la tâche.
-            found = self.find_assignable_interval(day, tz_delta, assigned_hours, rate_percent, minutes=minutes)
+            found = self.find_shift_in_day(day, tz_delta, assigned_hours, rate_percent, minutes=minutes)
             if found:
                 return [found]
 
         # -- On recherche des jours "libre" et on assigne morceau par morceau en gardant un peu de temps libre
-        found_list = []
+        shifts = []
         for days in xrange(nbr_days):
             day = (start_date + datetime.timedelta(days=days)).date()
             free_intervals = self.get_free_intervals(day)
@@ -272,10 +308,10 @@ class Calendar(DeclarativeBase):
                     # peu probable, mais on préfère éviter les intervalles vides.
                     continue
                 consumed_hours = min(assignable_minutes / 60.0, assigned_hours)
-                found_list.append((event_start, event_start + datetime.timedelta(hours=consumed_hours)))
+                shifts.append((event_start, event_start + datetime.timedelta(hours=consumed_hours)))
                 assigned_hours -= consumed_hours
                 if assigned_hours == 0:
-                    return found_list
+                    return shifts
 
         # -- Planification impossible ou incomplète.
         #    On retourne une liste vide même si on a une planification incomplète

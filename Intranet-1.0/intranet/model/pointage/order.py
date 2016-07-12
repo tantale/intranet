@@ -130,17 +130,33 @@ class Order(DeclarativeBase):
                      checked=task_status == STATUS_DONE)]
 
     def plan_order(self, tz_delta, minutes=15, max_months=4):
+        """
+        Plan the Order tasks and assignations (if possible).
+
+        :type tz_delta: datetime.timedelta
+        :param tz_delta: time-zone delta from UTC (tz_delta = utc_date - local_date).
+        :type minutes: int
+        :param minutes: Minimal number of assignable duration.
+        :type max_months: int
+        :param max_months: Maximal number of months.
+        :rtype: list[(datetime.datetime, datetime.datetime)]
+        :return: List of hours shifts or empty list if not assignable.
+            The couple (event_start, event_end) use date/time (local time).
+        """
         if self.close_date:
-            return u"Planification impossible car la commande est clôturée."
+            # -- "Planification impossible car la commande est clôturée."
+            return []
         checked = next(info for info in self.all_status_info if info["checked"])
         if checked["value"] == STATUS_DONE:
-            return u"Planification impossible\xa0: " + checked["description"]
+            # -- "Planification impossible\xa0: " + checked["description"]
+            return []
 
         # Sélection des tâches planifiables
         task_list = [order_phase for order_phase in self.order_phase_list
                      if order_phase.plan_status_info["can_plan"]]
         if not task_list:
-            return u"Planification impossible\xa0: aucune tâche ne peut être planifiée."
+            # -- "Planification impossible\xa0: aucune tâche ne peut être planifiée."
+            return []
 
         # Il nous faut choisir une date de début de planification
         # Cette date sera la valeur minimale des dates de début
@@ -148,13 +164,17 @@ class Order(DeclarativeBase):
         # Ensuite, cette date sera mise à jour après chaque planification
         # avec la valeur maximale de la date de fin de toutes les affectations.
 
-        first_task = task_list[0]
-        curr_date = min([assignation.start_date for assignation in first_task.assignation_list])
+        min_date_utc = None
+        shifts = []
         for task in task_list:
-            for assignation in task.assignation_list:
-                intervals = assignation.plan_assignation(tz_delta,
-                                                         minutes=minutes,
-                                                         max_months=max_months,
-                                                         min_date=curr_date)
-            # fixme: fin de planification
-            curr_date = curr_date  # ???
+            assert isinstance(task, OrderPhase)
+            task_shifts = task.plan_task(tz_delta,
+                                         minutes=minutes,
+                                         max_months=max_months,
+                                         min_date_utc=min_date_utc)
+            if task_shifts:
+                start_date = min([shift[0] for shift in task_shifts])
+                end_date = max([shift[1] for shift in task_shifts])
+                shifts.append((start_date, end_date))
+                min_date_utc = end_date + tz_delta
+        return shifts

@@ -24,6 +24,15 @@ from intranet.model.planning.planning_event import PlanningEvent
 class Assignation(DeclarativeBase):
     """
     Assign an Employee to an OrderPhase with the given rate (percent)
+
+    :type start_date: datetime.datetime
+    :param start_date: Start date/time (local time) of the interval (inclusive).
+    :type end_date: datetime.datetime
+    :param end_date: Start date/time (local time) of the interval (exclusive).
+    :type assigned_hours: float
+    :param assigned_hours: Number of assigned hours to the task.
+    :type rate_percent: float
+    :param rate_percent: Assignation rate in percent: 0 < rate_percent <= 1 (not nul).
     """
     __tablename__ = 'Assignation'
     __table_args__ = (UniqueConstraint('employee_uid', 'order_phase_uid',
@@ -116,13 +125,28 @@ class Assignation(DeclarativeBase):
         planning_event.calendar = self.employee.calendar
         self.planning_event_list.append(planning_event)
 
-    def plan_assignation(self, tz_delta, minutes=15, max_months=4, min_date=None):
+    def plan_assignation(self, tz_delta, minutes=15, max_months=4, min_date_utc=None):
+        """
+        Plan a single assignation.
+
+        :type tz_delta: datetime.timedelta
+        :param tz_delta: time-zone delta from UTC (tz_delta = utc_date - local_date).
+        :type minutes: int
+        :param minutes: Minimal number of assignable duration.
+        :type max_months: int
+        :param max_months: Maximal number of months.
+        :type min_date_utc: datetime.datetime
+        :param min_date_utc: Start date/time (UTC).
+        :rtype: list[(datetime.datetime, datetime.datetime)]
+        :return: List of hours shifts or empty list if not assignable.
+            The couple (event_start, event_end) use date/time (local time).
+        """
         # -- Date minimale de planification
-        min_date = min_date or self.start_date
+        min_date_utc = min_date_utc or self.start_date
 
         # -- Si la date de fin n'est pas défini, on fera une exploration sur 4 mois
         #    Les dates sont exprimées en date/heures UTC.
-        start_date_utc = min(self.start_date, min_date)
+        start_date_utc = min(self.start_date, min_date_utc)
         end_date_utc = self.end_date or (start_date_utc + datetime.timedelta(days=max_months * 30.5))
 
         # -- Attention, les calculs se font sur des dates/heures locales (et non pas UTC).
@@ -134,11 +158,11 @@ class Assignation(DeclarativeBase):
         calendar = self.employee.calendar
 
         # -- La recherche d'un intervalle se fait jour après jour.
-        intervals = calendar.find_assignable_event(start_date, end_date, tz_delta,
-                                                   self.assigned_hours, self.rate_percent, minutes=minutes)
-        for start_time, end_time in intervals:
+        shifts = calendar.find_shifts_in_interval(start_date, end_date, tz_delta,
+                                                  self.assigned_hours, self.rate_percent, minutes=minutes)
+        for start_time, end_time in shifts:
             self.append_planning_event(start_time, end_time, tz_delta)
-        return intervals
+        return shifts
 
     @property
     def plan_status_info(self):
