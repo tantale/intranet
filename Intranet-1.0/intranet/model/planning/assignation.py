@@ -116,10 +116,13 @@ class Assignation(DeclarativeBase):
         planning_event.calendar = self.employee.calendar
         self.planning_event_list.append(planning_event)
 
-    def plan_assignation(self, tz_delta, minutes=15, max_months=4):
+    def plan_assignation(self, tz_delta, minutes=15, max_months=4, min_date=None):
+        # -- Date minimale de planification
+        min_date = min_date or self.start_date
+
         # -- Si la date de fin n'est pas défini, on fera une exploration sur 4 mois
         #    Les dates sont exprimées en date/heures UTC.
-        start_date_utc = self.start_date
+        start_date_utc = min(self.start_date, min_date)
         end_date_utc = self.end_date or (start_date_utc + datetime.timedelta(days=max_months * 30.5))
 
         # -- Attention, les calculs se font sur des dates/heures locales (et non pas UTC).

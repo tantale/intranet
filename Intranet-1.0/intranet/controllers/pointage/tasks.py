@@ -130,8 +130,10 @@ class TasksController(RestController):
     def plan_all(self, tz_offset=0):
         LOG.debug("plan_all: "
                   "tz_offset={tz_offset!r}".format(**locals()))
-        # fixme: implémenter plan_all => planifier toutes les tâches
-        self.order_accessor.plan_all(self.order_uid, tz_offset=tz_offset)
+        tz_delta = datetime.timedelta(minutes=int(tz_offset))
+        minutes = 15
+        max_months = 4
+        self.order_accessor.plan_all(self.order_uid, tz_delta, minutes, max_months)
         redirect('./',
                  tz_offset=tz_offset)
 

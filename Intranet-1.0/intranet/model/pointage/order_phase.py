@@ -91,7 +91,7 @@ class OrderPhase(DeclarativeBase):
                      checked=self.task_status == STATUS_PENDING),
                 dict(value=STATUS_IN_PROGRESS,
                      label=u"En cours",
-                     description=u"La tâche est cours de planification, "
+                     description=u"La tâche est en cours de planification, "
                                  u"il est encore possible d’ajuster le reste à faire",
                      checked=self.task_status == STATUS_IN_PROGRESS),
                 dict(value=STATUS_DONE,

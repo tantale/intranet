@@ -11,7 +11,7 @@ from sqlalchemy.schema import Column
 from sqlalchemy.types import Integer, String, Date
 
 from intranet.model import DeclarativeBase
-from intranet.model.pointage.order_phase import STATUS_PENDING, STATUS_IN_PROGRESS, STATUS_DONE
+from intranet.model.pointage.order_phase import STATUS_PENDING, STATUS_IN_PROGRESS, STATUS_DONE, OrderPhase
 
 
 class Order(DeclarativeBase):
@@ -117,14 +117,44 @@ class Order(DeclarativeBase):
             task_status = STATUS_IN_PROGRESS
         return [dict(value=STATUS_PENDING,
                      label=u"Attente",
-                     description=u"La tâche est estimée et en attente de planification",
+                     description=u"Les tâches sont estimées et en attente de planification",
                      checked=task_status == STATUS_PENDING),
                 dict(value=STATUS_IN_PROGRESS,
                      label=u"En cours",
-                     description=u"La tâche est cours de planification, "
+                     description=u"Les tâches sont en cours de planification, "
                                  u"il est encore possible d’ajuster le reste à faire",
                      checked=task_status == STATUS_IN_PROGRESS),
                 dict(value=STATUS_DONE,
                      label=u"Terminée",
-                     description=u"La tâche est terminée.",
+                     description=u"Les tâches sont terminées.",
                      checked=task_status == STATUS_DONE)]
+
+    def plan_order(self, tz_delta, minutes=15, max_months=4):
+        if self.close_date:
+            return u"Planification impossible car la commande est clôturée."
+        checked = next(info for info in self.all_status_info if info["checked"])
+        if checked["value"] == STATUS_DONE:
+            return u"Planification impossible\xa0: " + checked["description"]
+
+        # Sélection des tâches planifiables
+        task_list = [order_phase for order_phase in self.order_phase_list
+                     if order_phase.plan_status_info["can_plan"]]
+        if not task_list:
+            return u"Planification impossible\xa0: aucune tâche ne peut être planifiée."
+
+        # Il nous faut choisir une date de début de planification
+        # Cette date sera la valeur minimale des dates de début
+        # de toutes les affectations de la première tâche.
+        # Ensuite, cette date sera mise à jour après chaque planification
+        # avec la valeur maximale de la date de fin de toutes les affectations.
+
+        first_task = task_list[0]
+        curr_date = min([assignation.start_date for assignation in first_task.assignation_list])
+        for task in task_list:
+            for assignation in task.assignation_list:
+                intervals = assignation.plan_assignation(tz_delta,
+                                                         minutes=minutes,
+                                                         max_months=max_months,
+                                                         min_date=curr_date)
+            # fixme: fin de planification
+            curr_date = curr_date  # ???

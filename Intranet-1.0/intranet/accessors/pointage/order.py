@@ -7,6 +7,7 @@
 import collections
 import datetime
 
+import sqlalchemy.exc
 import transaction
 
 from intranet.accessors import BasicAccessor
@@ -135,3 +136,12 @@ class OrderAccessor(BasicAccessor):
                     order_phase.estimated_duration = mean_time or None
                     order_phase.remain_duration = max(0, order_phase.estimated_duration - order_phase.tracked_duration)
                     order_phase.task_status = STATUS_PENDING
+
+    def plan_all(self, order_uid, tz_delta, minutes, max_months):
+        try:
+            with transaction.manager:
+                order = self.get_order(order_uid)
+                return order.plan_order(tz_delta, minutes, max_months)
+        except sqlalchemy.exc.IntegrityError:
+            transaction.abort()
+            raise
