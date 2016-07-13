@@ -148,7 +148,7 @@ class OrderPhase(DeclarativeBase):
                             description=u"La tâche ne peut pas être planifiée "
                                         u"car toutes les affectations sont déjà planifiées.")
 
-    def plan_task(self, tz_delta, minutes, max_months, min_date_utc=None):
+    def plan_task(self, tz_delta, minutes=15, max_months=4, min_date_utc=None):
         """
         Plan a single task (if possible).
 
