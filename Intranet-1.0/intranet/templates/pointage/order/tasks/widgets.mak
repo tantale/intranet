@@ -149,7 +149,7 @@ can_plan_cls = "ui-icon ui-icon-circle-check" if can_plan else "ui-icon ui-icon-
             <div class="col-xs-12">
                 <nav>
                     <button type="button" class="refresh_button"
-                            title="Met à jour la planification de la tâche">Réévaluer</button>
+                            title="Recalcul les durées de la tâche">Réévaluer</button>
                     <button type="submit" class="update_button"
                             title="Appliquer les modifications sur la tâche">Appliquer</button>
                     <button type="reset" class="cancel_button"

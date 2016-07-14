@@ -57,7 +57,7 @@
         <div class="row-xs">
             <div class="col-xs-12">
                 <nav>
-                    <button type="button" class="refresh_button"
+                    <button type="button" class="plan_all_button"
                             title="Met à jour la planification des tâches">Planifier tout</button>
                     <button type="button" class="calendar_button"
                             title="Affiche le planning des événements">Afficher le planning</button>
@@ -68,7 +68,7 @@
 </section>
 <script type="application/javascript" defer="defer">
     $(function() {
-        $("#${tasks_id} .refresh_button").button({
+        $("#${tasks_id} .plan_all_button").button({
             text : true,
             icons : {
                 primary : "ui-icon-refresh"
