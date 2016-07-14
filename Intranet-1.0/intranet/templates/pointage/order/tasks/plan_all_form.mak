@@ -33,21 +33,17 @@
         <table>
             %for task in order.order_phase_list:
             <%
-            can_plan = task.plan_status_info['can_plan']
-            style = "" if can_plan else "color: grey;"
+            plan_status_info = task.plan_status_info
+            can_plan = plan_status_info['can_plan']
+            can_plan_style = "" if can_plan else "color: grey;"
+            can_plan_cls = "ui-icon ui-icon-circle-check" if can_plan else "ui-icon ui-icon-triangle-1-e"
             %>
-            <tr style="${style}">
-                <td>
-                    %if task.plan_status_info['can_plan']:
-                    <span class="ui-icon ui-icon-circle-check"></span>
-                    %else:
-                    <span class="ui-icon ui-icon-triangle-1-e"></span>
-                    %endif
-                </td>
+            <tr style="${can_plan_style}">
+                <td><span class="${can_plan_cls}"></span></td>
                 <td><b>${task.label}&#160;:</b></td>
-                <td>${task.plan_status_info['label']}</td>
+                <td>${plan_status_info['label']}</td>
                 <td><span class="ui-icon ui-icon-help"></span>
-                    <p class="ui-tooltip" hidden="hidden"><span class="ui-tooltip-content">${task.plan_status_info['description']}</span></p>
+                    <p class="ui-tooltip" hidden="hidden"><span class="ui-tooltip-content">${plan_status_info['description']}</span></p>
                 </td>
             </tr>
             %endfor

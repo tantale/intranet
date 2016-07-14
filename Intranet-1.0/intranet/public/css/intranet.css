@@ -270,9 +270,13 @@ td.record-table-label {
 .row-xs {display: block; clear: left; overflow: hidden;}
 .col-xs-1  {display: inline-block; vertical-align: middle; min-width:   3em; width:   8.33%; float: left; padding: 5px;}
 .col-xs-2  {display: inline-block; vertical-align: middle; min-width:   7em; width:  16.66%; float: left; padding: 5px;}
-.col-xs-4  {display: inline-block; vertical-align: middle; min-width:  14em; width:  33.00%; float: left; padding: 5px;}
+.col-xs-3  {display: inline-block; vertical-align: middle; min-width:  11em; width:  25.00%; float: left; padding: 5px;}
+.col-xs-4  {display: inline-block; vertical-align: middle; min-width:  14em; width:  33.33%; float: left; padding: 5px;}
 .col-xs-5  {display: inline-block; vertical-align: middle; min-width:  17em; width:  41.66%; float: left; padding: 5px;}
 .col-xs-6  {display: inline-block; vertical-align: middle; min-width:  21em; width:  50.00%; float: left; padding: 5px;}
 .col-xs-7  {display: inline-block; vertical-align: middle; min-width:  25em; width:  58.33%; float: left; padding: 5px;}
+.col-xs-8  {display: inline-block; vertical-align: middle; min-width:  29em; width:  66.66%; float: left; padding: 5px;}
+.col-xs-9  {display: inline-block; vertical-align: middle; min-width:  33em; width:  75.00%; float: left; padding: 5px;}
 .col-xs-10 {display: inline-block; vertical-align: middle; min-width:  35em; width:  83.33%; float: left; padding: 5px;}
+.col-xs-11 {display: inline-block; vertical-align: middle; min-width:  39em; width:  91.66%; float: left; padding: 5px;}
 .col-xs-12 {display: inline-block; vertical-align: middle; min-width:  42em; width: 100.00%; float: left; padding: 5px;}

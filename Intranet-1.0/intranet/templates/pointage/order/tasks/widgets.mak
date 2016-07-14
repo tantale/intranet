@@ -16,6 +16,9 @@ obj_description = values.get("description") or task.description
 obj_estimated_duration = values.get("estimated_duration") or task.estimated_duration
 obj_remain_duration = values.get("remain_duration") or task.remain_duration
 obj_task_status = values.get("task_status") or task.task_status
+plan_status_info = task.plan_status_info
+can_plan = plan_status_info['can_plan']
+can_plan_cls = "ui-icon ui-icon-circle-check" if can_plan else "ui-icon ui-icon-triangle-1-e"
 %>
 <form id="${task_form_id}" class="ui-widget"
       action="${tg.url('./{task.order_uid}/tasks/{task.uid}'.format(task=task))}"
@@ -26,12 +29,22 @@ obj_task_status = values.get("task_status") or task.task_status
     %endfor
     <fieldset class="task ui-widget-content">
         <div class="row-xs">
-            <div class="col-xs-12">
+            <div class="col-xs-9">
                 <input class="change label" name="label" value="${obj_label}"
                        title="Nom de la tâche"/>
                 %if 'label'in form_errors:
                 <p><span class="error">${form_errors['label']}</span></p>
                 %endif
+            </div>
+            <div class="col-xs-3">
+                <span class="ui-widget">
+                    <span class="ui-state-default ui-corner-all" style="padding: 0 .7em;">
+                        <span>
+                            <span class="${can_plan_cls}" style="float: left; margin-right: .3em;"></span>
+                            <span title="${plan_status_info['description']}">${plan_status_info['label']}</span>
+                        </span>
+                    </span>
+                </span>
             </div>
         </div>
         <div class="row-xs">
