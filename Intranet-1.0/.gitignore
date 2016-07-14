@@ -25,6 +25,9 @@ __MACOSX__
 .installed.cfg
 # dist/ [laurent: necessaire pour distribuer le ZIP]
 MANIFEST
+nosetests.xml
+htmlcov/
+__pycache__
 
 # Project files for idea, eclipse, and netbeans
 nbproject/
