@@ -27,7 +27,7 @@ LOG = logging.getLogger(__name__)
 
 
 class TestAssignationAccessor(unittest.TestCase):
-    DEBUG = True
+    DEBUG = False
 
     @classmethod
     def setUpClass(cls):

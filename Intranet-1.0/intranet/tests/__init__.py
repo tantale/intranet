@@ -1,16 +1,15 @@
 # -*- coding: utf-8 -*-
 """Unit and functional test suite for Intranet."""
 
-from intranet.model import *
-from nose.tools import eq_
 from os import path
+
 from paste.deploy import loadapp  # @UnresolvedImport
 from paste.script.appinstall import SetupCommand  # @UnresolvedImport
 from routes import url_for
 from tg import config
 from webtest import TestApp
-import sys
 
+from intranet.model import *
 
 __all__ = ['setup_db', 'teardown_db', 'TestController', 'url_for']
 

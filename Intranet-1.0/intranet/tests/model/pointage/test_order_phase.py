@@ -24,7 +24,7 @@ LOG = logging.getLogger(__name__)
 
 
 class TestFrequencyAccessor(unittest.TestCase):
-    DEBUG = True
+    DEBUG = False
 
     @classmethod
     def setUpClass(cls):

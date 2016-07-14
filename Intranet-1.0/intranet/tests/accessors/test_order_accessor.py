@@ -23,7 +23,7 @@ LOG = logging.getLogger(__name__)
 
 
 class TestOrderAccessor(unittest.TestCase):
-    DEBUG = True
+    DEBUG = False
 
     @classmethod
     def setUpClass(cls):
