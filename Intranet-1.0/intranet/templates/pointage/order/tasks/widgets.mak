@@ -149,7 +149,7 @@ obj_task_status = values.get("task_status") or task.task_status
 <div>
     <div class="row-xs">
         <div class="col-xs-2">
-            <label class="assignations">Affectation(s)&nbsp;:</label>
+            <label class="assignations" style="display: inline-block; margin-top: 1.7em;">Affectation(s)&nbsp;:</label>
         </div>
         <div class="col-xs-10">
             <div id="${assignations_id}" class="assignations">

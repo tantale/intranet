@@ -12,7 +12,7 @@ from __future__ import unicode_literals
 import datetime
 
 from babel.dates import format_date
-from babel.numbers import format_percent
+from babel.numbers import format_percent, format_number
 from sqlalchemy.orm import relationship
 from sqlalchemy.schema import Column, CheckConstraint, ForeignKey, UniqueConstraint
 from sqlalchemy.types import Integer, DateTime, Float
@@ -88,13 +88,17 @@ class Assignation(DeclarativeBase):
         start_date = (self.start_date - tz_delta).date()
         if self.end_date:
             end_date = (self.end_date - tz_delta).date()
-            fmt = u'{employee.employee_name} assigné à {rate_percent} du {start_date} au {end_date}'
+            fmt = u'{employee.employee_name} assigné à {rate_percent} ' \
+                  u'du {start_date} au {end_date} pour {assigned_hours} h'
             return fmt.format(employee=self.employee,
+                              assigned_hours=format_number(self.assigned_hours, locale=locale),
                               rate_percent=format_percent(self.rate_percent, locale=locale),
                               start_date=format_date(start_date, format='short', locale=locale),
                               end_date=format_date(end_date, format='short', locale=locale))
-        fmt = u'{employee.employee_name} assigné à {rate_percent} à partir du {start_date}'
+        fmt = u'{employee.employee_name} assigné à {rate_percent} ' \
+              u'à partir du {start_date} pour {assigned_hours} h'
         return fmt.format(employee=self.employee,
+                          assigned_hours=format_number(self.assigned_hours, locale=locale),
                           rate_percent=format_percent(self.rate_percent, locale=locale),
                           start_date=format_date(start_date, format='short', locale=locale))
 
@@ -141,12 +145,14 @@ class Assignation(DeclarativeBase):
         :return: List of hours shifts or empty list if not assignable.
             The couple (event_start, event_end) use date/time (local time).
         """
-        # -- Date minimale de planification
+        # -- Date minimale de planification (planification au plus tôt à cette date)
         min_date_utc = min_date_utc or self.start_date
+
+        # -- La date de début de planification sera le max: la contrainte la plus forte
+        start_date_utc = max(self.start_date, min_date_utc)
 
         # -- Si la date de fin n'est pas défini, on fera une exploration sur 4 mois
         #    Les dates sont exprimées en date/heures UTC.
-        start_date_utc = min(self.start_date, min_date_utc)
         end_date_utc = self.end_date or (start_date_utc + datetime.timedelta(days=max_months * 30.5))
 
         # -- Attention, les calculs se font sur des dates/heures locales (et non pas UTC).
@@ -156,6 +162,8 @@ class Assignation(DeclarativeBase):
         # -- La recherche d'un intervalle se fait sur les heures de disponibilité de l'employé.
         #    Le calendrier est celui associé à l'employé.
         calendar = self.employee.calendar
+        if not calendar:
+            return []
 
         # -- La recherche d'un intervalle se fait jour après jour.
         shifts = calendar.find_shifts_in_interval(start_date, end_date, tz_delta,

@@ -1,4 +1,5 @@
 <%! import json %>
+<%! import datetime %>
 
 ##
 ## All assignations of a given task
@@ -60,6 +61,16 @@ unassigned_employees.sort(key=lambda e: e.employee_name)
 <%
 assignation_id = "assignation_{0}".format(assignation.uid)
 assignation_badge_id = "assignation_form_{0}".format(assignation.uid)
+tz_offset = hidden['tz_offset']
+tz_delta = datetime.timedelta(minutes=int(tz_offset))
+if assignation.start_planning_date:
+    start_planning_date = (assignation.start_planning_date - tz_delta).isoformat()
+else:
+    start_planning_date = ""
+if assignation.end_planning_date:
+    end_planning_date = (assignation.end_planning_date - tz_delta).isoformat()
+else:
+    end_planning_date = ""
 %>
 <div id="${assignation_badge_id}" class="badge ui-widget ui-state-default ui-corner-all">
     <%img_src = assignation.employee.photo_path if assignation.employee.photo_path else tg.url('/images/silhouette.min.png')%>
@@ -68,10 +79,11 @@ assignation_badge_id = "assignation_form_{0}".format(assignation.uid)
         <tr>
             <td rowspan="2"><img class="valignMiddle picture_box_inner_min"
                                  alt="${assignation.employee.employee_name}"
+                                 title="${assignation.employee.employee_name}"
                                  src="${img_src}"></td>
-            <td><label class="tooltip"><b>du&nbsp;:</b>
-                <input name="end_planning_date"
-                       value="${assignation.end_planning_date.isoformat() if assignation.end_planning_date else ''}"
+            <td><label class="tooltip"><b>au&nbsp;:</b>
+                <input name="start_planning_date"
+                       value="${start_planning_date}"
                        type="datetime-local"
                 disabled="disabled"></label></td>
             <td>
@@ -79,9 +91,9 @@ assignation_badge_id = "assignation_form_{0}".format(assignation.uid)
             </td>
         </tr>
         <tr>
-            <td><label class="tooltip"><b>au&nbsp;:</b>
-                <input name="start_planning_date"
-                       value="${assignation.start_planning_date.isoformat() if assignation.start_planning_date else ''}"
+            <td><label class="tooltip"><b>du&nbsp;:</b>
+                <input name="end_planning_date"
+                       value="${end_planning_date}"
                        type="datetime-local"
                 disabled="disabled"></label></td>
             <td>

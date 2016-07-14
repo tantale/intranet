@@ -5,7 +5,8 @@ import datetime
 import logging
 import unittest
 
-from sqlalchemy import create_engine
+import sqlalchemy
+import sqlalchemy.exc
 from sqlalchemy.orm import sessionmaker
 from zope.sqlalchemy.datamanager import ZopeTransactionExtension
 
@@ -34,7 +35,7 @@ class TestCalendarAccessor(unittest.TestCase):
         super(TestCalendarAccessor, self).setUp()
 
         # -- Connecting to the database
-        engine = create_engine('sqlite:///:memory:', echo=False)
+        engine = sqlalchemy.create_engine('sqlite:///:memory:', echo=False)
         DeclarativeBase.metadata.create_all(engine)  # @UndefinedVariable
 
         # -- Creating a Session
@@ -55,7 +56,37 @@ class TestCalendarAccessor(unittest.TestCase):
             hours_interval_accessor.setup(week_hours.uid)
             calendar_accessor.setup(week_hours.uid)
 
-        self.accessor = EmployeeAccessor(self.session)
+        self.employee_accessor = EmployeeAccessor(self.session)
+
+    def test_get_employee_by_name_NoResultFound(self):
+        with self.assertRaises(sqlalchemy.orm.exc.NoResultFound):
+            self.employee_accessor.get_employee_by_name("Missing")
+
+    def test_get_employee_by_name_MultipleResultsFound(self):
+        self.employee_accessor.insert_employee(employee_name="Duplicate",
+                                               worked_hours=39.0,
+                                               entry_date=datetime.date(2015, 10, 1),
+                                               exit_date=None)
+        self.employee_accessor.insert_employee(employee_name="Duplicate",
+                                               worked_hours=39.0,
+                                               entry_date=datetime.date(2015, 10, 3),
+                                               exit_date=None)
+        with self.assertRaises(sqlalchemy.orm.exc.MultipleResultsFound):
+            self.employee_accessor.get_employee_by_name("Duplicate")
+
+    def test_get_employee_by_name(self):
+        self.employee_accessor.insert_employee(employee_name="my first employee_name",
+                                               worked_hours=39.0,
+                                               entry_date=datetime.date(2015, 10, 1),
+                                               exit_date=None)
+        self.employee_accessor.insert_employee(employee_name="my second employee_name",
+                                               worked_hours=39.0,
+                                               entry_date=datetime.date(2015, 10, 2),
+                                               exit_date=None)
+        first = self.employee_accessor.get_employee_by_name("my first employee_name")
+        self.assertEqual(first.employee_name, "my first employee_name")
+        second = self.employee_accessor.get_employee_by_name("my second employee_name")
+        self.assertEqual(second.employee_name, "my second employee_name")
 
     def test_insert_employee(self):
         employee_name = "Employee"
@@ -63,13 +94,13 @@ class TestCalendarAccessor(unittest.TestCase):
         entry_date = datetime.date(2010, 11, 15)
         exit_date = None
         photo_path = None
-        self.accessor.insert_employee(employee_name=employee_name,
-                                      worked_hours=worked_hours,
-                                      entry_date=entry_date,
-                                      exit_date=exit_date,
-                                      photo_path=photo_path)
+        self.employee_accessor.insert_employee(employee_name=employee_name,
+                                               worked_hours=worked_hours,
+                                               entry_date=entry_date,
+                                               exit_date=exit_date,
+                                               photo_path=photo_path)
 
-        employee_list = self.accessor.get_employee_list()
+        employee_list = self.employee_accessor.get_employee_list()
         self.assertEqual(len(employee_list), 1)
 
         employee = employee_list[0]
@@ -83,8 +114,8 @@ class TestCalendarAccessor(unittest.TestCase):
         self.assertIsNotNone(employee.calendar)
 
         # -- Check cascade delete
-        self.accessor.delete_employee(employee.uid)
-        employee_list = self.accessor.get_employee_list()
+        self.employee_accessor.delete_employee(employee.uid)
+        employee_list = self.employee_accessor.get_employee_list()
         self.assertEqual(len(employee_list), 0)
         calendar_accessor = CalendarAccessor(self.session)
         calendar_list = calendar_accessor.get_calendar_list()
@@ -94,11 +125,11 @@ class TestCalendarAccessor(unittest.TestCase):
         today = datetime.date(2016, 2, 13)  # Saturday
 
         employee_accessor = EmployeeAccessor(self.session)
-        self.accessor.insert_employee(employee_name="Employee",
-                                      worked_hours=39.0,
-                                      entry_date=today,
-                                      exit_date=None,
-                                      photo_path=None)
+        self.employee_accessor.insert_employee(employee_name="Employee",
+                                               worked_hours=39.0,
+                                               entry_date=today,
+                                               exit_date=None,
+                                               photo_path=None)
 
         employee = employee_accessor.get_employee_list()[-1]
 

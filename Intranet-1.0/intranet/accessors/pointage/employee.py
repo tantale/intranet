@@ -57,6 +57,21 @@ class EmployeeAccessor(BasicAccessor):
         """
         return super(EmployeeAccessor, self)._get_record(uid)
 
+    def get_employee_by_name(self, employee_name):
+        """
+        Get the first Employee of a given name.
+
+        Useful for testing but not for production because the name may not be unique.
+
+        :type employee_name: str | unicode
+        :param employee_name: Employee name (label).
+        :rtype: Employee
+        :return: The found Employee.
+        :raises: sqlalchemy.orm.exc.NoResultFound
+        :raises: sqlalchemy.orm.exc.MultipleResultsFound
+        """
+        return self.session.query(Employee).filter(Employee.employee_name == employee_name).one()
+
     def get_last_employee(self):
         """
         Get the last inserted employee.

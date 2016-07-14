@@ -216,10 +216,12 @@ class Calendar(DeclarativeBase):
         available_slots = [slot for slot in gap_fill.colored_slots if slot[1] == FREE_SLOT]
         return filter(None, [create_time_interval(slot, minutes=minutes) for slot in available_slots])
 
-    def find_shift_in_day(self, day, tz_delta, assigned_hours, rate_percent, minutes=15):
+    def find_shift_in_day(self, day, constraint, tz_delta, assigned_hours, rate_percent, minutes=15):
         """
         Find assignable shift in the day.
 
+        :type constraint: tuple(datetime.datetime, datetime.datetime)
+        :param constraint: Start and end date/time (local time)
         :type day: datetime.date
         :param day: The day to search for an available shift.
         :type tz_delta: datetime.timedelta
@@ -249,12 +251,16 @@ class Calendar(DeclarativeBase):
         for start, end in intervals:
             event_start = datetime.datetime.combine(day, start)
             event_end = datetime.datetime.combine(day, end)
-            duration = event_end - event_start
-            total_minutes = duration.total_seconds() / 60.0
-            if required_minutes <= total_minutes:
-                # -- OK, on a trouvé un intervalle assez large.
-                #    On peut plannifier la tâche avec la durée assignée (sans taux rate_percent).
-                return event_start, event_start + datetime.timedelta(hours=assigned_hours)
+            # -- On applique la contrainte sur l'intervale de temps
+            event_start = max(event_start, constraint[0])
+            event_end = min(event_end, constraint[1])
+            if event_start < event_end:
+                duration = event_end - event_start
+                total_minutes = duration.total_seconds() / 60.0
+                if required_minutes <= total_minutes:
+                    # -- OK, on a trouvé un intervalle assez large.
+                    #    On peut plannifier la tâche avec la durée assignée (sans taux rate_percent).
+                    return event_start, event_start + datetime.timedelta(hours=assigned_hours)
 
         # -- not found
         return None
@@ -280,12 +286,14 @@ class Calendar(DeclarativeBase):
             The couple (event_start, event_end) use date/time (local time).
         """
         # -- On recherche un jour qui permet d'assigner toutes les heures ensembles
+        constraint = (start_date, end_date)
         nbr_days = (end_date - start_date).days
         for days in xrange(nbr_days):
             day = (start_date + datetime.timedelta(days=days)).date()
             # -- Il nous faut trouver un intervalle de dates dont la durée soit supérieure (ou égale)
             #    à la durée de la tâche.
-            found = self.find_shift_in_day(day, tz_delta, assigned_hours, rate_percent, minutes=minutes)
+            #    L'intervalle trouvé est contraint de se trouver dans l'intervalle de temps (start_date, end_date)
+            found = self.find_shift_in_day(day, constraint, tz_delta, assigned_hours, rate_percent, minutes=minutes)
             if found:
                 return [found]
 
@@ -301,17 +309,21 @@ class Calendar(DeclarativeBase):
                     continue
                 event_start = datetime.datetime.combine(day, start)
                 event_end = datetime.datetime.combine(day, end)
-                duration = event_end - event_start
-                total_minutes = duration.total_seconds() / 60.0
-                assignable_minutes = math.floor(total_minutes * rate_percent / minutes) * minutes
-                if assignable_minutes == 0:
-                    # peu probable, mais on préfère éviter les intervalles vides.
-                    continue
-                consumed_hours = min(assignable_minutes / 60.0, assigned_hours)
-                shifts.append((event_start, event_start + datetime.timedelta(hours=consumed_hours)))
-                assigned_hours -= consumed_hours
-                if assigned_hours == 0:
-                    return shifts
+                # -- On applique la contrainte sur l'intervale de temps
+                event_start = max(event_start, constraint[0])
+                event_end = min(event_end, constraint[1])
+                if event_start < event_end:
+                    duration = event_end - event_start
+                    total_minutes = duration.total_seconds() / 60.0
+                    assignable_minutes = math.floor(total_minutes * rate_percent / minutes) * minutes
+                    if assignable_minutes == 0:
+                        # peu probable, mais on préfère éviter les intervalles vides.
+                        continue
+                    consumed_hours = min(assignable_minutes / 60.0, assigned_hours)
+                    shifts.append((event_start, event_start + datetime.timedelta(hours=consumed_hours)))
+                    assigned_hours -= consumed_hours
+                    if assigned_hours == 0:
+                        return shifts
 
         # -- Planification impossible ou incomplète.
         #    On retourne une liste vide même si on a une planification incomplète

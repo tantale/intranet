@@ -108,8 +108,9 @@ class OrderPhase(DeclarativeBase):
 
     @property
     def plan_status_info(self):
-        count = len(self.assignation_list)
-        can_plan = any([assignation.plan_status_info["can_plan"] for assignation in self.assignation_list])
+        assignation_list = self.assignation_list
+        count = len(assignation_list)
+        can_plan_list = [assignation.plan_status_info["can_plan"] for assignation in assignation_list]
         if self.task_status == STATUS_DONE:
             return dict(can_plan=False,
                         label=u"Terminée",
@@ -126,7 +127,7 @@ class OrderPhase(DeclarativeBase):
                         description=u"La tâche ne peut pas être planifiée "
                                     u"car personne n’est affecté.")
         elif count == 1:
-            if can_plan:
+            if any(can_plan_list):
                 return dict(can_plan=True,
                             label=u"À planifier",
                             description=u"La tâche comporte une affectation "
@@ -137,11 +138,21 @@ class OrderPhase(DeclarativeBase):
                             description=u"La tâche ne peut pas être planifiée "
                                         u"car l’affectation est déjà planifiée.")
         else:
-            if can_plan:
+            if all(can_plan_list):
                 return dict(can_plan=True,
-                            label=u"Partiellement planifiée",
-                            description=u"La tâche comporte une (ou plusieurs) affectation(s) "
-                                        u"restant à planifier.")
+                            label=u"À planifier",
+                            description=u"Toutes les affectation de la tâche restent à planifier")
+            elif any(can_plan_list):
+                remain = can_plan_list.count(True)
+                if remain == 1:
+                    return dict(can_plan=True,
+                                label=u"Partiellement planifiée",
+                                description=u"La tâche comporte une affectation restant à planifier.")
+                else:
+                    return dict(can_plan=True,
+                                label=u"Partiellement planifiée",
+                                description=u"La tâche comporte {remain} affectations "
+                                            u"restant à planifier.".format(remain=remain))
             else:
                 return dict(can_plan=False,
                             label=u"Déjà planifiée",

@@ -30,6 +30,21 @@ class OrderAccessor(BasicAccessor):
     def get_order(self, uid):
         return super(OrderAccessor, self)._get_record(uid)
 
+    def get_order_by_ref(self, order_ref):
+        """
+        Get the first Order of a given reference.
+
+        Useful for testing but not for production because the reference may not be unique.
+
+        :type order_ref: str | unicode
+        :param order_ref: Order reference (label).
+        :rtype: Order
+        :return: The found Order.
+        :raises: sqlalchemy.orm.exc.NoResultFound
+        :raises: sqlalchemy.orm.exc.MultipleResultsFound
+        """
+        return self.session.query(Order).filter(Order.order_ref == order_ref).one()
+
     def get_order_list(self, filter_cond=None, order_by_cond=None):
         return super(OrderAccessor, self)._get_record_list(filter_cond,
                                                            order_by_cond)
@@ -137,7 +152,22 @@ class OrderAccessor(BasicAccessor):
                     order_phase.remain_duration = max(0, order_phase.estimated_duration - order_phase.tracked_duration)
                     order_phase.task_status = STATUS_PENDING
 
-    def plan_all(self, order_uid, tz_delta, minutes, max_months):
+    def plan_order(self, order_uid, tz_delta, minutes=15, max_months=4):
+        """
+        Plan the Order tasks and assignations (if possible).
+
+        :type order_uid: int | unicode
+        :param order_uid: UID of the order.
+        :type tz_delta: datetime.timedelta
+        :param tz_delta: time-zone delta from UTC (tz_delta = utc_date - local_date).
+        :type minutes: int
+        :param minutes: Minimal number of assignable duration.
+        :type max_months: int
+        :param max_months: Maximal number of months.
+        :rtype: list[(datetime.datetime, datetime.datetime)]
+        :return: List of hours shifts or empty list if not assignable.
+            The couple (event_start, event_end) use date/time (local time).
+        """
         try:
             with transaction.manager:
                 order = self.get_order(order_uid)

@@ -21,7 +21,6 @@ from intranet.accessors.pointage.assignation import AssignationAccessor
 from intranet.accessors.pointage.employee import EmployeeAccessor
 from intranet.accessors.pointage.order import OrderAccessor
 from intranet.model import DeclarativeBase
-from intranet.model.pointage.order import Order
 
 LOG = logging.getLogger(__name__)
 
@@ -84,7 +83,7 @@ class TestAssignationAccessor(unittest.TestCase):
         self.assignation_accessor = AssignationAccessor(self.session)
 
     def _get_order_by_ref(self, order_ref):
-        return self.order_accessor.get_order_list(Order.order_ref == order_ref)[0]
+        return self.order_accessor.get_order_by_ref(order_ref)
 
     def test_short_plan(self):
         # -- start date is Tuesdays

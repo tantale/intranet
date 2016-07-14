@@ -77,10 +77,10 @@ class TestFrequencyAccessor(unittest.TestCase):
                                                    photo_path=None)
 
     def _get_order_by_ref(self, order_ref):
-        return self.order_accessor.get_order_list(Order.order_ref == order_ref)[0]
+        return self.order_accessor.get_order_by_ref(order_ref)
 
     def _get_employee_by_name(self, employee_name):
-        return self.employee_accessor.get_employee_list(Employee.employee_name == employee_name)[0]
+        return self.employee_accessor.get_employee_by_name(employee_name)
 
     def test_plan_status_info(self):
         order = self._get_order_by_ref("My order_ref")
@@ -152,12 +152,15 @@ class TestFrequencyAccessor(unittest.TestCase):
         paul_uid = self._get_employee_by_name("Paul").uid
         jacques_uid = self._get_employee_by_name("Jacques").uid
 
+        # Pierre peut travailler 5 heures à partir du mercredi 17/02/2016 => 8h30
         self.assignation_accessor.insert_assignation(pierre_uid, task_uid,
-                                                     5, 1, datetime.datetime(2016, 2, 14), None)
+                                                     5.0, 1, datetime.datetime(2016, 2, 17), None)
+        # Paul peut travailler 10 heures à partir du mardi 16/02/2016 => 8h30
         self.assignation_accessor.insert_assignation(paul_uid, task_uid,
-                                                     10, 1, datetime.datetime(2016, 2, 13), None)
+                                                     10.0, 1, datetime.datetime(2016, 2, 16), None)
+        # Jacques peut travailler 15 heures à partir du lundi 15/02/2016 => 14h00
         self.assignation_accessor.insert_assignation(jacques_uid, task_uid,
-                                                     15, 1, datetime.datetime(2016, 2, 11), None)
+                                                     15.0, 1, datetime.datetime(2016, 2, 15), None)
 
         # -- Plan Paul's assignation
         order = self._get_order_by_ref("My order_ref")
@@ -166,14 +169,20 @@ class TestFrequencyAccessor(unittest.TestCase):
         tz_delta = datetime.timedelta()
         self.assignation_accessor.plan_assignation(assignation_uid, tz_delta=tz_delta)
 
+        # => Paul est planifié du mardi 16/02/2016 8h30 au mercredi 17/02/2016 10h45 (soit 10h de travail)
+        assignation = self.assignation_accessor.get_assignation(assignation_uid)
+        self.assertEqual(assignation.start_planning_date, datetime.datetime(2016, 2, 16, 8, 30))
+        self.assertEqual(assignation.end_planning_date, datetime.datetime(2016, 2, 17, 10, 45))
+        self.assertEqual(assignation.total_duration, 10.0)
+
         # -- Plan the task
         with transaction.manager:
             order = self._get_order_by_ref("My order_ref")
             task = order.order_phase_list[0]
             assert isinstance(task, OrderPhase)
-            shifts = task.plan_task(tz_delta=tz_delta, minutes=15, max_months=4, min_date_utc=None)
+            shifts = task.plan_task(tz_delta=tz_delta)
             transaction.commit()
 
-        expected = [(datetime.datetime(2016, 2, 11, 8, 30), datetime.datetime(2016, 2, 11, 15, 0)),  # Pierre
-                    (datetime.datetime(2016, 2, 11, 8, 30), datetime.datetime(2016, 2, 12, 17, 15))]  # Jacques
+        expected = [(datetime.datetime(2016, 2, 17, 8, 30), datetime.datetime(2016, 2, 17, 15, 0)),  # Pierre
+                    (datetime.datetime(2016, 2, 15, 14, 00), datetime.datetime(2016, 2, 17, 12, 0))]  # Jacques
         self.assertEqual(shifts, expected)
