@@ -38,15 +38,15 @@ class Order(DeclarativeBase):
         """
         Order Management
 
-        :param order_ref: the order's reference (unique and not null)
+        :param order_ref: the order reference (not unique and not null)
 
-        :param project_cat: the project's category which determines
+        :param project_cat: the project category which determines
         its color (required)
 
-        :param creation_date: creation date (required)
+        :param creation_date: creation date in local time (required)
         :type creation_date: datetime.date
 
-        :param close_date: close date, or None if it's status is in progress.
+        :param close_date: close date in local time, or None if it's status is in progress.
         :type close_date: datetime.date
         """
         self.order_ref = order_ref
