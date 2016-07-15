@@ -14,7 +14,7 @@ from intranet.accessors import BasicAccessor
 from intranet.accessors.pointage.order_cat import OrderCatAccessor
 from intranet.accessors.statistics import gauss_filter, mean
 from intranet.model.pointage.order import Order
-from intranet.model.pointage.order_phase import OrderPhase, STATUS_PENDING
+from intranet.model.pointage.order_phase import OrderPhase, STATUS_PENDING, STATUS_DONE, STATUS_IN_PROGRESS
 
 
 class OrderAccessor(BasicAccessor):
@@ -97,8 +97,36 @@ class OrderAccessor(BasicAccessor):
             self.session.add(order)
         return kwargs
 
-    def update_order(self, uid, **kwargs):
-        return super(OrderAccessor, self)._update_record(uid, **kwargs)
+    def update_order(self, uid, order_ref, project_cat, creation_date, close_date=None):
+        """
+        Update the attributes of the Order.
+
+        * If the Order is closed, all tasks are marked "DONE",
+        * If the Order is reopened, all tasks are marked "IN_PROGRESS" if tracked duration is positive else "PENDING".
+
+        :type uid: str | int
+        :param uid: Order UID
+        :type order_ref: unicode
+        :param order_ref: the order reference (not unique and not null)
+        :type project_cat: unicode
+        :param project_cat: the project category which determines its color (required)
+        :type creation_date: datetime.date
+        :param creation_date: creation date in local time (required)
+        :type close_date: datetime.date
+        :param close_date: close date in local time, or None if it's status is in progress.
+        """
+        with transaction.manager:
+            order = self._get_record(uid)
+            old_close_date = order.close_date
+            assert isinstance(order, Order)
+            order.order_ref = order_ref
+            order.project_cat = project_cat
+            order.creation_date = creation_date
+            order.close_date = close_date
+            if not old_close_date and close_date:
+                order.close_task()
+            elif old_close_date and not close_date:
+                order.reopen_task()
 
     def delete_order(self, uid):
         return super(OrderAccessor, self)._delete_record(uid)
@@ -150,7 +178,7 @@ class OrderAccessor(BasicAccessor):
                     mean_time = int(mean(pertinents) * 4) / 4.0 if pertinents else 0
                     order_phase.estimated_duration = mean_time or None
                     order_phase.remain_duration = max(0, order_phase.estimated_duration - order_phase.tracked_duration)
-                    order_phase.task_status = STATUS_PENDING
+                    order_phase.reopen_task()
 
     def plan_order(self, order_uid, tz_delta, minutes=15, max_months=4):
         """

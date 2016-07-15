@@ -159,6 +159,22 @@ class OrderPhase(DeclarativeBase):
                             description=u"La tâche ne peut pas être planifiée "
                                         u"car toutes les affectations sont déjà planifiées.")
 
+    def close_task(self):
+        """
+        Change the status of the task and turn it to "DONE".
+        """
+        self.task_status = STATUS_DONE
+
+    def reopen_task(self):
+        """
+        Change the status of the task and turn it to "IN_PROGRESS" if tracked duration is positive else "PENDING".
+        """
+        if self.cal_event_list:
+            # tracked_duration > 0
+            self.task_status = STATUS_IN_PROGRESS
+        else:
+            self.task_status = STATUS_PENDING
+
     def plan_task(self, tz_delta, minutes=15, max_months=4, min_date_utc=None):
         """
         Plan a single task (if possible).

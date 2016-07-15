@@ -40,15 +40,14 @@ class Order(DeclarativeBase):
         """
         Order Management
 
-        :param order_ref: the order's reference (unique and not null)
+        :param order_ref: the order reference (not unique and not null)
 
-        :param project_cat: the project's category which determines
-        its color (required)
+        :param project_cat: the project category which determines its color (required)
 
-        :param creation_date: creation date (required)
+        :param creation_date: creation date in local time (required)
         :type creation_date: datetime.date
 
-        :param close_date: close date, or None if it's status is in progress.
+        :param close_date: close date in local time, or None if it's status is in progress.
         :type close_date: datetime.date
         """
         self.order_ref = order_ref
@@ -128,6 +127,20 @@ class Order(DeclarativeBase):
                      label=u"Terminée",
                      description=u"Les tâches sont terminées.",
                      checked=task_status == STATUS_DONE)]
+
+    def close_task(self):
+        """
+        Change the status of all tasks and turn it to "DONE".
+        """
+        for order_phase in self.order_phase_list:
+            order_phase.close_task()
+
+    def reopen_task(self):
+        """
+        Change the status of all tasks and turn it to "IN_PROGRESS" if tracked duration is positive else "PENDING".
+        """
+        for order_phase in self.order_phase_list:
+            order_phase.reopen_task()
 
     def plan_order(self, tz_delta, minutes=15, max_months=4):
         """

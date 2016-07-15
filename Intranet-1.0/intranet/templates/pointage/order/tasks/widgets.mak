@@ -290,6 +290,10 @@ can_plan_cls = "ui-icon ui-icon-circle-check" if can_plan else "ui-icon ui-icon-
             $('#${task_form_id} .update_button').button("enable");
             $('#${task_form_id} .cancel_button').button("enable");
         });
+
+        %if obj_task_status in [STATUS_IN_PROGRESS, STATUS_DONE]:
+        $('#${task_form_id} .refresh_button').button("disable");
+        %endif
     });
 </script>
 </%def>

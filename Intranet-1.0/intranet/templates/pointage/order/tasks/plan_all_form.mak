@@ -30,6 +30,7 @@
         <input type="hidden" name="${hidden_name}" value="${hidden_value}">
         %endfor
         <p style="margin-bottom: .3em;">Liste des tâches à planifier&#160;:</p>
+        <% can_plan_order = False %>
         <table>
             %for task in order.order_phase_list:
             <%
@@ -37,6 +38,7 @@
             can_plan = plan_status_info['can_plan']
             can_plan_style = "" if can_plan else "color: grey;"
             can_plan_cls = "ui-icon ui-icon-circle-check" if can_plan else "ui-icon ui-icon-triangle-1-e"
+            can_plan_order |= can_plan
             %>
             <tr style="${can_plan_style}">
                 <td><span class="${can_plan_cls}"></span></td>
@@ -48,6 +50,12 @@
             </tr>
             %endfor
         </table>
+        %if not can_plan_order:
+        <div class="ui-state-highlight ui-corner-all" style="padding: 0 .7em;">
+            <p style="margin: 0.5em 0;"><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span>
+                Aucune tâche ne reste à planifier&nbsp;!</p>
+        </div>
+        %endif
     </form>
     <script type="application/javascript" defer="defer">
     $(function() {

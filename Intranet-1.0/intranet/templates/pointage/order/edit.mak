@@ -176,11 +176,13 @@ import datetime
                                 %for status_info in order.all_status_info:
                                 %if status_info['checked']:
                                 <label title="${status_info['description']}"><input class="change"
+                                                                                    disabled="disabled"
                                                                                     type="radio" checked="checked"
                                                                                     value="${status_info['value']}"
                                                                                     name="task_status"/>${status_info['label']}</label>
                                 %else:
                                 <label title="${status_info['description']}"><input class="change"
+                                                                                    disabled="disabled"
                                                                                     type="radio"
                                                                                     value="${status_info['value']}"
                                                                                     name="task_status"/>${status_info['label']}</label>
@@ -339,6 +341,11 @@ import datetime
 			primary : "ui-icon-calendar"
 		}
 	});
+%if values.get('close_date'):
+    $('#order_estimate_all_form .display_button').button("disable");
+%else:
+    $('#order_estimate_all_form .display_button').button("enable");
+%endif
 	$('#order_estimate_all_form').ajaxForm({
 		target: '#confirm_dialog_content',
 		success: function(responseJson, statusText, xhr) {

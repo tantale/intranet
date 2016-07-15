@@ -59,8 +59,6 @@
                 <nav>
                     <button type="button" class="plan_all_button"
                             title="Met à jour la planification des tâches">Planifier tout</button>
-                    <button type="button" class="calendar_button"
-                            title="Affiche le planning des événements">Afficher le planning</button>
                 </nav>
             </div>
         </div>
@@ -152,12 +150,11 @@
 
         });
 
-        $("#${tasks_id} .calendar_button").button({
-            text : true,
-            icons : {
-                primary : "ui-icon-calendar"
-            }
-        });
+%if order.close_date:
+        $("#${tasks_id} .plan_all_button").button("disable");
+%else:
+        $("#${tasks_id} .plan_all_button").button("enable");
+%endif
     });
 </script>
 %endif
