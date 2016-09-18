@@ -10,17 +10,23 @@ import json
 import logging
 
 import pylons
-from formencode.validators import Int, Number
-from sqlalchemy.sql.expression import or_, and_, desc
+from formencode.validators import Int
+from formencode.validators import Number
+from sqlalchemy.sql.expression import and_
+from sqlalchemy.sql.expression import desc
 from tg.controllers.restcontroller import RestController
 from tg.controllers.util import redirect
-from tg.decorators import with_trailing_slash, expose, validate, without_trailing_slash
+from tg.decorators import expose
+from tg.decorators import validate
+from tg.decorators import with_trailing_slash
+from tg.decorators import without_trailing_slash
 from tg.flash import flash
 
 from intranet.accessors.pointage.cal_event import CalEventAccessor
 from intranet.accessors.pointage.employee import EmployeeAccessor
 from intranet.accessors.pointage.order import OrderAccessor
 from intranet.accessors.pointage.order_phase import OrderPhaseAccessor
+from intranet.accessors.sql_utils import overlap_cond
 from intranet.controllers.session_obj.curr_user import CurrUserController
 from intranet.controllers.session_obj.full_calendar import FullCalendarController
 from intranet.controllers.session_obj.layout import LayoutController
@@ -37,28 +43,6 @@ def add_months(start_date, months):
     month = month % 12 + 1
     day = min(start_date.day, calendar.monthrange(year, month)[1])
     return datetime.date(year, month, day)
-
-
-# noinspection PyComparisonWithNone
-def overlap_cond(ref_start, ref_end, field_start, field_end):
-    """
-    Construct a sqlalchemy's predicate to check if two date intervals overlap.
-
-    :param ref_start: reference interval start date
-
-    :param ref_end: reference interval end date
-
-    :param field_start: field interval start date
-
-    :param field_end: field interval end date, or None for eternity
-
-    :return: ref_start <= field_start < ref_end or
-             field_start <= ref_start < field_end
-    """
-    return or_(and_(field_start >= ref_start,
-                    field_start < ref_end),
-               and_(field_start <= ref_start,
-                    or_(field_end == None, field_end > ref_start)))
 
 
 def get_event_duration(event):

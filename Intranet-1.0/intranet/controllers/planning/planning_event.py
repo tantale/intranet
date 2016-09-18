@@ -8,11 +8,18 @@ import pylons
 import sqlalchemy.exc
 import transaction
 from formencode import All
-from formencode.validators import Int, NotEmpty, MaxLength, StringBool
+from formencode.validators import Int
+from formencode.validators import MaxLength
+from formencode.validators import NotEmpty
+from formencode.validators import StringBool
 from pylons.i18n import ugettext as _
-from tg import expose, flash, validate, redirect
+from tg import expose
+from tg import flash
+from tg import redirect
+from tg import validate
 from tg.controllers import RestController
-from tg.decorators import with_trailing_slash, without_trailing_slash
+from tg.decorators import with_trailing_slash
+from tg.decorators import without_trailing_slash
 
 from intranet.accessors.planning.calendar import CalendarAccessor
 from intranet.accessors.planning.planning_event import PlanningEventAccessor
@@ -66,14 +73,47 @@ class PlanningEventController(RestController):
 
     # noinspection PyArgumentList
     @with_trailing_slash
+    @validate({'start': Int(min=0),
+               'end': Int(min=0)})
     @expose()
     def get_all(self, start, end, **kwargs):
+        """
+        Récupère le calendrier de l’utilisateur.
+        Recherche tous les événements dont la date de début ou de fin se trouve dans l'intervalle [start; end[.
+
+        Arguments::
+
+            start=1472421600, end=1476050400, kwargs={'_': u'1474187468622'}
+            start=1473976800, end=1474063200, kwargs={'_': u'1474187525738'}
+
+        :type start: int
+        :param start: Start date of the calendar view (timestamp).
+        :type end: int
+        :param end: End date of the calendar view (+ 1 day: excluded from interval).
+        :param kwargs: Contains the "no cache value".
+        """
         # fixme: use the [start; end] interval to filter the events, see: overlap_cond.
         LOG.info("get_all: start={start}, end={end}, kwargs={kwargs}".format(start=pprint.pformat(start),
                                                                              end=pprint.pformat(end),
                                                                              kwargs=pprint.pformat(kwargs)))
-        calendar = self.calendar_accessor.get_calendar(self.calendar_uid)
-        result = [event.event_obj() for event in calendar.planning_event_list]
+
+        # Il faut calculer les dates au format datetime pour la requête en bdd
+        start_date = datetime.datetime.fromtimestamp(start)
+        end_date = datetime.datetime.fromtimestamp(end)
+
+        # Les dates sont des dates locales.
+        # Il faut les convertir en date UTC pour les comparer avec les dates des événements.
+        # fixme: tz_offset is missing, see: intranet/templates/planning/event_source.mak
+        tz_offset = 0
+        tz_delta = datetime.timedelta(minutes=int(tz_offset))
+        start_utc = start_date + tz_delta
+        end_utc = end_date + tz_delta
+
+        #: Get all planning events in the calendar interval
+        events = self.accessor.search_planning_events(self.calendar_uid, start_utc, end_utc)
+
+        # Pour le plugin fullcalendar, on utilise des objets json
+        result = [event.event_obj() for event in events]
         return json.dumps(result)
 
     # noinspection PyArgumentList

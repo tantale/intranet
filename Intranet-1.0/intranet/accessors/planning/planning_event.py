@@ -6,6 +6,7 @@ from tg.i18n import ugettext as _
 
 from intranet.accessors import BasicAccessor
 from intranet.accessors.planning.calendar import CalendarAccessor
+from intranet.accessors.pointage.employee import overlap_cond
 from intranet.model.planning.planning_event import PlanningEvent
 
 try:
@@ -156,3 +157,11 @@ class PlanningEventAccessor(BasicAccessor):
             record.event_start += timedelta
             record.event_end += timedelta
             record.all_day = all_day
+
+    def search_planning_events(self, calendar_uid, start_date_utc, end_date_utc):
+        query = self.session.query(self.record_class)
+        query = query.filter(PlanningEvent.calendar_uid == calendar_uid,
+                             overlap_cond(start_date_utc, end_date_utc,
+                                          PlanningEvent.event_start,
+                                          PlanningEvent.event_end))
+        return query.all()
