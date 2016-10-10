@@ -135,8 +135,12 @@ class PlanningEventController(RestController):
             err_msg = _(u"Le formulaire comporte des champs invalides")
             flash(err_msg, status="error")
         selections = self.calendar_selections.get_all()["selections"]
-        predicate = Calendar.uid.in_(selections)
-        calendar_list = self.calendar_accessor.get_calendar_list(predicate)
+        if selections:
+            predicate = Calendar.uid.in_(selections)
+            calendar_list = self.calendar_accessor.get_calendar_list(predicate)
+        else:
+            # The list is empty if there is no selection.
+            calendar_list = []
         return dict(tz_offset=tz_offset, values=kwargs, form_errors=form_errors,
                     calendar_list=calendar_list)
 

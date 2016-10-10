@@ -28,8 +28,12 @@ class EventSourceController(RestController):
     def get_all(self):
         # -- find all and filter
         selections = self.calendar_selections.get_all()["selections"]
-        predicate = Calendar.uid.in_(selections)
-        calendar_list = self.calendar_accessor.get_calendar_list(predicate)
+        if selections:
+            predicate = Calendar.uid.in_(selections)
+            calendar_list = self.calendar_accessor.get_calendar_list(predicate)
+        else:
+            # The list is empty if there is no selection.
+            calendar_list = []
         event_source_list = [calendar.event_source_obj() for calendar in calendar_list]
         for event_source in event_source_list:
             event_source["url"] = "./sources/{id}/events".format(id=event_source["id"])
