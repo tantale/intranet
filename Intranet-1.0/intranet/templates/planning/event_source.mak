@@ -55,6 +55,7 @@
     jQuery.get("./full_calendar.json", function(data) {
 
         var prop = {
+            eventSources: ${ eventSources |n},
             viewRender: function( view, element ) {
                 var currDate = $("#event_sources").fullCalendar('getDate');
                 var ajaxData = {
@@ -192,4 +193,5 @@
         $('#event_sources').fullCalendar($.extend(data, prop));
 
     });
+
 </script>

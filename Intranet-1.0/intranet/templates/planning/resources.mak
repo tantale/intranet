@@ -39,14 +39,5 @@ $(function() {
             $('#event_sources').fullCalendar(action, eventSource);
         });
     });
-    window.setTimeout(function(){
-        %for calendar_list in group_dict.itervalues():
-            %for calendar in calendar_list:
-                jQuery.getJSON("./sources/" + ${calendar.uid}, function( eventSource ) {
-                    $('#event_sources').fullCalendar('addEventSource', eventSource);
-                });
-            %endfor
-        %endfor
-    }, 100);
 });
 </script>
