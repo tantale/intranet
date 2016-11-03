@@ -11,11 +11,15 @@
         %for calendar in calendar_list:
         <%
         checked = 'checked="checked"' if calendar.checked else ''
+        fmt = "display: inline-block; width: 12px; height: 12px; border: solid 1px; border-radius: 6px; " \
+              "background-color: {calendar.background_color}; " \
+              "border-color: {calendar.border_color}; "
+        style = fmt.format(calendar=calendar)
         %>\
         <p><input type="checkbox" class="checkbox" name="calendar" id="calendar_${calendar.uid}" ${checked}
                   title="${calendar.description}"/><label
                 class="edit_button"
-                for="calendar_${calendar.uid}" title="${calendar.description}">${calendar.label}</label>
+                for="calendar_${calendar.uid}" title="${calendar.description}"><span style="${style}"></span> ${calendar.label}</label>
         </p>
         %endfor
         %else:
