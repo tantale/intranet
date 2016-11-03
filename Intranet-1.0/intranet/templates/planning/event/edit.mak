@@ -19,7 +19,7 @@
                 <select class="ui-widget ui-state-default ui-corner-all" name="calendar_uid"
                         title="Sélectionner le calendrier">
                     %for calendar in calendar_list:
-                    %if calendar.uid == values.get('calendar_uid'):
+                    %if calendar.uid == int(values.get('calendar_uid', '0')):
                     <option value="${calendar.uid}" selected="selected">${calendar.label}</option>
                     %else:
                     <option value="${calendar.uid}">${calendar.label}</option>
