@@ -122,8 +122,13 @@ class Assignation(DeclarativeBase):
         order = order_phase.order
         fmt = u"{order_uid} – {order_ref}\xa0: {label}"
         label = fmt.format(order_uid=order.uid, order_ref=order.order_ref, label=order_phase.label)
+        description = order_phase.description or u""
+        # FIX: Truncate the ``label`` and the ``description`` if too long.
+        ellipsis = u"[…]"
+        label = label if len(label) <= 32 else label[:32 - len(ellipsis)] + ellipsis
+        description = description if len(description) <= 200 else description[:200 - len(ellipsis)] + ellipsis
         planning_event = PlanningEvent(label=label,
-                                       description=order_phase.description,
+                                       description=description,
                                        event_start=event_start_utc,
                                        event_end=event_end_utc)
         planning_event.calendar = self.employee.calendar
