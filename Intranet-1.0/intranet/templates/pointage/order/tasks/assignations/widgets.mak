@@ -81,7 +81,7 @@ else:
                                  alt="${assignation.employee.employee_name}"
                                  title="${assignation.employee.employee_name}"
                                  src="${img_src}"></td>
-            <td><label class="tooltip"><b>au&nbsp;:</b>
+            <td><label class="tooltip"><b>du&nbsp;:</b>
                 <input name="start_planning_date"
                        value="${start_planning_date}"
                        type="datetime-local"
@@ -91,7 +91,7 @@ else:
             </td>
         </tr>
         <tr>
-            <td><label class="tooltip"><b>du&nbsp;:</b>
+            <td><label class="tooltip"><b>au&nbsp;:</b>
                 <input name="end_planning_date"
                        value="${end_planning_date}"
                        type="datetime-local"
