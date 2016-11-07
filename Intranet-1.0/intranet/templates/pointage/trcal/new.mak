@@ -1,9 +1,4 @@
-# -*- coding: utf-8 -*-
-<%doc>
-:template: intranet.templates.pointage.trcal.new
-:date: 2013-09-22
-:author: Laurent LAPORTE <sandlol2009@gmail.com>
-</%doc>
+<%namespace file="intranet.templates.pointage.order_phase.widgets" import="order_phase_color_frame"/>
 <%flash = tg.flash_obj.render('flash', use_js=False)%>
 %if flash:
     ${flash | n}
@@ -23,10 +18,7 @@
 ##
 ## Referenced objects: order, order phase (with project_cat's css)
 ##
-    <p class="colorFrame ${order_phase.order.project_cat}"><span
-    title="Pointage pour la commande : ${order_phase.order.order_ref}">Commande N° ${order_phase.order.uid} - ${order_phase.order.order_ref}</span><span> : </span><span
-    title="Pointage pour la phase : ${order_phase.label}">${order_phase.label}</span></p>
-
+    ${order_phase_color_frame(order_phase)}
 ##
 ## Calendar event fields: event_start, event_duration, comment
 ##

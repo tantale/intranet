@@ -249,6 +249,7 @@ class PlanningEventController(RestController):
             err_msg = _(u"Le formulaire comporte des champs invalides")
             flash(err_msg, status="error")
         return dict(tz_offset=tz_offset,
+                    assignation=event.assignation,
                     values=values,
                     form_errors=form_errors,
                     calendar_list=self.calendar_accessor.get_calendar_list())

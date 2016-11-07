@@ -71,6 +71,8 @@ if assignation.end_planning_date:
     end_planning_date = (assignation.end_planning_date - tz_delta).isoformat()
 else:
     end_planning_date = ""
+readonly = str(hidden.get('readonly', 'False'))
+readonly = readonly.lower() in ['true', 't', 'yes', 'y', 1]
 %>
 <div id="${assignation_badge_id}" class="badge ui-widget ui-state-default ui-corner-all">
     <%img_src = assignation.employee.photo_path if assignation.employee.photo_path else tg.url('/images/silhouette.min.png')%>
@@ -85,20 +87,30 @@ else:
                 <input name="start_planning_date"
                        value="${start_planning_date}"
                        type="datetime-local"
-                disabled="disabled"></label></td>
-            <td>
-                <button type="submit" class="edit_button_icon" title="Modifier l‘affectation">!</button>
-            </td>
+                       disabled="disabled"></label></td>
+            %if readonly:
+            <td><label><b style="width: 4em; display: inline-block;">Heures&nbsp;:</b>
+            <input name="assigned_hours" value="${assignation.assigned_hours}" type="number"
+                   style="width: 5em;"
+                   min="0.25" step="0.25">&nbsp;h</label></td>
+            %else:
+            <td><button type="submit" class="edit_button_icon" title="Modifier l‘affectation">!</button></td>
+            %endif
         </tr>
         <tr>
             <td><label class="tooltip"><b>au&nbsp;:</b>
                 <input name="end_planning_date"
                        value="${end_planning_date}"
                        type="datetime-local"
-                disabled="disabled"></label></td>
-            <td>
-                <button type="button" class="calendar_button_icon" title="Planifier l‘affectation">#</button>
-            </td>
+                       disabled="disabled"></label></td>
+            %if readonly:
+            <td><label><b style="width: 4em; display: inline-block;">Taux&nbsp;:</b>
+            <input name="rate_percent" value="${assignation.rate_percent}" type="number"
+                   style="width: 5em;"
+                   min="5.0" max="100.0" step="5.0">&nbsp;%</label></td>
+            %else:
+            <td><button type="button" class="calendar_button_icon" title="Planifier l‘affectation">#</button></td>
+            %endif
         </tr>
         </tbody>
     </table>

@@ -1,3 +1,5 @@
+<%namespace file="intranet.templates.pointage.order.tasks.assignations.widgets" import="assignation_form"/>
+<%namespace file="intranet.templates.pointage.order_phase.widgets" import="order_phase_color_frame"/>
 <% flash = tg.flash_obj.render('flash', use_js=False) %>
 <article>
     <form id="event_edit_form" class="create_form"
@@ -11,6 +13,11 @@
             <input type="hidden" name="editable" value="true">
             <input type="hidden" name="_method" value="PUT">
         </p>
+
+        %if not assignation:
+        ##
+        ## Only displayed for classic events (without assignation)
+        ##
         <p>
             %if not calendar_list:
             <span class="error">Aucun calendrier</span>
@@ -28,11 +35,18 @@
                 </select></label>
             %endif
         </p>
+        %endif
+
         <h2>
             <label><input type="text" name="label" maxlength="32"
                           title="Libellé de l’événement (requis)"
                           placeholder="Libellé" class="label" value="${values.get('label')}"></label>
             <span>&nbsp;</span>
+
+            %if not assignation:
+            ##
+            ## Only displayed for classic events (without assignation)
+            ##
             %if values.get('private') == "true":
             <label>Privé&nbsp;:<input type="checkbox" name="private" value="true"
                                       title="Cocher si l’événement est d’ordre privé"
@@ -41,11 +55,17 @@
             <label>Privé&nbsp;:<input type="checkbox" name="private" value="true"
                                       title="Cocher si l’événement est d’ordre privé"></label>
             %endif
+            %endif
+
             %if 'label'in form_errors:
             <br/>
             <span class="error">${form_errors['label']}</span>
             %endif
         </h2>
+
+        %if assignation:
+        ${order_phase_color_frame(assignation.order_phase)}
+        %endif
 
         <p>
             <textarea name="description"
@@ -88,6 +108,10 @@
             %endif
         </p>
 
+        %if not assignation:
+        ##
+        ## Only displayed for classic events (without assignation)
+        ##
         <p>
             %if values.get('all_day') == "true":
             <label>Journée entière&nbsp;:<input type="checkbox" name="all_day" value="true"
@@ -98,6 +122,15 @@
                                                 title="Cocher si l’événement dure toute une journée ou plus"></label>
             %endif
         </p>
+        %endif
+
+        %if assignation:
+        <fieldset disabled="disabled">
+            <legend>Bilan de l’affectation</legend>
+            ${assignation_form(assignation, tz_offset=tz_offset, readonly=True)}
+        </fieldset>
+        %endif
+
     </form>
 
     <form id="event_delete_form" class="minimal_form"
