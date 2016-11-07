@@ -9,7 +9,7 @@
         font-family: arial;
         font-size: 1em;
         font-weight: bold;
-        width: 14em;
+        width: 19em;
     }
     article p .description {
         font-family: arial;

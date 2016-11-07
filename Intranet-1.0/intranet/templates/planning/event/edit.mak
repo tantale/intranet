@@ -29,9 +29,10 @@
             %endif
         </p>
         <h2>
-            <label><input type="text" name="label"
+            <label><input type="text" name="label" maxlength="32"
                           title="Libellé de l’événement (requis)"
                           placeholder="Libellé" class="label" value="${values.get('label')}"></label>
+            <span>&nbsp;</span>
             %if values.get('private') == "true":
             <label>Privé&nbsp;:<input type="checkbox" name="private" value="true"
                                       title="Cocher si l’événement est d’ordre privé"
