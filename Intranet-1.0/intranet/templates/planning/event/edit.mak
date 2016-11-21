@@ -14,13 +14,16 @@
             <input type="hidden" name="_method" value="PUT">
         </p>
 
-        %if not assignation:
+        %if assignation:
+            <input type="hidden" name="calendar_uid" value="${values.get('calendar_uid', '0')}"/>
+        %else:
         ##
         ## Only displayed for classic events (without assignation)
         ##
         <p>
             %if not calendar_list:
             <span class="error">Aucun calendrier</span>
+            <input type="hidden" name="calendar_uid" value="${values.get('calendar_uid', '0')}"/>
             %else:
             <label>Calendrier de&nbsp;:
                 <select class="ui-widget ui-state-default ui-corner-all" name="calendar_uid"
@@ -43,7 +46,9 @@
                           placeholder="Libellé" class="label" value="${values.get('label')}"></label>
             <span>&nbsp;</span>
 
-            %if not assignation:
+            %if assignation:
+                <input type="hidden" name="private" value="${values.get('private', 'false')}"/>
+            %else:
             ##
             ## Only displayed for classic events (without assignation)
             ##
@@ -108,7 +113,9 @@
             %endif
         </p>
 
-        %if not assignation:
+        %if assignation:
+            <input type="hidden" name="all_day" value="${values.get('all_day', 'false')}"/>
+        %else:
         ##
         ## Only displayed for classic events (without assignation)
         ##

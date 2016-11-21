@@ -257,8 +257,8 @@ class PlanningEventController(RestController):
                     calendar_list=self.calendar_accessor.get_calendar_list())
 
     @validate({'uid': Int(min=0, not_empty=True),
-               'tz_offset': Int(min=-720, max=720),
                'calendar_uid': Int(min=0),
+               'tz_offset': Int(min=-720, max=720),
                'label': All(NotEmpty(), MaxLength(32)),
                'description': MaxLength(200),
                'event_start': IsoDatetimeConverter(not_empty=True),
@@ -269,8 +269,8 @@ class PlanningEventController(RestController):
                'private': StringBool(if_empty=False)},
               error_handler=edit)
     @expose()
-    def put(self, uid, tz_offset, calendar_uid,
-            label, event_start, event_end, description=u"", editable=True, all_day=False,
+    def put(self, uid, calendar_uid, tz_offset, label, event_start, event_end,
+            description=u"", editable=True, all_day=False,
             location=None, private=False,
             **kwargs):
         LOG.info("put, locals={0}".format(pprint.pformat(locals())))

@@ -92,6 +92,7 @@ readonly = readonly.lower() in ['true', 't', 'yes', 'y', 1]
             <td><label><b style="width: 4em; display: inline-block;">Heures&nbsp;:</b>
             <input name="assigned_hours" value="${assignation.assigned_hours}" type="number"
                    style="width: 5em;"
+                   disabled="disabled"
                    min="0.25" step="0.25">&nbsp;h</label></td>
             %else:
             <td><button type="submit" class="edit_button_icon" title="Modifier l‘affectation">!</button></td>
@@ -107,6 +108,7 @@ readonly = readonly.lower() in ['true', 't', 'yes', 'y', 1]
             <td><label><b style="width: 4em; display: inline-block;">Taux&nbsp;:</b>
             <input name="rate_percent" value="${assignation.rate_percent}" type="number"
                    style="width: 5em;"
+                   disabled="disabled"
                    min="5.0" max="100.0" step="5.0">&nbsp;%</label></td>
             %else:
             <td><button type="button" class="calendar_button_icon" title="Planifier l‘affectation">#</button></td>
