@@ -9,7 +9,7 @@
         font-family: arial;
         font-size: 1em;
         font-weight: bold;
-        width: 19em;
+        width: 24em;
     }
     article p .description {
         font-family: arial;
@@ -118,8 +118,8 @@
 
                 $('#confirm_dialog_content').load(url, function(){
                     $('#confirm_dialog').dialog({
-                        width:  600,
-                        height: 450,
+                        width:  580,
+                        height: 480,
                         buttons: {
                             "Modifier": function() {
                                 $('#event_edit_form').submit();
