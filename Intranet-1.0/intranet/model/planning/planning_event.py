@@ -95,7 +95,8 @@ class PlanningEvent(DeclarativeBase):
     def event_obj(self):
         """
         http://arshaw.com/fullcalendar/docs/event_data/Event_Object/
-        @return: Event object as a Python dictionary
+
+        :return: Event object as a Python dictionary
         """
         dict_ = dict()
         # -- Standard fields
@@ -105,12 +106,15 @@ class PlanningEvent(DeclarativeBase):
         dict_['end'] = self.event_end.strftime('%Y-%m-%dT%H:%M:%SZ')
         dict_['allDay'] = self.all_day
         dict_['editable'] = self.editable
-        # todo: dict_['className'] = ""
         # -- Non-standard Fields
         dict_['calendar_uid'] = self.calendar_uid
         dict_['description'] = self.description
         dict_['location'] = self.location
         dict_['private'] = self.private
+        if self.assignation:
+            dict_['title'] = self.assignation.employee.employee_name
+            dict_['project_cat'] = self.assignation.order_phase.order.project_cat
+            dict_['label'] = self.label
         return dict_
 
     @property

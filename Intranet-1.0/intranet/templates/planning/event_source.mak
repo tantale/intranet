@@ -187,6 +187,32 @@
                         displayErrDialog(title, text);
                     }
                 });
+            },
+            eventRender: function(event, element, view) {
+                var start_date = $.fullCalendar.parseDate(event.start),
+                    end_date = $.fullCalendar.parseDate(event.end),
+                    event_duration = (end_date - start_date) / 3600.0 / 1000,
+                    duration = event_duration.toString().replace('.', ',')
+                var eventTime = element.find('.fc-event-time');
+                var hour = eventTime.text();
+                if (hour.indexOf(':') == -1) {
+                    // append ":00" to the hour (missing)
+                    hour = hour + ":00";
+                }
+                eventTime.text(hour + " (" + duration + "\u00a0h)")
+                    .css({display: 'inline-block'});
+
+                // Add the *description* to the event title (for tooltip).
+                element.attr('title', event.description);
+
+                if (event.label) {
+                    var eventInner = element.find('.fc-event-inner');
+                    var label = $('<span/>')
+                        .css({display: 'inline-block', padding: '3px'})
+                        .addClass('colorFrame')
+                        .addClass(event.project_cat).append(event.label);
+                    label.appendTo(eventInner);
+                }
             }
         };
 
