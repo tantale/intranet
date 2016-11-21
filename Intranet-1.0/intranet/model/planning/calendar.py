@@ -104,6 +104,7 @@ class Calendar(DeclarativeBase):
         """
         http://fullcalendar.io/docs1/event_data/Event_Source_Object/
 
+        :rtype: dict[str|unicode, unicode]
         :return: Event source object as a Python dictionary
         """
         dict_ = dict()
