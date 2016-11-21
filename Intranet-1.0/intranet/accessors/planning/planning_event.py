@@ -85,9 +85,9 @@ class PlanningEventAccessor(BasicAccessor):
         :type description: unicode or None
         :param description: Description of the event.
         :type event_start: datetime.datetime
-        :param event_start: The date/time an event begins.
+        :param event_start: The UTC date/time of the event begins.
         :type event_end: datetime.datetime
-        :param event_end: The date/time an event ends (exclusive).
+        :param event_end: The UTC date/time of the event ends (exclusive).
         :type editable: bool
         :param editable: Determine if the events can be dragged and resized.
         :type all_day: bool
@@ -159,6 +159,21 @@ class PlanningEventAccessor(BasicAccessor):
             record.all_day = all_day
 
     def search_planning_events(self, calendar_uid, start_date_utc, end_date_utc):
+        """
+        Search matching planning events.
+
+        :type calendar_uid: int or str or unicode
+        :param calendar_uid: UID of the calendar.
+
+        :type start_date_utc: datetime.datetime
+        :param start_date_utc: The UTC date/time of the event begins.
+
+        :type end_date_utc: datetime.datetime
+        :param end_date_utc: The UTC date/time of the event ends (exclusive).
+
+        :rtype: list[intranet.model.planning.planning_event.PlanningEvent]
+        :return: list of events
+        """
         query = self.session.query(self.record_class)
         query = query.filter(PlanningEvent.calendar_uid == calendar_uid,
                              overlap_cond(start_date_utc, end_date_utc,

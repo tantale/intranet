@@ -81,6 +81,10 @@ class PlanningEventController(RestController):
         Récupère le calendrier de l’utilisateur.
         Recherche tous les événements dont la date de début ou de fin se trouve dans l'intervalle [start; end[.
 
+        Example:
+
+            /admin/planning/sources/7/events?start=1474840800&end=1478473200&_=1479716150036
+
         Arguments::
 
             start=1472421600, end=1476050400, kwargs={'_': u'1474187468622'}
@@ -92,7 +96,6 @@ class PlanningEventController(RestController):
         :param end: End date of the calendar view (+ 1 day: excluded from interval).
         :param kwargs: Contains the "no cache value".
         """
-        # fixme: use the [start; end] interval to filter the events, see: overlap_cond.
         LOG.info("get_all: start={start}, end={end}, kwargs={kwargs}".format(start=pprint.pformat(start),
                                                                              end=pprint.pformat(end),
                                                                              kwargs=pprint.pformat(kwargs)))
