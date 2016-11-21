@@ -25,7 +25,7 @@ class EventSourceController(RestController):
     # noinspection PyArgumentList
     @with_trailing_slash
     @expose('intranet.templates.planning.event_source')
-    def get_all(self):
+    def get_all(self, tz_offset):
         # -- find all and filter
         selections = self.calendar_selections.get_all()["selections"]
         if selections:
@@ -35,8 +35,9 @@ class EventSourceController(RestController):
             # The list is empty if there is no selection.
             calendar_list = []
         event_source_list = [calendar.event_source_obj() for calendar in calendar_list]
+        url_fmt = "./sources/{id}/events?tz_offset={tz_offset}"
         for event_source in event_source_list:
-            event_source["url"] = "./sources/{id}/events".format(id=event_source["id"])
+            event_source["url"] = url_fmt.format(id=event_source["id"], tz_offset=tz_offset)
         return dict(eventSources=json.dumps(event_source_list, indent=True))
 
     @expose('json')

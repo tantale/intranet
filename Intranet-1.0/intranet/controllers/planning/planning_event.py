@@ -106,8 +106,7 @@ class PlanningEventController(RestController):
 
         # Les dates sont des dates locales.
         # Il faut les convertir en date UTC pour les comparer avec les dates des événements.
-        # fixme: tz_offset is missing, see: intranet/templates/planning/event_source.mak
-        tz_offset = 0
+        tz_offset = int(kwargs['tz_offset'])
         tz_delta = datetime.timedelta(minutes=int(tz_offset))
         start_utc = start_date + tz_delta
         end_utc = end_date + tz_delta

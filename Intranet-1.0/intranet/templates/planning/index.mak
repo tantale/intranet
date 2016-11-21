@@ -44,8 +44,10 @@
             height: 200,
             modal: true
         });
+
+        var tz_offset = new Date().getTimezoneOffset();
         $('#planning_resources').load("./resources");
-        $('#planning_calendar').load("./sources");
+        $('#planning_calendar').load("./sources?tz_offset=" + encodeURIComponent(tz_offset));
 	});
 
 </script>
