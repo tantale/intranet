@@ -41,8 +41,10 @@ class EventSourceController(RestController):
         return dict(eventSources=json.dumps(event_source_list, indent=True))
 
     @expose('json')
-    def get_one(self, uid):
+    def get_one(self, uid, **kwargs):
+        # .. warning:: *tz_offset* must be passed as *kwargs* (TG2 limitation).
         calendar = self.calendar_accessor.get_calendar(uid)
         event_source = calendar.event_source_obj()
-        event_source["url"] = "./sources/{id}/events".format(id=event_source["id"])
+        url_fmt = "./sources/{id}/events?tz_offset={tz_offset}"
+        event_source["url"] = url_fmt.format(id=event_source["id"], tz_offset=kwargs['tz_offset'])
         return event_source

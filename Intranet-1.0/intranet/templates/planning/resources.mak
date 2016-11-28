@@ -37,8 +37,10 @@ $(function() {
     });
     $("#accordion .checkbox").button().click(function(event) {
         var uid = this.id.split("_")[1], checked = this.checked;
+        var tz_offset = new Date().getTimezoneOffset();
         jQuery.ajax("./resources", {method: "put", data: {uid: uid, checked: checked}});
-        jQuery.getJSON("./sources/" + uid, function( eventSource ) {
+        var url = "./sources/" + uid + "?tz_offset=" + encodeURIComponent(tz_offset);
+        jQuery.getJSON(url, function( eventSource ) {
             var action = (checked == true) ? 'addEventSource' : 'removeEventSource';
             $('#event_sources').fullCalendar(action, eventSource);
         });
