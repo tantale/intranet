@@ -19,9 +19,12 @@ class Order(DeclarativeBase):
     Order Management.
 
     .. versionadded:: 1.2.0
-        - The UID is the order ID.
-        - The order reference isn't anymore unique: it can't a client's name so
-          we tolerate duplicates.
+       - The UID is the order ID.
+       - The order reference isn't anymore unique: it can't a client's name so
+         we tolerate duplicates.
+
+    .. versionchanged:: 2.2.0
+       Add the *order_phase_list* relationship.
     """
     __tablename__ = 'Order'
 
@@ -131,6 +134,8 @@ class Order(DeclarativeBase):
     def close_task(self):
         """
         Change the status of all tasks and turn it to "DONE".
+
+        .. versionadded:: 2.2.0
         """
         for order_phase in self.order_phase_list:
             order_phase.close_task()
@@ -138,6 +143,8 @@ class Order(DeclarativeBase):
     def reopen_task(self):
         """
         Change the status of all tasks and turn it to "IN_PROGRESS" if tracked duration is positive else "PENDING".
+
+        .. versionadded:: 2.2.0
         """
         for order_phase in self.order_phase_list:
             order_phase.reopen_task()
@@ -145,6 +152,8 @@ class Order(DeclarativeBase):
     def plan_order(self, tz_delta, minutes=15, max_months=4):
         """
         Plan the Order tasks and assignations (if possible).
+
+        .. versionadded:: 2.2.0
 
         :type tz_delta: datetime.timedelta
         :param tz_delta: time-zone delta from UTC (tz_delta = utc_date - local_date).

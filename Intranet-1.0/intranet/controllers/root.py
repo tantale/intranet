@@ -27,6 +27,8 @@ class RootController(BaseController):
     Keep in mind that WSGI applications shouldn't be mounted directly: They
     must be wrapped around with :class:`tg.controllers.WSGIAppController`.
 
+    .. versionchanged:: 2.2.0
+       Remove the *tools* controller.
     """
     _menu_accessor = MenuItemAccessor()
     admin_menu = _menu_accessor.get_main_menu(u"Administration")

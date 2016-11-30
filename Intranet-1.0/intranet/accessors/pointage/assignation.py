@@ -1,11 +1,13 @@
 # -*- coding: utf-8 -*-
 """
 assignation
-=============
+===========
 
-Date: 2016-02-23
+:Date: 2016-02-23
+:Author: Laurent LAPORTE <tantale.solutions@gmail.com>
 
-Author: Laurent LAPORTE <tantale.solutions@gmail.com>
+.. versionadded:: 2.2.0
+   Accessor used to assign an employee to a task (OrderPhase).
 """
 import logging
 
@@ -19,6 +21,7 @@ LOG = logging.getLogger(__name__)
 
 
 class AssignationAccessor(BasicAccessor):
+    """ Accessor used to assign an employee to a task (OrderPhase). """
     def __init__(self, session=None):
         super(AssignationAccessor, self).__init__(Assignation, session=session)
 

@@ -26,6 +26,14 @@ class EventSourceController(RestController):
     @with_trailing_slash
     @expose('intranet.templates.planning.event_source')
     def get_all(self, tz_offset):
+        """
+        Get all event sources.
+
+        .. versionchanged:: 2.2.0
+           Add the *tz_offset* parameter.
+
+        :param tz_offset: Time zone offset.
+        """
         # -- find all and filter
         selections = self.calendar_selections.get_all()["selections"]
         if selections:
@@ -42,6 +50,14 @@ class EventSourceController(RestController):
 
     @expose('json')
     def get_one(self, uid, **kwargs):
+        """
+        Get one event source.
+
+        .. versionchanged:: 2.2.0
+           Handle the *tz_offset* parameter in *kwargs*.
+
+        :param uid: UID of the calendar.
+        """
         # .. warning:: *tz_offset* must be passed as *kwargs* (TG2 limitation).
         calendar = self.calendar_accessor.get_calendar(uid)
         event_source = calendar.event_source_obj()

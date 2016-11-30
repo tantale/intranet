@@ -52,7 +52,7 @@ install_requires = [
 ]
 
 setup(name='Intranet',
-      version='2.1.2',
+      version='2.2.0',
       description='Intranet for time tracking and planning',
       author='Laurent LAPORTE',
       author_email='tantale.solutions@gmail.com',

@@ -1,4 +1,11 @@
 # -*- coding: utf-8 -*-
+"""
+Time slots
+==========
+
+.. versionadded:: 2.2.0
+   Utility function used to create slots of date/time intervals.
+"""
 import datetime
 
 EMPTY_SLOT, FREE_SLOT, BUSY_SLOT = "EMPTY_SLOT", "FREE_SLOT", "BUSY_SLOT"

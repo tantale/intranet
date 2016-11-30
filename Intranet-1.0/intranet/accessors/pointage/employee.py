@@ -45,6 +45,8 @@ class EmployeeAccessor(BasicAccessor):
 
         Useful for testing but not for production because the name may not be unique.
 
+        .. versionadded:: 2.2.0
+
         :type employee_name: str | unicode
         :param employee_name: Employee name (label).
         :rtype: Employee
@@ -165,6 +167,8 @@ class EmployeeAccessor(BasicAccessor):
     def get_active_employees(self, start_date_utc, end_date_utc=None):
         """
         Get the employees currently working at a given date interval.
+
+        .. versionadded:: 2.2.0
 
         :type start_date_utc: datetime.date
         :param start_date_utc: Start date of the interval (UTC date).

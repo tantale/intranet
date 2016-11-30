@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
 """
 Assignation
-=============
+===========
 
-Date: 2016-01-18
+:Date: 2016-01-18
+:Author: Laurent LAPORTE <tantale.solutions@gmail.com>
 
-Author: Laurent LAPORTE <tantale.solutions@gmail.com>
+.. versionadded:: 2.2.0
 """
 from __future__ import unicode_literals
 
@@ -24,6 +25,8 @@ from intranet.model.planning.planning_event import PlanningEvent
 class Assignation(DeclarativeBase):
     """
     Assign an Employee to an OrderPhase with the given rate (percent)
+
+    .. versionadded:: 2.2.0
 
     :type start_date: datetime.datetime
     :param start_date: Start date/time (local time) of the interval (inclusive).

@@ -11,6 +11,9 @@ from intranet.model import DeclarativeBase
 class WeekDay(DeclarativeBase):
     """
     WeekDay management.
+
+    .. versionchanged:: 2.2.0
+       Add the *hours_interval_list* relationship.
     """
     __tablename__ = 'WeekDay'
     # ISO iso_weekday: Monday is 1 and Sunday is 7

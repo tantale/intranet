@@ -79,6 +79,9 @@ def find_event_intervals(day, event_list, slots, tz_delta):
     """
     Find the event intervals available in open hours (slots).
 
+    .. versionchanged:: 2.2.0
+       The *work_hours_dict* parameter is renamed to *slots*.
+
     :param day: day's date
     :type day: datetime.date
 
@@ -123,6 +126,9 @@ def find_first_event_interval(day, first_hour, event_list, slots, tz_delta):
     """
     Find the first event interval available in open hours.
 
+    .. versionchanged:: 2.2.0
+       The *work_hours_dict* parameter is renamed to *slots*.
+
     :param day: day's date
     :type day: datetime.date
 
@@ -160,6 +166,9 @@ def guess_event_duration(day, hour_start, event_list, slots, tz_delta):
     """
     Guess the event duration by finding available time intervals
     in the current day.
+
+    .. versionchanged:: 2.2.0
+       The *work_hours_dict* parameter is renamed to *slots*.
 
     :param day: day's date
     :type day: datetime.date

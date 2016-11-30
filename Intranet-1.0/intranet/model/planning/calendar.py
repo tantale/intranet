@@ -34,6 +34,9 @@ def checked_color(color):
 class Calendar(DeclarativeBase):
     """
     Calendar management.
+
+    .. versionchanged:: 2.2.0
+       Add *planning_event_list* and *year_period_list* relationships.
     """
     __tablename__ = 'Calendar'
 
@@ -123,6 +126,8 @@ class Calendar(DeclarativeBase):
         Select the week hours matching the given day.
         First look in the year periods to find a matching day, then in the default week hours.
 
+        .. versionadded:: 2.2.0
+
         :type day: datetime.date
         :param day: day date (local time)
         :rtype: intranet.model.planning.week_hours.WeekHours
@@ -143,6 +148,8 @@ class Calendar(DeclarativeBase):
                               [event_start...event_end[
                                             [event_start...event_end[
 
+        .. versionadded:: 2.2.0
+
         :type date_start_utc: datetime.datetime
         :param date_start_utc: End date/time (UTC) of the interval (exclusive)
         :type date_end_utc: datetime.datetime
@@ -158,6 +165,8 @@ class Calendar(DeclarativeBase):
         """
         Get the free time intervals (for time tracking).
 
+        .. versionadded:: 2.2.0
+
         :type day: datetime.date
         :param day: day date (local time)
         :rtype: list[(datetime.time, datetime.time)]
@@ -171,6 +180,8 @@ class Calendar(DeclarativeBase):
     def get_busy_intervals(self, day, tz_delta):
         """
         Get the busy time intervals (for planing).
+
+        .. versionadded:: 2.2.0
 
         :type day: datetime.date
         :param day: day date (local time)
@@ -190,6 +201,8 @@ class Calendar(DeclarativeBase):
         """
         Get the available time intervals of the given day.
         Available intervals = free from the current week hours - busy from existing planning events.
+
+        .. versionadded:: 2.2.0
 
         :type day: datetime.date
         :param day: day date (local time)
@@ -220,6 +233,8 @@ class Calendar(DeclarativeBase):
     def find_shift_in_day(self, day, constraint, tz_delta, assigned_hours, rate_percent, minutes=15):
         """
         Find assignable shift in the day.
+
+        .. versionadded:: 2.2.0
 
         :type constraint: tuple(datetime.datetime, datetime.datetime)
         :param constraint: Start and end date/time (local time)
@@ -269,6 +284,8 @@ class Calendar(DeclarativeBase):
     def find_shifts_in_interval(self, start_date, end_date, tz_delta, assigned_hours, rate_percent, minutes=15):
         """
         Find assignable shifts in the (start_date, end_date) interval.
+
+        .. versionadded:: 2.2.0
 
         :type start_date: datetime.datetime
         :param start_date: Start date/time (local time) of the interval (inclusive).

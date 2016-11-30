@@ -65,6 +65,8 @@ class YearPeriod(DeclarativeBase):
         Select the week hours matching the given day.
         Return ``None`` if the day doesn't match.
 
+        .. versionadded:: 2.2.0
+
         :type day: datetime.date
         :param day: The day to select in the year period.
         :rtype: WeekHours

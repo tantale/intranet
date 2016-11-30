@@ -90,6 +90,8 @@ class PlanningEventController(RestController):
             start=1472421600, end=1476050400, kwargs={'_': u'1474187468622'}
             start=1473976800, end=1474063200, kwargs={'_': u'1474187525738'}
 
+        .. versionchanged:: 2.2.0
+
         :type start: int
         :param start: Start date of the calendar view (timestamp).
         :type end: int

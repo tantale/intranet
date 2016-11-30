@@ -1,4 +1,11 @@
 # -*- coding: utf-8 -*-
+"""
+Tasks
+=====
+
+.. versionchanged:: 2.2.0
+   Move the :class:`~TasksController` to a separate Python module.
+"""
 import datetime
 import logging
 

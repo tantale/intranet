@@ -8,6 +8,9 @@ def overlap_cond(ref_start, ref_end, field_start, field_end):
     """
     Construct a sqlalchemy's predicate to check if two date intervals overlap.
 
+    .. versionadded:: 2.2.0
+       Refactoring.
+
     :param ref_start: reference interval start date
 
     :param ref_end: reference interval end date

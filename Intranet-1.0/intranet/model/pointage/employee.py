@@ -19,9 +19,13 @@ class Employee(DeclarativeBase):
     Employee management.
 
     .. versionadded:: 1.2.0
-        - The UID is the personal ID.
-        - The name 'employee_name' isn't anymore unique: we tolerate duplicated names.
-        - The worked hours field can be a decimal value, eg.: 31.2 hours.
+       - The UID is the personal ID.
+       - The name 'employee_name' isn't anymore unique: we tolerate duplicated names.
+       - The worked hours field can be a decimal value, eg.: 31.2 hours.
+
+    .. versionchanged:: 2.2.0
+       Add the *cal_event_list* and *assignation_list* relationships.
+       Prepare table properties for MySQL.
     """
     __tablename__ = 'Employee'
     __table_args__ = ({'mysql_engine': 'InnoDB'},)
@@ -91,6 +95,8 @@ class Employee(DeclarativeBase):
                               [event_start...event_end[
                                             [event_start...event_end[
 
+        .. versionadded:: 2.2.0
+
         :type date_start_utc: datetime.datetime
         :param date_start_utc: End date/time (UTC) of the interval (exclusive)
         :type date_end_utc: datetime.datetime
@@ -106,6 +112,8 @@ class Employee(DeclarativeBase):
         """
         Get the free time intervals (for time tracking).
 
+        .. versionadded:: 2.2.0
+
         :type day: datetime.date
         :param day: day date (local time)
         :rtype: list[(datetime.time, datetime.time)]
@@ -118,6 +126,8 @@ class Employee(DeclarativeBase):
     def get_busy_intervals(self, day, tz_delta):
         """
         Get the busy time intervals (for planing).
+
+        .. versionadded:: 2.2.0
 
         :type day: datetime.date
         :param day: day date (local time)
@@ -138,6 +148,8 @@ class Employee(DeclarativeBase):
         """
         Get the available time intervals of the given day.
         Available intervals = free from the current week hours - busy from existing planning events.
+
+        .. versionadded:: 2.2.0
 
         :type day: datetime.date
         :param day: day date (local time)

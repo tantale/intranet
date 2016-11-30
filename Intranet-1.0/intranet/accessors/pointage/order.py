@@ -36,6 +36,8 @@ class OrderAccessor(BasicAccessor):
 
         Useful for testing but not for production because the reference may not be unique.
 
+        .. versionadded:: 2.2.0
+
         :type order_ref: str | unicode
         :param order_ref: Order reference (label).
         :rtype: Order
@@ -101,8 +103,9 @@ class OrderAccessor(BasicAccessor):
         """
         Update the attributes of the Order.
 
-        * If the Order is closed, all tasks are marked "DONE",
-        * If the Order is reopened, all tasks are marked "IN_PROGRESS" if tracked duration is positive else "PENDING".
+        .. versionchanged:: 2.2.0
+           * If the Order is closed, all tasks are marked "DONE",
+           * If the Order is reopened, all tasks are marked "IN_PROGRESS" if tracked duration is positive else "PENDING".
 
         :type uid: str | int
         :param uid: Order UID
@@ -134,6 +137,8 @@ class OrderAccessor(BasicAccessor):
     def estimate_duration(self, order_uid, order_phase_uid=None, closed=True, max_count=64):
         """
         Estimate the duration of ALL tasks of a given order.
+
+        .. versionadded:: 2.2.0
 
         :type order_uid: int | unicode
         :param order_uid: UID of the order.
@@ -183,6 +188,8 @@ class OrderAccessor(BasicAccessor):
     def plan_order(self, order_uid, tz_delta, minutes=15, max_months=4):
         """
         Plan the Order tasks and assignations (if possible).
+
+        .. versionadded:: 2.2.0
 
         :type order_uid: int | unicode
         :param order_uid: UID of the order.

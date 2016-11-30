@@ -3,7 +3,8 @@
 Mathematical statistics functions
 =================================
 
-Minimal implementation of statistics, see: `<https://docs.python.org/3/library/statistics.html>`_.
+.. versionadded:: 2.2.0
+   Minimal implementation of statistics, see: `<https://docs.python.org/3/library/statistics.html>`_.
 """
 from __future__ import division
 
