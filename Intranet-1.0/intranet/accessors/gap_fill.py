@@ -5,6 +5,9 @@ Gap fill
 
 :Date: 2016-02-10
 :Author: Laurent LAPORTE
+
+.. versionadded:: 2.2.0
+   Utility classe used to find gaps in date/time intervals.
 """
 
 import itertools

@@ -162,6 +162,8 @@ class PlanningEventAccessor(BasicAccessor):
         """
         Search matching planning events.
 
+        .. versionadded:: 2.2.0
+
         :type calendar_uid: int or str or unicode
         :param calendar_uid: UID of the calendar.
 

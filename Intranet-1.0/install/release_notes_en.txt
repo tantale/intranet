@@ -1,6 +1,256 @@
 Changelog
 =========
 
+2.2.0 (2016-11-30)
+------------------
+
+New
+~~~
+
+- Add a "can_plan" flag on task forms. [Laurent LAPORTE]
+
+- Full implementation of
+  :meth:`intranet.model.pointage.order.Order#plan_order` (to be tested).
+  [Laurent LAPORTE]
+
+- New "Plan all" form. [Laurent LAPORTE]
+
+- Plan a assigned task (close #25) [Laurent LAPORTE]
+
+- It is now possible to plan "average" and "long" tasks. [Laurent
+  LAPORTE]
+
+- It is now possible to plan "short" tasks. Implementation isn't done
+  for "long" tasks. [Laurent LAPORTE]
+
+- New :class:`AssignationAccessor` and :class:`AssignationsController`
+  for the creation, modification and deletion of employee assignations
+  on tasks. (close #21) [Laurent LAPORTE]
+
+- Remove usless tools. [Laurent LAPORTE]
+
+- New database migration script: add the missing field ``description``
+  to table ``OrderPhase``. Upgrade the database model and accessors.
+  [Laurent LAPORTE]
+
+- Display the tasks (the order phases). It is possible to modify a
+  :class:`OrderPhase` (partial implementation). Note that
+  ``description`` attribute is missing in :class:`OrderPhase`, a
+  database migration script will be necessary. [Laurent LAPORTE]
+
+- Add :class:`GapFill` and :mod:`time_slot`: compute free/busy time
+  slots. Fix some typo. [Laurent LAPORTE]
+
+- New estimate tasks form (close #19). [Laurent LAPORTE]
+
+- New algorithm in :class:`OrderAccessor` used to estimate the
+  OrderPhase duration (close #16). [Laurent LAPORTE]
+
+- Extend ``OrderPhase`` and ``PlanningEvent`` tables and create
+  ``Assignation`` table for the order planning. Re-implementation of the
+  tables relationships. [Laurent LAPORTE]
+
+Changes
+~~~~~~~
+
+- Adjust dialog box size for planing events. [Laurent LAPORTE]
+
+- Change the event rendering in an event has assignation: add the
+  employee name and colors. [Laurent LAPORTE]
+
+- Change in planing event form: Display the assignation in the Edit
+  form. [Laurent LAPORTE]
+
+- Improve layout of Edit form: wider label, max length = 32. [Laurent
+  LAPORTE]
+
+- Add a little colored bullet next to the employee's name in the left
+  menu of the calendar. [Laurent LAPORTE]
+
+- Change in planning: the list of calendars is empty if there is no
+  selection. [Laurent LAPORTE]
+
+- Update the attributes of the Order (close #31). [Laurent LAPORTE]
+
+  * If the Order is closed, all tasks are marked "DONE",
+  * If the Order is reopened, all tasks are marked "IN_PROGRESS" if tracked duration is positive else "PENDING".
+
+- Add unit tests for plan_task. [Laurent LAPORTE]
+
+- Change highlight frame in forms. [Laurent LAPORTE]
+
+- Add a warning message in ``plan_dialog`` if the assignation already
+  have events. [Laurent LAPORTE]
+
+- Improve code quality using ``tox``. [Laurent LAPORTE]
+
+- More precise implementation of :meth:`intranet.model.planning.calendar
+  .Calendar.find_assignable_event`: can plan on morning or afternoon if
+  employee ins't busy. [Laurent LAPORTE]
+
+- Refactoring of the assignation badges. [Laurent LAPORTE]
+
+- Remove "Planifier" button in Edit Order form (see: issue #1). [Laurent
+  LAPORTE]
+
+- New controller used to list all assignations of a given task. [Laurent
+  LAPORTE]
+
+- Compute the right URL for new/edit/delete assignation. [Laurent
+  LAPORTE]
+
+- Fix spelling in French. [Laurent LAPORTE]
+
+- In Task widget: The "update" and "cancel" buttons are disabled until
+  the form is changed. [Laurent LAPORTE]
+
+- Add hidden fields in tasks forms to keep tz_offset and estimation
+  parameters. [Laurent LAPORTE]
+
+- Add a title to the "estimate tasks" dialog. Add a warning if tasks are
+  already estimated. [Laurent LAPORTE]
+
+- The :meth:`OderAccessor.estimate_duration` now calculate the remain
+  duration and set the task status to ``STATUS_PENDING`` for each order
+  phase. [Laurent LAPORTE]
+
+- Add :meth:`EmployeeAccessor.get_active_employees` method: Get the
+  employees currently working at a given date interval. Refactoring and
+  documentation of :class:`CalendarController`. [Laurent LAPORTE]
+
+- Change in :class:`OrderController` and in attached HTML templates:
+  display the tasks list only if the total estimated duration is not
+  nul. Todo: display the task details. [Laurent LAPORTE]
+
+- Change the mouse cursor in "progress" state in "Estimer les tâches"
+  dialog box: show calculation progression during task duration
+  estimation. [Laurent LAPORTE]
+
+- Change printing page layout: hide top menu and side bar. [Laurent
+  LAPORTE]
+
+- Change in :class:`Employee` and :class:`CalEvent`: add methods to
+  calculate free/busy/available time intervals in time tracking
+  calendar. [Laurent LAPORTE]
+
+- Change in :class:`Calendar` and :class:`PlanningEvent`: add methods to
+  calculate free/busy/available time intervals in planning calendar.
+  [Laurent LAPORTE]
+
+- Improve test case:
+  :file:`intranet/tests/accessors/test_week_hours_accessor.py`. [Laurent
+  LAPORTE]
+
+- Change in :class:`WeekHours`: add :meth:`WeekHours.get_time_slots`
+  method: Get the time slots of the given day. Improve documentation.
+  [Laurent LAPORTE]
+
+- Change in :class:`Calendar` and :class:`YearPeriod`: select the week
+  hours matching the given day. First look in the year periods to find a
+  matching day, then in the default week hours. [Laurent LAPORTE]
+
+- Refactoring of CalEventAccessor: get the available slots of the
+  employee at a given date. [Laurent LAPORTE]
+
+Fix
+~~~
+
+- Add the missing timezone offset for ``addEventSource`` URL. [Laurent
+  LAPORTE]
+
+- Add hidden fields if the planing event form has an assignation:
+  *calendar_uid*, *private* and *all_day*. Input fields in
+  ``assignation_form`` widget must be disabled to avoid posting them.
+  [Laurent LAPORTE]
+
+- Calculate the timezone offset for planing events in :func:`intranet.co
+  ntrollers.planning.planning_event.PlanningEventController.get_all`.
+  [Laurent LAPORTE]
+
+- Bad labels in assignation form. [Laurent LAPORTE]
+
+- Truncate the ``label`` and the ``description`` if too long in :meth:`i
+  ntranet.model.planning.assignation.Assignation.append_planning_event`.
+  [Laurent LAPORTE]
+
+- Correction in the New/Edit event calendar form: the ``calendar_uid``
+  drop down list select the current employee, even if the value is not a
+  :class:`int`. [Laurent LAPORTE]
+
+- The event sources are defined at full_calendar loading (and not
+  deferred). [Laurent LAPORTE]
+
+- Bad CSS selector for refresh button in task forms. [Laurent LAPORTE]
+
+- Bug in ``plan_order`` algorithm and views. [Laurent LAPORTE]
+
+- Bad date format in ``assignation_form``. [Laurent LAPORTE]
+
+- Keep key order in :class:`intranet.accessors.gap_fill.GapFill`.
+  [Laurent LAPORTE]
+
+- Bad error handling in :meth:`intranet.accessors.pointage.assignation.A
+  ssignationAccessor.update_assignation`: IntegrityError is now re-
+  raised. [Laurent LAPORTE]
+
+- Correct the filed ``${task.total_duration}`` in
+  :file:`intranet/templates/pointage/order/tasks/widgets.mak`. [Laurent
+  LAPORTE]
+
+- Bad ``start_date`` and ``end_date` format: use date format instead of
+  datetime format. Add more logs. [Laurent LAPORTE]
+
+- Bad error handling in :meth:`intranet.accessors.pointage.assignation.A
+  ssignationAccessor.insert_assignation`: IntegrityError is now re-
+  raised. [Laurent LAPORTE]
+
+- JavaScript error in
+  :file:`intranet/templates/pointage/order/tasks/task_widget.mak`.
+  [Laurent LAPORTE]
+
+- In Task widget: replace "disabled" by "readonly" because "disabled"
+  input values are not sent to the server. [Laurent LAPORTE]
+
+- In Task widget: replace "disabled" by "readonly" because "disabled"
+  input values are not sent to the server. [Laurent LAPORTE]
+
+- CSS problems in
+  :file:`intranet/templates/pointage/order/tasks/task_widget.mak`. Add
+  new affectation form (simple select). [Laurent LAPORTE]
+
+- Correct a database transaction bug in
+  :meth:`OrderAccessor.estimate_duration`. [Laurent LAPORTE]
+
+- Time tracking events are now calculated according to the free time
+  slots of employee calendar, and busy time slots of employee time
+  tracking. fix #17. [Laurent LAPORTE]
+
+- Re-implementation of the accessors for the ``Add planning tables``
+  migration script. [Laurent LAPORTE]
+
+- Bad import of :class:`HoursInterval` class in migration scripts.
+  [Laurent LAPORTE]
+
+- Delayed import of ``DBSession`` in accessors. [Laurent LAPORTE]
+
+Other
+~~~~~
+
+- Intranet-32: New :meth:`search_planning_events` used to search the
+  events in a given interval. (see: fixme for missing features).
+  [Laurent LAPORTE]
+
+- Intranet-22 [Commande] Modifier le formulaire d’édition. [Laurent
+  LAPORTE]
+
+- Intranet-23 [Assignation] Vérifier l’intervalle de dates. [Laurent
+  LAPORTE]
+
+- Intranet-24 [Assignation] Nombre d’heures assignées. [Laurent LAPORTE]
+
+- Intranet-18 Order – Limiter la liste des commandes à 25 entrées.
+  [Laurent LAPORTE]
+
 2.1.2 (2016-01-16)
 ------------------
 
@@ -23,12 +273,6 @@ Fix
 ~~~
 
 - Installation scripts. [Laurent LAPORTE]
-
-Other
-~~~~~
-
-- - Prepare release v2.1.1: update :file:`release_notes_en.txt`.
-  [Laurent LAPORTE]
 
 2.1.0 (2016-01-08)
 ------------------
@@ -203,11 +447,6 @@ Fix
 
 - Use ISO weekday (Monday is 1 and Sunday is 7) for :class:`WeekDay`
   instances. [Laurent LAPORTE]
-
-Other
-~~~~~
-
-- Initial commit. [Laurent LAPORTE]
 
 1.4.0 (2015-06-25)
 ------------------

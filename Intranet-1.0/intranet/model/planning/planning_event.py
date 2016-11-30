@@ -11,6 +11,9 @@ from intranet.model import DeclarativeBase
 class PlanningEvent(DeclarativeBase):
     """
     An event in the planning calendar.
+
+    .. versionchanged:: 2.2.0
+       Add the *assignation_uid* field and the *assignation* relationship.
     """
     __tablename__ = 'PlanningEvent'
     __table_args__ = (CheckConstraint("event_start <= event_end",
@@ -96,6 +99,10 @@ class PlanningEvent(DeclarativeBase):
         """
         http://arshaw.com/fullcalendar/docs/event_data/Event_Object/
 
+        .. versionchanged:: 2.2.0
+           Change the returned *title* and add the *project_cat* and *label* values
+           if at least an assignation is set on this planning event.
+
         :return: Event object as a Python dictionary
         """
         dict_ = dict()
@@ -138,6 +145,8 @@ class PlanningEvent(DeclarativeBase):
                 [event_start...event_end[
                               [event_start...event_end[
                                             [event_start...event_end[
+
+        .. versionadded:: 2.2.0
 
         :type date_start_utc: datetime.datetime
         :param date_start_utc: End date/time (UTC) of the interval (exclusive)

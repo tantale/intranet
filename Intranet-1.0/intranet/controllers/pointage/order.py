@@ -111,6 +111,9 @@ class OrderController(RestController):
         GET /pointage/order/get_all
         GET /pointage/order/get_all.json
 
+        .. versionchanged:: 2.2.0
+           New implementation which limit the number of orders to 25.
+
         :param keyword: Search keyword (for ``order_ref`` field), or empty.
         :param uid: The currently selected ``uid``, or empty if none is selected.
         :param order_ref: The currently selected ``order_ref``, or empty if none is selected.

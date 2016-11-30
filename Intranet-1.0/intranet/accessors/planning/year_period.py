@@ -70,13 +70,13 @@ class YearPeriodAccessor(BasicAccessor):
         """
         Append a period of the year.
 
+        :param calendar_uid: UID of the calendar (parent).
+        :param week_hours_uid: UID of the week hours.
+        :param frequency_uid: UID of the frequency to append.
         :type start_date: datetime.date
         :param start_date: Start date of the period (local time).
         :type end_date: datetime.date
         :param end_date: End date of the period (local time).
-        :param calendar_uid: UID of the calendar (parent).
-        :param week_hours_uid: UID of the week hours.
-        :param frequency_uid: UID of the frequency to append.
         :rtype: YearPeriod
         """
         with transaction.manager:

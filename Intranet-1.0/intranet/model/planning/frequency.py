@@ -11,6 +11,9 @@ from intranet.model import DeclarativeBase
 class Frequency(DeclarativeBase):
     """
     Frequency management.
+
+    .. versionchanged:: 2.2.0
+       Add the *year_period_list* relationship.
     """
     __tablename__ = 'Frequency'
     __table_args__ = (UniqueConstraint('modulo', 'quotient',

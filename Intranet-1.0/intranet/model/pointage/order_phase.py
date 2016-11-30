@@ -14,7 +14,14 @@ ALL_TASK_STATUS = [STATUS_PENDING, STATUS_IN_PROGRESS, STATUS_DONE]
 
 
 class OrderPhase(DeclarativeBase):
-    """A phase in an order."""
+    """
+    A phase in an order.
+
+    .. versionadded:: 2.2.0
+       - Add the *description*, *estimated_duration*, *remain_duration*,
+         and *task_status* fields,
+       - Add *cal_event_list* and *assignation_list* relationships.
+    """
     __tablename__ = 'OrderPhase'
     __table_args__ = (CheckConstraint("position > 0", name="position_check"),
                       {'mysql_engine': 'InnoDB'})
@@ -49,6 +56,10 @@ class OrderPhase(DeclarativeBase):
     def __init__(self, position, label, description=None):
         """
         Initialize a phase for the given order.
+
+        .. versionchanged:: 2.2.0
+           Add the *description*, *estimated_duration*, *remain_duration*,
+           and *task_status* fields.
 
         :param position: the index position of the phase in it's parent order.
         :type position: int
@@ -162,12 +173,16 @@ class OrderPhase(DeclarativeBase):
     def close_task(self):
         """
         Change the status of the task and turn it to "DONE".
+
+        .. versionadded:: 2.2.0
         """
         self.task_status = STATUS_DONE
 
     def reopen_task(self):
         """
         Change the status of the task and turn it to "IN_PROGRESS" if tracked duration is positive else "PENDING".
+
+        .. versionadded:: 2.2.0
         """
         if self.cal_event_list:
             # tracked_duration > 0
@@ -178,6 +193,8 @@ class OrderPhase(DeclarativeBase):
     def plan_task(self, tz_delta, minutes=15, max_months=4, min_date_utc=None):
         """
         Plan a single task (if possible).
+
+        .. versionadded:: 2.2.0
 
         :type tz_delta: datetime.timedelta
         :param tz_delta: time-zone delta from UTC (tz_delta = utc_date - local_date).

@@ -1,5 +1,11 @@
 # -*- coding: utf-8 -*-
-"""The application's model objects"""
+"""
+The application's model objects
+-------------------------------
+
+.. versionchanged:: 2.2.0
+   Add the :class:`~Assignation` class.
+"""
 
 from sqlalchemy.orm import scoped_session, sessionmaker
 from zope.sqlalchemy import ZopeTransactionExtension

@@ -59,6 +59,10 @@ class CalEventAccessor(BasicAccessor):
         """
         Get the day events of a given employee.
 
+        .. versionchanged:: 2.2.0
+           Rename the method ``get_work_hours`` to ``get_day_events``.
+           New implementation based on the calendar events of a given employee.
+
         :type employee_uid: int
         :param employee_uid: employee's uid
 

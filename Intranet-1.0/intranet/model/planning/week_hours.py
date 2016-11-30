@@ -14,6 +14,9 @@ from intranet.model.planning.hours_interval import HoursInterval
 class WeekHours(DeclarativeBase):
     """
     WeekHours management.
+
+    .. versionchanged:: 2.2.0
+       Add the *calendar_list*, *day_period_list* and *year_period_list* relationships.
     """
     __tablename__ = 'WeekHours'
     __table_args__ = (CheckConstraint("position > 0", name="position_check"),)  # tuple
@@ -99,6 +102,8 @@ class WeekHours(DeclarativeBase):
         """
         Get the hours intervals of the given day.
 
+        .. versionadded:: 2.2.0
+
         :type iso_weekday: int
         :param iso_weekday: ISO iso_weekday: Monday is 1 and Sunday is 7.
         :rtype: list[intranet.model.planning.hours_interval.HoursInterval]
@@ -112,6 +117,8 @@ class WeekHours(DeclarativeBase):
     def get_time_intervals(self, iso_weekday):
         """
         Get the time intervals of the given day.
+
+        .. versionadded:: 2.2.0
 
         :type iso_weekday: int
         :param iso_weekday: ISO iso_weekday: Monday is 1 and Sunday is 7.

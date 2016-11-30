@@ -13,6 +13,9 @@ from intranet.model import DeclarativeBase
 class DayPeriod(DeclarativeBase):
     """
     DayPeriod management.
+
+    .. versionchanged:: 2.2.0
+       Add the *hours_interval_list* relationship.
     """
     __tablename__ = 'DayPeriod'
     __table_args__ = (UniqueConstraint('week_hours_uid', 'position',

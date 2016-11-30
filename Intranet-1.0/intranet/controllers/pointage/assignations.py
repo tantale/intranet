@@ -1,4 +1,10 @@
 # -*- coding: utf-8 -*-
+"""
+Assignations
+------------
+
+.. versionadded:: 2.2.0
+"""
 import datetime
 import logging
 import pprint
