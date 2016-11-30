@@ -1,7 +1,7 @@
 Tantale Intranet - version 2.1.2
 --------------------------------
 
-Procédure d’installation et me migration de la base de donnée.
+Procédure d’installation et de migration de la base de donnée.
 
 Copier la base de données de production à la place du fichier ``productiondata.db``.
 
