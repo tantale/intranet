@@ -14,7 +14,7 @@ from intranet.accessors import BasicAccessor
 from intranet.accessors.pointage.order_cat import OrderCatAccessor
 from intranet.accessors.statistics import gauss_filter, mean
 from intranet.model.pointage.order import Order
-from intranet.model.pointage.order_phase import OrderPhase, STATUS_PENDING, STATUS_DONE, STATUS_IN_PROGRESS
+from intranet.model.pointage.order_phase import OrderPhase
 
 
 class OrderAccessor(BasicAccessor):
