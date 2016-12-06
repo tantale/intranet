@@ -105,7 +105,8 @@ class OrderAccessor(BasicAccessor):
 
         .. versionchanged:: 2.2.0
            * If the Order is closed, all tasks are marked "DONE",
-           * If the Order is reopened, all tasks are marked "IN_PROGRESS" if tracked duration is positive else "PENDING".
+           * If the Order is reopened, all tasks are marked "IN_PROGRESS"
+             if tracked duration is positive else "PENDING".
 
         :type uid: str | int
         :param uid: Order UID
