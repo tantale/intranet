@@ -92,7 +92,7 @@ class AssignationsController(RestController):
         form_errors = pylons.tmpl_context.form_errors
         employee = self.employee_accessor.get_employee(employee_uid)
         task = self.order_phase_accessor.get_order_phase(self.order_phase_uid)
-        values = dict(assigned_hours=task.estimated_duration,
+        values = dict(assigned_hours=task.remain_duration,
                       rate_percent=80.0,
                       start_date=start_date,
                       end_date=None)
