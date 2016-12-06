@@ -3,9 +3,15 @@
 :date: 2013-09-16
 :author: Laurent LAPORTE <sandlol2009@gmail.com>
 """
+import datetime
+
 from sqlalchemy.orm import relationship
-from sqlalchemy.schema import Column, ForeignKey
-from sqlalchemy.types import Integer, String, DateTime, Boolean
+from sqlalchemy.schema import Column
+from sqlalchemy.schema import ForeignKey
+from sqlalchemy.types import Boolean
+from sqlalchemy.types import DateTime
+from sqlalchemy.types import Integer
+from sqlalchemy.types import String
 
 from intranet.model import DeclarativeBase
 
@@ -141,6 +147,8 @@ class CalEvent(DeclarativeBase):
         """
         event_start = max(date_start_utc, self.event_start)
         event_end = min(date_end_utc, self.event_end)
+        if event_end - event_start == datetime.timedelta(days=1):
+            return datetime.time.min, datetime.time.max
         event_start_local = event_start - tz_delta
         event_end_local = event_end - tz_delta
         return event_start_local.time(), event_end_local.time()

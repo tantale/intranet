@@ -13,10 +13,16 @@ from __future__ import unicode_literals
 import datetime
 
 from babel.dates import format_date
-from babel.numbers import format_percent, format_number
+from babel.numbers import format_number
+from babel.numbers import format_percent
 from sqlalchemy.orm import relationship
-from sqlalchemy.schema import Column, CheckConstraint, ForeignKey, UniqueConstraint
-from sqlalchemy.types import Integer, DateTime, Float
+from sqlalchemy.schema import CheckConstraint
+from sqlalchemy.schema import Column
+from sqlalchemy.schema import ForeignKey
+from sqlalchemy.schema import UniqueConstraint
+from sqlalchemy.types import DateTime
+from sqlalchemy.types import Float
+from sqlalchemy.types import Integer
 
 from intranet.model import DeclarativeBase
 from intranet.model.planning.planning_event import PlanningEvent

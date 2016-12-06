@@ -4,7 +4,13 @@
 :date: 2013-08-09
 :author: Laurent LAPORTE <sandlol2009@gmail.com>
 """
-from sqlalchemy import Column, Integer, String, Float, Enum, CheckConstraint, ForeignKey
+from sqlalchemy import CheckConstraint
+from sqlalchemy import Column
+from sqlalchemy import Enum
+from sqlalchemy import Float
+from sqlalchemy import ForeignKey
+from sqlalchemy import Integer
+from sqlalchemy import String
 from sqlalchemy.orm import relationship
 
 from intranet.model import DeclarativeBase

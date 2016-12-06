@@ -1,9 +1,18 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+import datetime
+import unicodedata
+
 from sqlalchemy.orm import relationship
-from sqlalchemy.schema import Column, CheckConstraint, ForeignKey, UniqueConstraint
-from sqlalchemy.types import Integer, String, DateTime, Boolean
+from sqlalchemy.schema import CheckConstraint
+from sqlalchemy.schema import Column
+from sqlalchemy.schema import ForeignKey
+from sqlalchemy.schema import UniqueConstraint
+from sqlalchemy.types import Boolean
+from sqlalchemy.types import DateTime
+from sqlalchemy.types import Integer
+from sqlalchemy.types import String
 
 from intranet.model import DeclarativeBase
 
@@ -92,8 +101,15 @@ class PlanningEvent(DeclarativeBase):
                     "{self.editable!r}, "
                     "{self.all_day!r}, "
                     "{self.location!r}, "
-                    "{self.private!r}")
+                    "{self.private!r})")
         return repr_fmt.format(self=self)
+
+    def __unicode__(self):
+        fmt = u"Du {event_start:%d/%m/%Y %Hh%M} au {event_end:%d/%m/%Y %Hh%M} : {label}"
+        return fmt.format(event_start=self.event_start, event_end=self.event_end, label=self.label)
+
+    def __str__(self):
+        return unicodedata.normalize('NFKD', self.__unicode__()).encode('ascii', errors='ignore')
 
     def event_obj(self):
         """
@@ -163,6 +179,8 @@ class PlanningEvent(DeclarativeBase):
         else:
             event_start = max(date_start_utc, self.event_start)
             event_end = min(date_end_utc, self.event_end)
+        if event_end - event_start == datetime.timedelta(days=1):
+            return datetime.time.min, datetime.time.max
         event_start_local = event_start - tz_delta
         event_end_local = event_end - tz_delta
         return event_start_local.time(), event_end_local.time()

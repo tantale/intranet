@@ -7,10 +7,17 @@ import datetime
 
 from sqlalchemy.orm import relationship
 from sqlalchemy.schema import Column
-from sqlalchemy.types import Date, Float, Integer, String
+from sqlalchemy.types import Date
+from sqlalchemy.types import Float
+from sqlalchemy.types import Integer
+from sqlalchemy.types import String
 
 from intranet.accessors.gap_fill import GapFill
-from intranet.accessors.time_slot import create_time_slot, create_time_interval, FREE_SLOT, BUSY_SLOT, EMPTY_SLOT
+from intranet.accessors.time_slot import BUSY_SLOT
+from intranet.accessors.time_slot import EMPTY_SLOT
+from intranet.accessors.time_slot import FREE_SLOT
+from intranet.accessors.time_slot import create_time_interval
+from intranet.accessors.time_slot import create_time_slot
 from intranet.model import DeclarativeBase
 
 
@@ -94,6 +101,7 @@ class Employee(DeclarativeBase):
                 [event_start...event_end[
                               [event_start...event_end[
                                             [event_start...event_end[
+                [event_start...............................event_end[
 
         .. versionadded:: 2.2.0
 
@@ -105,8 +113,7 @@ class Employee(DeclarativeBase):
         :return: The list of matching calendar events.
         """
         return [cal_event for cal_event in self.cal_event_list
-                if (date_start_utc <= cal_event.event_start < date_end_utc or
-                    date_start_utc <= cal_event.event_end < date_end_utc)]
+                if not (cal_event.event_end < date_start_utc or date_end_utc <= cal_event.event_start)]
 
     def get_free_intervals(self, day):
         """

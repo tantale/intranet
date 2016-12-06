@@ -6,7 +6,8 @@
 import re
 
 from sqlalchemy.schema import Column
-from sqlalchemy.types import Integer, String
+from sqlalchemy.types import Integer
+from sqlalchemy.types import String
 
 from intranet.model import DeclarativeBase
 

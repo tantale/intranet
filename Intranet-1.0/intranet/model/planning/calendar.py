@@ -14,11 +14,19 @@ import math
 import re
 
 from sqlalchemy.orm import relationship
-from sqlalchemy.schema import Column, ForeignKey, CheckConstraint
-from sqlalchemy.types import Integer, String, Float
+from sqlalchemy.schema import CheckConstraint
+from sqlalchemy.schema import Column
+from sqlalchemy.schema import ForeignKey
+from sqlalchemy.types import Float
+from sqlalchemy.types import Integer
+from sqlalchemy.types import String
 
 from intranet.accessors.gap_fill import GapFill
-from intranet.accessors.time_slot import create_time_slot, FREE_SLOT, BUSY_SLOT, create_time_interval, EMPTY_SLOT
+from intranet.accessors.time_slot import BUSY_SLOT
+from intranet.accessors.time_slot import EMPTY_SLOT
+from intranet.accessors.time_slot import FREE_SLOT
+from intranet.accessors.time_slot import create_time_interval
+from intranet.accessors.time_slot import create_time_slot
 from intranet.model import DeclarativeBase
 
 COLOR_REGEX = ur"^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$"
@@ -147,6 +155,7 @@ class Calendar(DeclarativeBase):
                 [event_start...event_end[
                               [event_start...event_end[
                                             [event_start...event_end[
+                [event_start...............................event_end[
 
         .. versionadded:: 2.2.0
 
@@ -158,8 +167,7 @@ class Calendar(DeclarativeBase):
         :return: The list of matching planning events.
         """
         return [planning_event for planning_event in self.planning_event_list
-                if (date_start_utc <= planning_event.event_start < date_end_utc or
-                    date_start_utc <= planning_event.event_end < date_end_utc)]
+                if not (planning_event.event_end < date_start_utc or date_end_utc <= planning_event.event_start)]
 
     def get_free_intervals(self, day):
         """

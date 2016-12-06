@@ -12,8 +12,11 @@ from __future__ import unicode_literals
 import datetime
 
 from sqlalchemy.orm import relationship
-from sqlalchemy.schema import Column, CheckConstraint, ForeignKey
-from sqlalchemy.types import Integer, Time
+from sqlalchemy.schema import CheckConstraint
+from sqlalchemy.schema import Column
+from sqlalchemy.schema import ForeignKey
+from sqlalchemy.types import Integer
+from sqlalchemy.types import Time
 
 from intranet.model import DeclarativeBase
 

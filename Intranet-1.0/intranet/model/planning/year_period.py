@@ -10,8 +10,10 @@ Created on: 2015-08-28
 from __future__ import unicode_literals
 
 from sqlalchemy.orm import relationship
-from sqlalchemy.schema import Column, ForeignKey
-from sqlalchemy.types import Integer, Date
+from sqlalchemy.schema import Column
+from sqlalchemy.schema import ForeignKey
+from sqlalchemy.types import Date
+from sqlalchemy.types import Integer
 
 from intranet.model import DeclarativeBase
 

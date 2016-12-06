@@ -8,10 +8,15 @@ import collections
 
 from sqlalchemy.orm import relationship
 from sqlalchemy.schema import Column
-from sqlalchemy.types import Integer, String, Date
+from sqlalchemy.types import Date
+from sqlalchemy.types import Integer
+from sqlalchemy.types import String
 
 from intranet.model import DeclarativeBase
-from intranet.model.pointage.order_phase import STATUS_PENDING, STATUS_IN_PROGRESS, STATUS_DONE, OrderPhase
+from intranet.model.pointage.order_phase import STATUS_DONE
+from intranet.model.pointage.order_phase import STATUS_IN_PROGRESS
+from intranet.model.pointage.order_phase import STATUS_PENDING
+from intranet.model.pointage.order_phase import OrderPhase
 
 
 class Order(DeclarativeBase):

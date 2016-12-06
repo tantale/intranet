@@ -4,8 +4,11 @@ from __future__ import unicode_literals
 import datetime
 
 from sqlalchemy.orm import relationship
-from sqlalchemy.schema import Column, CheckConstraint
-from sqlalchemy.types import Integer, SmallInteger, String
+from sqlalchemy.schema import CheckConstraint
+from sqlalchemy.schema import Column
+from sqlalchemy.types import Integer
+from sqlalchemy.types import SmallInteger
+from sqlalchemy.types import String
 
 from intranet.model import DeclarativeBase
 from intranet.model.planning.hours_interval import HoursInterval
