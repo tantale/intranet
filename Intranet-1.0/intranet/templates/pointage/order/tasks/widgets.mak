@@ -177,7 +177,15 @@ can_plan_cls = "ui-icon ui-icon-circle-check" if can_plan else "ui-icon ui-icon-
         var tz_offset = today.getTimezoneOffset();
         $('#${task_form_id}').find('input[name=tz_offset]').val(tz_offset);
 
-        $('#${task_form_id}').ajaxForm({target: '#${task_id}'});
+        var updateChargeTable = function(res, status, xhr, form) {
+            var url = "${tg.url('./{task.order.uid}/charge_table'.format(task=task))|n}";
+            $('#order_update table.charge').load(url).toggle("highlight").toggle("highlight");
+        }
+
+        $('#${task_form_id}').ajaxForm({
+            target: '#${task_id}',
+            success: updateChargeTable
+        });
 
         $('#${task_form_id} .refresh_button').button({
             text : true,
@@ -237,6 +245,7 @@ can_plan_cls = "ui-icon ui-icon-circle-check" if can_plan else "ui-icon ui-icon-
                         } else {
                             $('#${task_id}').html(responseText);
                             thisDialog.dialog("close");
+                            updateChargeTable();
                         }
                     }
                 };
@@ -286,7 +295,7 @@ can_plan_cls = "ui-icon ui-icon-circle-check" if can_plan else "ui-icon ui-icon-
             $('#${task_form_id} .cancel_button').button("disable");
         });
 
-        $('#${task_form_id} .change').change(function(){
+        $('#${task_form_id} .change').bind('change input propertychange', function(){
             $('#${task_form_id} .update_button').button("enable");
             $('#${task_form_id} .cancel_button').button("enable");
         });

@@ -350,3 +350,8 @@ class OrderController(RestController):
         msg_fmt = u"La commande « {order_ref} » est supprimée."
         flash(msg_fmt.format(order_ref=old_order.order_ref), status="ok")
         return dict(order=None)
+
+    @expose('intranet.templates.pointage.order.charge_table')
+    def charge_table(self, uid):
+        order = self.order_accessor.get_order(uid)
+        return dict(order=order)
