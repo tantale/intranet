@@ -1,5 +1,3 @@
-<%namespace file="intranet.templates.planning.calendar.ctrl_select_class_name" import="select_class_name"/>
-%for calendar in calendar_list:
 <article id="calendar_${calendar.uid}">
 
     <h2><span id="calendar_${calendar.uid}_label" class="label editable"
@@ -57,47 +55,26 @@
                 <td><input id="calendar_${calendar.uid}_text_color" class="text_color editable" type="color"
                            name="text_color" title="${_(u'Couleur du texte')}" value="${calendar.text_color}"/></td>
             </tr>
-            <tr>
-                <td><label for="calendar_${calendar.uid}_groups">catégorie&nbsp;: </label></td>
-                <td>${select_class_name("calendar_{0}_groups".format(calendar.uid),
-                    "class_name", _(u"Sélectionnez une catégorie"),
-                    order_cat_groups, selected_cat_name=calendar.class_name, empty_label=_(u"(Aucune)"))}
-                </td>
-            </tr>
             </tbody>
         </table>
     </details>
-
-    <nav>
-        <form id="calendar_${calendar.uid}_delete_form" class="delete_form inline_form"
-              action="${tg.url('/admin/planning/calendar/{0}/delete'.format(calendar.uid))}"
-              method="get">
-            <p>
-                <button id="calendar_${calendar.uid}_delete" type="submit" class="delete_button"
-                        title="Supprimer le calendrier : ${calendar.label}">${_(u"Supprimer")}
-                </button>
-            </p>
-        </form>
-    </nav>
-
 </article>
-%endfor
 
 <script type='text/javascript'><!--
     "use strict";
     /*global $*/
     $(function() {
-        $('#calendar .delete_form').ajaxForm({
+        $('#calendar_${calendar.uid} .delete_form').ajaxForm({
             target: '#confirm_dialog_content'
         });
-        $('#calendar .delete_button').button({
+        $('#calendar_${calendar.uid} .delete_button').button({
             text: true,
             icons: {
                 primary: "ui-icon-trash"
             }
         });
         // see: http://vitalets.github.io/x-editable/docs.html
-        $('#calendar .label.editable').editable({
+        $('#calendar_${calendar.uid} .label.editable').editable({
             type: "text",
             clear: true,
             pk: "unused",
@@ -114,7 +91,7 @@
             },
             inputclass: "input-large label"
         });
-        $('#calendar .description.editable').editable({
+        $('#calendar_${calendar.uid} .description.editable').editable({
             type: "textarea",
             rows: 2,
             clear: true,
@@ -132,11 +109,11 @@
             },
             inputclass: "input-large description"
         });
-        $('#calendar select.editable').change(function() {
+        $('#calendar_${calendar.uid} select.editable').change(function() {
             jQuery.post("${tg.url('/admin/planning/calendar/edit_in_place')}",
                 {name: this.id, value: this.value});
         });
-        $('#calendar input[type=color].editable').change(function() {
+        $('#calendar_${calendar.uid} input[type=color].editable').change(function() {
             jQuery.post("${tg.url('/admin/planning/calendar/edit_in_place')}",
                 {name: this.id, value: this.value});
         });

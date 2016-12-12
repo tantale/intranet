@@ -41,7 +41,8 @@ class CalendarController(RestController):
     def get_one(self, uid):
         LOG.info("get_one, uid = " + pprint.pformat(uid))
         calendar = self.accessor.get_calendar(uid)
-        return dict(calendar=calendar)
+        return dict(calendar=calendar,
+                    week_hours_list=self.accessor.get_week_hours_list())
 
     # noinspection PyArgumentList
     @with_trailing_slash

@@ -62,7 +62,8 @@
 							%endif
 							</p>
 					<p><label>Calendrier :</label>
-						<button type="button" class="update_button"
+						<button id="employee_update__calendar"
+								type="button" class="update_button"
 								title="Modifier les prorpiétés du calendrier">${calendar.label}</button></p></td>
 			</tr>
 			<tr>
@@ -138,5 +139,25 @@ $('#employee_get_delete .delete_button').button({
 });
 $('#employee_get_delete').ajaxForm({
 	target : '#confirm_dialog_content'
+});
+$('#employee_update__calendar').click(function() {
+	var thisButton = $("span", this);
+	var url = "${tg.url('/admin/planning/calendar/{calendar.uid}'.format(calendar=calendar))}";
+	$('#confirm_dialog_content').load(url);
+	$('#confirm_dialog').dialog({
+		width: 500,
+		height: 400,
+		buttons: {
+			"Fermer": function() {
+				// update the button label (if modified in confirm_dialog_content)
+				var label = $('#calendar_${calendar.uid}_label').text();
+				thisButton.text(label);
+				$(this).dialog("close");
+			}
+		},
+		title: "Propriétés du calendrier ${calendar.label|n}",
+		close: function() {
+		}
+	}).dialog("open");
 });
 </script>
