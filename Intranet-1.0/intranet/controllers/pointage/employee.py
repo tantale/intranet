@@ -9,8 +9,7 @@ import pprint
 
 import pylons
 import sqlalchemy.exc
-from formencode.validators import NotEmpty, Number, String
-from sqlalchemy.sql.expression import or_
+from formencode.validators import NotEmpty, Number
 from tg.controllers.restcontroller import RestController
 from tg.controllers.util import redirect
 from tg.decorators import with_trailing_slash, expose, validate, without_trailing_slash
@@ -18,7 +17,6 @@ from tg.flash import flash
 
 from intranet.accessors.pointage.employee import EmployeeAccessor
 from intranet.controllers.session_obj.layout import LayoutController
-from intranet.model.planning.calendar import Calendar
 from intranet.model.pointage.employee import Employee
 from intranet.validators.date_interval import check_date_interval
 from intranet.validators.iso_date_converter import IsoDateConverter
@@ -72,10 +70,7 @@ class EmployeeController(RestController):
         :param uid: UID of the employee to display.
         """
         employee = self.accessor.get_employee(uid)
-        # noinspection PyComparisonWithNone
-        predicate = or_(Calendar.employee_uid == employee.uid, Calendar.employee_uid == None)
-        calendar_list = self.calendar_accessor.get_calendar_list(filter_cond=predicate)
-        return dict(employee=employee, calendar_list=calendar_list)
+        return dict(employee=employee)
 
     # noinspection PyArgumentList
     @with_trailing_slash
@@ -131,8 +126,7 @@ class EmployeeController(RestController):
     @validate({'employee_name': NotEmpty(),
                'worked_hours': Number(min=1, max=39, not_empty=True),
                'entry_date': IsoDateConverter(not_empty=True),
-               'exit_date': IsoDateConverter(not_empty=False),
-               'photo_path': String()},
+               'exit_date': IsoDateConverter(not_empty=False)},
               error_handler=new)
     @expose()
     def post(self, employee_name, worked_hours, entry_date,
@@ -193,25 +187,19 @@ class EmployeeController(RestController):
                       worked_hours=str(employee.worked_hours),
                       entry_date=entry_date,
                       exit_date=exit_date,
-                      photo_path=employee.photo_path,
-                      calendar_uid=employee.calendar.uid if employee.calendar else None)
+                      photo_path=employee.photo_path)
         values.update(kwargs)
-        # noinspection PyComparisonWithNone
-        predicate = or_(Calendar.employee_uid == employee.uid, Calendar.employee_uid == None)
-        calendar_list = self.calendar_accessor.get_calendar_list(filter_cond=predicate)
-        return dict(values=values, form_errors=form_errors, calendar_list=calendar_list)
+        return dict(values=values, form_errors=form_errors, calendar=employee.calendar)
 
     # noinspection PyUnusedLocal
     @validate({'employee_name': NotEmpty(),
                'worked_hours': Number(min=1, max=39, not_empty=True),
                'entry_date': IsoDateConverter(not_empty=True),
-               'exit_date': IsoDateConverter(not_empty=False),
-               'photo_path': String(),
-               'calendar_uid': Number(min=1, not_empty=False)},
+               'exit_date': IsoDateConverter(not_empty=False)},
               error_handler=edit)
     @expose()
     def put(self, uid, employee_name, worked_hours, entry_date, exit_date=None,
-            photo_path=None, calendar_uid=None, **kwargs):
+            photo_path=None, **kwargs):
         """
         Update an existing record.
 
@@ -224,12 +212,10 @@ class EmployeeController(RestController):
         :param entry_date: Entry date of the employee in the firm.
         :param exit_date: Exit date of the employee in the firm.
         :param photo_path: Relative path of the photo image.
-        :param calendar_uid: Employee calendar (if any).
         :param kwargs: Extra URL parameters
         :return: Mako template parameters
         """
         LOG.info(u"put: " + pprint.pformat(locals()))
-        calendar = self.calendar_accessor.get_calendar(calendar_uid) if calendar_uid else None
         ctrl_dict = check_date_interval(entry_date, exit_date)
         if ctrl_dict['status'] != "ok":
             flash(ctrl_dict['message'], status=ctrl_dict['status'])
@@ -238,8 +224,7 @@ class EmployeeController(RestController):
                      worked_hours=worked_hours,
                      entry_date=entry_date,
                      exit_date=exit_date,
-                     photo_path=photo_path,
-                     calendar_uid=calendar_uid)
+                     photo_path=photo_path)
 
         try:
             self.accessor.update_employee(uid,
@@ -247,8 +232,7 @@ class EmployeeController(RestController):
                                           worked_hours=worked_hours,
                                           entry_date=entry_date,
                                           exit_date=exit_date,
-                                          photo_path=photo_path,
-                                          calendar=calendar)
+                                          photo_path=photo_path)
         except sqlalchemy.exc.IntegrityError:
             msg_fmt = u"L'employé « {employee_name} » existe déjà."
             err_msg = msg_fmt.format(employee_name=employee_name)
@@ -258,8 +242,7 @@ class EmployeeController(RestController):
                      worked_hours=worked_hours,
                      entry_date=entry_date,
                      exit_date=exit_date,
-                     photo_path=photo_path,
-                     calendar_uid=calendar_uid)
+                     photo_path=photo_path)
         else:
             msg_fmt = u"L'employé « {employee_name} » est modifiée."
             flash(msg_fmt.format(employee_name=employee_name), status="ok")
