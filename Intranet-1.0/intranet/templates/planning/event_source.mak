@@ -163,30 +163,37 @@
                 });
             },
             eventResize: function(event, dayDelta, minuteDelta, revertFunc) {
-                var
-                    uid = event.id.split("_")[2],
-                    url = "./sources/" + event.calendar_uid + "/events/" + uid + "/event_resize";
+                // User-defined events are resizable,
+                // but tasks events are not if it is a multiple-day resizing.
+                // Note: tasks events have 'project_cat' attributes.
+                if (dayDelta && event.project_cat) {
+                    revertFunc();
+                } else {
+                    var
+                        uid = event.id.split("_")[2],
+                        url = "./sources/" + event.calendar_uid + "/events/" + uid + "/event_resize";
 
-                $.ajax({
-                    type: "GET",
-                    url: url,
-                    data: {
-                        day_delta: dayDelta,
-                        minute_delta: minuteDelta
-                    },
-                    success: function(){
-                        $('#calendar').fullCalendar('gotoDate', event.start);
-                        if (dayDelta) {
-                            $('#calendar').fullCalendar('refetchEvents');
+                    $.ajax({
+                        type: "GET",
+                        url: url,
+                        data: {
+                            day_delta: dayDelta,
+                            minute_delta: minuteDelta
+                        },
+                        success: function(){
+                            $('#calendar').fullCalendar('gotoDate', event.start);
+                            if (dayDelta) {
+                                $('#calendar').fullCalendar('refetchEvents');
+                            }
+                        },
+                        error: function() {
+                            revertFunc();
+                            var title = "Erreur de connexion HTTP",
+                                text = "Impossible de mettre à jour la durée de l\u2019événements\u00a0!";
+                            displayErrDialog(title, text);
                         }
-                    },
-                    error: function() {
-                        revertFunc();
-                        var title = "Erreur de connexion HTTP",
-                            text = "Impossible de mettre à jour la durée de l\u2019événements\u00a0!";
-                        displayErrDialog(title, text);
-                    }
-                });
+                    });
+                }
             },
             eventRender: function(event, element, view) {
                 var start_date = $.fullCalendar.parseDate(event.start),
