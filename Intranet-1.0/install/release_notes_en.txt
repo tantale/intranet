@@ -1,6 +1,38 @@
 Changelog
 =========
 
+2.2.1 (2016-12-19)
+------------------
+
+Fix
+~~~
+
+- Fix code style. [Laurent LAPORTE]
+
+- `Issue #37 <https://github.com/tantale/intranet/issues/37>`_ [eventResize] Interdire le redimensionnement d’une tâche
+  sur plusieurs jours. User-defined events are resizable, but tasks
+  events are not if it is a multiple-day resizing. [Laurent LAPORTE]
+
+- `Issue #28 <https://github.com/tantale/intranet/issues/28>`_ [OrderPhase] Mettre à jour la liste des phases: If at
+  least one task is estimated => don't display order phases. [Laurent
+  LAPORTE]
+
+- `Issue #38 <https://github.com/tantale/intranet/issues/38>`_ [Order] Mettre à jour la commande après estimation des
+  tâches. [Laurent LAPORTE]
+
+- `Issue #42 <https://github.com/tantale/intranet/issues/42>`_ [Employee] Ajouter formulaire de modification du
+  calendrier. [Laurent LAPORTE]
+
+- `Issue #39 <https://github.com/tantale/intranet/issues/39>`_ [Employee] Impossible d’ajouter une photo. [Laurent
+  LAPORTE]
+
+- `Issue #41 <https://github.com/tantale/intranet/issues/41>`_ La planification ne tient pas compte des événements
+  utilisateur. [Laurent LAPORTE]
+
+- `Issue #48 <https://github.com/tantale/intranet/issues/40>`_ Assigner heures ne correspond pas au temps restant.
+  [Laurent LAPORTE]
+
+
 2.2.0 (2016-11-30)
 ------------------
 
@@ -15,7 +47,7 @@ New
 
 - New "Plan all" form. [Laurent LAPORTE]
 
-- Plan a assigned task (close #25) [Laurent LAPORTE]
+- Plan a assigned task (close `Issue #25 <https://github.com/tantale/intranet/issues/25>`_) [Laurent LAPORTE]
 
 - It is now possible to plan "average" and "long" tasks. [Laurent
   LAPORTE]
@@ -25,7 +57,7 @@ New
 
 - New :class:`AssignationAccessor` and :class:`AssignationsController`
   for the creation, modification and deletion of employee assignations
-  on tasks. (close #21) [Laurent LAPORTE]
+  on tasks. (close `Issue #21 <https://github.com/tantale/intranet/issues/21>`_) [Laurent LAPORTE]
 
 - Remove usless tools. [Laurent LAPORTE]
 
@@ -41,10 +73,10 @@ New
 - Add :class:`GapFill` and :mod:`time_slot`: compute free/busy time
   slots. Fix some typo. [Laurent LAPORTE]
 
-- New estimate tasks form (close #19). [Laurent LAPORTE]
+- New estimate tasks form (close `Issue #19 <https://github.com/tantale/intranet/issues/19>`_). [Laurent LAPORTE]
 
 - New algorithm in :class:`OrderAccessor` used to estimate the
-  OrderPhase duration (close #16). [Laurent LAPORTE]
+  OrderPhase duration (close `Issue #16 <https://github.com/tantale/intranet/issues/16>`_). [Laurent LAPORTE]
 
 - Extend ``OrderPhase`` and ``PlanningEvent`` tables and create
   ``Assignation`` table for the order planning. Re-implementation of the
@@ -70,7 +102,7 @@ Changes
 - Change in planning: the list of calendars is empty if there is no
   selection. [Laurent LAPORTE]
 
-- Update the attributes of the Order (close #31). [Laurent LAPORTE]
+- Update the attributes of the Order (close `Issue #31 <https://github.com/tantale/intranet/issues/31>`_). [Laurent LAPORTE]
 
   * If the Order is closed, all tasks are marked "DONE",
   * If the Order is reopened, all tasks are marked "IN_PROGRESS" if tracked duration is positive else "PENDING".
@@ -90,7 +122,7 @@ Changes
 
 - Refactoring of the assignation badges. [Laurent LAPORTE]
 
-- Remove "Planifier" button in Edit Order form (see: issue #1). [Laurent
+- Remove "Planifier" button in Edit Order form (see: issue `Issue #1 <https://github.com/tantale/intranet/issues/1>`_). [Laurent
   LAPORTE]
 
 - New controller used to list all assignations of a given task. [Laurent
@@ -197,7 +229,7 @@ Fix
   :file:`intranet/templates/pointage/order/tasks/widgets.mak`. [Laurent
   LAPORTE]
 
-- Bad ``start_date`` and ``end_date` format: use date format instead of
+- Bad ``start_date`` and ``end_date`` format: use date format instead of
   datetime format. Add more logs. [Laurent LAPORTE]
 
 - Bad error handling in :meth:`intranet.accessors.pointage.assignation.A
@@ -223,7 +255,7 @@ Fix
 
 - Time tracking events are now calculated according to the free time
   slots of employee calendar, and busy time slots of employee time
-  tracking. fix #17. [Laurent LAPORTE]
+  tracking. fix `Issue #17 <https://github.com/tantale/intranet/issues/17>`_. [Laurent LAPORTE]
 
 - Re-implementation of the accessors for the ``Add planning tables``
   migration script. [Laurent LAPORTE]
@@ -233,22 +265,19 @@ Fix
 
 - Delayed import of ``DBSession`` in accessors. [Laurent LAPORTE]
 
-Other
-~~~~~
-
-- Intranet-32: New :meth:`search_planning_events` used to search the
+- `Issue #32 <https://github.com/tantale/intranet/issues/32>`_: New :meth:`search_planning_events` used to search the
   events in a given interval. (see: fixme for missing features).
   [Laurent LAPORTE]
 
-- Intranet-22 [Commande] Modifier le formulaire d’édition. [Laurent
+- `Issue #22 <https://github.com/tantale/intranet/issues/22>`_ [Commande] Modifier le formulaire d’édition. [Laurent
   LAPORTE]
 
-- Intranet-23 [Assignation] Vérifier l’intervalle de dates. [Laurent
+- `Issue #23 <https://github.com/tantale/intranet/issues/23>`_ [Assignation] Vérifier l’intervalle de dates. [Laurent
   LAPORTE]
 
-- Intranet-24 [Assignation] Nombre d’heures assignées. [Laurent LAPORTE]
+- `Issue #24 <https://github.com/tantale/intranet/issues/24>`_ [Assignation] Nombre d’heures assignées. [Laurent LAPORTE]
 
-- Intranet-18 Order – Limiter la liste des commandes à 25 entrées.
+- `Issue #18 <https://github.com/tantale/intranet/issues/18>`_ Order – Limiter la liste des commandes à 25 entrées.
   [Laurent LAPORTE]
 
 2.1.2 (2016-01-16)
@@ -561,17 +590,17 @@ Changes
 Fix
 ~~~
 
-- Issues #8: decimal value for worked_hours, and #11: allow duplicates
+- `Issue #8 <https://github.com/tantale/intranet/issues/8>`_: decimal value for worked_hours, and `Issue #11 <https://github.com/tantale/intranet/issues/11>`_: allow duplicates
   for order and employees. Don't fix #3: order's references with auto-
   increment. [Laurent LAPORTE]
 
-- Issue #6: it is now possible to print the recorded times from the
+- `Issue #6 <https://github.com/tantale/intranet/issues/6>`_: it is now possible to print the recorded times from the
   calendar view. [Laurent LAPORTE]
 
-- Issue #7: use `kwargs` arguments to the `update_cal_event` call.
+- `Issue #7 <https://github.com/tantale/intranet/issues/7>`_: use `kwargs` arguments to the `update_cal_event` call.
   [Laurent LAPORTE]
 
-- Issue #2: use the user’s time zone to compute the first day of the
+- `Issue #2 <https://github.com/tantale/intranet/issues/2>`_: use the user’s time zone to compute the first day of the
   week for time recording control. [Laurent LAPORTE]
 
 Other
