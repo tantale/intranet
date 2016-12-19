@@ -58,7 +58,7 @@ form_post_id = 'order_phase_post_{}'.format(order_uid)
 ##
 ## -- editable
 ##
-	%if editable:
+%if editable:
 	$('#${ul_list_id}').sortable({
 		update: function(event, ui) {
 			var child_list = ui.item.parent().children(), uid_list = [], data;
@@ -108,7 +108,7 @@ form_post_id = 'order_phase_post_{}'.format(order_uid)
 ##
 ## -- selectable
 ##
-	%elif selectable:
+%elif selectable:
 	$("#${ul_list_id} li")
 	.zIndex(1000)
 	.draggable({
@@ -148,5 +148,5 @@ form_post_id = 'order_phase_post_{}'.format(order_uid)
 		$('ul.selectable li').removeClass('ui-selecting ui-selected');
 		$(this).addClass('ui-selected');
 	});
-	%endif
+%endif
 </script>

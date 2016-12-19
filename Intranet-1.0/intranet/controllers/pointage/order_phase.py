@@ -63,6 +63,12 @@ class OrderPhaseController(RestController):
 
         accessor = OrderPhaseAccessor()
         order = accessor.get_order(order_uid)
+
+        # If at least one task is estimated => don't display order phases
+        if order.estimated_duration:
+            editable = False
+            selectable = False
+
         return dict(order_uid=order_uid,
                     project_cat=order.project_cat,
                     order_phase_list=order.order_phase_list,
