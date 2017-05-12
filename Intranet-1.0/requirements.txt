@@ -1,6 +1,6 @@
 -r install/requirements.txt
 tg.devtools==2.3.10
 docutils==0.13.1
-gitchangelog
+gitchangelog==3.0.3
 Intranet
 wheel
