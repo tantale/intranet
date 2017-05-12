@@ -1,5 +1,5 @@
 alembic==0.9.1
-Babel==2.2.0
+Babel==2.4.0
 Beaker==1.7.0
 crank==0.7.3
 decorator==4.0.6
