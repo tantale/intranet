@@ -105,6 +105,8 @@ class Employee(DeclarativeBase):
 
         .. versionadded:: 2.2.0
 
+        .. versionadded:: 2.2.0
+
         :type date_start_utc: datetime.datetime
         :param date_start_utc: End date/time (UTC) of the interval (exclusive)
         :type date_end_utc: datetime.datetime

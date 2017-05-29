@@ -7,7 +7,7 @@ Copier la base de données de production à la place du fichier ``productiondata
 
 Activer la virtualenv::
 
-    Script/activate      # Sous Windows
+    Scripts\activate      # Sous Windows
 
 
 Exécuter le programme de migration de la base de données::
@@ -17,7 +17,13 @@ Exécuter le programme de migration de la base de données::
 
 Tester l’application::
 
+    # Changer le port en 127.0.0.1 puis :
     paster serve work/production.ini
 
+    # -> Le serveur doit démarrer.
 
-Le serveur doit démarrer.
+
+Redémarer Apache
+
+- Aller dans les services Windows en relancer Apache24
+- Vérifier avec l’URL du service : http://chipheures-intranet/
