@@ -24,7 +24,7 @@ six==1.10.0
 speaklater==1.3
 SQLAlchemy==1.0.11
 Tempita==0.5.2
-transaction==1.4.4
+transaction==2.2.0
 TurboGears2==2.2.2
 tw2.core==2.2.3
 tw2.forms==2.2.0.3
