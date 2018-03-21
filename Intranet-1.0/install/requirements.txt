@@ -16,7 +16,7 @@ Pygments==2.0.2
 Pylons==1.0.2
 python-editor==0.5
 pytz==2015.7
-repoze.lru==0.6
+repoze.lru==0.7
 repoze.tm2==2.0
 Routes==2.2
 simplejson==3.8.1
