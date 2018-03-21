@@ -27,7 +27,7 @@ Tempita==0.5.2
 transaction==1.4.4
 TurboGears2==2.2.2
 tw2.core==2.2.3
-tw2.forms==2.2.0.3
+tw2.forms==2.2.5
 WebError==0.11
 WebFlash==0.1a9
 WebHelpers==1.3
