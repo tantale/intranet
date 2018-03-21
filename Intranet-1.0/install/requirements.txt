@@ -17,7 +17,7 @@ Pylons==1.0.2
 python-editor==0.5
 pytz==2015.7
 repoze.lru==0.6
-repoze.tm2==2.0
+repoze.tm2==2.1
 Routes==2.2
 simplejson==3.8.1
 six==1.10.0
