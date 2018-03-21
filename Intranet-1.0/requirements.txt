@@ -1,5 +1,5 @@
 -r install/requirements.txt
-tg.devtools==2.2.2
+tg.devtools==2.3.11
 docutils
 gitchangelog
 Intranet
