@@ -3,4 +3,4 @@ tg.devtools==2.2.2
 docutils
 gitchangelog
 Intranet
-wheel
+wheel==0.30.0
