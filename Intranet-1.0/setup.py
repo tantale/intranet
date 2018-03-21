@@ -41,6 +41,7 @@ install_requires = [
     # 'Babel==0.9.6',
     # 'crank==0.6.4',
     "TurboGears2 == 2.2.2",
+    "tg.devtools == 2.2.2",
 
     "Genshi == 0.7",
     "Mako == 0.7.3",
