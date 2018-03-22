@@ -1,4 +1,4 @@
-alembic==0.8.4
+alembic==0.9.9
 Babel==2.2.0
 Beaker==1.7.0
 crank==0.7.3
