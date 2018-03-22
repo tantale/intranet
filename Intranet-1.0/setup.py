@@ -36,7 +36,7 @@ install_requires = [
 
     # 'WebOb==1.1.1',
     # 'Pylons==1.0',
-    # 'WebFlash==0.1a9',
+    'WebFlash==0.1a9',  # forced to use an alpha release
     # 'WebError==0.10.3',
     # 'Babel==0.9.6',
     # 'crank==0.6.4',
@@ -47,9 +47,9 @@ install_requires = [
     "Mako == 0.7.3",
     "zope.sqlalchemy >= 0.4",
     "repoze.tm2 >= 1.0a5",
-    "sqlalchemy",
+    "SQLAlchemy >= 1.0.11, < 1.1",
     "tw2.forms == 2.2.0.3",
-    "alembic",
+    "alembic >= 0.8.4, < 0.9",
 ]
 
 setup(name='Intranet',
