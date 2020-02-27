@@ -9,8 +9,6 @@ include alembic.ini
 include development.ini
 include test.ini
 include tox.ini
-recursive-include ez_setup *.py
-recursive-include ez_setup *.txt
 recursive-include install *.conf
 recursive-include install *.db
 recursive-include install *.ini
