@@ -39,3 +39,4 @@ nbproject/
 /testdata.db
 /build
 /__backup
+.tox
