@@ -77,7 +77,8 @@ setup(
         "paste.app_factory": ["main = intranet.config.middleware:make_app"],
         "paste.app_install": ["main = pylons.util:PylonsInstaller"],
         "console_scripts": [
-            "intranet_upgrade = intranet.maintenance.versions.v01_02.upgrade:main"
+            "intranet_upgrade  = intranet.maintenance.versions.v01_02.upgrade:main",
+            "auto_close_orders = intranet.maintenance.auto_close_orders:main",
         ],
     },
     dependency_links=["http://tg.gy/222"],

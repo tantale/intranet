@@ -1,6 +1,21 @@
 Changelog
 =========
 
+2.3.0 (unrelease)
+-----------------
+
+Added
+~~~~~
+
+- add the ``auto_close_orders`` application: automatically close commands (scheduled task).
+
+
+2.2.1 (2016-12-19)
+------------------
+
+Bug fix release
+
+
 2.2.0 (2016-11-30)
 ------------------
 

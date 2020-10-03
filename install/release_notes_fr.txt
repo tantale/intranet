@@ -1,11 +1,23 @@
-﻿Développements en cours
+﻿Historique des versions
 =======================
 
-- Planification des tâches associées aux phases des commandes.
+
+2.3.0 (unreleased)
+------------------
+
+Nouveautés
+
+- Ajout de l'application ``auto_close_orders`` : clôture automatiquement les commandes qui n'ont plus de pointage depuis un certain temps (au moins 3 mois).
 
 
-Nouveautés de la version 2.2.0
-==============================
+2.2.1 (2016-12-19)
+------------------
+
+Correction de bugs
+
+
+2.2.0 (2016-11-30)
+------------------
 
 Nouveautés
 
@@ -14,8 +26,8 @@ Nouveautés
 - Paramétrage des calendriers.
 
 
-Nouveautés de la version 1.4.0
-==============================
+1.4.0 (2015-06-25)
+------------------
 
 Nouveautés
 
@@ -41,8 +53,8 @@ Bugs corrigés
 - Correction du menu d‘accès rapide : les menus « Administration » et « Pointage » s’affiche correctement (de manière dynamique).
 
 
-Nouveautés de la version 1.3.0
-==============================
+1.3.0 (215-03-03)
+------------------
 
 
 Nouveautés
