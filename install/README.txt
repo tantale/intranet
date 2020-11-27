@@ -1,6 +1,8 @@
 Tantale Intranet - version 2.3.0
 --------------------------------
 
+L'application est normalement installée dans ``C:\Program Files\Tantale\Intranet\``.
+
 Procédure d’installation et de migration de la base de donnée.
 
 Copier la base de données de production à la place du fichier ``productiondata.db``.
