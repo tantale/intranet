@@ -20,7 +20,7 @@ install_requires = [
     "Mako == 0.7.3",
     "zope.sqlalchemy >= 0.4, <0.8",
     "repoze.tm2 >= 1.0a5",
-    "SQLAlchemy >= 1.0.11, < 1.1",
+    "SQLAlchemy >= 1.0.11, < 1.4",
     "tw2.forms == 2.2.0.3",
     "alembic >= 0.8.4, < 0.9",
 ]
