@@ -17,7 +17,7 @@ install_requires = [
     "TurboGears2 == 2.2.2",
     "tg.devtools == 2.2.2",
     "Genshi == 0.7",
-    "Mako == 0.7.3",
+    "Mako == 1.2.2",
     "zope.sqlalchemy >= 0.4, <0.8",
     "repoze.tm2 >= 1.0a5",
     "SQLAlchemy >= 1.0.11, < 1.1",
